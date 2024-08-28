@@ -76,7 +76,7 @@ class GetPackageHistoryRepository {
       dynamic response = await _apiServices.getGetApiResponse(
           "http://swabi.ap-south-1.elasticbeanstalk.com"
           "/package_booking/get_package_booking_by_userId?userId=${data["userId"]}&bookingStatus=${data["bookingStatus"]}&pageNumber=${data["pageNumber"]}&pageSize=${data["pageSize"]}");
-      print("Get Package History Repo Success");
+      print("Get Package History Repo Success$response");
       return response = GetPackageHistoryModel.fromJson(response);
     } catch (e) {
       print("Get Package History Repo Field");
@@ -93,8 +93,8 @@ class GetPackageHistoryDetailByIdRepository {
   Future<dynamic> getPackageHistoryDetailByIdRepositoryApi(data) async {
     try {
       // dynamic response = await _apiServices.getGetApiResponse(AppUrl.getPackageList);
-      dynamic response = await _apiServices
-          .getGetApiResponse("http://swabi.ap-south-1.elasticbeanstalk.com"
+      dynamic response = await _apiServices.getGetApiResponse(
+          "http://swabi.ap-south-1.elasticbeanstalk.com"
           "/package_booking/get_package_booking_by_id?packageBookingId=${data["packageBookingId"]}");
       print("Get Package History Detail By Id Repo Success");
       return response = GetPackageHIstoryDetailsModel.fromJson(response);
@@ -113,9 +113,10 @@ class PackageCancelRepository {
   Future<dynamic> packageCancelRepositoryApi(data) async {
     try {
       // dynamic response = await _apiServices.getGetApiResponse(AppUrl.getPackageList);
-      dynamic response = await _apiServices
-          .patchApiResponseWithData("http://swabi.ap-south-1.elasticbeanstalk.com"
-          "/package_booking/cancel_package_booking?packageBookingId=${data["packageBookingId"]}&cancellationReason=${data["cancellationReason"]}&cancelledBy=${data["cancelledBy"]}",data);
+      dynamic response = await _apiServices.patchApiResponseWithData(
+          "http://swabi.ap-south-1.elasticbeanstalk.com"
+          "/package_booking/cancel_package_booking?packageBookingId=${data["packageBookingId"]}&cancellationReason=${data["cancellationReason"]}&cancelledBy=${data["cancelledBy"]}",
+          data);
       print("Package Cancel Repo Success");
       return response = PackageCancelModel.fromJson(response);
     } catch (e) {
@@ -133,9 +134,10 @@ class AddPickUpLocationPackageRepository {
   Future<dynamic> addPickUpLocationPackageRepositoryApi(data) async {
     try {
       // dynamic response = await _apiServices.getGetApiResponse(AppUrl.getPackageList);
-      dynamic response = await _apiServices
-          .patchApiResponseWithData("http://swabi.ap-south-1.elasticbeanstalk.com"
-          "/package_booking/add_pickup_location?packageBookingId=${data["packageBookingId"]}&pickupLocation=${data["pickupLocation"]}",data);
+      dynamic response = await _apiServices.patchApiResponseWithData(
+          "http://swabi.ap-south-1.elasticbeanstalk.com"
+          "/package_booking/add_pickup_location?packageBookingId=${data["packageBookingId"]}&pickupLocation=${data["pickupLocation"]}",
+          data);
       print("Add PickUp Location Package Repo Success");
       return response;
       // return response = AddPickUpLocationModel.fromJson(response);
@@ -154,8 +156,8 @@ class GetPackageItineraryRepository {
   Future<dynamic> getPackageItineraryRepositoryApi(data) async {
     try {
       // dynamic response = await _apiServices.getGetApiResponse(AppUrl.getPackageList);
-      dynamic response = await _apiServices
-          .getGetApiResponse("http://swabi.ap-south-1.elasticbeanstalk.com"
+      dynamic response = await _apiServices.getGetApiResponse(
+          "http://swabi.ap-south-1.elasticbeanstalk.com"
           "/package_booking/get_itinerary_by_package_booking_id?packageBookingId=${data["packageBookingId"]}");
       print("GetPackageItinerary Repo Success");
       // return response;

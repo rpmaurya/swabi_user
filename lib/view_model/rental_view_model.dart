@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/response/api_response.dart';
+import 'package:flutter_cab/model/paymentDetailsModel.dart';
 import 'package:flutter_cab/model/rentalBooking_model.dart';
 import 'package:flutter_cab/respository/rental_repository.dart';
 import 'package:go_router/go_router.dart';
@@ -332,6 +333,35 @@ class RentalViewDetailViewModel with ChangeNotifier {
       // Utils.flushBarErrorMessage(error.toString(), context);
       setDataList1(ApiResponse.error(error.toString()));
     });
+  }
+}
+
+///Rental booking payment  detail view model
+class RentalPaymentDetailsViewModel with ChangeNotifier {
+  final _myRepo = RentalViewPaymentDetailsRepository();
+  ApiResponse<PaymentDetailsModel> RentalPaymentDetail = ApiResponse.loading();
+
+  setDataList(ApiResponse<PaymentDetailsModel> response) {
+    RentalPaymentDetail = response;
+    notifyListeners();
+  }
+
+  Future<PaymentDetailsModel?> rentalPaymentDetail(
+      {required BuildContext context, required String paymentId}) async {
+    Map<String, dynamic> query = {"paymentId": paymentId};
+    try {
+      setDataList(ApiResponse.loading());
+      var resp =
+          await _myRepo.paymentDetailsApi(context: context, query: query);
+      if (resp?.status?.httpCode == '200') {
+        setDataList(ApiResponse.completed(resp));
+        debugPrint('Rental payment Api ViewModel Success');
+      }
+      return resp;
+    } catch (e) {
+      print(e);
+    }
+    return null;
   }
 }
 

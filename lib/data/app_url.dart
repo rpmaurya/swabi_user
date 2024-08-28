@@ -19,4 +19,5 @@ class AppUrl {
   static var verifyPayment = "/payment/verify_payment";
   static var changepasswordUrl = "/user/change_user_password";
   static var rentalCarBookingUrl = "/rental/booking_v2";
+  static var paymentDetailUrl = "/payment/get_payment_by_payment_id";
 }

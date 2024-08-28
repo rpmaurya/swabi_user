@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/model/packageModels.dart';
+import 'package:flutter_cab/model/paymentDetailsModel.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/res/Custom%20Page%20Layout/commonPage_Layout.dart';
 import 'package:flutter_cab/res/Custom%20Widgets/multi_imageSlider_ContainerWidget.dart';
@@ -14,11 +15,13 @@ import 'package:flutter_cab/utils/text_styles.dart';
 import 'package:flutter_cab/utils/utils.dart';
 import 'package:flutter_cab/view/dashboard/rental/carBooking.dart';
 import 'package:flutter_cab/view/dashboard/tourPackage/packageDetails.dart';
+import 'package:flutter_cab/view_model/rental_view_model.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_api_headers/google_api_headers.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:google_places_flutter/google_places_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:readmore/readmore.dart';
 import '../../../../view_model/package_view_model.dart';
@@ -43,7 +46,7 @@ class _PackagePageViewDetailsState extends State<PackagePageViewDetails> {
 
   bool loading = false;
   int? day;
-
+  PaymentDetailsModel? paymentDetails;
   @override
   void initState() {
     // TODO: implement initState
@@ -52,8 +55,31 @@ class _PackagePageViewDetailsState extends State<PackagePageViewDetails> {
       Provider.of<GetPackageItineraryViewModel>(context, listen: false)
           .fetchGetPackageItineraryViewModelApi(
               context, {"packageBookingId": widget.packageBookID});
+      getPaymentDetail();
     });
     // day = detailsData.bookingDate * pkgDetails.noOfDays;
+  }
+
+  Future getPaymentDetail() async {
+    String paymentId = Provider.of<GetPackageHistoryDetailByIdViewModel>(
+                context,
+                listen: false)
+            .getPackageHistoryDetailById
+            .data
+            ?.data
+            .paymentId ??
+        '';
+    print('paymentid:...$paymentId');
+
+    await Provider.of<RentalPaymentDetailsViewModel>(context, listen: false)
+        .rentalPaymentDetail(context: context, paymentId: paymentId)
+        .then((onValue) {
+      if (onValue?.status?.httpCode == '200') {
+        setState(() {
+          paymentDetails = onValue;
+        });
+      }
+    });
   }
 
   var detailsData, pkgDetails, userDetails, dataPackage;
@@ -158,7 +184,7 @@ class _PackagePageViewDetailsState extends State<PackagePageViewDetails> {
             .packageBookingId ??
         '';
     // debugPrint("${getPackageItineraryList.length} GetItineraryDetailsList");
-    // debugPrint("$getPackageItinerary GetItineraryDetails");
+    debugPrint("${detailsData.paymentId} paymentId......");
     return Scaffold(
       backgroundColor: bgGreyColor,
       appBar: const CustomAppBar(
@@ -212,6 +238,7 @@ class _PackagePageViewDetailsState extends State<PackagePageViewDetails> {
               alertController.clear();
             },
             totalAmt: detailsData.totalAmount,
+            paymentDetails: paymentDetails,
             memberList: List.generate(
                 memberListDetails.length,
                 (index) => PackageHIstoryDetailsMemberList(
@@ -266,6 +293,7 @@ class _PackagePageViewDetailsState extends State<PackagePageViewDetails> {
                       assignedId: "",
                       isCancelled: false,
                     )),
+
             ///Activity Details List
             child: getPackageItineraryList.isNotEmpty
                 ? ItineraryActivityContainer(
@@ -390,6 +418,7 @@ class PackageDetailsContainer extends StatefulWidget {
   final List<PackageHIstoryDetailsMemberList> memberList;
   final List<AssignedVehicleOnPackageBooking> vehicleDetails;
   final List<AssignedDriverOnPackageBooking> driverDetails;
+  final PaymentDetailsModel? paymentDetails;
   final VoidCallback? onTap;
 
   const PackageDetailsContainer(
@@ -413,6 +442,7 @@ class PackageDetailsContainer extends StatefulWidget {
       required this.memberList,
       required this.vehicleDetails,
       required this.driverDetails,
+      required this.paymentDetails,
       required this.days});
 
   @override
@@ -453,6 +483,8 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
 
   @override
   Widget build(BuildContext context) {
+    DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(
+        (widget.paymentDetails?.data?.createdAt ?? 0) * 1000);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1045,6 +1077,45 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
             ],
           ),
         ),
+        widget.paymentDetails?.data != null
+            ? const Padding(
+                padding: EdgeInsets.symmetric(vertical: 10),
+                child: CustomTextWidget(
+                  content: "Payment Details",
+                  fontSize: 20,
+                  sideLogo: true,
+                  fontWeight: FontWeight.w600,
+                ),
+              )
+            : Container(),
+        widget.paymentDetails?.data != null
+            ? CommonContainer(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                width: double.infinity,
+                elevation: 0,
+                borderRadius: BorderRadius.circular(5),
+                borderReq: true,
+                borderColor: naturalGreyColor.withOpacity(0.3),
+                child: Column(
+                  children: [
+                    textItem(
+                        lable: 'PaymentId',
+                        value: widget.paymentDetails?.data?.id ?? ''),
+                    textItem(
+                        lable: 'Amount',
+                        value: 'AED ${widget.paymentDetails?.data?.amount}'),
+                    textItem(
+                      lable: 'PaymentDate',
+                      value: DateFormat('dd-MM-yyyy').format(dateTime),
+                    ),
+                    textItem(
+                        lable: 'PaymentTime',
+                        value: DateFormat('hh:mm a').format(dateTime))
+                  ],
+                ),
+              )
+            : Container(),
         const Padding(
           padding: EdgeInsets.symmetric(vertical: 10),
           child: CustomTextWidget(
@@ -1185,7 +1256,7 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
                 borderReq: true,
                 borderColor: naturalGreyColor.withOpacity(0.3),
                 child: DataTable(
-                  horizontalMargin: 5,
+                    horizontalMargin: 5,
                     columnSpacing: 20,
                     headingRowHeight: 40,
                     dividerThickness: 0,
@@ -1308,6 +1379,37 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
       ],
     );
   }
+
+  textItem({required String lable, required String value}) {
+    return Padding(
+      padding: const EdgeInsets.all(5.0),
+      child: Row(
+        children: [
+          Expanded(
+            flex: 2,
+            child: Text(
+              lable,
+              style: titleTextStyle,
+            ),
+          ),
+          Text(
+            ':',
+            style: titleTextStyle,
+          ),
+          const SizedBox(
+            width: 10,
+          ),
+          Expanded(
+            flex: 3,
+            child: Text(
+              value,
+              style: titleTextStyle1,
+            ),
+          )
+        ],
+      ),
+    );
+  }
 }
 
 class ItineraryActivityContainer extends StatefulWidget {
@@ -1347,8 +1449,12 @@ class _ItineraryActivityContainerState
         if (index == 0 ||
             itineraryData.day != widget.itineraryDataList[index - 1].day) {
           return Padding(
-            padding: EdgeInsets.only(bottom: index == 0 ||
-                itineraryData.day != widget.itineraryDataList[index - 1].day ?  2 : 5),
+            padding: EdgeInsets.only(
+                bottom: index == 0 ||
+                        itineraryData.day !=
+                            widget.itineraryDataList[index - 1].day
+                    ? 2
+                    : 5),
             child: CommonContainer(
               borderReq: true,
               elevation: 0,
@@ -1358,7 +1464,7 @@ class _ItineraryActivityContainerState
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.only(bottom: 10,top: 5),
+                    padding: const EdgeInsets.only(bottom: 10, top: 5),
                     child: Column(
                       children: [
                         Row(
@@ -1366,7 +1472,7 @@ class _ItineraryActivityContainerState
                           children: [
                             CustomTextWidget(
                               content:
-                              "Day ${itineraryData.day == "null" ? "" : itineraryData.day} (${itineraryData.date})",
+                                  "Day ${itineraryData.day == "null" ? "" : itineraryData.day} (${itineraryData.date})",
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
                               sideLogo: true,
@@ -1375,10 +1481,14 @@ class _ItineraryActivityContainerState
                               padding: const EdgeInsets.all(5),
                               elevation: 0,
                               borderRadius: BorderRadius.circular(10),
-                              color: widget.itineraryDataList[index].dayStatus == "COMPLETED" ? greenColor : redColor ,
+                              color:
+                                  widget.itineraryDataList[index].dayStatus ==
+                                          "COMPLETED"
+                                      ? greenColor
+                                      : redColor,
                               child: CustomText(
                                 content:
-                                widget.itineraryDataList[index].dayStatus,
+                                    widget.itineraryDataList[index].dayStatus,
                                 fontSize: 16,
                                 textColor: background,
                                 fontWeight: FontWeight.w600,
@@ -1394,13 +1504,13 @@ class _ItineraryActivityContainerState
                             children: [
                               CustomTextWidget(
                                 content:
-                                "Start Time : ${widget.itineraryDataList[index].startTimestamp.toString().isEmpty ? "N/A" : widget.itineraryDataList[index].startTimestamp.toString().split(' ')[1].substring(0,5)}",
+                                    "Start Time : ${widget.itineraryDataList[index].startTimestamp.toString().isEmpty ? "N/A" : widget.itineraryDataList[index].startTimestamp.toString().split(' ')[1].substring(0, 5)}",
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,
                               ),
                               CustomTextWidget(
                                 content:
-                                "End Time : ${widget.itineraryDataList[index].endTimestamp.toString().isEmpty ? "N/A" : widget.itineraryDataList[index].endTimestamp.toString().split(' ')[1].substring(0,5)}",
+                                    "End Time : ${widget.itineraryDataList[index].endTimestamp.toString().isEmpty ? "N/A" : widget.itineraryDataList[index].endTimestamp.toString().split(' ')[1].substring(0, 5)}",
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,
                               ),
@@ -1423,7 +1533,8 @@ class _ItineraryActivityContainerState
               elevation: 0,
               padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
               borderColor: naturalGreyColor.withOpacity(.3),
-              child: _buildActivityContent(itineraryData, image, "Activity ${index + 1}"),
+              child: _buildActivityContent(
+                  itineraryData, image, "Activity ${index + 1}"),
             ),
           );
         }

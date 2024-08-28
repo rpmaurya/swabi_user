@@ -89,7 +89,7 @@ class _PackageHistoryManagementState extends State<PackageHistoryManagement> {
         .toString();
     String upcommingStatus = context
         .watch<GetPackageHistoryViewModel>()
-        .getBookedHistory
+        .getUpcommingHistory
         .status
         .toString();
     String completedStatus = context
@@ -151,7 +151,7 @@ class _PackageHistoryManagementState extends State<PackageHistoryManagement> {
         });
       }
     }
-    // debugPrint("${widget.userID}History Package UrID");
+    debugPrint("${upcommingStatus} booking Status.....");
     // debugPrint("${bookedHistory.length} Booked History Package");
     // debugPrint("${completedHistory.length} Completed History Package");
     return DefaultTabController(
@@ -280,61 +280,56 @@ class _PackageHistoryManagementState extends State<PackageHistoryManagement> {
                     ? upcommingHistory.isNotEmpty
                         ? ListView.separated(
                             padding: const EdgeInsets.symmetric(horizontal: 2),
-                            itemCount: upcommingStatus == "Status.loading"
-                                ? upcommingHistory.length + 1
-                                : upcommingHistory.length,
+                            itemCount: upcommingHistory.length,
                             // physics: const BouncingScrollPhysics(),
-                            controller: bookedPkgController,
+                            // controller: bookedPkgController,
                             itemBuilder: (context, index) {
-                              if (upcommingHistory.length == index) {
-                                return const Center(
-                                  child: Padding(
-                                    padding: EdgeInsets.all(8.0),
-                                    child: SizedBox(
-                                        height: 30,
-                                        width: 30,
-                                        child: CircularProgressIndicator(
-                                          color: btnColor,
-                                        )),
-                                  ),
-                                );
-                              } else {
-                                return PackageHistoryContainer(
-                                  status: upcommingHistory[index].bookingStatus,
-                                  pkgID:
-                                      upcommingHistory[index].packageBookingId,
-                                  bookingDate:
-                                      upcommingHistory[index].bookingDate,
-                                  members: upcommingHistory[index]
-                                      .memberList
-                                      .length
-                                      .toString(),
-                                  price: upcommingHistory[index].totalAmount,
-                                  pkgName:
-                                      upcommingHistory[index].pkg.packageName,
-                                  // pkgName: pkgMap['packageName'],
-                                  location:
-                                      upcommingHistory[index].pkg.location,
-                                  imageList: upcommingHistory[index]
-                                      .pkg
-                                      .packageImageUrl,
-                                  onTap: () {
-                                    Provider.of<GetPackageHistoryDetailByIdViewModel>(
-                                            context,
-                                            listen: false)
-                                        .fetchGetPackageHistoryDetailByIdViewModelApi(
-                                            context,
-                                            {
-                                              "packageBookingId":
-                                                  upcommingHistory[index]
-                                                      .packageBookingId
-                                            },
-                                            widget.userID,
-                                            upcommingHistory[index]
-                                                .packageBookingId);
-                                  },
-                                );
-                              }
+                              // if (upcommingHistory.length == index) {
+                              //   return const Center(
+                              //     child: Padding(
+                              //       padding: EdgeInsets.all(8.0),
+                              //       child: SizedBox(
+                              //           height: 30,
+                              //           width: 30,
+                              //           child: CircularProgressIndicator(
+                              //             color: btnColor,
+                              //           )),
+                              //     ),
+                              //   );
+                              // } else {
+                              return PackageHistoryContainer(
+                                status: upcommingHistory[index].bookingStatus,
+                                pkgID: upcommingHistory[index].packageBookingId,
+                                bookingDate:
+                                    upcommingHistory[index].bookingDate,
+                                members: upcommingHistory[index]
+                                    .memberList
+                                    .length
+                                    .toString(),
+                                price: upcommingHistory[index].totalAmount,
+                                pkgName:
+                                    upcommingHistory[index].pkg.packageName,
+                                // pkgName: pkgMap['packageName'],
+                                location: upcommingHistory[index].pkg.location,
+                                imageList:
+                                    upcommingHistory[index].pkg.packageImageUrl,
+                                onTap: () {
+                                  Provider.of<GetPackageHistoryDetailByIdViewModel>(
+                                          context,
+                                          listen: false)
+                                      .fetchGetPackageHistoryDetailByIdViewModelApi(
+                                          context,
+                                          {
+                                            "packageBookingId":
+                                                upcommingHistory[index]
+                                                    .packageBookingId
+                                          },
+                                          widget.userID,
+                                          upcommingHistory[index]
+                                              .packageBookingId);
+                                },
+                              );
+                              // }
                             },
                             separatorBuilder: (context, index) =>
                                 const SizedBox(

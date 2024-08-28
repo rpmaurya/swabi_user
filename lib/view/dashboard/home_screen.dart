@@ -224,8 +224,8 @@ class _home_screenState extends State<home_screen> {
                       padding: const EdgeInsets.symmetric(horizontal: 10),
                       scrollDirection: Axis.horizontal,
                       itemBuilder: (context, index) => ListContainerDesign(
-                        imageList: images[index],
-                      ),
+                            imageList: images[index],
+                          ),
                       separatorBuilder: (context, index) =>
                           const SizedBox(width: 10),
                       itemCount: images.length),
@@ -265,7 +265,10 @@ class _home_screenState extends State<home_screen> {
                               children: [
                                 Image.asset(carRental, height: 40),
                                 const SizedBox(height: 5),
-                                Text("Rental",style: titleTextStyle,)
+                                Text(
+                                  "Rental",
+                                  style: titleTextStyle,
+                                )
                               ],
                             ),
                           ),
@@ -286,7 +289,10 @@ class _home_screenState extends State<home_screen> {
                               children: [
                                 Image.asset(holidays, height: 40),
                                 const SizedBox(height: 5),
-                                Text("Package",style: titleTextStyle,)
+                                Text(
+                                  "Package",
+                                  style: titleTextStyle,
+                                )
                               ],
                             ),
                           ),
@@ -377,7 +383,7 @@ class _home_screenState extends State<home_screen> {
                   ),
                 ),
                 Container(
-                  height: AppDimension.getHeight(context) * .75,
+                  // height: AppDimension.getHeight(context) * .75,
                   padding:
                       const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
                   child: CustomGridView(
@@ -544,19 +550,22 @@ class ListContainerDesign extends StatelessWidget {
           // ),
           child: ClipRRect(
               borderRadius: BorderRadius.circular(10),
-              child: Image.asset(imageList,fit: BoxFit.fill)),
+              child: Image.asset(imageList, fit: BoxFit.fill)),
         ),
         Positioned(
           right: 5,
           top: 5,
           child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 5,vertical: 1),
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              color: background
+            padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20), color: background),
+            child: const CustomText(
+              content: "HOTELS",
+              fontSize: 10,
+              fontWeight: FontWeight.w600,
+            ),
           ),
-          child: const CustomText(content: "HOTELS",fontSize: 10,fontWeight: FontWeight.w600,),
-        ),),
+        ),
         Positioned(
           bottom: 5,
           left: 5,
@@ -564,16 +573,27 @@ class ListContainerDesign extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 5,vertical: 1),
-                decoration: const BoxDecoration(
-                    color: background
+                padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
+                decoration: const BoxDecoration(color: background),
+                child: const CustomText(
+                  content: "PRICE DROP ALERT",
+                  fontSize: 10,
+                  fontWeight: FontWeight.w600,
                 ),
-                child: const CustomText(content: "PRICE DROP ALERT",fontSize: 10,fontWeight: FontWeight.w600,),
               ),
-              const CustomText(content: "Grab Up to 25% OFF* on Internation Hotels",textColor: background,fontWeight: FontWeight.w600,),
-              const CustomText(content: "& plan your 15-19 Aug LOOONG weekend trip",textColor: background,fontSize: 10,fontWeight: FontWeight.w600),
+              const CustomText(
+                content: "Grab Up to 25% OFF* on Internation Hotels",
+                textColor: background,
+                fontWeight: FontWeight.w600,
+              ),
+              const CustomText(
+                  content: "& plan your 15-19 Aug LOOONG weekend trip",
+                  textColor: background,
+                  fontSize: 10,
+                  fontWeight: FontWeight.w600),
             ],
-          ),)
+          ),
+        )
       ],
     );
   }

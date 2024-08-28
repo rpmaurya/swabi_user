@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/app_url.dart';
 import 'package:flutter_cab/data/response/baseResponse.dart';
+import 'package:flutter_cab/model/paymentDetailsModel.dart';
 import 'package:flutter_cab/model/rentalBooking_model.dart';
 import 'package:flutter_cab/view_model/services/httpService.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -157,6 +158,39 @@ class RentalViewDetailsRepository {
       print(e);
       rethrow;
     }
+  }
+}
+
+///Rental View Single payment Detail Repo
+class RentalViewPaymentDetailsRepository {
+  final BaseApiServices _apiServices = NetworkApiService();
+
+  Future<PaymentDetailsModel?> paymentDetailsApi(
+      {required BuildContext context,
+      required Map<String, dynamic> query}) async {
+    var http = HttpService(
+        baseURL: AppUrl.baseUrl,
+        endURL: AppUrl.paymentDetailUrl,
+        queryParameters: query,
+        bodyType: HttpBodyType.JSON,
+        methodType: HttpMethodType.GET,
+        isAuthorizeRequest: false);
+    try {
+      Response<dynamic>? response = await http.request<dynamic>();
+      print('response..${response?.data}');
+      var resp = PaymentDetailsModel.fromJson(response?.data);
+      return resp;
+    } on DioException catch (error) {
+      BaseResponseModel baseResponseModel =
+          BaseResponseModel.fromJson(error.response?.data);
+      print(baseResponseModel.status?.message);
+
+      print({'error..': error});
+      http.handleErrorResponse(
+          context: context, error: error, errorResponse: baseResponseModel);
+    }
+
+    return null;
   }
 }
 

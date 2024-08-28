@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_cab/model/paymentDetailsModel.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/res/Custom%20Page%20Layout/commonPage_Layout.dart';
+import 'package:flutter_cab/res/Custom%20Widgets/customPaymentDetailsContainer.dart';
 import 'package:flutter_cab/res/Custom%20Widgets/multi_imageSlider_ContainerWidget.dart';
 import 'package:flutter_cab/res/customAppBar_widget.dart';
 import 'package:flutter_cab/utils/color.dart';
@@ -9,6 +11,7 @@ import 'package:flutter_cab/utils/utils.dart';
 import 'package:flutter_cab/view/dashboard/rental/carBooking.dart';
 import 'package:flutter_cab/view_model/rental_view_model.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../utils/text_styles.dart';
@@ -27,7 +30,37 @@ class RentalBookedPageView extends StatefulWidget {
 class _RentalBookedPageViewState extends State<RentalBookedPageView> {
   TextEditingController controller = TextEditingController();
   var fulldata, userData, vehicleDetails, driverDetails, guestDetails;
+  Data? paymentDetails;
   bool loading = false;
+  @override
+  void initState() {
+    // TODO: implement initState
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      getPaymentDetail();
+    });
+    super.initState();
+  }
+
+  Future getPaymentDetail() async {
+    String paymentId =
+        Provider.of<RentalViewDetailViewModel>(context, listen: false)
+                .DataList
+                .data
+                ?.data
+                .paymentId ??
+            '';
+    print('paymentid:...$paymentId');
+
+    await Provider.of<RentalPaymentDetailsViewModel>(context, listen: false)
+        .rentalPaymentDetail(context: context, paymentId: paymentId)
+        .then((onValue) {
+      if (onValue?.status?.httpCode == '200') {
+        setState(() {
+          paymentDetails = onValue?.data;
+        });
+      }
+    });
+  }
 
   // List<String> vehicleImage = [];
   @override
@@ -50,10 +83,20 @@ class _RentalBookedPageViewState extends State<RentalBookedPageView> {
     guestDetails =
         context.watch<RentalViewDetailViewModel>().DataList.data?.data.guest ??
             "";
-    vehicleDetails = context.watch<RentalViewDetailViewModel>().DataList.data?.data.vehicle ?? "";
+    vehicleDetails = context
+            .watch<RentalViewDetailViewModel>()
+            .DataList
+            .data
+            ?.data
+            .vehicle ??
+        "";
     driverDetails =
         context.watch<RentalViewDetailViewModel>().DataList.data?.data.driver ??
             "";
+
+    DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(
+        (paymentDetails?.createdAt ?? 0) * 1000);
+    print('paymentdewatil.......${paymentDetails?.amount}');
     print("${driverDetails.firstName}Name");
     print("${vehicleDetails.carName}Name");
     // vehicleImage = context.watch<RentalViewDetailViewModel>().DataList.data?.data.driver ?? "";
@@ -125,7 +168,7 @@ class _RentalBookedPageViewState extends State<RentalBookedPageView> {
         child: ListView(
           children: [
             RentalBookingContainer(
-              bookingId: fulldata.rentalBookingId,
+              // bookingId: fulldata.bookerId,
               // carName: vehicleMap['carName'] ?? 'N/A',
               hour: fulldata.totalRentTime,
               id: widget.bookedId,
@@ -145,9 +188,10 @@ class _RentalBookedPageViewState extends State<RentalBookedPageView> {
               carType: fulldata.carType,
               brandName: fulldata.vehicle!.brandName?.toString() ?? '',
               /////////////////Guest Detail////////////////////////
-              guestId: fulldata.guest!.guestId?.toString() ?? '' ,
+              guestId: fulldata.guest!.guestId?.toString() ?? '',
               firstName: fulldata.guest!.guestName?.toString() ?? '',
-              lastName: guestDetails.toString().isEmpty || guestDetails != "null"
+              lastName:
+                  guestDetails.toString().isEmpty || guestDetails != "null"
                       ? ""
                       : "",
               contact: fulldata.guest!.guestMobile?.toString() ?? '',
@@ -170,8 +214,7 @@ class _RentalBookedPageViewState extends State<RentalBookedPageView> {
                                     controller.clear();
                                     return SingleChildScrollView(
                                       padding: EdgeInsets.only(
-                                          top: AppDimension.getHeight(
-                                                  context) *
+                                          top: AppDimension.getHeight(context) *
                                               .2),
                                       child: CancelContainerDialog(
                                         loading: cancelledStatus ==
@@ -194,8 +237,7 @@ class _RentalBookedPageViewState extends State<RentalBookedPageView> {
                                                     context,
                                                     {
                                                       "id": widget.bookedId,
-                                                      "reason":
-                                                          controller.text,
+                                                      "reason": controller.text,
                                                       "cancelledBy": "USER"
                                                     },
                                                     widget.useriD)
@@ -209,8 +251,7 @@ class _RentalBookedPageViewState extends State<RentalBookedPageView> {
                                                   'userId': widget.useriD,
                                                   'pageNumber': '0',
                                                   'pageSize': '20',
-                                                  'bookingStatus':
-                                                      'CANCELLED',
+                                                  'bookingStatus': 'CANCELLED',
                                                 });
                                                 controller.clear();
                                                 // context.pop();
@@ -231,32 +272,40 @@ class _RentalBookedPageViewState extends State<RentalBookedPageView> {
                   : Container(),
             ),
             const SizedBox(height: 10),
+            paymentDetails != null
+                ? Custompaymentdetailscontainer(
+                    paymentId: paymentDetails?.id ?? '',
+                    paymentDate: DateFormat('dd-MM-yyyy').format(dateTime),
+                    amount: paymentDetails?.amount.toString() ?? '',
+                    paymentTime: DateFormat('hh:mm a').format(dateTime))
+                : Container(),
+            const SizedBox(height: 10),
             vehicleDetails != null &&
-                vehicleDetails.carName != null &&
-                vehicleDetails.carName!.isNotEmpty
+                    vehicleDetails.carName != null &&
+                    vehicleDetails.carName!.isNotEmpty
                 ? VechicleDetailsContainer(
-              color: vehicleDetails.color ?? '',
-              vehicleName: vehicleDetails.carName ?? '',
-              brandName: vehicleDetails.brandName ?? '',
-              vehicleNo: vehicleDetails.vehicleNumber ?? '',
-              fuelType: vehicleDetails.fuelType ?? '',
-              seats: vehicleDetails.seats ?? '',
-              vehicleImage: vehicleDetails.images,
-            )
+                    color: vehicleDetails.color ?? '',
+                    vehicleName: vehicleDetails.carName ?? '',
+                    brandName: vehicleDetails.brandName ?? '',
+                    vehicleNo: vehicleDetails.vehicleNumber ?? '',
+                    fuelType: vehicleDetails.fuelType ?? '',
+                    seats: vehicleDetails.seats ?? '',
+                    vehicleImage: vehicleDetails.images,
+                  )
                 : Container(),
             const SizedBox(
               height: 10,
             ),
             driverDetails != null &&
-                driverDetails.firstName != null &&
-                driverDetails.firstName!.isNotEmpty
+                    driverDetails.firstName != null &&
+                    driverDetails.firstName!.isNotEmpty
                 ? DriverDetailsContainer(
-              firstName: fulldata.driver.firstName?.toString() ?? '',
-              lastName: fulldata.driver.lastName?.toString() ?? '',
-              gender: fulldata.driver.gender?.toString() ?? '',
-              mobile: fulldata.driver.mobile?.toString() ?? '',
-              email: fulldata.driver.email?.toString() ?? '',
-            )
+                    firstName: fulldata.driver.firstName?.toString() ?? '',
+                    lastName: fulldata.driver.lastName?.toString() ?? '',
+                    gender: fulldata.driver.gender?.toString() ?? '',
+                    mobile: fulldata.driver.mobile?.toString() ?? '',
+                    email: fulldata.driver.email?.toString() ?? '',
+                  )
                 : Container(),
           ],
         ),
@@ -281,7 +330,7 @@ class RentalBookingContainer extends StatelessWidget {
   final String kilometer;
   final String status;
   final String rentalCharge;
-  final String bookingId;
+  // final String bookingId;
   final String pickUpLocation;
   final String paid;
   final String carType;
@@ -302,7 +351,7 @@ class RentalBookingContainer extends StatelessWidget {
     required this.kilometer,
     required this.status,
     required this.rentalCharge,
-    required this.bookingId,
+    // required this.bookingId,
     required this.pickUpLocation,
     required this.paid,
     this.seats = '',
@@ -428,7 +477,7 @@ class RentalBookingContainer extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text("Id : ", style: titleTextStyle),
+                              Text("BookingId : ", style: titleTextStyle),
                               SizedBox(
                                 // width: 100,
                                 child: Text(id, style: titleTextStyle1),
@@ -440,10 +489,10 @@ class RentalBookingContainer extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text("Status : ", style: titleTextStyle),
+                              Text("Kilometer : ", style: titleTextStyle),
                               SizedBox(
                                 // width: 100,
-                                child: Text(status, style: titleTextStyle1),
+                                child: Text(kilometer, style: titleTextStyle1),
                               )
                             ],
                           ),
@@ -480,10 +529,10 @@ class RentalBookingContainer extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text("Kilometer : ", style: titleTextStyle),
+                              Text("Status : ", style: titleTextStyle),
                               SizedBox(
                                 // width: 100,
-                                child: Text(kilometer, style: titleTextStyle1),
+                                child: Text(status, style: titleTextStyle1),
                               )
                             ],
                           ),
@@ -495,8 +544,8 @@ class RentalBookingContainer extends StatelessWidget {
                               Text("Rental Charge : ", style: titleTextStyle),
                               SizedBox(
                                 // width: 100,
-                                child:
-                                    Text(rentalCharge, style: titleTextStyle1),
+                                child: Text('AED ${rentalCharge}',
+                                    style: titleTextStyle1),
                               )
                             ],
                           ),
@@ -517,6 +566,22 @@ class RentalBookingContainer extends StatelessWidget {
                       )
                     ],
                   ),
+                  // const SizedBox(height: 5),
+                  // Row(
+                  //     mainAxisAlignment: MainAxisAlignment.start,
+                  //     crossAxisAlignment: CrossAxisAlignment.start,
+                  //     children: [
+                  //       Text("Booking ID : ", style: titleTextStyle),
+                  //       SizedBox(
+                  //         width: 220,
+                  //         child: Text(
+                  //           bookingId,
+                  //           style: titleTextStyle1,
+                  //           textAlign: TextAlign.start,
+                  //           maxLines: 2,
+                  //         ),
+                  //       ),
+                  //     ]),
                   const SizedBox(height: 5),
                   Row(
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -530,22 +595,6 @@ class RentalBookingContainer extends StatelessWidget {
                               textAlign: TextAlign.start),
                         ),
                       ]),
-                  const SizedBox(height: 5),
-                  Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text("Booking ID : ", style: titleTextStyle),
-                        SizedBox(
-                          width: 220,
-                          child: Text(
-                            bookingId,
-                            style: titleTextStyle1,
-                            textAlign: TextAlign.start,
-                            maxLines: 2,
-                          ),
-                        ),
-                      ])
                 ],
               ),
             ),

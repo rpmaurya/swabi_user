@@ -24,16 +24,59 @@ class _ChangePasswordState extends State<ChangePassword> {
   final _oldPasswordController = TextEditingController();
   final _newPasswordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
+  final _focasNode1 = FocusNode();
+  final _focasNode2 = FocusNode();
+  final _focasNode3 = FocusNode();
+
+  String? _oldPasswordError;
+  String? _newPasswordError;
+  String? _confirmPasswordError;
 
   bool _obscureOldPassword = true;
   bool _obscureNewPassword = true;
   bool _obscureConfirmPassword = true;
+  @override
+  void initState() {
+    super.initState();
+
+    _focasNode1.addListener(() {
+      if (!_focasNode1.hasFocus) {
+        setState(() {
+          _oldPasswordError = _validatePassword(_oldPasswordController.text);
+        });
+      }
+    });
+
+    _focasNode2.addListener(() {
+      if (!_focasNode2.hasFocus) {
+        setState(() {
+          _newPasswordError = _validatePassword(_newPasswordController.text);
+        });
+      }
+    });
+
+    _focasNode3.addListener(() {
+      if (!_focasNode3.hasFocus) {
+        setState(() {
+          if (_confirmPasswordController.text != _newPasswordController.text) {
+            _confirmPasswordError = "Passwords do not match";
+          } else {
+            _confirmPasswordError =
+                _validatePassword(_confirmPasswordController.text);
+          }
+        });
+      }
+    });
+  }
 
   @override
   void dispose() {
     _oldPasswordController.dispose();
     _newPasswordController.dispose();
     _confirmPasswordController.dispose();
+    _focasNode1.dispose();
+    _focasNode2.dispose();
+    _focasNode3.dispose();
     super.dispose();
   }
 
@@ -88,6 +131,7 @@ class _ChangePasswordState extends State<ChangePassword> {
           if (onValue?.status.httpCode == '200') {
             Utils.flushBarSuccessMessage(
                 'Password changed successfully', context);
+            context.pop();
           }
         });
       } catch (e) {
@@ -110,24 +154,30 @@ class _ChangePasswordState extends State<ChangePassword> {
         child: Column(
           children: [
             customtextformfield(
+                focusNode: _focasNode1,
                 controller: _oldPasswordController,
                 obscureText: _obscureOldPassword,
                 hinttext: 'Old Password',
+                errorText: _oldPasswordError,
                 onIconPress: _toggleOldPasswordVisibility,
                 validator: _validatePassword),
             const SizedBox(height: 16.0),
             customtextformfield(
+                focusNode: _focasNode2,
                 controller: _newPasswordController,
                 obscureText: _obscureNewPassword,
                 hinttext: 'New Password',
+                errorText: _newPasswordError,
                 onIconPress: _toggleNewPasswordVisibility,
                 validator: _validatePassword),
 
             const SizedBox(height: 16.0),
             customtextformfield(
+                focusNode: _focasNode3,
                 controller: _confirmPasswordController,
                 obscureText: _obscureConfirmPassword,
                 hinttext: 'Confirm New Password',
+                errorText: _confirmPasswordError,
                 onIconPress: _toggleConfirmPasswordVisibility,
                 validator: _validateConfirmPassword),
 
@@ -165,7 +215,7 @@ class _ChangePasswordState extends State<ChangePassword> {
             // ),
             const Spacer(),
             CustomButtonBig(
-              btnHeading: "Update",
+              btnHeading: "Change Password",
               onTap: () => _updatePassword(),
             ),
             const SizedBox(height: 10),
@@ -180,15 +230,18 @@ class _ChangePasswordState extends State<ChangePassword> {
       required bool obscureText,
       required String hinttext,
       required void Function()? onIconPress,
-      String? Function(String?)? validator}) {
+      String? Function(String?)? validator,
+      FocusNode? focusNode,
+      String? errorText}) {
     return TextFormField(
+      focusNode: focusNode,
       controller: controller,
       obscureText: obscureText,
       decoration: InputDecoration(
         // labelText: 'Old Password',
         fillColor: Colors.white,
         filled: true,
-
+        errorText: errorText,
         contentPadding:
             const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
         // border: InputBorder.none,

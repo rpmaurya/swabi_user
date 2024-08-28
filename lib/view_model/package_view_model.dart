@@ -77,7 +77,7 @@ class GetPackageBookingByIdViewModel with ChangeNotifier {
       Provider.of<GetPackageHistoryViewModel>(context, listen: false)
           .fetchGetPackageHistoryBookedViewModelApi(context, {
         "userId": urId,
-        "bookingStatus": "BOOKED",
+        "bookingStatus": "ALL",
         "pageNumber": "0",
         "pageSize": "100",
       });
@@ -222,7 +222,7 @@ class PackageCancelViewModel with ChangeNotifier {
       Provider.of<GetPackageHistoryViewModel>(context, listen: false)
           .fetchGetPackageHistoryBookedViewModelApi(context, {
         "userId": urId,
-        "bookingStatus": "BOOKED",
+        "bookingStatus": "ALL",
         "pageNumber": "0",
         "pageSize": "100",
       }).then((value) =>

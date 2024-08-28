@@ -54,7 +54,7 @@ class Custom_ListTile extends StatelessWidget {
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 15, vertical: 15),
+                          horizontal: 10, vertical: 10),
                       child: Text(
                         heading,
                         style: custom_ListTileTextStyle,

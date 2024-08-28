@@ -55,6 +55,8 @@ Future<void> main() async {
             create: (context) => PaymentCreateOrderIdViewModel()),
         ChangeNotifierProvider(create: (context) => PaymentVerifyViewModel()),
         ChangeNotifierProvider(create: (context) => ChangePasswordViewModel()),
+        ChangeNotifierProvider(
+            create: (context) => RentalPaymentDetailsViewModel()),
       ],
       child: const MyApp(),
     ));
