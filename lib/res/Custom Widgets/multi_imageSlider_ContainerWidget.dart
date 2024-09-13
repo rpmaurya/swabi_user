@@ -48,7 +48,9 @@ class _MultiImageSliderState extends State<MultiImageSlider> {
     if (widget.images.isEmpty) {
       return ClipRRect(
           borderRadius: BorderRadius.circular(4),
-          child: SizedBox(width: double.infinity,child: Image.asset(tour1, fit: BoxFit.fill)));
+          child: SizedBox(
+              width: double.infinity,
+              child: Image.asset(tour, fit: BoxFit.fill)));
     } else if (widget.images.length == 1) {
       return ClipRRect(
         borderRadius: BorderRadius.circular(4),

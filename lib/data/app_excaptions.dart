@@ -10,8 +10,7 @@ class AppException implements Exception {
 }
 
 class FetchDataException extends AppException {
-  FetchDataException([String? message])
-      : super(message!, '');
+  FetchDataException([String? message]) : super(message!, '');
 }
 
 class BadRequestException extends AppException {
@@ -19,13 +18,45 @@ class BadRequestException extends AppException {
 }
 
 class UnauthorisedException extends AppException {
-  UnauthorisedException([String? message])
-      : super(message!, '');
+  UnauthorisedException([String? message]) : super(message!, '');
 }
 
 class InvalidInputException extends AppException {
   InvalidInputException([String? message]) : super(message!, '');
 }
+
 class InvalidPermissionException extends AppException {
   InvalidPermissionException([String? message]) : super(message!, '');
+}
+
+class NetworkException implements Exception {
+  final String message;
+  NetworkException(this.message);
+
+  @override
+  String toString() => message;
+}
+
+class ApiException implements Exception {
+  final String message;
+  ApiException(this.message);
+
+  @override
+  String toString() => message;
+}
+
+class TimeoutException implements Exception {
+  final String message;
+  TimeoutException(this.message);
+
+  @override
+  String toString() => message;
+}
+
+class UnknownException implements Exception {
+  final String message;
+  UnknownException(this.message);
+
+  @override
+  String toString() => message;
 }

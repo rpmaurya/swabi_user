@@ -58,5 +58,4 @@ class UserViewModel with ChangeNotifier {
     sp.clear();
     Utils.flushBarSuccessMessage("Logout Successful", context);
   }
-
 }

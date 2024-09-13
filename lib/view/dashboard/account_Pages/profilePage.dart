@@ -10,6 +10,7 @@ import 'package:flutter_cab/res/login/login_customTextFeild.dart';
 import 'package:flutter_cab/utils/assets.dart';
 import 'package:flutter_cab/utils/color.dart';
 import 'package:flutter_cab/utils/dimensions.dart';
+import 'package:flutter_cab/utils/string_extenstion.dart';
 import 'package:flutter_cab/utils/text_styles.dart';
 import 'package:flutter_cab/view_model/userProfile_view_model.dart';
 import 'package:go_router/go_router.dart';
@@ -172,7 +173,9 @@ class _ProfilePageState extends State<ProfilePage> {
                   initiValueReq: false,
                   controller: TextEditingController(
                       text:
-                          "${userdata.firstName ?? ''} ${userdata.lastName ?? ''}"),
+                          "${userdata.firstName ?? ''} ${userdata.lastName ?? ''}"
+                              .toString()
+                              .capitalizeFirstOfEach),
                   initialValueText:
                       "${userdata.firstName ?? ''} ${userdata.lastName ?? ''}",
                   prefixIcon: true,
@@ -219,7 +222,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   prefixIcon: true,
                   initiValueReq: false,
                   controller: TextEditingController(
-                      text: "${userdata.countryCode} ${userdata.mobile}"),
+                      text: "+${userdata.countryCode} ${userdata.mobile}"),
                   initialValueText: userdata.mobile ?? '',
                   readOnly: true,
                   img: phone,

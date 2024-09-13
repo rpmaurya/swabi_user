@@ -3,6 +3,7 @@ import 'package:flutter_cab/utils/color.dart';
 import 'package:flutter_cab/utils/dimensions.dart';
 import 'package:flutter_cab/utils/text_styles.dart';
 import 'package:google_fonts/google_fonts.dart';
+
 class FormCommonSingleAlertSelector extends StatefulWidget {
   final String title;
   final String alertBoxTitle;
@@ -22,22 +23,23 @@ class FormCommonSingleAlertSelector extends StatefulWidget {
   final onTap;
 
   const FormCommonSingleAlertSelector(
-      {super.key, required this.title,
-        this.icon,
-        this.icons,
-        this.numberOnly,
-        this.width,
-        this.elevation,
-        this.textStyle,
-        this.border = false,
-        this.length,
-        this.iconReq = false,
-        required this.controller,
-        required this.showIcon,
-        this.onTap,
-        required this.initialValue,
-        required this.alertBoxTitle,
-        required this.data});
+      {super.key,
+      required this.title,
+      this.icon,
+      this.icons,
+      this.numberOnly,
+      this.width,
+      this.elevation,
+      this.textStyle,
+      this.border = false,
+      this.length,
+      this.iconReq = false,
+      required this.controller,
+      required this.showIcon,
+      this.onTap,
+      required this.initialValue,
+      required this.alertBoxTitle,
+      required this.data});
 
   @override
   _FormCommonSingleAlertSelectorState createState() =>
@@ -73,46 +75,44 @@ class _FormCommonSingleAlertSelectorState
           child: Text(
             widget.title,
             overflow: TextOverflow.ellipsis,
-            style: widget.textStyle ?? titleTextStyle ,
+            style: widget.textStyle ?? titleTextStyle,
           ),
         ),
         const SizedBox(height: 5),
         GestureDetector(
           onTap: () {
-            if(context.mounted){
+            if (context.mounted) {
               _showCustomDialog(context, widget.controller, widget.data,
                   widget.alertBoxTitle);
+              FocusScope.of(context).requestFocus(FocusNode());
             }
-            },
+          },
           child: Material(
             elevation: widget.elevation ?? 2,
             color: background,
-            borderRadius: BorderRadius.circular(
-                5
-            ),
+            borderRadius: BorderRadius.circular(5),
             child: Container(
               height: 50,
-              width:widget.width ?? AppDimension.getWidth(context)*.9,
+              width: widget.width ?? AppDimension.getWidth(context) * .9,
               padding: const EdgeInsets.only(left: 12),
               decoration: ShapeDecoration(
                 color: background,
                 shape: RoundedRectangleBorder(
                   side: BorderSide(
-                    color: widget.border ? naturalGreyColor.withOpacity(0.3)  : naturalGreyColor.withOpacity(0.3)
-                  ),
-                  borderRadius: BorderRadius.circular(
-                    5
-                  ),
+                      color: widget.border
+                          ? naturalGreyColor.withOpacity(0.3)
+                          : naturalGreyColor.withOpacity(0.3)),
+                  borderRadius: BorderRadius.circular(5),
                 ),
               ),
               child: Row(
                 children: [
                   widget.icon != null
                       ? Padding(
-                    padding: const EdgeInsets.only(right: 10),
-                    child: Image.asset(widget.icon!,
-                        height: 25, width: 25),
-                  )
+                          padding: const EdgeInsets.only(right: 10),
+                          child:
+                              Image.asset(widget.icon!, height: 25, width: 25),
+                        )
                       : Container(),
                   Expanded(
                     child: SingleChildScrollView(
@@ -120,16 +120,22 @@ class _FormCommonSingleAlertSelectorState
                       child: IntrinsicWidth(
                         child: Container(
                           constraints: BoxConstraints(
-                            minWidth: AppDimension.getWidth(context) *.8,
+                            minWidth: AppDimension.getWidth(context) * .8,
                           ),
                           child: Row(
                             children: [
-                               widget.controller.text.isEmpty ? const SizedBox() : Padding(
-                                 padding:const  EdgeInsets.symmetric(horizontal: 5),
-                                 child:widget.iconReq ?  widget.showIcon : const SizedBox.shrink(),
-                               ),
+                              widget.controller.text.isEmpty
+                                  ? const SizedBox()
+                                  : Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 0),
+                                      child: widget.iconReq
+                                          ? widget.showIcon
+                                          : const SizedBox.shrink(),
+                                    ),
                               Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 5),
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 0),
                                 child: Text(
                                   widget.controller.text.isEmpty
                                       ? widget.initialValue
@@ -139,7 +145,7 @@ class _FormCommonSingleAlertSelectorState
                                         ? greyColor1
                                         : textColor,
                                     fontSize: 16,
-                                    fontWeight: FontWeight.w600,
+                                    fontWeight: FontWeight.w500,
                                   ),
                                 ),
                               ),
@@ -150,14 +156,17 @@ class _FormCommonSingleAlertSelectorState
                     ),
                   ),
                   const Padding(
-                    padding: EdgeInsets.only(right: 10),
-                    child: Icon(Icons.keyboard_arrow_down_sharp,color: greyColor1,)
-                    // Image.asset(arrow_down,
-                    //     height: 15.h,
-                    //     width: 15.h,
-                    //     fit: BoxFit.fill,
-                    //     color: secondary),
-                  )
+                      padding: EdgeInsets.only(right: 10),
+                      child: Icon(
+                        Icons.keyboard_arrow_down_sharp,
+                        color: greyColor1,
+                      )
+                      // Image.asset(arrow_down,
+                      //     height: 15.h,
+                      //     width: 15.h,
+                      //     fit: BoxFit.fill,
+                      //     color: secondary),
+                      )
                 ],
               ),
             ),
@@ -277,8 +286,9 @@ class _ContentBoxState extends State<ContentBox> {
                     selectedValue = index;
                     widget.controller.text = widget.data[selectedValue];
                     Navigator.pop(context, selectedValue);
+                    FocusScope.of(context).requestFocus(FocusNode());
                   });
-                  },
+                },
                 child: RadioField(
                   title: widget.data[index],
                   isSelected: index == selectedValue,

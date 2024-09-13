@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/res/Custom%20Page%20Layout/commonPage_Layout.dart';
-import 'package:flutter_cab/res/login/login_customTextFeild.dart';
-import 'package:flutter_cab/utils/assets.dart';
 import 'package:flutter_cab/utils/utils.dart';
 import 'package:flutter_cab/view_model/userProfile_view_model.dart';
 import 'package:go_router/go_router.dart';
@@ -109,14 +107,16 @@ class _ChangePasswordState extends State<ChangePassword> {
   }
 
   String? _validateConfirmPassword(String? value) {
-    if (value != _newPasswordController.text) {
+    if (_confirmPasswordController.text.isEmpty) {
+      return 'Please enter confirm password';
+    } else if (value != _newPasswordController.text) {
       return 'Passwords do not match';
     }
     return null;
   }
 
   void _updatePassword() {
-    if (_formKey.currentState?.validate() ?? false) {
+    if (_formKey.currentState!.validate()) {
       Map<String, dynamic> query = {
         "userId": widget.userId,
         "oldPassword": _oldPasswordController.text,
@@ -149,7 +149,7 @@ class _ChangePasswordState extends State<ChangePassword> {
       ),
       body: PageLayout_Page(
           child: Form(
-        autovalidateMode: AutovalidateMode.onUserInteraction,
+        // autovalidateMode: AutovalidateMode.onUserInteraction,
         key: _formKey,
         child: Column(
           children: [

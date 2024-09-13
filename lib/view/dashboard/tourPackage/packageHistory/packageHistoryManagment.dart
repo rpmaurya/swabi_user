@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/model/packageModels.dart';
 import 'package:flutter_cab/res/Custom%20Page%20Layout/commonPage_Layout.dart';
+import 'package:flutter_cab/res/Custom%20Widgets/customTabBar.dart';
 import 'package:flutter_cab/res/Custom%20Widgets/multi_imageSlider_ContainerWidget.dart';
 import 'package:flutter_cab/res/customAppBar_widget.dart';
 import 'package:flutter_cab/res/customContainer.dart';
@@ -8,6 +9,7 @@ import 'package:flutter_cab/res/customTextWidget.dart';
 import 'package:flutter_cab/utils/assets.dart';
 import 'package:flutter_cab/utils/color.dart';
 import 'package:flutter_cab/utils/dimensions.dart';
+import 'package:flutter_cab/utils/text_styles.dart';
 import 'package:flutter_cab/view_model/package_view_model.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -22,450 +24,198 @@ class PackageHistoryManagement extends StatefulWidget {
       _PackageHistoryManagementState();
 }
 
-class _PackageHistoryManagementState extends State<PackageHistoryManagement> {
+class _PackageHistoryManagementState extends State<PackageHistoryManagement>
+    with SingleTickerProviderStateMixin {
   int pageLength = 40;
   ScrollController bookedPkgController = ScrollController();
+  List<String> tabList = ['ALL', 'BOOKED', 'COMPLETED', 'CANCELLED'];
+  TabController? _tabController;
+  int initialIndex = 0;
+  int currentPage = 0;
+  bool isLoadingMore = false;
+  bool lastPage = false; // Assuming true at the start
+  final int pageSize = 10; // Set your page size
+  final ScrollController _scrollController = ScrollController();
+  List<PackageHistoryContent> bookedHistory = [];
+
+  Future<void> getPackageHistoryList() async {
+    // Avoid fetching data if already loading or reached the last page
+    if (isLoadingMore || lastPage) return;
+
+    setState(() {
+      isLoadingMore = true;
+    });
+
+    String status = tabList[initialIndex]; // Get current tab status
+
+    try {
+      // Fetch data using Provider
+      final response =
+          await Provider.of<GetPackageHistoryViewModel>(context, listen: false)
+              .fetchGetPackageHistoryBookedViewModelApi(context, {
+        "userId": widget.userID,
+        "bookingStatus": status,
+        "pageNumber": currentPage,
+        "pageSize": pageSize,
+      });
+
+      // Update history with new data
+      final data = response?.data.content ?? [];
+
+      print('Fetched data: $data');
+
+      if (data.isNotEmpty) {
+        setState(() {
+          bookedHistory.addAll(data); // Append new data to the existing list
+          currentPage++; // Increment page number
+          lastPage = data.length < pageSize; // Check if this is the last page
+        });
+      } else {
+        setState(() {
+          lastPage = true; // No more data available
+        });
+      }
+    } catch (e) {
+      print('Error fetching data: $e');
+      // Handle error, e.g., show a toast or error message
+    }
+
+    setState(() {
+      isLoadingMore = false;
+    });
+  }
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    // bookedPkgController.addListener(() {
-    //   if(bookedPkgController.position.pixels == bookedPkgController.position.maxScrollExtent){
-    //     fetchPackageHistoryBookedList();
-    //   }
-    // });
+    _tabController = TabController(length: tabList.length, vsync: this);
+
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      Provider.of<GetPackageHistoryViewModel>(context, listen: false)
-          .fetchGetPackageHistoryBookedViewModelApi(context, {
-        "userId": widget.userID,
-        "bookingStatus": "ALL",
-        "pageNumber": "0",
-        "pageSize": "100",
-      });
-      Provider.of<GetPackageHistoryViewModel>(context, listen: false)
-          .fetchGetPackageHistoryUpCommingViewModelApi(context, {
-        "userId": widget.userID,
-        "bookingStatus": "BOOKED",
-        "pageNumber": "0",
-        "pageSize": "100",
-      });
-      Provider.of<GetPackageHistoryViewModel>(context, listen: false)
-          .fetchGetPackageHistoryCompletedViewModelApi(context, {
-        "userId": widget.userID,
-        "bookingStatus": "COMPLETED",
-        "pageNumber": "0",
-        "pageSize": "100",
-      });
-      Provider.of<GetPackageHistoryViewModel>(context, listen: false)
-          .fetchGetPackageHistoryCancelledViewModelApi(context, {
-        "userId": widget.userID,
-        "bookingStatus": "CANCELLED",
-        "pageNumber": "0",
-        "pageSize": "100",
-      });
+      getPackageHistoryList();
     });
-    pageLength += 5;
+
+    _tabController?.addListener(() {
+      initialIndex = _tabController?.index ?? 0;
+      setState(() {
+        currentPage = 0; // Reset pagination when tab changes
+        bookedHistory.clear(); // Clear the history
+        lastPage = false;
+      });
+      getPackageHistoryList();
+    });
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels ==
+          _scrollController.position.maxScrollExtent) {
+        // User has reached the end of the list
+        if (!isLoadingMore && !lastPage) {
+          print('testing......');
+          getPackageHistoryList();
+        }
+      }
+    });
   }
 
-  // void fetchPackageHistoryBookedList(){
-  //   WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-  //
-  //   });
-  //   pageLength +=20;
-  // }
-
-  List<PackageHistoryContent> bookedHistory = [];
-  List<PackageHistoryContent> upcommingHistory = [];
-  List<PackageHistoryContent> completedHistory = [];
-  List<PackageHistoryContent> cancelledHistory = [];
+  @override
+  void dispose() {
+    _tabController?.dispose();
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    String bookedStatus = context
-        .watch<GetPackageHistoryViewModel>()
-        .getBookedHistory
-        .status
-        .toString();
-    String upcommingStatus = context
-        .watch<GetPackageHistoryViewModel>()
-        .getUpcommingHistory
-        .status
-        .toString();
-    String completedStatus = context
-        .watch<GetPackageHistoryViewModel>()
-        .getCompletedHistory
-        .status
-        .toString();
-    String cancelledStatus = context
-        .watch<GetPackageHistoryViewModel>()
-        .getCancelledHistory
-        .status
-        .toString();
-    if (bookedStatus == "Status.completed") {
-      bookedHistory = context
-              .watch<GetPackageHistoryViewModel>()
-              .getBookedHistory
-              .data
-              ?.data
-              .content ??
-          [];
-    }
-    if (upcommingStatus == "Status.completed") {
-      upcommingHistory = context
-              .watch<GetPackageHistoryViewModel>()
-              .getUpcommingHistory
-              .data
-              ?.data
-              .content ??
-          [];
-    }
-    if (completedStatus == "Status.completed") {
-      completedHistory = context
-              .watch<GetPackageHistoryViewModel>()
-              .getCompletedHistory
-              .data
-              ?.data
-              .content ??
-          [];
-    }
-
-    if (cancelledStatus == "Status.completed") {
-      cancelledHistory = context
-              .watch<GetPackageHistoryViewModel>()
-              .getCancelledHistory
-              .data
-              ?.data
-              .content ??
-          [];
-    }
-    if (bookedPkgController.hasClients) {
-      if (bookedStatus == "Status.loading" &&
-          bookedPkgController.position.pixels ==
-              bookedPkgController.position.maxScrollExtent) {
-        WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-          bookedPkgController.animateTo(
-              bookedPkgController.position.maxScrollExtent,
-              duration: const Duration(milliseconds: 100),
-              curve: Curves.bounceIn);
-        });
-      }
-    }
-    debugPrint("${upcommingStatus} booking Status.....");
-    // debugPrint("${bookedHistory.length} Booked History Package");
-    // debugPrint("${completedHistory.length} Completed History Package");
-    return DefaultTabController(
-      length: 4,
-      child: Scaffold(
-        backgroundColor: bgGreyColor,
-        appBar: const CustomAppBar(
-          heading: "My Package History",
-        ),
-        body: PageLayout_Page(
-            child: Column(
-          children: [
-            Container(
-              // width: AppDimension.getWidth(context) * .9,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: background,
-                  border: Border.all(color: naturalGreyColor.withOpacity(0.3))),
-              child: TabBar(
-                  indicatorSize: TabBarIndicatorSize.tab,
-                  // indicatorPadding: EdgeInsets.symmetric(horizontal: -5),
-                  indicator: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      // border: Border.all(color: btnColor),
-                      color: btnColor),
-                  tabAlignment: TabAlignment.fill,
-                  labelPadding: const EdgeInsets.symmetric(vertical: 5),
-                  labelColor: background,
-                  dividerColor: Colors.transparent,
-                  unselectedLabelColor: blackColor,
-                  tabs: [
-                    Tab(
-                        child: Text("BOOKED",
-                            style: GoogleFonts.lato(
-                                fontSize: 13, fontWeight: FontWeight.w700))),
-                    Tab(
-                        child: Text("UPCOMMING",
-                            style: GoogleFonts.lato(
-                                fontSize: 13, fontWeight: FontWeight.w700))),
-                    Tab(
-                        child: Text("COMPLETED",
-                            style: GoogleFonts.lato(
-                                fontSize: 13, fontWeight: FontWeight.w700))),
-                    Tab(
-                        child: Text("CANCELLED",
-                            style: GoogleFonts.lato(
-                                fontSize: 13, fontWeight: FontWeight.w700))),
-                  ]),
-            ),
-            const SizedBox(height: 10),
-            Expanded(
-              child: TabBarView(children: [
-                ///Booked List
-                bookedStatus == "Status.completed"
-                    ? bookedHistory.isNotEmpty
-                        ? ListView.separated(
-                            padding: const EdgeInsets.symmetric(horizontal: 2),
-                            itemCount: bookedStatus == "Status.loading"
-                                ? bookedHistory.length + 1
-                                : bookedHistory.length,
-                            // physics: const BouncingScrollPhysics(),
-                            controller: bookedPkgController,
-                            itemBuilder: (context, index) {
-                              if (bookedHistory.length == index) {
-                                return const Center(
-                                  child: Padding(
-                                    padding: EdgeInsets.all(8.0),
-                                    child: SizedBox(
-                                        height: 30,
-                                        width: 30,
-                                        child: CircularProgressIndicator(
-                                          color: btnColor,
-                                        )),
-                                  ),
-                                );
-                              } else {
-                                return PackageHistoryContainer(
-                                  status: bookedHistory[index].bookingStatus,
-                                  pkgID: bookedHistory[index].packageBookingId,
-                                  bookingDate: bookedHistory[index].bookingDate,
-                                  members: bookedHistory[index]
-                                      .memberList
-                                      .length
-                                      .toString(),
-                                  price: bookedHistory[index].totalAmount,
-                                  pkgName: bookedHistory[index].pkg.packageName,
-                                  // pkgName: pkgMap['packageName'],
-                                  location: bookedHistory[index].pkg.location,
-                                  imageList:
-                                      bookedHistory[index].pkg.packageImageUrl,
-                                  onTap: () {
-                                    Provider.of<GetPackageHistoryDetailByIdViewModel>(
-                                            context,
-                                            listen: false)
-                                        .fetchGetPackageHistoryDetailByIdViewModelApi(
-                                            context,
-                                            {
-                                              "packageBookingId":
-                                                  bookedHistory[index]
-                                                      .packageBookingId
-                                            },
-                                            widget.userID,
-                                            bookedHistory[index]
-                                                .packageBookingId);
-                                  },
-                                );
-                              }
-                            },
-                            separatorBuilder: (context, index) =>
-                                const SizedBox(
-                                  height: 10,
-                                ))
-                        : Center(
-                            child: Container(
-                                decoration: const BoxDecoration(),
-                                child: Image.asset(
-                                  folder,
-                                  height: 150,
-                                )))
-                    : const Center(
-                        child: CircularProgressIndicator(
-                          color: Colors.green,
-                        ),
-                      ),
-                upcommingStatus == "Status.completed"
-                    ? upcommingHistory.isNotEmpty
-                        ? ListView.separated(
-                            padding: const EdgeInsets.symmetric(horizontal: 2),
-                            itemCount: upcommingHistory.length,
-                            // physics: const BouncingScrollPhysics(),
-                            // controller: bookedPkgController,
-                            itemBuilder: (context, index) {
-                              // if (upcommingHistory.length == index) {
-                              //   return const Center(
-                              //     child: Padding(
-                              //       padding: EdgeInsets.all(8.0),
-                              //       child: SizedBox(
-                              //           height: 30,
-                              //           width: 30,
-                              //           child: CircularProgressIndicator(
-                              //             color: btnColor,
-                              //           )),
-                              //     ),
-                              //   );
-                              // } else {
-                              return PackageHistoryContainer(
-                                status: upcommingHistory[index].bookingStatus,
-                                pkgID: upcommingHistory[index].packageBookingId,
-                                bookingDate:
-                                    upcommingHistory[index].bookingDate,
-                                members: upcommingHistory[index]
-                                    .memberList
-                                    .length
-                                    .toString(),
-                                price: upcommingHistory[index].totalAmount,
-                                pkgName:
-                                    upcommingHistory[index].pkg.packageName,
-                                // pkgName: pkgMap['packageName'],
-                                location: upcommingHistory[index].pkg.location,
-                                imageList:
-                                    upcommingHistory[index].pkg.packageImageUrl,
-                                onTap: () {
-                                  Provider.of<GetPackageHistoryDetailByIdViewModel>(
-                                          context,
-                                          listen: false)
-                                      .fetchGetPackageHistoryDetailByIdViewModelApi(
-                                          context,
-                                          {
-                                            "packageBookingId":
-                                                upcommingHistory[index]
-                                                    .packageBookingId
-                                          },
-                                          widget.userID,
-                                          upcommingHistory[index]
-                                              .packageBookingId);
-                                },
-                              );
-                              // }
-                            },
-                            separatorBuilder: (context, index) =>
-                                const SizedBox(
-                                  height: 10,
-                                ))
-                        : Center(
-                            child: Container(
-                                decoration: const BoxDecoration(),
-                                child: Image.asset(
-                                  folder,
-                                  height: 150,
-                                )))
-                    : const Center(
-                        child: CircularProgressIndicator(
-                          color: Colors.green,
-                        ),
-                      ),
-
-                ///Completed List
-                completedStatus == "Status.completed"
-                    ? completedHistory.isNotEmpty
-                        ? ListView.separated(
-                            itemCount: completedHistory.length,
-                            // physics: const BouncingScrollPhysics(),
-                            padding: const EdgeInsets.symmetric(horizontal: 2),
-                            itemBuilder: (context, index) {
-                              return PackageHistoryContainer(
-                                status: completedHistory[index].bookingStatus,
-                                pkgID: completedHistory[index].packageBookingId,
-                                bookingDate:
-                                    completedHistory[index].bookingDate,
-                                members: completedHistory[index]
-                                    .memberList
-                                    .length
-                                    .toString(),
-                                price: completedHistory[index].totalAmount,
-                                pkgName:
-                                    completedHistory[index].pkg.packageName,
-                                location: completedHistory[index].pkg.location,
-                                imageList:
-                                    completedHistory[index].pkg.packageImageUrl,
-                                onTap: () {
-                                  Provider.of<GetPackageHistoryDetailByIdViewModel>(
-                                          context,
-                                          listen: false)
-                                      .fetchGetPackageHistoryDetailByIdViewModelApi(
-                                          context,
-                                          {
-                                            "packageBookingId":
-                                                completedHistory[index]
-                                                    .packageBookingId
-                                          },
-                                          widget.userID,
-                                          completedHistory[index]
-                                              .packageBookingId);
-                                },
-                              );
-                            },
-                            separatorBuilder: (context, index) =>
-                                const SizedBox(
-                                  height: 10,
-                                ))
-                        : Center(
-                            child: Container(
-                                decoration: const BoxDecoration(),
-                                child: Image.asset(
-                                  folder,
-                                  height: 150,
-                                )))
-                    : const Center(
-                        child: CircularProgressIndicator(
-                          color: Colors.green,
-                        ),
-                      ),
-
-                ///Cancelled List
-                cancelledStatus == "Status.completed"
-                    ? cancelledHistory.isNotEmpty
-                        ? ListView.separated(
-                            padding: const EdgeInsets.symmetric(horizontal: 2),
-                            itemCount: cancelledHistory.length,
-                            // physics: const BouncingScrollPhysics(),
-                            itemBuilder: (context, index) {
-                              return PackageHistoryContainer(
-                                status: cancelledHistory[index].bookingStatus,
-                                pkgID: cancelledHistory[index].packageBookingId,
-                                bookingDate:
-                                    cancelledHistory[index].bookingDate,
-                                members: cancelledHistory[index]
-                                    .memberList
-                                    .length
-                                    .toString(),
-                                price: cancelledHistory[index].totalAmount,
-                                pkgName:
-                                    cancelledHistory[index].pkg.packageName,
-                                location: cancelledHistory[index].pkg.location,
-                                imageList:
-                                    cancelledHistory[index].pkg.packageImageUrl,
-                                onTap: () {
-                                  Provider.of<GetPackageHistoryDetailByIdViewModel>(
-                                          context,
-                                          listen: false)
-                                      .fetchGetPackageHistoryDetailByIdViewModelApi(
-                                          context,
-                                          {
-                                            "packageBookingId":
-                                                cancelledHistory[index]
-                                                    .packageBookingId
-                                          },
-                                          widget.userID,
-                                          cancelledHistory[index]
-                                              .packageBookingId);
-                                },
-                              );
-                            },
-                            separatorBuilder: (context, index) =>
-                                const SizedBox(
-                                  height: 10,
-                                ))
-                        : Center(
-                            child: Container(
-                                decoration: const BoxDecoration(),
-                                child: Image.asset(
-                                  folder,
-                                  height: 150,
-                                )))
-                    : const Center(
-                        child: CircularProgressIndicator(
-                          color: Colors.green,
-                        ),
-                      ),
-              ]),
-            )
-          ],
-        )),
+    return Scaffold(
+      appBar: const CustomAppBar(
+        heading: 'My Package History',
       ),
+      body: Customtabbar(
+          controller: _tabController,
+          tabs: tabList,
+          onTap: (p0) {
+            setState(() {
+              currentPage = 0; // Reset pagination when tab changes
+              bookedHistory.clear(); // Clear the history
+              lastPage = false;
+            });
+            getPackageHistoryList();
+          },
+          viewchildren: List.generate(tabList.length, (index) {
+            return Consumer<GetPackageHistoryViewModel>(
+              builder: (context, viewModel, child) {
+                final response = viewModel.getBookedHistory;
+
+                if (response.status.toString() == "Status.loading") {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (response.status.toString() == "Status.error") {
+                  return const Center(
+                      child: Text(
+                    'No Data',
+                    style: TextStyle(color: redColor),
+                  ));
+                } else if (response.status.toString() == "Status.completed") {
+                  final data = response.data?.data.content ?? [];
+
+                  if (data.isEmpty && currentPage == 0) {
+                    // return const Center(child: Text('No Data Available'));
+                    return Center(
+                        child: Container(
+                            decoration: const BoxDecoration(),
+                            child: Image.asset(
+                              folder,
+                              height: 150,
+                            )));
+                  }
+
+                  return ListView.builder(
+                    controller: _scrollController,
+                    itemCount: bookedHistory.length + (isLoadingMore ? 1 : 0),
+                    itemBuilder: (context, index) {
+                      if (index == bookedHistory.length) {
+                        return isLoadingMore
+                            ? const Center(child: CircularProgressIndicator())
+                            : const SizedBox.shrink(); // Hide if not loading
+                      }
+
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 10),
+                        child: PackageHistoryContainer(
+                          status: bookedHistory[index].bookingStatus,
+                          pkgID: bookedHistory[index].packageBookingId,
+                          bookingDate: bookedHistory[index].bookingDate,
+                          members:
+                              bookedHistory[index].memberList.length.toString(),
+                          price: bookedHistory[index].totalAmount,
+                          pkgName: bookedHistory[index].pkg.packageName,
+                          location: bookedHistory[index].pkg.country,
+                          imageList: bookedHistory[index]
+                              .pkg
+                              .packageActivities
+                              .expand((e) => e.activity.activityImageUrl)
+                              .toList(),
+                          onTap: () {
+                            Provider.of<GetPackageHistoryDetailByIdViewModel>(
+                                    context,
+                                    listen: false)
+                                .fetchGetPackageHistoryDetailByIdViewModelApi(
+                                    context,
+                                    {
+                                      "packageBookingId":
+                                          bookedHistory[index].packageBookingId
+                                    },
+                                    widget.userID,
+                                    bookedHistory[index].packageBookingId);
+                          },
+                        ),
+                      );
+                    },
+                  );
+                }
+
+                return const Center(child: Text('No data found'));
+              },
+            );
+          })),
     );
   }
 }
@@ -495,6 +245,7 @@ class PackageHistoryContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print('images  list................${imageList.length}');
     return CommonContainer(
       borderRadius: BorderRadius.circular(5),
       elevation: 0,
@@ -551,117 +302,76 @@ class PackageHistoryContainer extends StatelessWidget {
                 decoration: const BoxDecoration(
                     border:
                         Border(bottom: BorderSide(color: naturalGreyColor))),
-                child: Row(
-                  children: [
-                    const CustomTextWidget(
-                      content: "Package ID : ",
-                      fontWeight: FontWeight.w600,
-                      fontSize: 16,
-                      textColor: textColor,
-                    ),
-                    CustomTextWidget(
-                      content: pkgID,
-                      fontWeight: FontWeight.w400,
-                      fontSize: 15,
-                      textColor: textColor,
-                    ),
-                    const Spacer(),
-                    const CustomText(
-                      content: "Location : ",
-                      fontWeight: FontWeight.w600,
-                      fontSize: 16,
-                      textColor: textColor,
-                    ),
-                    SizedBox(
-                      width: 130,
-                      child: CustomText(
-                        content: location,
-                        fontWeight: FontWeight.w400,
-                        fontSize: 16,
-                        align: TextAlign.start,
-                        textEllipsis: true,
-                        textColor: textColor,
+                child: textTile(
+                    lable1: 'Booking Id',
+                    value1: pkgID,
+                    lable2: 'Status',
+                    value2: status),
+              ),
+              Container(
+                  height: 50,
+                  padding: const EdgeInsets.symmetric(horizontal: 5),
+                  decoration: const BoxDecoration(
+                      border:
+                          Border(bottom: BorderSide(color: naturalGreyColor))),
+                  child: textTile(
+                      lable1: 'Date',
+                      value1: bookingDate,
+                      lable2: "Member's",
+                      value2: members)),
+              Container(
+                  height: 50,
+                  padding: const EdgeInsets.symmetric(horizontal: 5),
+                  decoration: const BoxDecoration(
+                      // border: Border(bottom: BorderSide(color: naturalGreyColor))
                       ),
-                    )
-                  ],
-                ),
-              ),
-              Container(
-                height: 50,
-                padding: const EdgeInsets.symmetric(horizontal: 5),
-                decoration: const BoxDecoration(
-                    border:
-                        Border(bottom: BorderSide(color: naturalGreyColor))),
-                child: Row(
-                  children: [
-                    const CustomTextWidget(
-                      content: "Date : ",
-                      fontWeight: FontWeight.w600,
-                      fontSize: 16,
-                      textColor: textColor,
-                    ),
-                    CustomTextWidget(
-                      content: bookingDate,
-                      fontWeight: FontWeight.w400,
-                      fontSize: 16,
-                      textColor: textColor,
-                    ),
-                    const Spacer(),
-                    const CustomTextWidget(
-                      content: "Member's : ",
-                      fontWeight: FontWeight.w600,
-                      fontSize: 16,
-                      textColor: textColor,
-                    ),
-                    CustomTextWidget(
-                      content: members,
-                      fontWeight: FontWeight.w400,
-                      fontSize: 16,
-                      textColor: textColor,
-                    )
-                  ],
-                ),
-              ),
-              Container(
-                height: 50,
-                padding: const EdgeInsets.symmetric(horizontal: 5),
-                decoration: const BoxDecoration(
-                    // border: Border(bottom: BorderSide(color: naturalGreyColor))
-                    ),
-                child: Row(
-                  children: [
-                    const CustomTextWidget(
-                      content: "Status : ",
-                      fontWeight: FontWeight.w600,
-                      fontSize: 16,
-                      textColor: textColor,
-                    ),
-                    CustomTextWidget(
-                      content: status,
-                      fontWeight: FontWeight.w400,
-                      fontSize: 16,
-                      textColor: textColor,
-                    ),
-                    const Spacer(),
-                    const CustomTextWidget(
-                      content: "Price : AED ",
-                      fontWeight: FontWeight.w600,
-                      fontSize: 16,
-                      textColor: textColor,
-                    ),
-                    CustomTextWidget(
-                      content: price,
-                      fontWeight: FontWeight.w400,
-                      fontSize: 16,
-                      textColor: textColor,
-                    )
-                  ],
-                ),
-              ),
+                  child: textTile(
+                      lable1: 'Price',
+                      value1: 'AED $price',
+                      lable2: 'Location',
+                      value2: location)),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  textTile({
+    required String lable1,
+    required String value1,
+    required String lable2,
+    required String value2,
+  }) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      // crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(flex: 2, child: _builtText(lable: lable1, value: value1)),
+        Expanded(flex: 2, child: _builtText(lable: lable2, value: value2))
+      ],
+    );
+  }
+
+  _builtText({required String lable, required String value}) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          lable,
+          style: titleTextStyle,
+        ),
+        const SizedBox(width: 5),
+        Text(
+          ':',
+          style: titleTextStyle,
+        ),
+        const SizedBox(width: 5),
+        Text(
+          value,
+          style: titleTextStyle1,
+        )
+      ],
     );
   }
 }

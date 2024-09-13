@@ -18,8 +18,10 @@ class CustomTextFeild extends StatelessWidget {
   final bool number;
   final double? width;
   final bool readOnly;
+
   final TextEditingController controller;
   final Function(String)? onChange;
+
   const CustomTextFeild(
       {this.focusNode,
       this.heading = "",
@@ -110,6 +112,7 @@ class LoginTextFeild extends StatefulWidget {
   final bool readOnly;
   final bool number;
   final String hint;
+  final String? Function(String?)? validator;
   LoginTextFeild(
       {this.heading = "",
       this.img = "",
@@ -121,6 +124,7 @@ class LoginTextFeild extends StatefulWidget {
       this.number = false,
       this.obscure = false,
       this.readOnly = false,
+      this.validator,
       super.key});
 
   @override
@@ -192,6 +196,7 @@ class _LoginTextFeildState extends State<LoginTextFeild> {
                       : const EdgeInsets.symmetric(horizontal: 10),
                   border:
                       const UnderlineInputBorder(borderSide: BorderSide.none)),
+              validator: widget.validator,
             ),
           ),
         )

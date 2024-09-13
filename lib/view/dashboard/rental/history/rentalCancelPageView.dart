@@ -14,77 +14,37 @@ class RentalCancelledPageView extends StatefulWidget {
   const RentalCancelledPageView({super.key, required this.cancelledId});
 
   @override
-  State<RentalCancelledPageView> createState() => _RentalCancelledPageViewState();
+  State<RentalCancelledPageView> createState() =>
+      _RentalCancelledPageViewState();
 }
 
 class _RentalCancelledPageViewState extends State<RentalCancelledPageView> {
-
-  var data,userData,driverDetails,vehicleDetails,guestDetails;
+  var data, userData, driverDetails, vehicleDetails, guestDetails;
   @override
   Widget build(BuildContext context) {
-    data = context.watch<RentalViewDetailViewModel>().DataList1.data?.data ?? "";
-    userData = context.watch<RentalViewDetailViewModel>().DataList1.data?.data.user ?? "";
-    driverDetails = context.watch<RentalViewDetailViewModel>().DataList1.data?.data.driver ?? "";
-    guestDetails = context.watch<RentalViewDetailViewModel>().DataList1.data?.data.guest ?? "";
-    vehicleDetails = context.watch<RentalViewDetailViewModel>().DataList1.data?.data.vehicle ?? "";
-    // print("${data}Data view ka data h ye");
-    // print("${widget.cancelledId} Data of IDD h ye");
-    ///User Details Sub Data
-    // String userString = userData.replaceAll('{', '').replaceAll('}', '');
-    // List<String> userAttributes = userString.split(", ");
-    // Map<String, dynamic> userMap = {};
-    // for (String attribute in userAttributes) {
-    //   List<String> keyValue = attribute.split(":");
-    //   if (keyValue.length == 2) {
-    //     String key = keyValue[0].trim();
-    //     String value = keyValue[1].trim();
-    //     if (key.isNotEmpty && value.isNotEmpty) {
-    //       userMap[key] = value;
-    //     }
-    //   }
-    // }
-    // ///Vehicle Details Sub Data
-    // String vehicleString = vehicleDetails.replaceAll('{', '').replaceAll('}', '');
-    // List<String> vehicleAttributes = vehicleString.split(", ");
-    // Map<String, dynamic> vehicleMap = {};
-    // for (String attribute in vehicleAttributes) {
-    //   List<String> keyValue = attribute.split(":");
-    //   if (keyValue.length == 2) {
-    //     String key = keyValue[0].trim();
-    //     String value = keyValue[1].trim();
-    //     if (key.isNotEmpty && value.isNotEmpty) {
-    //       vehicleMap[key] = value;
-    //     }
-    //   }
-    // }
-    // ///Vehicle Details Sub Data
-    // String guestString = guestDetails.replaceAll('{', '').replaceAll('}', '');
-    // List<String> guestAttributes = guestString.split(", ");
-    // Map<String, dynamic> guestMap = {};
-    // for (String attribute in guestAttributes) {
-    //   List<String> keyValue = attribute.split(":");
-    //   if (keyValue.length == 2) {
-    //     String key = keyValue[0].trim();
-    //     String value = keyValue[1].trim();
-    //     if (key.isNotEmpty && value.isNotEmpty) {
-    //       guestMap[key] = value;
-    //     }
-    //   }
-    // }
-    // ///Driver Details Sub Data
-    // String driverString = driverDetails.replaceAll('{', '').replaceAll('}', '');
-    // List<String> driverAttributes = driverString.split(", ");
-    // Map<String, dynamic> driverMap = {};
-    // for (String attribute in driverAttributes) {
-    //   List<String> keyValue = attribute.split(":");
-    //   if (keyValue.length == 2) {
-    //     String key = keyValue[0].trim();
-    //     String value = keyValue[1].trim();
-    //     if (key.isNotEmpty && value.isNotEmpty) {
-    //       driverMap[key] = value;
-    //     }
-    //   }
-    // }
+    data =
+        context.watch<RentalViewDetailViewModel>().DataList1.data?.data ?? "";
+    userData =
+        context.watch<RentalViewDetailViewModel>().DataList1.data?.data.user ??
+            "";
+    driverDetails = context
+            .watch<RentalViewDetailViewModel>()
+            .DataList1
+            .data
+            ?.data
+            .driver ??
+        "";
+    guestDetails =
+        context.watch<RentalViewDetailViewModel>().DataList1.data?.data.guest ??
+            "";
+    vehicleDetails = context
+            .watch<RentalViewDetailViewModel>()
+            .DataList1
+            .data
+            ?.data
+            .vehicle ??
+        "";
+
     return Scaffold(
       backgroundColor: bgGreyColor,
       appBar: const CustomAppBar(
@@ -92,36 +52,37 @@ class _RentalCancelledPageViewState extends State<RentalCancelledPageView> {
       ),
       body: PageLayout_Page(
           child: ListView(
-            children: [
-              RentalCancelledContainer(
-                bookingId: data.rentalBookingId,
-                // carName: data.carType,
-                hour: data.totalRentTime,
-                id: widget.cancelledId,
-                kilometer: data.kilometers,
-                pickDate: data.date,
-                pickTime: data.pickupTime,
-                rentalCharge: data.rentalCharge,
-                status: data.bookingStatus,
-                // fuel: "Petrol",s
-                pickUpLocation: data.pickupLocation,
-                paid: data.paidStatus,
-                cancelReason: data.cancellationReason,
-                cancelledBy: data.cancelledBy == 'null' ? "N/A" : data.cancelledBy,
-                // vehicle: data.vehicle,
-                firstName: data.guest!.guestName?.toString() ?? '',
-                lastName: data.guest!.guestName?.toString() ?? '',
-                contact: data.guest!.guestName?.toString() ?? '',
-                email: data.guest!.guestName?.toString() ?? '',
-                // firstName: guestDetails.toString().isEmpty || guestDetails != "null" ? guestMap['guestName'] : "",
-                // lastName: guestDetails.toString().isEmpty || guestDetails != "null" ? "" : "",
-                // contact: guestDetails.toString().isEmpty || guestDetails != "null" ? guestMap['guestMobile'] : "",
-                // email: guestDetails.toString().isEmpty || guestDetails != "null" ? guestMap['gender'] : "",
-              ),
-              const SizedBox(height: 10),
-              vehicleDetails != null &&
+        children: [
+          RentalCancelledContainer(
+            bookingId: data.rentalBookingId,
+            // carName: data.carType,
+            hour: data.totalRentTime,
+            id: widget.cancelledId,
+            kilometer: data.kilometers,
+            pickDate: data.date,
+            pickTime: data.pickupTime,
+            rentalCharge: data.rentalCharge,
+            status: data.bookingStatus,
+            // fuel: "Petrol",s
+            pickUpLocation: data.pickupLocation,
+            paid: data.paidStatus,
+            cancelReason: data.cancellationReason,
+            cancelledBy: data.cancelledBy == 'null' ? "N/A" : data.cancelledBy,
+            // vehicle: data.vehicle,
+            firstName: data.guest!.guestName?.toString() ?? '',
+            lastName: data.guest!.guestName?.toString() ?? '',
+            contact: data.guest!.guestName?.toString() ?? '',
+            email: data.guest!.guestName?.toString() ?? '',
+            // firstName: guestDetails.toString().isEmpty || guestDetails != "null" ? guestMap['guestName'] : "",
+            // lastName: guestDetails.toString().isEmpty || guestDetails != "null" ? "" : "",
+            // contact: guestDetails.toString().isEmpty || guestDetails != "null" ? guestMap['guestMobile'] : "",
+            // email: guestDetails.toString().isEmpty || guestDetails != "null" ? guestMap['gender'] : "",
+          ),
+          const SizedBox(height: 10),
+          vehicleDetails != null &&
                   vehicleDetails.carName != null &&
-                  vehicleDetails.carName!.isNotEmpty ? VechicleDetailsContainer(
+                  vehicleDetails.carName!.isNotEmpty
+              ? VechicleDetailsContainer(
                   color: data.vehicle?.color?.toString() ?? '',
                   vehicleName: data.vehicle?.carName?.toString() ?? '',
                   brandName: data.vehicle?.brandName?.toString() ?? '',
@@ -129,23 +90,27 @@ class _RentalCancelledPageViewState extends State<RentalCancelledPageView> {
                   fuelType: data.vehicle?.fuelType?.toString() ?? '',
                   seats: data.vehicle?.seats?.toString() ?? '',
                   vehicleImage: const [],
-              ): Container(),
-              const SizedBox(height: 10,),
-              driverDetails != null &&
+                )
+              : Container(),
+          const SizedBox(
+            height: 10,
+          ),
+          driverDetails != null &&
                   driverDetails.firstName != null &&
-                  driverDetails.firstName!.isNotEmpty? DriverDetailsContainer(
-                firstName: data.driver.firstName?.toString() ?? '',
-                lastName: data.driver.lastName?.toString() ?? '',
-                gender: data.driver.gender?.toString() ?? '',
-                mobile: data.driver.mobile?.toString() ?? '',
-                email: data.driver.email?.toString() ?? '',
-              ): Container(),
-            ],
-          )),
+                  driverDetails.firstName!.isNotEmpty
+              ? DriverDetailsContainer(
+                  firstName: data.driver.firstName?.toString() ?? '',
+                  lastName: data.driver.lastName?.toString() ?? '',
+                  gender: data.driver.gender?.toString() ?? '',
+                  mobile: data.driver.mobile?.toString() ?? '',
+                  email: data.driver.email?.toString() ?? '',
+                )
+              : Container(),
+        ],
+      )),
     );
   }
 }
-
 
 class RentalCancelledContainer extends StatelessWidget {
   // final String carName;
@@ -166,26 +131,26 @@ class RentalCancelledContainer extends StatelessWidget {
   final String cancelReason;
   final String cancelledBy;
 
-  const RentalCancelledContainer(
-      {super.key,
-        // required this.carName,
-        required this.pickDate,
-        required this.pickTime,
-        required this.hour,
-        required this.id,
-        required this.kilometer,
-        required this.status,
-        required this.rentalCharge,
-        required this.bookingId,
-        required this.pickUpLocation,
-        required this.paid,
-        required this.firstName,
-        required this.lastName,
-        required this.contact,
-        required this.email,
-        required this.cancelReason,
-        required this.cancelledBy,
-      });
+  const RentalCancelledContainer({
+    super.key,
+    // required this.carName,
+    required this.pickDate,
+    required this.pickTime,
+    required this.hour,
+    required this.id,
+    required this.kilometer,
+    required this.status,
+    required this.rentalCharge,
+    required this.bookingId,
+    required this.pickUpLocation,
+    required this.paid,
+    required this.firstName,
+    required this.lastName,
+    required this.contact,
+    required this.email,
+    required this.cancelReason,
+    required this.cancelledBy,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -197,10 +162,11 @@ class RentalCancelledContainer extends StatelessWidget {
         width: AppDimension.getWidth(context) * .9,
         // padding: EdgeInsets.symmetric(vertical: 15),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          color: background,
-          border: Border.all(color: naturalGreyColor.withOpacity(0.3),)
-        ),
+            borderRadius: BorderRadius.circular(10),
+            color: background,
+            border: Border.all(
+              color: naturalGreyColor.withOpacity(0.3),
+            )),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -212,7 +178,9 @@ class RentalCancelledContainer extends StatelessWidget {
                     topLeft: Radius.circular(9),
                   ),
                   color: btnColor,
-                  border: Border(bottom: BorderSide(color: naturalGreyColor.withOpacity(0.3)))),
+                  border: Border(
+                      bottom: BorderSide(
+                          color: naturalGreyColor.withOpacity(0.3)))),
               child: Align(
                   alignment: Alignment.center,
                   child: Text(
@@ -220,8 +188,7 @@ class RentalCancelledContainer extends StatelessWidget {
                     style: GoogleFonts.lato(
                         color: background,
                         fontSize: 18,
-                        fontWeight: FontWeight.w700
-                    ),
+                        fontWeight: FontWeight.w700),
                   )),
             ),
             // Align(
@@ -308,12 +275,10 @@ class RentalCancelledContainer extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text("Id : ",
-                                  style: titleTextStyle),
+                              Text("Id : ", style: titleTextStyle),
                               SizedBox(
                                 width: 50,
-                                child: Text(id,
-                                    style: titleTextStyle1),
+                                child: Text(id, style: titleTextStyle1),
                               )
                             ],
                           ),
@@ -322,12 +287,10 @@ class RentalCancelledContainer extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text("Status : ",
-                                  style: titleTextStyle),
+                              Text("Status : ", style: titleTextStyle),
                               SizedBox(
                                 // width: 100,
-                                child: Text(status,
-                                    style: titleTextStyle1),
+                                child: Text(status, style: titleTextStyle1),
                               )
                             ],
                           ),
@@ -336,12 +299,10 @@ class RentalCancelledContainer extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text("Date : ",
-                                  style: titleTextStyle),
+                              Text("Date : ", style: titleTextStyle),
                               SizedBox(
                                 // width: 100,
-                                child: Text(pickDate,
-                                    style: titleTextStyle1),
+                                child: Text(pickDate, style: titleTextStyle1),
                               )
                             ],
                           ),
@@ -350,12 +311,10 @@ class RentalCancelledContainer extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text("Hour : ",
-                                  style: titleTextStyle),
+                              Text("Hour : ", style: titleTextStyle),
                               SizedBox(
                                 // width: 100,
-                                child: Text(hour,
-                                    style: titleTextStyle1),
+                                child: Text(hour, style: titleTextStyle1),
                               )
                             ],
                           ),
@@ -368,12 +327,10 @@ class RentalCancelledContainer extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text("Kilometer : ",
-                                  style: titleTextStyle),
+                              Text("Kilometer : ", style: titleTextStyle),
                               SizedBox(
                                 // width: 100,
-                                child: Text(kilometer,
-                                    style: titleTextStyle1),
+                                child: Text(kilometer, style: titleTextStyle1),
                               )
                             ],
                           ),
@@ -382,12 +339,11 @@ class RentalCancelledContainer extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text("Rental Charge : ",
-                                  style: titleTextStyle),
+                              Text("Rental Charge : ", style: titleTextStyle),
                               SizedBox(
                                 // width: 100,
-                                child: Text(rentalCharge,
-                                    style: titleTextStyle1),
+                                child:
+                                    Text(rentalCharge, style: titleTextStyle1),
                               )
                             ],
                           ),
@@ -396,12 +352,10 @@ class RentalCancelledContainer extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text("Time : ",
-                                  style: titleTextStyle),
+                              Text("Time : ", style: titleTextStyle),
                               SizedBox(
                                 // width: 100,
-                                child: Text(pickTime,
-                                    style: titleTextStyle1),
+                                child: Text(pickTime, style: titleTextStyle1),
                               )
                             ],
                           ),
@@ -414,12 +368,10 @@ class RentalCancelledContainer extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text("PickUp Location : ",
-                          style: titleTextStyle),
+                      Text("PickUp Location : ", style: titleTextStyle),
                       SizedBox(
                         width: 200,
-                        child: Text(pickUpLocation,
-                            style: titleTextStyle1),
+                        child: Text(pickUpLocation, style: titleTextStyle1),
                       )
                     ],
                   ),
@@ -428,12 +380,10 @@ class RentalCancelledContainer extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text("Canceled By : ",
-                          style: titleTextStyle),
+                      Text("Canceled By : ", style: titleTextStyle),
                       SizedBox(
                         width: 200,
-                        child: Text(cancelledBy,
-                            style: titleTextStyle1),
+                        child: Text(cancelledBy, style: titleTextStyle1),
                       )
                     ],
                   ),
@@ -442,93 +392,85 @@ class RentalCancelledContainer extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text("Cancel Reason : ",
-                          style: titleTextStyle),
+                      Text("Cancel Reason : ", style: titleTextStyle),
                       SizedBox(
                         width: 200,
-                        child: Text(cancelReason,
-                            style: titleTextStyle1),
+                        child: Text(cancelReason, style: titleTextStyle1),
                       )
                     ],
                   ),
                   const SizedBox(height: 5),
-                 Row(
-                   mainAxisAlignment: MainAxisAlignment.start,
-                   crossAxisAlignment: CrossAxisAlignment.start,
-                   children: [
-                     Text("Booking ID : ",
-                            style: titleTextStyle),
-                     SizedBox(
-                       width: 230,
-                       child: Text(bookingId,
-                           style: titleTextStyle1),
-                     )
-                   ],
-                 )
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text("Booking ID : ", style: titleTextStyle),
+                      SizedBox(
+                        width: 230,
+                        child: Text(bookingId, style: titleTextStyle1),
+                      )
+                    ],
+                  )
                 ],
               ),
             ),
-            firstName.isNotEmpty ? Container(
-              decoration: const BoxDecoration(
-                  border: Border(top: BorderSide(color: greyColor))
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child:  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Align(
-                          alignment: Alignment.center,
-                          child: Text(
-                            "Guest Details",
-                            style: titleTextStyle,
-                          )),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
+            firstName.isNotEmpty
+                ? Container(
+                    decoration: const BoxDecoration(
+                        border: Border(top: BorderSide(color: greyColor))),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text("Guest Name : ",
-                              style: titleTextStyle),
-                          SizedBox(
-                            // width: 100,
-                            child: Text('$firstName $lastName',
-                                style: titleTextStyle1),
-                          )
+                          Align(
+                              alignment: Alignment.center,
+                              child: Text(
+                                "Guest Details",
+                                style: titleTextStyle,
+                              )),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text("Guest Name : ", style: titleTextStyle),
+                              SizedBox(
+                                // width: 100,
+                                child: Text('$firstName $lastName',
+                                    style: titleTextStyle1),
+                              )
+                            ],
+                          ),
+                          const SizedBox(height: 5),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text("Contact : ", style: titleTextStyle),
+                              SizedBox(
+                                // width: 100,
+                                child: Text(contact, style: titleTextStyle1),
+                              )
+                            ],
+                          ),
+                          const SizedBox(height: 5),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text("Email : ", style: titleTextStyle),
+                              SizedBox(
+                                // width: 100,
+                                child: Text(email, style: titleTextStyle1),
+                              )
+                            ],
+                          ),
+                          const SizedBox(height: 5),
                         ],
                       ),
-                      const SizedBox(height: 5),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text("Contact : ",
-                              style: titleTextStyle),
-                          SizedBox(
-                            // width: 100,
-                            child: Text(contact,
-                                style: titleTextStyle1),
-                          )
-                        ],
-                      ),
-                      const SizedBox(height: 5),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text("Email : ",
-                              style: titleTextStyle),
-                          SizedBox(
-                            // width: 100,
-                            child: Text(email,
-                                style: titleTextStyle1),
-                          )
-                        ],
-                      ),
-                      const SizedBox(height: 5),
-                    ],
-                  ),
-              ),
-            ) :const SizedBox(),
+                    ),
+                  )
+                : const SizedBox(),
             const SizedBox(height: 10)
           ],
         ),
@@ -569,8 +511,9 @@ class VechicleDetailsContainer extends StatelessWidget {
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
             color: background,
-            border: Border.all(color: naturalGreyColor.withOpacity(0.3),)
-        ),
+            border: Border.all(
+              color: naturalGreyColor.withOpacity(0.3),
+            )),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -582,7 +525,9 @@ class VechicleDetailsContainer extends StatelessWidget {
                     topLeft: Radius.circular(9),
                   ),
                   color: btnColor,
-                  border: Border(bottom: BorderSide(color: naturalGreyColor.withOpacity(0.3)))),
+                  border: Border(
+                      bottom: BorderSide(
+                          color: naturalGreyColor.withOpacity(0.3)))),
               child: Align(
                   alignment: Alignment.center,
                   child: Text(
@@ -613,12 +558,11 @@ class VechicleDetailsContainer extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text("Vehicle Name : ",
-                                  style: titleTextStyle),
+                              Text("Vehicle Name : ", style: titleTextStyle),
                               SizedBox(
                                 width: 110,
-                                child: Text(vehicleName,
-                                    style: titleTextStyle1),
+                                child:
+                                    Text(vehicleName, style: titleTextStyle1),
                               )
                             ],
                           ),
@@ -627,12 +571,10 @@ class VechicleDetailsContainer extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text("Brand Name : ",
-                                  style: titleTextStyle),
+                              Text("Brand Name : ", style: titleTextStyle),
                               SizedBox(
                                 width: 110,
-                                child: Text(brandName,
-                                    style: titleTextStyle1),
+                                child: Text(brandName, style: titleTextStyle1),
                               )
                             ],
                           ),
@@ -641,12 +583,10 @@ class VechicleDetailsContainer extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text("Vehicle No. : ",
-                                  style: titleTextStyle),
+                              Text("Vehicle No. : ", style: titleTextStyle),
                               SizedBox(
                                 // width: 100,
-                                child: Text(vehicleNo,
-                                    style: titleTextStyle1),
+                                child: Text(vehicleNo, style: titleTextStyle1),
                               )
                             ],
                           ),
@@ -659,12 +599,10 @@ class VechicleDetailsContainer extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text("Color : ",
-                                  style: titleTextStyle),
+                              Text("Color : ", style: titleTextStyle),
                               SizedBox(
                                 // width: 100,
-                                child: Text(color,
-                                    style: titleTextStyle1),
+                                child: Text(color, style: titleTextStyle1),
                               )
                             ],
                           ),
@@ -673,12 +611,10 @@ class VechicleDetailsContainer extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text("Fuel Type : ",
-                                  style: titleTextStyle),
+                              Text("Fuel Type : ", style: titleTextStyle),
                               SizedBox(
                                 // width: 100,
-                                child: Text(fuelType,
-                                    style: titleTextStyle1),
+                                child: Text(fuelType, style: titleTextStyle1),
                               )
                             ],
                           ),
@@ -687,16 +623,13 @@ class VechicleDetailsContainer extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text("Seats : ",
-                                  style: titleTextStyle),
+                              Text("Seats : ", style: titleTextStyle),
                               SizedBox(
                                 // width: 100,
-                                child: Text(seats,
-                                    style: titleTextStyle1),
+                                child: Text(seats, style: titleTextStyle1),
                               )
                             ],
                           ),
-
                         ],
                       )
                     ],
@@ -719,7 +652,12 @@ class DriverDetailsContainer extends StatelessWidget {
   final String gender;
 
   const DriverDetailsContainer({
-    super.key, required this.firstName, required this.lastName, required this.mobile, required this.email, required this.gender,
+    super.key,
+    required this.firstName,
+    required this.lastName,
+    required this.mobile,
+    required this.email,
+    required this.gender,
   });
 
   @override
@@ -734,8 +672,9 @@ class DriverDetailsContainer extends StatelessWidget {
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
             color: background,
-            border: Border.all(color: naturalGreyColor.withOpacity(0.3),)
-        ),
+            border: Border.all(
+              color: naturalGreyColor.withOpacity(0.3),
+            )),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -747,7 +686,9 @@ class DriverDetailsContainer extends StatelessWidget {
                     topLeft: Radius.circular(9),
                   ),
                   color: btnColor,
-                  border: Border(bottom: BorderSide(color: naturalGreyColor.withOpacity(0.3)))),
+                  border: Border(
+                      bottom: BorderSide(
+                          color: naturalGreyColor.withOpacity(0.3)))),
               child: Align(
                   alignment: Alignment.center,
                   child: Text(
@@ -774,12 +715,14 @@ class DriverDetailsContainer extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text( "First Name : ",
-                                  style: titleTextStyle),
+                              Text("First Name : ", style: titleTextStyle),
                               SizedBox(
                                 // width: 100,
-                                child: Text(firstName,
-                                  style: titleTextStyle1,maxLines: 3,),
+                                child: Text(
+                                  firstName,
+                                  style: titleTextStyle1,
+                                  maxLines: 3,
+                                ),
                               )
                             ],
                           ),
@@ -788,12 +731,14 @@ class DriverDetailsContainer extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text( "Mobile No. : ",
-                                  style: titleTextStyle),
+                              Text("Mobile No. : ", style: titleTextStyle),
                               SizedBox(
                                 // width: 100,
-                                child: Text(mobile,
-                                  style: titleTextStyle1,maxLines: 3,),
+                                child: Text(
+                                  mobile,
+                                  style: titleTextStyle1,
+                                  maxLines: 3,
+                                ),
                               )
                             ],
                           ),
@@ -802,12 +747,14 @@ class DriverDetailsContainer extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text("Email : ",
-                                  style: titleTextStyle),
+                              Text("Email : ", style: titleTextStyle),
                               SizedBox(
                                 // width: 100,
-                                child: Text(email,
-                                  style: titleTextStyle1,maxLines: 3,),
+                                child: Text(
+                                  email,
+                                  style: titleTextStyle1,
+                                  maxLines: 3,
+                                ),
                               )
                             ],
                           ),
@@ -817,28 +764,32 @@ class DriverDetailsContainer extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text("Last Name : ",
-                                  style: titleTextStyle),
-                              SizedBox(
-                                // width: 100,
-                                child: Text(lastName,
-                                  style: titleTextStyle1,maxLines: 3,),
-                              )
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text("Last Name : ", style: titleTextStyle),
+                                SizedBox(
+                                  // width: 100,
+                                  child: Text(
+                                    lastName,
+                                    style: titleTextStyle1,
+                                    maxLines: 3,
+                                  ),
+                                )
                               ]),
                           const SizedBox(height: 5),
                           Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text("Gender : ",
-                                    style: titleTextStyle),
+                                Text("Gender : ", style: titleTextStyle),
                                 SizedBox(
                                   // width: 100,
-                                  child: Text(gender,
-                                    style: titleTextStyle1,maxLines: 3,),
+                                  child: Text(
+                                    gender,
+                                    style: titleTextStyle1,
+                                    maxLines: 3,
+                                  ),
                                 )
                               ]),
                         ],

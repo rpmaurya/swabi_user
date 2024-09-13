@@ -2246,7 +2246,12 @@ class PackageHIstoryDetailsData {
   List<AssignedDriverOnPackageBooking> assignedDriverOnPackageBookings;
   String pickupLocation;
   String cancelledBy;
+  String endDate;
   String paymentId;
+  String countryCode;
+  String mobile;
+  String alternateMobileCountryCode;
+  String alternateMobile;
 
   PackageHIstoryDetailsData({
     required this.packageBookingId,
@@ -2264,37 +2269,49 @@ class PackageHIstoryDetailsData {
     required this.assignedDriverOnPackageBookings,
     required this.pickupLocation,
     required this.cancelledBy,
+    required this.endDate,
     required this.paymentId,
+    required this.countryCode,
+    required this.mobile,
+    required this.alternateMobileCountryCode,
+    required this.alternateMobile,
   });
 
   factory PackageHIstoryDetailsData.fromJson(Map<String, dynamic> json) =>
       PackageHIstoryDetailsData(
-          packageBookingId: json["packageBookingId"].toString(),
-          bookingDate: json["bookingDate"] ?? "",
-          bookingStatus: json["bookingStatus"] ?? "",
-          cancellationReason: json["cancellationReason"] ?? "",
-          createdDate: json["createdDate"].toString(),
-          modifiedDate: json["modifiedDate"].toString(),
-          user: json["user"].toString(),
-          // pkg: json["pkg"].toString(),
-          // user: PackageHIstoryDetailsUser.fromJson(json["user"]),
-          pkg: PackageHIstoryDetailsPkg.fromJson(json["pkg"]),
-          totalAmount: json["totalAmount"].toString(),
-          numberOfMembers: json["numberOfMembers"].toString(),
-          memberList: List<PackageHIstoryDetailsMemberList>.from(
-              json["memberList"]
-                  .map((x) => PackageHIstoryDetailsMemberList.fromJson(x))),
-          assignedVehicleOnPackageBookings:
-              List<AssignedVehicleOnPackageBooking>.from(
-                  json["assignedVehicleOnPackageBookings"]
-                      .map((x) => AssignedVehicleOnPackageBooking.fromJson(x))),
-          assignedDriverOnPackageBookings:
-              List<AssignedDriverOnPackageBooking>.from(
-                  json["assignedDriverOnPackageBookings"]
-                      .map((x) => AssignedDriverOnPackageBooking.fromJson(x))),
-          pickupLocation: json["pickupLocation"]?.toString() ?? "",
-          cancelledBy: json["cancelledBy"].toString(),
-          paymentId: json["paymentId"].toString());
+        packageBookingId: json["packageBookingId"].toString(),
+        bookingDate: json["bookingDate"] ?? "",
+        bookingStatus: json["bookingStatus"] ?? "",
+        cancellationReason: json["cancellationReason"] ?? "",
+        createdDate: json["createdDate"].toString(),
+        modifiedDate: json["modifiedDate"].toString(),
+        user: json["user"].toString(),
+        // pkg: json["pkg"].toString(),
+        // user: PackageHIstoryDetailsUser.fromJson(json["user"]),
+        pkg: PackageHIstoryDetailsPkg.fromJson(json["pkg"]),
+        totalAmount: json["totalAmount"].toString(),
+        numberOfMembers: json["numberOfMembers"].toString(),
+        memberList: List<PackageHIstoryDetailsMemberList>.from(
+            json["memberList"]
+                .map((x) => PackageHIstoryDetailsMemberList.fromJson(x))),
+        assignedVehicleOnPackageBookings:
+            List<AssignedVehicleOnPackageBooking>.from(
+                json["assignedVehicleOnPackageBookings"]
+                    .map((x) => AssignedVehicleOnPackageBooking.fromJson(x))),
+        assignedDriverOnPackageBookings:
+            List<AssignedDriverOnPackageBooking>.from(
+                json["assignedDriverOnPackageBookings"]
+                    .map((x) => AssignedDriverOnPackageBooking.fromJson(x))),
+        pickupLocation: json["pickupLocation"]?.toString() ?? "",
+        cancelledBy: json["cancelledBy"]?.toString() ?? "",
+        endDate: json["endDate"] ?? "",
+        paymentId: json["paymentId"].toString(),
+        countryCode: json["countryCode"]?.toString() ?? "",
+        mobile: json["mobile"]?.toString() ?? "",
+        alternateMobileCountryCode:
+            json["alternateMobileCountryCode"]?.toString() ?? "",
+        alternateMobile: json["alternateMobile"]?.toString() ?? "",
+      );
 
   Map<String, dynamic> toJson() => {
         "packageBookingId": packageBookingId,
@@ -2316,7 +2333,12 @@ class PackageHIstoryDetailsData {
             assignedDriverOnPackageBookings.map((x) => x.toJson())),
         "pickupLocation": pickupLocation,
         "cancelledBy": cancelledBy,
-        "paymentId": paymentId
+        "endDate": endDate,
+        "paymentId": paymentId,
+        "countryCode": countryCode,
+        "mobile": mobile,
+        "alternateMobileCountryCode": alternateMobileCountryCode,
+        "alternateMobile": alternateMobile
       };
 }
 
@@ -2534,14 +2556,16 @@ class PackageHIstoryDetailsMemberList {
   String memberId;
   String name;
   String age;
-  String type;
+  String ageUnit;
+  // String type;
   String gender;
 
   PackageHIstoryDetailsMemberList({
     required this.memberId,
     required this.name,
     required this.age,
-    required this.type,
+    required this.ageUnit,
+    // required this.type,
     required this.gender,
   });
 
@@ -2550,7 +2574,8 @@ class PackageHIstoryDetailsMemberList {
         memberId: json["memberId"].toString(),
         name: json["name"] ?? "",
         age: json["age"].toString(),
-        type: json["type"] ?? "",
+        ageUnit: json["ageUnit"].toString(),
+        // type: json["type"],
         gender: json["gender"] ?? "",
       );
 
@@ -2558,7 +2583,8 @@ class PackageHIstoryDetailsMemberList {
         "memberId": memberId,
         "name": name,
         "age": age,
-        "age": type,
+        "ageUnit": ageUnit,
+        // "type": type,
         "gender": gender,
       };
 }
@@ -3439,7 +3465,7 @@ class AddPickUpLocationStatus {
 ///Get Package Itinerary Model
 class GetPackageItineraryModel {
   GetPackageItineraryStatus status;
-  GetPackageItineraryData data;
+  GetPackageItineraryData? data;
 
   GetPackageItineraryModel({
     required this.status,
@@ -3449,12 +3475,14 @@ class GetPackageItineraryModel {
   factory GetPackageItineraryModel.fromJson(Map<String, dynamic> json) =>
       GetPackageItineraryModel(
         status: GetPackageItineraryStatus.fromJson(json["status"]),
-        data: GetPackageItineraryData.fromJson(json["data"]),
+        data: json["data"] != null
+            ? GetPackageItineraryData.fromJson(json["data"])
+            : null,
       );
 
   Map<String, dynamic> toJson() => {
         "status": status.toJson(),
-        "data": data.toJson(),
+        "data": data?.toJson(),
       };
 }
 

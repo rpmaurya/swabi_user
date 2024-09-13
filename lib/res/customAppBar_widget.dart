@@ -13,6 +13,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final bool leadingIcon;
   final bool trailingIcon;
   final bool rightIconOnTapReq;
+  final Widget? userIcon;
 
   const CustomAppBar(
       {Key? key,
@@ -24,7 +25,8 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       this.backBtnOnTap,
       this.heading = "",
       this.leadingIcon = false,
-      this.trailingIcon = false})
+      this.trailingIcon = false,
+      this.userIcon})
       : super(key: key);
 
   @override
@@ -71,7 +73,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                   padding: const EdgeInsets.all(12.0),
                   child: InkWell(
                       borderRadius: BorderRadius.circular(50),
-                      onTap: backBtnOnTap ?? ()=> context.pop(context),
+                      onTap: backBtnOnTap ?? () => context.pop(context),
                       child: const Icon(Icons.arrow_back_rounded)),
                 ),
               ),
@@ -83,12 +85,17 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                   padding:
                       const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                   child: InkWell(
-                      onTap: rightIconOnTapReq ? rightIconOnTapOnTap ??  () => print("Custom Appbar") : null,
-                      child: Image.asset(rightIconImage,height: 25,)
+                      onTap: rightIconOnTapReq
+                          ? rightIconOnTapOnTap ?? () => print("Custom Appbar")
+                          : null,
+                      child: Image.asset(
+                        rightIconImage,
+                        height: 25,
+                      )
                       // child: Image.asset(appLogo1)
                       ),
                 )
-              : const SizedBox()
+              : const SizedBox(),
         ],
       ),
     );

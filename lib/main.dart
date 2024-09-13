@@ -4,14 +4,17 @@ import 'package:flutter_cab/utils/routes/route.dart';
 import 'package:flutter_cab/view_model/auth_view_model.dart';
 import 'package:flutter_cab/view_model/package_view_model.dart';
 import 'package:flutter_cab/view_model/payment_gateway_view_model.dart';
+import 'package:flutter_cab/view_model/raiseIssue_view_model.dart';
 import 'package:flutter_cab/view_model/registration_view_model.dart';
 import 'package:flutter_cab/view_model/rental_view_model.dart';
 import 'package:flutter_cab/view_model/userProfile_view_model.dart';
 import 'package:flutter_cab/view_model/user_view_model.dart';
+
 import 'package:provider/provider.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
@@ -57,6 +60,8 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (context) => ChangePasswordViewModel()),
         ChangeNotifierProvider(
             create: (context) => RentalPaymentDetailsViewModel()),
+        ChangeNotifierProvider(create: (context) => ChangeMobileViewModel()),
+        ChangeNotifierProvider(create: (context) => RaiseissueViewModel()),
       ],
       child: const MyApp(),
     ));

@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cab/res/Common%20Widgets/common_alertTextfeild.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/res/Custom%20Page%20Layout/commonPage_Layout.dart';
+import 'package:flutter_cab/res/Custom%20Widgets/customPhoneField.dart';
 import 'package:flutter_cab/res/customAppBar_widget.dart';
-import 'package:flutter_cab/res/login/login_customTextFeild.dart';
-import 'package:flutter_cab/res/razorPay_payment.dart';
 import 'package:flutter_cab/res/validationTextFeild.dart';
 import 'package:flutter_cab/utils/assets.dart';
 import 'package:flutter_cab/utils/color.dart';
@@ -12,9 +11,10 @@ import 'package:flutter_cab/utils/text_styles.dart';
 import 'package:flutter_cab/utils/utils.dart';
 import 'package:flutter_cab/view_model/payment_gateway_view_model.dart';
 import 'package:flutter_cab/view_model/rental_view_model.dart';
+import 'package:flutter_cab/view_model/services/paymentService.dart';
 import 'package:flutter_cab/view_model/userProfile_view_model.dart';
-import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 class BookingData {
   final String date;
@@ -74,10 +74,25 @@ class _GuestRentalBookingFormState extends State<GuestRentalBookingForm> {
       List.generate(3, (index) => TextEditingController());
   final focusNode1 = FocusNode();
   final focusNode2 = FocusNode();
+  final focusNode3 = FocusNode();
 
+  String countryCode = 'AE';
   bool loader = false;
   bool isloading = false;
   var profileUser;
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    controller[0].dispose();
+    controller[1].dispose();
+    controller[2].dispose();
+    focusNode1.dispose();
+    focusNode2.dispose();
+    focusNode3.dispose();
+
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     String status =
@@ -93,15 +108,8 @@ class _GuestRentalBookingFormState extends State<GuestRentalBookingForm> {
       body: PageLayout_Page(
           child: Container(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // CustomTextFeild(
-            //   prefixIcon: true,
-            //     img: user,
-            //     width: double.infinity,
-            //     headingReq: true,
-            //     hint: "Enter your name",
-            //     heading: "Guest Name",
-            //     controller: controller[0]),
             ValidationTextField(
                 focusNode: focusNode1,
                 headingReq: true,
@@ -112,18 +120,8 @@ class _GuestRentalBookingFormState extends State<GuestRentalBookingForm> {
                 hint: "Enter your name",
                 heading: "Guest Name",
                 controller: controller[0]),
-            const SizedBox(height: 10),
-            CustomTextFeild(
-                focusNode: focusNode2,
-                width: double.infinity,
-                prefixIcon: true,
-                img: contact,
-                number: true,
-                hint: "XXXXXXXXXX",
-                headingReq: true,
-                heading: "Mobile",
-                controller: controller[1]),
-            const SizedBox(height: 10),
+            // const SizedBox(height: 10),
+
             FormCommonSingleAlertSelector(
               title: "Gender",
               controller: controller[2],
@@ -144,25 +142,32 @@ class _GuestRentalBookingFormState extends State<GuestRentalBookingForm> {
               initialValue: "Select Gender",
               alertBoxTitle: "Select Gender",
             ),
-            // CustomDropDownButton(
-            //   controller: controller[2],
-            //   hint: "Select Gender",
-            //   width:double.infinity,
-            //   title: "Gender",
-            //   dropDownValues: const ["Male","Female"],
-            //   iconReq: false,
-            //   iconImg: gender,
-            //   iconImgReq: true,
-            //   icon: const Icon(Icons.ac_unit_outlined),
-            //   selectedValue: "",
-            //   // selectedValue: "2 Hr 30 KM",
-            //   onTap: () {
-            //   },
-            //   headingReq: true,
-            // ),
+            Text(
+              'Mobile',
+              textAlign: TextAlign.left,
+              style: titleTextStyle,
+            ),
+            Customphonefield(
+              initalCountryCode: countryCode,
+              controller: controller[1],
+              focusNode: focusNode3,
+              onChanged: (phoneNumber) {
+                countryCode =
+                    phoneNumber.countryCode.replaceFirst("+", '').trim();
+                debugPrint('phone number$countryCode');
+                // primaryNoController.text = phoneNumber.number;
+              },
+              onCountryChanged: (country) {
+                countryCode = country.dialCode;
+              },
+              validator: (p0) {
+                return null;
+              },
+            ),
+
             const Spacer(),
             CustomButtonBig(
-              btnHeading: "Book",
+              btnHeading: "Book Now",
               loading: status == "Status.loading" && loader,
               onTap: () async {
                 if (controller[0].text.isEmpty) {
@@ -175,78 +180,79 @@ class _GuestRentalBookingFormState extends State<GuestRentalBookingForm> {
                 } else {
                   loader = true;
                   double amt = double.parse(widget.price);
-                  if (!mounted) return;
-                  BuildContext dialogContext = context;
-                  // Show the second dialog
-                  await showDialog(
+                  PaymentService paymentService = PaymentService(
                     context: context,
-                    builder: (context) {
-                      return RazorpayPayment(
-                        userId: widget.bookerId,
-                        amount: amt,
-                        email: profileUser.email,
-                        coutryCode: profileUser.countryCode,
-                        mobileNo: profileUser.mobile,
-                      );
-                    },
-                  ).then((_) async {
-                    if (!mounted) return;
-                    // setState(() {
-                    //   isloading = true; // Show loader
-                    // });
-                    // if (isloading) {
-                    //   loaderDailog();
-                    // }
-                    // Retrieve transaction ID
-                    var transactionId =
-                        await Provider.of<PaymentVerifyViewModel>(
+                    onPaymentSuccess: (PaymentSuccessResponse response) {
+                      print('paymentResponse#${response.orderId}');
+
+                      Provider.of<PaymentVerifyViewModel>(context,
+                              listen: false)
+                          .paymentVerifyViewModelApi(
+                              context: context,
+                              userId: widget.bookerId.toString(),
+                              paymentId: response.paymentId,
+                              razorpayOrderId: response.orderId,
+                              razorpaySignature: response.signature)
+                          .then(
+                        (value) {
+                          if (value?.status.httpCode == '200') {
+                            print(
+                                'payment verification is successfull${value?.data.transactionId}');
+                            debugPrint(response.orderId);
+                            debugPrint(
+                              response.paymentId,
+                            );
+                            debugPrint(response.signature);
+                            //   // Prepare API request body
+                            Map<String, dynamic> body = {
+                              "date": widget.date,
+                              "pickupTime": widget.pickUpTime,
+                              "bookerId": widget.bookerId,
+                              "carType": widget.carType,
+                              "kilometers": widget.kilometer,
+                              "hours": widget.hour,
+                              "price": widget.price,
+                              "transactionId": value?.data.transactionId,
+                              "pickUpLocation": widget.pickUpLocation,
+                              "guestName": controller[0].text,
+                              "countryCode": countryCode,
+                              "guestMobile": controller[1].text,
+                              "gender": controller[2].text,
+                              "locationLatitude": widget.lati,
+                              "locationLongitude": widget.longi
+                            };
+                            Provider.of<RentalBookingViewModel>(
                               context,
                               listen: false,
-                            ).paymentVerify.data?.data.transactionId ??
-                            '';
+                            )
+                                .rentalBookingViewModel(
+                                  context: context,
+                                  body: body,
+                                  userId: widget.bookerId,
+                                )
+                                .then((onValue) {})
+                                .catchError((error) {
+                              print('error....$error');
+                            });
+                            // .whenComplete(() {
+                            //   setState(() {
+                            //     isloading = false;
+                            //   });
+                            // });
+                          }
+                        },
+                      );
+                      // Call verify payment function after successful payment
+                      // _verifyPayment(context, response);
+                    },
+                  );
 
-                    // Prepare API request body
-                    Map<String, dynamic> body = {
-                      "date": widget.date,
-                      "pickupTime": widget.pickUpTime,
-                      "bookerId": widget.bookerId,
-                      "carType": widget.carType,
-                      "kilometers": widget.kilometer,
-                      "hours": widget.hour,
-                      "price": widget.price,
-                      "transactionId": transactionId,
-                      "pickUpLocation": widget.pickUpLocation,
-                      "guestName": controller[0].text,
-                      "guestMobile": controller[1].text,
-                      "gender": controller[2].text,
-                      "locationLatitude": widget.lati,
-                      "locationLongitude": widget.longi
-                    };
-
-                    if (mounted) {
-                      setState(() {
-                        print("${body}bodydata1");
-                      });
-
-                      // Perform booking API call
-                      await Provider.of<RentalBookingViewModel>(
-                        context,
-                        listen: false,
-                      )
-                          .rentalBookingViewModel(
-                            context: context,
-                            body: body,
-                            userId: widget.bookerId,
-                          )
-                          .then((onValue) {});
-                      //   .catchError((onError) {})
-                      //   .whenComplete(() {
-                      // setState(() {
-                      //   isloading = false;
-                      // });
-                      // });
-                    }
-                  });
+                  paymentService.openCheckout(
+                      amount: amt,
+                      userId: widget.bookerId.toString(),
+                      coutryCode: profileUser?.countryCode,
+                      mobileNo: profileUser?.mobile,
+                      email: profileUser?.email);
                 }
               },
             )

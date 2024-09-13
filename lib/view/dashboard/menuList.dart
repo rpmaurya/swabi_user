@@ -44,112 +44,122 @@ class _MenuListState extends State<MenuList> {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('noti', value);
   }
+
   @override
   Widget build(BuildContext context) {
     debugPrint("${noti}Data of Notification");
     debugPrint("${widget.userId}Data of UserId");
 
     return Scaffold(
-      backgroundColor: bgGreyColor,
-      appBar: const CustomAppBar(
-        heading: "Account",
-      ),
-      body: PageLayout_Page(
-        child: Column(
-           crossAxisAlignment: CrossAxisAlignment.center,
-          // padding: EdgeInsets.only(bottom: 20),
-          children: [
-            // const SizedBox(height: 5),
-            Custom_ListTile(
-              img: profile,
-              heading: "Profile",
-              // onTap: () => context.push("/profilePage",extra: {"userId":widget.userId}),
-              onTap: () {
-                Provider.of<UserProfileViewModel>(context, listen: false)
-                    .fetchUserProfileViewModelApi(
-                    context, {"userId": widget.userId});
-                context.push("/profilePage",extra: {"userId":widget.userId});
-              },
-            ),
-            Custom_ListTile(
-              img: distance,
-              heading: "My Trip",
-              onTap: () => context.push("/rentalForm/rentalHistory",extra: {"myIdNo": widget.userId}),
-              // context.push("/booking")
-            ),
-            Custom_ListTile(
-              img: package,
-              heading: "My Package",
-              onTap: () => context.push("/package/packageHistoryManagement",extra: {"userID":widget.userId}),                // context.push("/booking")
-            ),
-            // Custom_ListTile(
-            //   img: card,
-            //   heading: "Cards Details",
-            //   onTap: () => context.push("/myCards"),
-            // ),
-            // Custom_ListTile(
-            //   img: transaction,
-            //   heading: "Transaction",
-            //   onTap: () => context.push("/myTransaction"),
-            // ),
-            // Custom_ListTile(
-            //   img: settingimg,
-            //   heading: "Settings",
-            //   onTap: () => context.push("/setting"),
-            // ),
-            // Custom_ListTileSwitch(
-            //   img: notification,
-            //   heading: "Notification",
-            //   notification: FlutterSwitch(
-            //     width: 60,
-            //     height: 32,
-            //     activeColor: Colors.green,
-            //     toggleSize: 22,
-            //     // switchBorder: Border.all(color: naturalGreyColor.withOpacity(0.3)),
-            //     inactiveColor: naturalGreyColor.withOpacity(0.3),
-            //     value: noti,
-            //     onToggle: (value) {
-            //       setState(() {
-            //         noti = value;
-            //       });
-            //       _saveNotiValue(value);
-            //     },
-            //   ),
-            // ),
-            Custom_ListTile(
-              img: tnc,
-              heading: "Terms & Condition",
-              onTap: () => context.push("/termCondition"),
-            ),
-            Custom_ListTile(
-              img: contact,
-              heading: "Contact",
-              onTap: () => context.push("/contact"),
-            ),
-            Custom_ListTile(
-              img: faq,
-              heading: "FAQ",
-              onTap: () => context.push("/faqPage"),
-            ),
-            const Spacer(),
-            CustomButtonLogout(
-                img: logout,
-                btnHeading: "Logout",
-                loading: userViewModel.loading,
-                onTap: () {
-                  userViewModel.remove(context);
-                  context.go("/login");
-                }),
-            // Padding(
-            //   padding: const EdgeInsets.symmetric(vertical: 10),
-            //   child: SizedBox(
-            //    height: 40,
-            //    child: Image.asset(appLogo),
-            //                 ),
-            // )
-          ],
+        backgroundColor: bgGreyColor,
+        appBar: const CustomAppBar(
+          heading: "Account",
         ),
-      )
-    );
+        body: PageLayout_Page(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            // padding: EdgeInsets.only(bottom: 20),
+            children: [
+              // const SizedBox(height: 5),
+              Custom_ListTile(
+                img: profile,
+                heading: "Profile",
+                // onTap: () => context.push("/profilePage",extra: {"userId":widget.userId}),
+                onTap: () {
+                  Provider.of<UserProfileViewModel>(context, listen: false)
+                      .fetchUserProfileViewModelApi(
+                          context, {"userId": widget.userId});
+                  context
+                      .push("/profilePage", extra: {"userId": widget.userId});
+                },
+              ),
+              Custom_ListTile(
+                img: distance,
+                heading: "My Trip",
+                onTap: () => context.push("/rentalForm/rentalHistory",
+                    extra: {"myIdNo": widget.userId}),
+                // context.push("/booking")
+              ),
+              Custom_ListTile(
+                img: package,
+                heading: "My Package",
+                onTap: () => context.push("/package/packageHistoryManagement",
+                    extra: {
+                      "userID": widget.userId
+                    }), // context.push("/booking")
+              ),
+              // Custom_ListTile(
+              //   img: card,
+              //   heading: "Cards Details",
+              //   onTap: () => context.push("/myCards"),
+              // ),
+              // Custom_ListTile(
+              //   img: transaction,
+              //   heading: "Transaction",
+              //   onTap: () => context.push("/myTransaction"),
+              // ),
+              // Custom_ListTile(
+              //   img: settingimg,
+              //   heading: "Settings",
+              //   onTap: () => context.push("/setting"),
+              // ),
+              // Custom_ListTileSwitch(
+              //   img: notification,
+              //   heading: "Notification",
+              //   notification: FlutterSwitch(
+              //     width: 60,
+              //     height: 32,
+              //     activeColor: Colors.green,
+              //     toggleSize: 22,
+              //     // switchBorder: Border.all(color: naturalGreyColor.withOpacity(0.3)),
+              //     inactiveColor: naturalGreyColor.withOpacity(0.3),
+              //     value: noti,
+              //     onToggle: (value) {
+              //       setState(() {
+              //         noti = value;
+              //       });
+              //       _saveNotiValue(value);
+              //     },
+              //   ),
+              // ),
+              // Custom_ListTile(
+              //   img: tnc,
+              //   heading: "Terms & Condition",
+              //   onTap: () => context.push("/termCondition"),
+              // ),
+              // Custom_ListTile(
+              //   img: contact,
+              //   heading: "Contact",
+              //   onTap: () => context.push("/contact"),
+              // ),
+              Custom_ListTile(
+                img: contact,
+                heading: "Help & Support",
+                onTap: () => context.push("/help&support"),
+              ),
+              Custom_ListTile(
+                img: faq,
+                heading: "FAQ",
+                onTap: () => context.push("/faqPage"),
+              ),
+              const Spacer(),
+              CustomButtonLogout(
+                  img: logout,
+                  btnHeading: "Logout",
+                  loading: userViewModel.loading,
+                  onTap: () {
+                    userViewModel.remove(context);
+                    context.go("/login");
+                  }),
+              // Padding(
+              //   padding: const EdgeInsets.symmetric(vertical: 10),
+              //   child: SizedBox(
+              //    height: 40,
+              //    child: Image.asset(appLogo),
+              //                 ),
+              // )
+            ],
+          ),
+        ));
   }
 }

@@ -7,13 +7,16 @@ import 'package:flutter_cab/view/dashboard/account_Pages/cardPage.dart';
 import 'package:flutter_cab/view/dashboard/account_Pages/changePassword.dart';
 import 'package:flutter_cab/view/dashboard/account_Pages/contact.dart';
 import 'package:flutter_cab/view/dashboard/account_Pages/faqPage.dart';
+import 'package:flutter_cab/view/dashboard/account_Pages/help&support.dart';
 import 'package:flutter_cab/view/dashboard/account_Pages/notification.dart';
 import 'package:flutter_cab/view/dashboard/account_Pages/profilePage.dart';
+import 'package:flutter_cab/view/dashboard/account_Pages/raiseIssueDetails.dart';
 import 'package:flutter_cab/view/dashboard/account_Pages/term_condition.dart';
 import 'package:flutter_cab/view/dashboard/account_Pages/transaction.dart';
 import 'package:flutter_cab/view/dashboard/account_Pages/verifyPassword.dart';
 import 'package:flutter_cab/view/dashboard/home_screen.dart';
 import 'package:flutter_cab/view/dashboard/menuList.dart';
+import 'package:flutter_cab/view/dashboard/raiseIssue_pages/issueViewDetails.dart';
 import 'package:flutter_cab/view/dashboard/rental/bookYourCab.dart';
 import 'package:flutter_cab/view/dashboard/rental/carBooking.dart';
 import 'package:flutter_cab/view/dashboard/rental/carsDetails.dart';
@@ -231,6 +234,27 @@ final GoRouter myRouter = GoRouter(
       parentNavigatorKey: _rootNavigatorKey,
       builder: (BuildContext context, GoRouterState state) {
         return const ContactPage();
+      },
+    ),
+    GoRoute(
+      path: '/help&support',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (BuildContext context, GoRouterState state) {
+        return const HelpAndSupport();
+      },
+    ),
+    GoRoute(
+      path: '/raiseIssueDetail',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (BuildContext context, GoRouterState state) {
+        return const Raiseissuedetails();
+      },
+    ),
+    GoRoute(
+      path: '/issueDetailsbyId',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (BuildContext context, GoRouterState state) {
+        return const Issueviewdetails();
       },
     ),
     GoRoute(

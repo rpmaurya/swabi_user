@@ -25,14 +25,15 @@ class _LoginScreenState extends State<LoginScreen> {
   String usr = '';
   String pass = '';
   bool value = false;
-  List<TextEditingController> controller = List.generate(2, (index) => TextEditingController());
+  bool _rememberMe = false;
+  List<TextEditingController> controller =
+      List.generate(2, (index) => TextEditingController());
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     savecredential();
-
   }
 
   // @override
@@ -42,14 +43,19 @@ class _LoginScreenState extends State<LoginScreen> {
   //   controller[0].dispose();
   //   controller[1].dispose();
   // }
-    savecredential() async {
-      final prefsData = await SharedPreferences.getInstance();
-      List<String>? items = prefsData.getStringList('saveCredential');
+  savecredential() async {
+    final prefsData = await SharedPreferences.getInstance();
+    List<String>? items = prefsData.getStringList('saveCredential');
+    if (items != null && items.length >= 2) {
       setState(() {
-        usr = items![0].toString();
+        usr = items[0].toString();
         pass = items[1].toString();
       });
+    } else {
+      // Handle the case where 'saveCredential' is not set or doesn't have enough data
+      print("No credentials found or incomplete data");
     }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -70,27 +76,27 @@ class _LoginScreenState extends State<LoginScreen> {
                 children: [
                   const SizedBox(height: 100),
                   Padding(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 50
-                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 50),
                     child: Center(child: Image.asset(appLogo1)),
                     // child: Center(child: Image.asset(appLogo1)),
                   ),
                   const CustomTextWidget(
-                      content: "WELCOME!\nPlease Enter Your Details",
+                      content: "WELCOME!\nPlease sign in to your account",
                       fontSize: 20,
                       fontWeight: FontWeight.w600,
                       maxline: 2,
                       align: TextAlign.start,
                       textColor: textColor),
                   const SizedBox(height: 4),
+
                   ///Login Field
                   LoginTextFeild(
                     headingReq: true,
                     controller: controller[0]..text = usr.toString(),
                     img: email,
                     hint: "Enter your email",
-                    heading: "Enter your Email",),
+                    heading: "Enter your Email",
+                  ),
                   const SizedBox(height: 8),
                   LoginTextFeild(
                     headingReq: true,
@@ -102,8 +108,21 @@ class _LoginScreenState extends State<LoginScreen> {
                     heading: "Enter your Password",
                   ),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
+                      Checkbox(
+                        value: _rememberMe,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            _rememberMe = value ?? false;
+                          });
+                        },
+                      ),
+                      Expanded(
+                          child: Text('Remember Me',
+                              style: GoogleFonts.lato(
+                                  fontWeight: FontWeight.w700,
+                                  color: Colors.black))),
                       Container(
                         child: TextButton(
                           onPressed: () {
@@ -112,46 +131,42 @@ class _LoginScreenState extends State<LoginScreen> {
                             //     MaterialPageRoute(
                             //         builder: (context) => ForgotPassword()));
                           },
-                          child: Text('Forgot Password',
+                          child: Text('Forgot your password?',
                               style: GoogleFonts.lato(
                                   fontWeight: FontWeight.w700,
-                                  color: const Color.fromRGBO(0, 0, 0, 0.5))
-
-                              ),
+                                  color: Colors.green)),
                         ),
                       ),
                     ],
                   ),
                   CustomButtonBig(
-                    btnHeading: "LOGIN",
+                    btnHeading: "Sign in",
                     loading: authViewMode.loading,
                     onTap: () {
                       if (controller[0].text.isEmpty) {
                         Utils.flushBarErrorMessage(
-                            "Enter valid Email Id",
-                            context);
+                            "Enter valid Email Id", context);
                       } else if (controller[1].text.isEmpty) {
                         Utils.flushBarErrorMessage(
-                            "Enter valid Password",
-                            context);
-                      } else
-                      {
+                            "Enter valid Password", context);
+                      } else {
                         Map<String, String> data = {
                           'email': controller[0].text.toString(),
                           'password': controller[1].text.toString(),
-                          'userType':'USER'
+                          'userType': 'USER'
                         };
-                        authViewMode.loginApi(data,context);
+                        authViewMode.loginApi(data, context);
                       }
                       // context.push('/');
-
                     },
                   ),
-                  const SizedBox(height: 10,),
+                  const SizedBox(
+                    height: 10,
+                  ),
                   Login_SignUpBtn(
                     onTap: () => context.push("/signup"),
                     btnHeading: 'Signup',
-                    sideHeading:'Does not have account?',
+                    sideHeading: " Don't have an account ? ",
                   ),
                 ]),
           ),

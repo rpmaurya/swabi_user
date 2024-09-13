@@ -5,6 +5,7 @@ class AppUrl {
   ///registration URL
   static var login = "$baseUrl/login";
   static var signUp = "$baseUrl/user/register_user";
+  static var signupUrl = '/user/register_user';
   static var rental = "$baseUrl/rental";
   static var rentalBooking = "$baseUrl/rental/booking";
   static var rentalBookingCancel = "$baseUrl/rental/cancel_rental_booking";
@@ -20,4 +21,8 @@ class AppUrl {
   static var changepasswordUrl = "/user/change_user_password";
   static var rentalCarBookingUrl = "/rental/booking_v2";
   static var paymentDetailUrl = "/payment/get_payment_by_payment_id";
+  static var changeMobileUrl = "/package_booking/change_mobile_number";
+  static var raiseIssueUrl = "/booking_issue/raise_issue";
+  static var getIssueUrl = "/booking_issue/get_issue_raised_by";
+  static var getIssueDetailsUrl = "/booking_issue/get_issue_detail";
 }

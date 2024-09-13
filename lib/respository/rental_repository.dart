@@ -53,14 +53,13 @@ class RentalBookingRepository {
       print("rentalBooking Repo api success${response?.data}");
       var resp = RentalCarBookingModel.fromJson(response?.data);
       return resp;
-    } on DioException catch (error) {
-      BaseResponseModel baseResponseModel =
-          BaseResponseModel.fromJson(error.response?.data);
-      print(baseResponseModel.status?.message);
+    } catch (error) {
+      // BaseResponseModel baseResponseModel =
+      //     BaseResponseModel.fromJson(error.response?.data);
+      // print(baseResponseModel.status?.message);
 
       print({'error..': error});
-      http.handleErrorResponse(
-          context: context, error: error, errorResponse: baseResponseModel);
+      http.handleErrorResponse(context: context, error: error);
     }
     return null;
   }
@@ -180,14 +179,16 @@ class RentalViewPaymentDetailsRepository {
       print('response..${response?.data}');
       var resp = PaymentDetailsModel.fromJson(response?.data);
       return resp;
-    } on DioException catch (error) {
-      BaseResponseModel baseResponseModel =
-          BaseResponseModel.fromJson(error.response?.data);
-      print(baseResponseModel.status?.message);
+    } catch (error) {
+      // BaseResponseModel baseResponseModel =
+      //     BaseResponseModel.fromJson(error.response?.data);
+      // print(baseResponseModel.status?.message);
 
       print({'error..': error});
       http.handleErrorResponse(
-          context: context, error: error, errorResponse: baseResponseModel);
+        context: context,
+        error: error,
+      );
     }
 
     return null;

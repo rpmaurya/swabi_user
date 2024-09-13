@@ -1,6 +1,13 @@
+import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_cab/data/app_url.dart';
 import 'package:flutter_cab/data/network/base_apiservices.dart';
 import 'package:flutter_cab/data/network/network_apiservice.dart';
+import 'package:flutter_cab/data/response/baseResponse.dart';
+import 'package:flutter_cab/model/changeMobileModel.dart';
 import 'package:flutter_cab/model/packageModels.dart';
+import 'package:flutter_cab/utils/utils.dart';
+import 'package:flutter_cab/view_model/services/httpService.dart';
 
 ///Get Package List Repo
 class GetPackageListRepository {
@@ -162,10 +169,40 @@ class GetPackageItineraryRepository {
       print("GetPackageItinerary Repo Success");
       // return response;
       return response = GetPackageItineraryModel.fromJson(response);
-    } catch (e) {
+    } on DioException catch (e) {
       print("GetPackageItinerary Repo Field");
-      print(e);
+      print(e.response?.data);
       rethrow;
     }
+  }
+}
+
+///Get Package Itinerary Repo
+class ChangeMobileRepository {
+  Future<ChangeMobileModel?> changeMobile(
+      {required BuildContext context,
+      required Map<String, dynamic> body}) async {
+    var http = HttpService(
+        baseURL: AppUrl.baseUrl,
+        endURL: AppUrl.changeMobileUrl,
+        body: body,
+        methodType: HttpMethodType.PUT,
+        bodyType: HttpBodyType.JSON,
+        isAuthorizeRequest: false);
+    try {
+      Response<dynamic>? response = await http.request<dynamic>();
+      print('response...$response');
+      var resp = ChangeMobileModel.fromJson(response?.data);
+      return resp;
+    } catch (error) {
+      // BaseResponseModel baseResponseModel =
+      //     BaseResponseModel.fromJson(error.response?.data);
+      // print(baseResponseModel.status?.message);
+      // Utils.flushBarErrorMessage(
+      //     baseResponseModel.status?.message ?? '', context);
+      // throw error.response?.data;
+      http.handleErrorResponse(context: context, error: error);
+    }
+    return null;
   }
 }

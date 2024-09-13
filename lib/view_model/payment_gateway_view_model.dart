@@ -80,6 +80,7 @@ class PaymentVerifyViewModel with ChangeNotifier {
       "razorpaySignature": razorpaySignature
     };
     try {
+      print('bodyofpaymentverification..$body');
       setDataList(ApiResponse.loading());
       var resp = await _myRepo.paymentVerifyApi(context: context, body: body);
       setDataList(ApiResponse.completed(resp));

@@ -8,6 +8,7 @@ import 'package:flutter_cab/res/customContainer.dart';
 import 'package:flutter_cab/res/customTextWidget.dart';
 import 'package:flutter_cab/utils/color.dart';
 import 'package:flutter_cab/utils/dimensions.dart';
+import 'package:flutter_cab/utils/string_extenstion.dart';
 import 'package:flutter_cab/view_model/package_view_model.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -55,31 +56,15 @@ class _PackageDetailsState extends State<PackageDetails> {
             .getPackageActivityById
             .data
             ?.data
-            .packageImageUrl ??
+            .packageActivities
+            .expand((e) => e.activity.activityImageUrl)
+            .toList() ??
         [];
-    // ///Driver Details Sub Data
-    // String packageActivityString = packageActivity.replaceAll('{', '').replaceAll('}', '');
-    // List<String> packageActivityAttributes = packageActivityString.split(", ");
-    // Map<String, dynamic> packageActivityMap = {};
-    // for (String attribute in packageActivityAttributes) {
-    //   List<String> keyValue = attribute.split(":");
-    //   if (keyValue.length == 2) {
-    //     String key = keyValue[0].trim();
-    //     String value = keyValue[1].trim();
-    //     if (key.isNotEmpty && value.isNotEmpty) {
-    //       packageActivityMap[key] = value;
-    //     }
-    //   }
-    // }
-    // debugPrint(widget.packageId);
-    // debugPrint(widget.userId);
-    // debugPrint(packageActivityList.length.toString());
-    // debugPrint(packageActivityList[0].packageActivityId.toString());
-    // debugPrint("${widget.bookDate}Detail Page Booking");
+
     return Scaffold(
       backgroundColor: bgGreyColor,
       appBar: const CustomAppBar(
-        heading: "Page View",
+        heading: "Package View",
       ),
       body: PageLayout_Page(
           padding: EdgeInsets.zero,
@@ -126,123 +111,27 @@ class _PackageDetailsState extends State<PackageDetails> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          Padding(
-                            padding: const EdgeInsets.only(top: 10),
-                            child: Row(
-                              children: [
-                                const CustomText(
-                                    content: "Name : ",
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.w600,
-                                    textColor: textColor),
-                                SizedBox(
-                                  width: AppDimension.getWidth(context) * .7,
-                                  child: CustomText(
-                                      content: packageActivity.packageName,
-                                      align: TextAlign.start,
-                                      fontSize: 15,
-                                      maxline: 3,
-                                      fontWeight: FontWeight.w400,
-                                      textColor: textColor),
-                                )
-                              ],
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 10),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const CustomText(
-                                    content: "Location : ",
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.w600,
-                                    textColor: textColor),
-                                SizedBox(
-                                  width: AppDimension.getWidth(context) * .7,
-                                  child: CustomText(
-                                      content:
-                                          "${packageActivity.location} ${packageActivity.country} ${packageActivity.state}",
-                                      align: TextAlign.start,
-                                      fontSize: 15,
-                                      maxline: 3,
-                                      fontWeight: FontWeight.w400,
-                                      textColor: textColor),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 10),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                const CustomText(
-                                    content: "Activities : ",
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.w600,
-                                    textColor: textColor),
-                                SizedBox(
-                                  width: AppDimension.getWidth(context) * .7,
-                                  child: CustomText(
-                                      content: "${packageActivityList.length}",
-                                      align: TextAlign.start,
-                                      fontSize: 15,
-                                      maxline: 3,
-                                      fontWeight: FontWeight.w400,
-                                      textColor: textColor),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 10),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                const CustomText(
-                                    content: "Days : ",
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.w600,
-                                    textColor: textColor),
-                                SizedBox(
-                                  width: AppDimension.getWidth(context) * .7,
-                                  child: CustomText(
-                                      content:
-                                          "${packageActivity.noOfDays} Day",
-                                      align: TextAlign.start,
-                                      fontSize: 15,
-                                      maxline: 3,
-                                      fontWeight: FontWeight.w400,
-                                      textColor: textColor),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 10, bottom: 10),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                const CustomText(
-                                    content: "Nights : ",
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.w600,
-                                    textColor: textColor),
-                                SizedBox(
-                                  width: AppDimension.getWidth(context) * .7,
-                                  child: CustomText(
-                                      content:
-                                          "${int.parse(packageActivity.noOfDays) - 1} Night",
-                                      align: TextAlign.start,
-                                      fontSize: 15,
-                                      maxline: 3,
-                                      fontWeight: FontWeight.w400,
-                                      textColor: textColor),
-                                ),
-                              ],
-                            ),
+                          detailItem(
+                              lable: 'Name',
+                              value: packageActivity.packageName
+                                  .toString()
+                                  .capitalizeFirstOfEach),
+                          detailItem(
+                              lable: 'Total Price',
+                              value: 'AED${packageActivity.totalPrice}'),
+                          detailItem(
+                              lable: 'No. Of Activities',
+                              value: "${packageActivityList.length}"),
+                          detailItem(
+                              lable: 'Duration',
+                              value:
+                                  "${packageActivity.noOfDays} Day / ${int.parse(packageActivity.noOfDays) - 1} Night"),
+                          detailItem(
+                              lable: 'Location',
+                              value:
+                                  "${packageActivity.location} ${packageActivity.country} ${packageActivity.state}"),
+                          const SizedBox(
+                            height: 10,
                           )
                         ],
                       ),
@@ -296,6 +185,11 @@ class _PackageDetailsState extends State<PackageDetails> {
                                     .startTime,
                                 closeTime:
                                     packageActivityList[index].activity.endTime,
+                                suitableFor: packageActivityList[index]
+                                    .activity
+                                    .participantType
+                                    .map((e) => e.name.toString())
+                                    .toList(),
                                 address:
                                     packageActivityList[index].activity.address,
                               );
@@ -364,6 +258,40 @@ class _PackageDetailsState extends State<PackageDetails> {
           )),
     );
   }
+
+  detailItem({required String lable, required String value}) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        Expanded(
+          flex: 2,
+          child: CustomText(
+              align: TextAlign.start,
+              content: lable,
+              fontSize: 15,
+              fontWeight: FontWeight.w600,
+              textColor: textColor),
+        ),
+        const Text(
+          ':',
+          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
+        ),
+        const SizedBox(
+          width: 10,
+        ),
+        Expanded(
+          flex: 3,
+          child: CustomText(
+              content: value,
+              align: TextAlign.start,
+              fontSize: 15,
+              maxline: 3,
+              fontWeight: FontWeight.w400,
+              textColor: textColor),
+        )
+      ],
+    );
+  }
 }
 
 class ActivityContainer extends StatefulWidget {
@@ -373,6 +301,7 @@ class ActivityContainer extends StatefulWidget {
   final String description;
   final String activityHour;
   final String activityVisit;
+  final List<String> suitableFor;
   final String openTime;
   final String closeTime;
   final String address;
@@ -384,6 +313,7 @@ class ActivityContainer extends StatefulWidget {
       required this.description,
       required this.activityHour,
       required this.activityVisit,
+      required this.suitableFor,
       required this.openTime,
       required this.closeTime,
       required this.address,
@@ -456,7 +386,7 @@ class _ActivityContainerState extends State<ActivityContainer> {
               lessStyle: const TextStyle(
                   fontWeight: FontWeight.w500, color: redColor, fontSize: 15),
             ),
-            const SizedBox(height: 5),
+            const SizedBox(height: 15),
             // words.length >= 30 ? Padding(
             //   padding: const EdgeInsets.only(bottom: 10),
             //   child: Align(
@@ -549,12 +479,44 @@ class _ActivityContainerState extends State<ActivityContainer> {
                 ]))
               ],
             ),
+            widget.suitableFor.isNotEmpty
+                ? const SizedBox(height: 10)
+                : SizedBox(),
+            widget.suitableFor.isNotEmpty
+                ? RichText(
+                    textAlign: TextAlign.start,
+                    text: TextSpan(children: [
+                      TextSpan(
+                          text: "Suitable For : ",
+                          style: GoogleFonts.lato(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: textColor)),
+                      TextSpan(
+                          children:
+                              widget.suitableFor.asMap().entries.map((entry) {
+                            int idx = entry.key;
+                            String text = entry.value;
+
+                            // Add a space after each TextSpan except the last one
+                            return TextSpan(
+                              text: idx < widget.suitableFor.length - 1
+                                  ? '$text, '
+                                  : text.toString(),
+                            );
+                          }).toList(),
+                          style: GoogleFonts.lato(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w400,
+                              color: textColor))
+                    ]))
+                : SizedBox(),
             const SizedBox(height: 10),
             RichText(
                 textAlign: TextAlign.start,
                 text: TextSpan(children: [
                   TextSpan(
-                      text: "Location : ",
+                      text: "Address : ",
                       style: GoogleFonts.lato(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,

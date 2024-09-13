@@ -4,15 +4,13 @@ import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/res/customAlertBox.dart';
 import 'package:flutter_cab/res/customAppBar_widget.dart';
 import 'package:flutter_cab/res/customTextWidget.dart';
-import 'package:flutter_cab/res/razorPay_payment.dart';
 import 'package:flutter_cab/utils/assets.dart';
 import 'package:flutter_cab/utils/color.dart';
 import 'package:flutter_cab/utils/dimensions.dart';
 import 'package:flutter_cab/utils/text_styles.dart';
-import 'package:flutter_cab/utils/utils.dart';
-import 'package:flutter_cab/view/dashboard/rental/history/rentalHistoryManagment.dart';
 import 'package:flutter_cab/view_model/payment_gateway_view_model.dart';
 import 'package:flutter_cab/view_model/rental_view_model.dart';
+import 'package:flutter_cab/view_model/services/paymentService.dart';
 import 'package:flutter_cab/view_model/userProfile_view_model.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -66,9 +64,17 @@ class _BookYourCabState extends State<BookYourCab> {
   }
 
   bool isloading = false;
+  late BuildContext _savedContext;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _savedContext = context;
+  }
 
   @override
   void dispose() {
+    if (mounted) {}
     // Do not use context directly here; use _safeContext instead
     super.dispose();
   }
@@ -143,102 +149,115 @@ class _BookYourCabState extends State<BookYourCab> {
                             showDialog(
                                 context: context,
                                 builder: (context) =>
-                                    _showAlertBox(context, () async {
-                                      if (!mounted) return;
-
+                                    _showAlertBox(context, () {
                                       setState(() {
                                         debugPrint(checkBox.toString());
                                       });
                                       if (checkBox == 1) {
                                         print(
                                             ',nmnmnmnmnm,m,m,m.................');
-                                        await Future.delayed(
-                                            Duration(milliseconds: 100));
-                                        if (!mounted) return;
-
-                                        // Show the second dialog
-                                        await showDialog(
+                                        PaymentService paymentService =
+                                            PaymentService(
                                           context: context,
-                                          builder: (context) {
-                                            return RazorpayPayment(
-                                              userId: widget.userId,
-                                              amount: amt,
-                                              email: profileUser.email,
-                                              coutryCode:
-                                                  profileUser.countryCode,
-                                              mobileNo: profileUser.mobile,
-                                            );
-                                          },
-                                        ).then((_) async {
-                                          if (!mounted) return;
-                                          setState(() {
-                                            isloading = true; // Show loader
-                                          });
-                                          if (isloading) {
-                                            loaderDailog();
-                                          }
-                                          // Retrieve transaction ID
-                                          var transactionId = await Provider.of<
-                                                      PaymentVerifyViewModel>(
-                                                context,
-                                                listen: false,
-                                              )
-                                                  .paymentVerify
-                                                  .data
-                                                  ?.data
-                                                  .transactionId ??
-                                              '';
+                                          onPaymentSuccess:
+                                              (PaymentSuccessResponse
+                                                  response) {
+                                            print(
+                                                'paymentResponse#${response.orderId}');
 
-                                          debugPrint(
-                                              "${rental.totalPrice} Booking Price2");
-
-                                          // Prepare API request body
-                                          Map<String, dynamic> data1 = {
-                                            "date": rental.date,
-                                            "pickupTime": rental.pickupTime,
-                                            "bookerId": widget.userId,
-                                            "bookingForId": widget.userId,
-                                            "carType": rental.carType,
-                                            "kilometers": rental.kilometers,
-                                            "hours": rental.hours,
-                                            "price": rental.totalPrice,
-                                            "transactionId": transactionId,
-                                            "pickUpLocation": rental
-                                                .pickUpLocation
-                                                .trim()
-                                                .replaceAll(
-                                                    RegExp(r'\s+'), ' '),
-                                            "locationLatitude": widget.latitude,
-                                            "locationLongitude": widget.logitude
-                                          };
-
-                                          if (mounted) {
                                             setState(() {
-                                              print("${data1}Data1");
+                                              isloading = true; // Show loader
                                             });
+                                            if (isloading) {
+                                              loaderDailog();
+                                            }
+                                            // context.pop();
 
-                                            // Perform booking API call
+                                            Provider.of<PaymentVerifyViewModel>(
+                                                    _savedContext,
+                                                    listen: false)
+                                                .paymentVerifyViewModelApi(
+                                                    context: _savedContext,
+                                                    userId: widget.userId
+                                                        .toString(),
+                                                    paymentId:
+                                                        response.paymentId,
+                                                    razorpayOrderId:
+                                                        response.orderId,
+                                                    razorpaySignature:
+                                                        response.signature)
+                                                .then(
+                                              (value) {
+                                                if (value?.status.httpCode ==
+                                                    '200') {
+                                                  print(
+                                                      'payment verification is successfull${value?.data.transactionId}');
+                                                  debugPrint(response.orderId);
+                                                  debugPrint(
+                                                    response.paymentId,
+                                                  );
+                                                  debugPrint(
+                                                      response.signature);
+                                                  //   // Prepare API request body
+                                                  Map<String, dynamic> data1 = {
+                                                    "date": rental.date,
+                                                    "pickupTime":
+                                                        rental.pickupTime,
+                                                    "bookerId": widget.userId,
+                                                    "bookingForId":
+                                                        widget.userId,
+                                                    "carType": rental.carType,
+                                                    "kilometers":
+                                                        rental.kilometers,
+                                                    "hours": rental.hours,
+                                                    "price": rental.totalPrice,
+                                                    "transactionId": value
+                                                        ?.data.transactionId,
+                                                    "pickUpLocation": rental
+                                                        .pickUpLocation
+                                                        .trim()
+                                                        .replaceAll(
+                                                            RegExp(r'\s+'),
+                                                            ' '),
+                                                    "locationLatitude":
+                                                        widget.latitude,
+                                                    "locationLongitude":
+                                                        widget.logitude
+                                                  };
+                                                  Provider.of<
+                                                          RentalBookingViewModel>(
+                                                    _savedContext,
+                                                    listen: false,
+                                                  )
+                                                      .rentalBookingViewModel(
+                                                        context: _savedContext,
+                                                        body: data1,
+                                                        userId: widget.userId,
+                                                      )
+                                                      .then((onValue) {})
+                                                      .catchError((error) {
+                                                    print('error....$error');
+                                                  }).whenComplete(() {
+                                                    setState(() {
+                                                      isloading = false;
+                                                    });
+                                                  });
+                                                }
+                                              },
+                                            );
 
-                                            await Provider.of<
-                                                    RentalBookingViewModel>(
-                                              context,
-                                              listen: false,
-                                            )
-                                                .rentalBookingViewModel(
-                                                  context: context,
-                                                  body: data1,
-                                                  userId: widget.userId,
-                                                )
-                                                .then((onValue) {})
-                                                .catchError((error) {
-                                              print('error....$error');
-                                            }).whenComplete(() {
-                                              setState(() {
-                                                isloading = false;
-                                              });
-                                            });
-                                          }
-                                        });
+                                            // Call verify payment function after successful payment
+                                            // _verifyPayment(context, response);
+                                          },
+                                        );
+
+                                        paymentService.openCheckout(
+                                            amount: amt,
+                                            userId: widget.userId.toString(),
+                                            coutryCode:
+                                                profileUser?.countryCode,
+                                            mobileNo: profileUser?.mobile,
+                                            email: profileUser?.email);
                                       } else if ((checkBox == 2)) {
                                         debugPrint(
                                             "${rental.totalPrice} Booking Price3");
@@ -284,125 +303,147 @@ class _BookYourCabState extends State<BookYourCab> {
                                         context.pop();
                                         showDialog(
                                             context: context,
-                                            builder: (context) => _showAlertBox(
-                                                    context, () async {
+                                            builder: (context) =>
+                                                _showAlertBox(context, () {
                                                   setState(() {
                                                     debugPrint(
                                                         checkBox.toString());
                                                     // debugPrint("${rental.totalPrice} Booking Price");
                                                   });
                                                   if ((checkBox == 1)) {
-                                                    await Future.delayed(
-                                                        const Duration(
-                                                            milliseconds: 100));
-                                                    if (!mounted) return;
-
-                                                    // Show the second dialog
-                                                    await showDialog(
-                                                      context: context,
-                                                      builder: (context) {
-                                                        return RazorpayPayment(
-                                                          userId: widget.userId,
-                                                          amount: amt,
-                                                          email:
-                                                              profileUser.email,
-                                                          coutryCode:
-                                                              profileUser
-                                                                  .countryCode,
-                                                          mobileNo: profileUser
-                                                              .mobile,
-                                                        );
-                                                      },
-                                                    ).then((_) async {
-                                                      if (!mounted) return;
-                                                      setState(() {
-                                                        isloading =
-                                                            true; // Show loader
-                                                      });
-                                                      if (isloading) {
-                                                        loaderDailog();
-                                                      }
-                                                      // Retrieve transaction ID
-                                                      var transactionId =
-                                                          await Provider.of<
-                                                                      PaymentVerifyViewModel>(
-                                                                context,
+                                                    PaymentService
+                                                        paymentService =
+                                                        PaymentService(
+                                                      context: _savedContext,
+                                                      onPaymentSuccess:
+                                                          (PaymentSuccessResponse
+                                                              response) {
+                                                        print(
+                                                            'paymentResponse#${response.orderId}');
+                                                        setState(() {
+                                                          isloading =
+                                                              true; // Show loader
+                                                        });
+                                                        if (isloading) {
+                                                          loaderDailog();
+                                                        }
+                                                        // context.pop();
+                                                        // if (!mounted) return;
+                                                        Provider.of<PaymentVerifyViewModel>(
+                                                                _savedContext,
+                                                                listen: false)
+                                                            .paymentVerifyViewModelApi(
+                                                                context:
+                                                                    _savedContext,
+                                                                userId: widget
+                                                                    .userId
+                                                                    .toString(),
+                                                                paymentId: response
+                                                                    .paymentId,
+                                                                razorpayOrderId:
+                                                                    response
+                                                                        .orderId,
+                                                                razorpaySignature:
+                                                                    response
+                                                                        .signature)
+                                                            .then(
+                                                          (value) {
+                                                            if (value?.status
+                                                                    .httpCode ==
+                                                                '200') {
+                                                              print(
+                                                                  'payment verification is successfull${value?.data.transactionId}');
+                                                              debugPrint(
+                                                                  response
+                                                                      .orderId);
+                                                              debugPrint(
+                                                                response
+                                                                    .paymentId,
+                                                              );
+                                                              debugPrint(response
+                                                                  .signature);
+                                                              //   // Prepare API request body
+                                                              Map<String,
+                                                                      dynamic>
+                                                                  data1 = {
+                                                                "date":
+                                                                    rental.date,
+                                                                "pickupTime": rental
+                                                                    .pickupTime,
+                                                                "bookerId":
+                                                                    widget
+                                                                        .userId,
+                                                                "bookingForId":
+                                                                    widget
+                                                                        .userId,
+                                                                "carType": rental
+                                                                    .carType,
+                                                                "kilometers": rental
+                                                                    .kilometers,
+                                                                "hours": rental
+                                                                    .hours,
+                                                                "price": rental
+                                                                    .totalPrice,
+                                                                "transactionId":
+                                                                    value?.data
+                                                                        .transactionId,
+                                                                "pickUpLocation": rental
+                                                                    .pickUpLocation
+                                                                    .trim()
+                                                                    .replaceAll(
+                                                                        RegExp(
+                                                                            r'\s+'),
+                                                                        ' '),
+                                                                "locationLatitude":
+                                                                    widget
+                                                                        .latitude,
+                                                                "locationLongitude":
+                                                                    widget
+                                                                        .logitude
+                                                              };
+                                                              Provider.of<
+                                                                      RentalBookingViewModel>(
+                                                                _savedContext,
                                                                 listen: false,
                                                               )
-                                                                  .paymentVerify
-                                                                  .data
-                                                                  ?.data
-                                                                  .transactionId ??
-                                                              '';
+                                                                  .rentalBookingViewModel(
+                                                                    context:
+                                                                        _savedContext,
+                                                                    body: data1,
+                                                                    userId: widget
+                                                                        .userId,
+                                                                  )
+                                                                  .then(
+                                                                      (onValue) {})
+                                                                  .catchError(
+                                                                      (error) {
+                                                                print(
+                                                                    'error....$error');
+                                                              }).whenComplete(
+                                                                      () {
+                                                                setState(() {
+                                                                  isloading =
+                                                                      false;
+                                                                });
+                                                              });
+                                                            }
+                                                          },
+                                                        );
+                                                        // Call verify payment function after successful payment
+                                                        // _verifyPayment(context, response);
+                                                      },
+                                                    );
 
-                                                      debugPrint(
-                                                          "${rental.totalPrice} Booking Price2");
-
-                                                      // Prepare API request body
-                                                      Map<String, dynamic>
-                                                          data1 = {
-                                                        "date": rental.date,
-                                                        "pickupTime":
-                                                            rental.pickupTime,
-                                                        "bookerId":
-                                                            widget.userId,
-                                                        "bookingForId":
-                                                            widget.userId,
-                                                        "carType":
-                                                            rental.carType,
-                                                        "kilometers":
-                                                            rental.kilometers,
-                                                        "hours": rental.hours,
-                                                        "price":
-                                                            rental.totalPrice,
-                                                        "transactionId":
-                                                            transactionId,
-                                                        "pickUpLocation": rental
-                                                            .pickUpLocation
-                                                            .trim()
-                                                            .replaceAll(
-                                                                RegExp(r'\s+'),
-                                                                ' '),
-                                                        "locationLatitude":
-                                                            widget.latitude,
-                                                        "locationLongitude":
-                                                            widget.logitude
-                                                      };
-
-                                                      if (mounted) {
-                                                        setState(() {
-                                                          print(
-                                                              "${data1}Data1");
-                                                        });
-
-                                                        // Perform booking API call
-                                                        await Provider.of<
-                                                                RentalBookingViewModel>(
-                                                          context,
-                                                          listen: false,
-                                                        )
-                                                            .rentalBookingViewModel(
-                                                          context: context,
-                                                          body: data1,
-                                                          userId: widget.userId,
-                                                        )
-                                                            .then((onValue) {
-                                                          if (onValue?.status
-                                                                  .httpCode ==
-                                                              '200') {
-                                                            print(
-                                                                'cvbmbmnbnbnbnbnbnb');
-                                                          }
-                                                        }).catchError((error) {
-                                                          print(
-                                                              'error....$error');
-                                                        }).whenComplete(() {
-                                                          setState(() {
-                                                            isloading == false;
-                                                          });
-                                                        });
-                                                      }
-                                                    });
+                                                    paymentService.openCheckout(
+                                                        amount: amt,
+                                                        userId: widget.userId
+                                                            .toString(),
+                                                        coutryCode: profileUser
+                                                            ?.countryCode,
+                                                        mobileNo:
+                                                            profileUser?.mobile,
+                                                        email:
+                                                            profileUser?.email);
                                                   } else if ((checkBox == 2)) {
                                                     debugPrint(
                                                         "${rental.totalPrice} Booking Price1");
@@ -587,6 +628,7 @@ class _BookYourCabState extends State<BookYourCab> {
 
   void loaderDailog() {
     showDialog(
+        barrierDismissible: false,
         context: context,
         builder: (context) {
           return Dialog(
@@ -594,8 +636,8 @@ class _BookYourCabState extends State<BookYourCab> {
               borderRadius: BorderRadius.circular(10),
             ),
             child: Container(
-              height: 300,
-              width: 350,
+              height: 200,
+              width: 200,
               decoration: BoxDecoration(
                   color: Colors.white, borderRadius: BorderRadius.circular(10)),
               child: const Padding(

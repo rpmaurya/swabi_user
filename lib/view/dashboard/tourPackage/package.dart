@@ -54,7 +54,7 @@ class _PackagesState extends State<Packages> {
     // controller.text = _selectedDate.day.toString();
   }
 
-  void _fetchPackageList() {
+  void _fetchPackageList() async {
     Provider.of<GetPackageListViewModel>(context, listen: false)
         .fetchGetPackageListViewModelApi(context, {
       "pageNumber": "0",
@@ -96,7 +96,6 @@ class _PackagesState extends State<Packages> {
     }
   }
 
-
   List<Content> packageList = [];
 
   bool loader = false;
@@ -105,8 +104,16 @@ class _PackagesState extends State<Packages> {
   // List<Content> imgList = [];
   @override
   Widget build(BuildContext context) {
-    String status = context.watch<GetPackageListViewModel>().getPackageList.status.toString();
-    String statusDetails = context.watch<GetPackageActivityByIdViewModel>().getPackageActivityById.status.toString();
+    String status = context
+        .watch<GetPackageListViewModel>()
+        .getPackageList
+        .status
+        .toString();
+    String statusDetails = context
+        .watch<GetPackageActivityByIdViewModel>()
+        .getPackageActivityById
+        .status
+        .toString();
     packageList = context
             .watch<GetPackageListViewModel>()
             .getPackageList
@@ -128,151 +135,163 @@ class _PackagesState extends State<Packages> {
       ),
       body: PageLayout_Page(
           child: Column(
-            children: [
-              Container(
-                padding: const EdgeInsets.only(bottom: 10),
-                color: bgGreyColor,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    // FormDatePickerExpense(
-                    //   width: AppDimension.getWidth(context) / 1.4,
-                    //   title: "Select Date",
-                    //   headingReq: false,
-                    //   controller: controller,
-                    //   hint: "PickUp Date",
-                    // ),
-                    Material(
+        children: [
+          Container(
+            padding: const EdgeInsets.only(bottom: 10),
+            color: bgGreyColor,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                // FormDatePickerExpense(
+                //   width: AppDimension.getWidth(context) / 1.4,
+                //   title: "Select Date",
+                //   headingReq: false,
+                //   controller: controller,
+                //   hint: "PickUp Date",
+                // ),
+                Material(
+                  borderRadius: BorderRadius.circular(5),
+                  elevation: 0,
+                  child: Container(
+                    width: AppDimension.getWidth(context) * .92,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: naturalGreyColor.withOpacity(0.3),
+                      ),
+                      color: background,
                       borderRadius: BorderRadius.circular(5),
-                      elevation: 0,
-                      child: Container(
-                        width: AppDimension.getWidth(context) * .92,
-                        height: 50,
-                        decoration: BoxDecoration(
-                          border: Border.all(color: naturalGreyColor.withOpacity(0.3),),
-                          color: background,
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        child: TextField(
-                          controller: controller,
-                          readOnly: true,
-                          onTap: () async {
-                            await _selectDate(context);
-                          },
-                          style: titleTextStyle,
-                          decoration: const InputDecoration(
-                            border:
-                                UnderlineInputBorder(borderSide: BorderSide.none),
-                            prefixIcon: Icon(
-                              Icons.calendar_month_outlined,
-                              color: naturalGreyColor,
-                            ),
-                          ),
+                    ),
+                    child: TextField(
+                      controller: controller,
+                      readOnly: true,
+                      onTap: () async {
+                        await _selectDate(context);
+                      },
+                      style: titleTextStyle,
+                      decoration: const InputDecoration(
+                        border:
+                            UnderlineInputBorder(borderSide: BorderSide.none),
+                        prefixIcon: Icon(
+                          Icons.calendar_month_outlined,
+                          color: naturalGreyColor,
                         ),
                       ),
                     ),
-                    // CustomTextFeild(
-                    //   headingReq: false,
-                    //   prefixIcon: true,
-                    //   hint: "Search",
-                    //   controller: TextEditingController(),
-                    //   img: search,
-                    // ),
-                    // Material(
-                    //   elevation: 5,
-                    //   color: btnColor,
-                    //   borderRadius: BorderRadius.circular(10),
-                    //   child: InkWell(
-                    //     borderRadius: BorderRadius.circular(10),
-                    //     child: SizedBox(
-                    //         height: 50,
-                    //         width: 80,
-                    //         child: Center(
-                    //             child: Text(
-                    //               "Filter",
-                    //               style: GoogleFonts.lato(
-                    //                   color: background,
-                    //                   fontWeight: FontWeight.w600,
-                    //                   fontSize: 16),
-                    //             ))),
-                    //     // onTap: () => _selectDate(context),
-                    //     onTap: () {
-                    //       setState(() {
-                    //         print(controller.text);
-                    //       });
-                    //     },
-                    //   ),
-                    // )
-                  ],
+                  ),
                 ),
-              ),
-              Expanded(
-                child: status == "Status.completed"
-                    ? packageList.isNotEmpty
-                        ? ListView.builder(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 5, horizontal: 5),
-                            itemCount: packageList.length,
-                            itemBuilder: (context, index) {
-                              List<PackageActivity> activityData = packageList[index].packageActivities;
-                              return PackageContainer(
-                                packageImg:
-                                packageList[index].packageImageUrl.map((url) {
-                                  return url;
-                                }).toList(),
-                                packageName: packageList[index].packageName,
-                                noOfDays: packageList[index].noOfDays,
-                                // noOfNights: "0",
-                                country: packageList[index].country,
-                                state: packageList[index].state,
-                                location: packageList[index].location,
-                                total: packageList[index].totalPrice,
-                                activityName: List.generate(activityData.length, (index) => activityData[index].activity.activityName),
-                                activity: packageList[index]
-                                    .packageActivities
-                                    .length
-                                    .toString(),
-                                loader: statusDetails == "Status.loading" && loader && selectedIndex == index,
-                                ontap: (){
-                                  setState(() {
-                                    selectedIndex = index;
-                                    loader = true;
-                                  });
-                                  Provider.of<GetPackageActivityByIdViewModel>(
-                                      context,
-                                      listen: false)
-                                      .fetchGetPackageActivityByIdViewModelApi(
-                                      context,
-                                      {
-                                        "packageId":
-                                        packageList[index].packageId
-                                      },
-                                      packageList[index].packageId,
-                                      widget.ursID,
-                                      controller.text);
-                                }
-                                // ()=> context.push("/package/packageDetails"),
+                // CustomTextFeild(
+                //   headingReq: false,
+                //   prefixIcon: true,
+                //   hint: "Search",
+                //   controller: TextEditingController(),
+                //   img: search,
+                // ),
+                // Material(
+                //   elevation: 5,
+                //   color: btnColor,
+                //   borderRadius: BorderRadius.circular(10),
+                //   child: InkWell(
+                //     borderRadius: BorderRadius.circular(10),
+                //     child: SizedBox(
+                //         height: 50,
+                //         width: 80,
+                //         child: Center(
+                //             child: Text(
+                //               "Filter",
+                //               style: GoogleFonts.lato(
+                //                   color: background,
+                //                   fontWeight: FontWeight.w600,
+                //                   fontSize: 16),
+                //             ))),
+                //     // onTap: () => _selectDate(context),
+                //     onTap: () {
+                //       setState(() {
+                //         print(controller.text);
+                //       });
+                //     },
+                //   ),
+                // )
+              ],
+            ),
+          ),
+          Expanded(
+            child: status == "Status.completed"
+                ? packageList.isNotEmpty
+                    ? ListView.builder(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 5, horizontal: 5),
+                        itemCount: packageList.length,
+                        itemBuilder: (context, index) {
+                          List<PackageActivity> activityData =
+                              packageList[index].packageActivities;
+                          return PackageContainer(
+                              packageImg: packageList[index]
+                                  .packageActivities
+                                  .expand((e) => e.activity.activityImageUrl)
+                                  .toList(),
+                              //     .map((url) {
+                              //   return url;
+                              // }).toList(),
+                              packageName: packageList[index].packageName,
+                              noOfDays: packageList[index].noOfDays,
+                              // noOfNights: "0",
+                              country: packageList[index].country,
+                              state: packageList[index].state,
+                              location: packageList[index].location,
+                              total: packageList[index].totalPrice,
+                              activityName: List.generate(
+                                  activityData.length,
+                                  (index) => activityData[index]
+                                      .activity
+                                      .activityName),
+                              activity: packageList[index]
+                                  .packageActivities
+                                  .length
+                                  .toString(),
+                              loader: statusDetails == "Status.loading" &&
+                                  loader &&
+                                  selectedIndex == index,
+                              ontap: () {
+                                setState(() {
+                                  selectedIndex = index;
+                                  loader = true;
+                                });
+                                Provider.of<GetPackageActivityByIdViewModel>(
+                                        context,
+                                        listen: false)
+                                    .fetchGetPackageActivityByIdViewModelApi(
+                                        context,
+                                        {
+                                          "packageId":
+                                              packageList[index].packageId
+                                        },
+                                        packageList[index].packageId,
+                                        widget.ursID,
+                                        controller.text);
+                              }
+                              // ()=> context.push("/package/packageDetails"),
                               );
-                            },
-                            // PackageContainer(
-                            //   packageImg: List.generate(packageList[index].packageImageUrl.length, (ind) =>),
-                            // ),
-                          )
-                        : Center(
-                            child: Container(
-                                decoration: const BoxDecoration(),
-                                child: Image.asset(
-                                  folder,
-                                  height: 150,
-                                )))
-                    : const Center(
-                        child: CircularProgressIndicator(
-                          color: Colors.green,
-                        ),
-                      ),
-              )
-            ],
-          )),
+                        },
+                        // PackageContainer(
+                        //   packageImg: List.generate(packageList[index].packageImageUrl.length, (ind) =>),
+                        // ),
+                      )
+                    : Center(
+                        child: Container(
+                            decoration: const BoxDecoration(),
+                            child: Image.asset(
+                              folder,
+                              height: 150,
+                            )))
+                : const Center(
+                    child: CircularProgressIndicator(
+                      color: Colors.green,
+                    ),
+                  ),
+          )
+        ],
+      )),
     );
   }
 }
@@ -317,11 +336,13 @@ class _PackageContainerState extends State<PackageContainer> {
   @override
   void initState() {
     super.initState();
-    timer = Timer.periodic(const Duration(seconds: 5), (Timer t) {
-      setState(() {
-        currentIndex = (currentIndex + 1) % widget.packageImg.length;
+    if (widget.packageImg.isNotEmpty) {
+      timer = Timer.periodic(const Duration(seconds: 5), (Timer t) {
+        setState(() {
+          currentIndex = (currentIndex + 1) % widget.packageImg.length;
+        });
       });
-    });
+    }
   }
 
   @override
@@ -353,19 +374,22 @@ class _PackageContainerState extends State<PackageContainer> {
                             width: double.infinity,
                             height: AppDimension.getHeight(context) / 3.5,
                             child: ClipRRect(
-                                borderRadius:
-                                    const BorderRadius.only(topRight: Radius.circular(5),topLeft: Radius.circular(5)),
+                                borderRadius: const BorderRadius.only(
+                                    topRight: Radius.circular(5),
+                                    topLeft: Radius.circular(5)),
                                 child: MultiImageSlider(
                                     images: widget.packageImg)),
                           )
                         : ClipRRect(
-                      borderRadius:
-                      const BorderRadius.only(topRight: Radius.circular(5),topLeft: Radius.circular(5)),
+                            borderRadius: const BorderRadius.only(
+                                topRight: Radius.circular(5),
+                                topLeft: Radius.circular(5)),
                             child: Container(
                                 width: double.infinity,
                                 decoration: const BoxDecoration(
-                                  borderRadius:
-                                  BorderRadius.only(topRight: Radius.circular(5),topLeft: Radius.circular(5)),
+                                  borderRadius: BorderRadius.only(
+                                      topRight: Radius.circular(5),
+                                      topLeft: Radius.circular(5)),
                                 ),
                                 child: Image.asset(
                                   tour,
@@ -388,26 +412,25 @@ class _PackageContainerState extends State<PackageContainer> {
                             vertical: 5, horizontal: 0),
                         width: double.infinity,
                         decoration: const BoxDecoration(
-                          border: Border(bottom: BorderSide(color: greyColor1))
-                            ),
+                            border:
+                                Border(bottom: BorderSide(color: greyColor1))),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             SizedBox(
-                              width: AppDimension.getWidth(context)*.65,
+                              width: AppDimension.getWidth(context) * .65,
                               child: CustomText(
-                                  content:  widget.packageName,
+                                  content: widget.packageName,
                                   align: TextAlign.start,
                                   fontSize: 15,
                                   maxline: 1,
                                   fontWeight: FontWeight.w600,
-                                  textColor: textColor
-                              ),
+                                  textColor: textColor),
                             ),
                             Container(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 4,vertical: 5),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 4, vertical: 5),
                               decoration: BoxDecoration(
                                   color: greyColor1.withOpacity(.1),
                                   borderRadius: BorderRadius.circular(2)),
@@ -416,10 +439,9 @@ class _PackageContainerState extends State<PackageContainer> {
                                   Text(
                                     "${int.tryParse(widget.noOfDays ?? '1') != null ? (int.parse(widget.noOfDays) - 1).toString() : '0'}N / ${widget.noOfDays ?? '0'}D",
                                     style: GoogleFonts.lato(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w600,
-                                      color: btnColor
-                                    ),
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w600,
+                                        color: btnColor),
                                   ),
                                   // Text(",${widget.noOfNights}N",style: textTextStyle,),
                                 ],
@@ -437,47 +459,58 @@ class _PackageContainerState extends State<PackageContainer> {
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                               Container(
-                                  height: 15,
-                                  width: 15,
-                                  margin: const EdgeInsets.only(right: 5),
-                                  child: const Card(
-                                    shape: CircleBorder(),
-                                    elevation: 0,
-                                    color: greyColor1,
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: AppDimension.getWidth(context) *.3,
-                                  child:CustomText(
-                                    content: widget.location.toUpperCase(),
-                                    fontSize: 15,
-                                    maxline: 2,
-                                    align: TextAlign.start,
-                                    textColor: greyColor1,
-                                  ),
-                                ),
+                                widget.location.isEmpty
+                                    ? Container()
+                                    : Container(
+                                        height: 15,
+                                        width: 15,
+                                        margin: const EdgeInsets.only(right: 5),
+                                        child: const Card(
+                                          shape: CircleBorder(),
+                                          elevation: 0,
+                                          color: greyColor1,
+                                        ),
+                                      ),
+                                widget.state.isEmpty
+                                    ? Container()
+                                    : SizedBox(
+                                        width:
+                                            AppDimension.getWidth(context) * .3,
+                                        child: CustomText(
+                                          content:
+                                              widget.location.toUpperCase(),
+                                          fontSize: 15,
+                                          maxline: 2,
+                                          align: TextAlign.start,
+                                          textColor: greyColor1,
+                                        ),
+                                      ),
                                 const Spacer(),
-                                Container(
-                                  height: 15,
-                                  width: 15,
-                                  margin: const EdgeInsets.only(right: 5),
-                                  child: const Card(
-                                    shape: CircleBorder(),
-                                    elevation: 0,
-                                    color: greyColor1,
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: AppDimension.getWidth(context) *.4,
-                                  child: CustomText(
-                                    content: widget.state.toUpperCase(),
-                                    fontSize: 15,
-                                    maxline: 2,
-                                    align: TextAlign.start,
-                                    textColor: greyColor1,
-                                  ),
-                                ),
+                                widget.state.isEmpty
+                                    ? Container()
+                                    : Container(
+                                        height: 15,
+                                        width: 15,
+                                        margin: const EdgeInsets.only(right: 5),
+                                        child: const Card(
+                                          shape: CircleBorder(),
+                                          elevation: 0,
+                                          color: greyColor1,
+                                        ),
+                                      ),
+                                widget.location.isEmpty
+                                    ? Container()
+                                    : SizedBox(
+                                        width:
+                                            AppDimension.getWidth(context) * .4,
+                                        child: CustomText(
+                                          content: widget.state.toUpperCase(),
+                                          fontSize: 15,
+                                          maxline: 2,
+                                          align: TextAlign.start,
+                                          textColor: greyColor1,
+                                        ),
+                                      ),
                               ],
                             ),
                           ),
@@ -497,8 +530,8 @@ class _PackageContainerState extends State<PackageContainer> {
                                   ),
                                 ),
                                 SizedBox(
-                                  width: AppDimension.getWidth(context) *.3,
-                                  child:CustomText(
+                                  width: AppDimension.getWidth(context) * .3,
+                                  child: CustomText(
                                     content: widget.country.toUpperCase(),
                                     fontSize: 15,
                                     maxline: 2,
@@ -518,7 +551,7 @@ class _PackageContainerState extends State<PackageContainer> {
                                   ),
                                 ),
                                 SizedBox(
-                                  width: AppDimension.getWidth(context) *.4,
+                                  width: AppDimension.getWidth(context) * .4,
                                   child: CustomText(
                                     content: "${widget.activity} Activity",
                                     fontSize: 15,
@@ -540,43 +573,52 @@ class _PackageContainerState extends State<PackageContainer> {
                             ),
                           ),
                           Column(
-                            children: List.generate(widget.activityName.length, (index) => Padding(
-                              padding: const EdgeInsets.only(bottom: 10),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Padding(
-                                    padding: EdgeInsets.only(top: 2),
-                                    child: Icon(
-                                      Icons.check,
-                                      color: greenColor,
-                                      size: 13,
-                                    ),
-                                  ),
-                                  Container(
-                                      padding: const EdgeInsets.only(left: 2),
-                                      width: AppDimension.getWidth(context) * .8,
-                                      // color: Colors.cyan,
-                                      child: CustomText(
-                                        content: widget.activityName[index],
-                                        textColor: greenColor,
-                                        fontSize: 15,
-                                        maxline: 2,
-                                        align: TextAlign.start,
-                                      ))
-                                  // RichText(
-                                  //     text: TextSpan(children: [
-                                  //       TextSpan(
-                                  //           text: "Activity : ",
-                                  //           style: packagetextTextStyle),
-                                  //       TextSpan(
-                                  //           text: widget.activity,
-                                  //           style: packagetextTextStyle),
-                                  //     ])),
-                                ],
-                              ),
-                            )),
+                            children: List.generate(
+                                widget.activityName.length,
+                                (index) => Padding(
+                                      padding:
+                                          const EdgeInsets.only(bottom: 10),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          const Padding(
+                                            padding: EdgeInsets.only(top: 2),
+                                            child: Icon(
+                                              Icons.check,
+                                              color: greenColor,
+                                              size: 13,
+                                            ),
+                                          ),
+                                          Container(
+                                              padding: const EdgeInsets.only(
+                                                  left: 2),
+                                              width: AppDimension.getWidth(
+                                                      context) *
+                                                  .8,
+                                              // color: Colors.cyan,
+                                              child: CustomText(
+                                                content:
+                                                    widget.activityName[index],
+                                                textColor: greenColor,
+                                                fontSize: 15,
+                                                maxline: 2,
+                                                align: TextAlign.start,
+                                              ))
+                                          // RichText(
+                                          //     text: TextSpan(children: [
+                                          //       TextSpan(
+                                          //           text: "Activity : ",
+                                          //           style: packagetextTextStyle),
+                                          //       TextSpan(
+                                          //           text: widget.activity,
+                                          //           style: packagetextTextStyle),
+                                          //     ])),
+                                        ],
+                                      ),
+                                    )),
                           ),
                         ],
                       ),
@@ -611,12 +653,12 @@ class _PackageContainerState extends State<PackageContainer> {
                                       color: Colors.black,
                                       fontSize: 15,
                                       fontWeight: FontWeight.w700)),
-                                  TextSpan(
-                                      text: " / Person",
-                                      style: GoogleFonts.nunito(
-                                          color: greyColor1,
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w600)),
+                              TextSpan(
+                                  text: " / Person",
+                                  style: GoogleFonts.nunito(
+                                      color: greyColor1,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w600)),
                             ])),
                           ],
                         ),

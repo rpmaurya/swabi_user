@@ -1,106 +1,23 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+
+import 'package:flutter_cab/model/user_profile_model.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
-import 'package:flutter_cab/res/customAppBar_widget.dart';
+
 import 'package:flutter_cab/res/customContainer.dart';
 import 'package:flutter_cab/res/customTextWidget.dart';
 import 'package:flutter_cab/res/custom_gridViewBuilder.dart';
 import 'package:flutter_cab/utils/assets.dart';
 import 'package:flutter_cab/utils/color.dart';
 import 'package:flutter_cab/utils/dimensions.dart';
+import 'package:flutter_cab/utils/string_extenstion.dart';
 import 'package:flutter_cab/utils/text_styles.dart';
+import 'package:flutter_cab/view_model/userProfile_view_model.dart';
 import 'package:flutter_cab/view_model/user_view_model.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
-// class home_screen extends StatefulWidget {
-//   const home_screen({super.key});
-//
-//   @override
-//   State<home_screen> createState() => _home_screenState();
-// }
-//
-// class _home_screenState extends State<home_screen> {
-//
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       body: CustomScrollView(
-//
-//         slivers: <Widget>[
-//           SliverAppBar(
-//             expandedHeight: 500.0,
-//             systemOverlayStyle: SystemUiOverlayStyle(
-//               statusBarBrightness: Brightness.dark
-//             ),
-//             pinned: true,
-//             backgroundColor: background,
-//             surfaceTintColor: background,
-//             flexibleSpace: FlexibleSpaceBar(
-//               title: Text(''),
-//               background: Image.asset(
-//                 dubaiHome1,
-//                 fit: BoxFit.cover,
-//               ),
-//             ),
-//             // bottom: PreferredSize(
-//             //     preferredSize: Size.fromHeight(0.0),
-//             //     child: Container(
-//             //       height: 1,
-//             //       color: background,
-//             //     )),
-//             bottom: PreferredSize(
-//               preferredSize: Size.fromHeight(0.0),
-//               child: Container(
-//                 child: Row(
-//                   children: [
-//                     Dashboard_Container(
-//                       bgImage: rentalCar,
-//                       // loading: rangeStatus == "Status.loading" && loading,
-//                       // onTap: ()=> context.push("/rentalForm", extra: {'iD': uId})
-//                       onTap: () {
-//                         // context.push("/rentalForm/rentalHistory");
-//                         // context.push("/rentalForm", extra: {'userId':uId});
-//                       },
-//                       img: rent,
-//                       title: "Rental Vehicle",
-//                     ),
-//                   ],
-//                 ),
-//               ),
-//             ),
-//
-//           ),
-//           // SliverList(
-//           //   delegate: SliverChildBuilderDelegate(
-//           //         (BuildContext context, int index) {
-//           //       return ClipRRect(
-//           //         borderRadius: BorderRadius.only(
-//           //             topLeft: Radius.circular(10),
-//           //             topRight: Radius.circular(10)
-//           //         ),
-//           //         child: Container(
-//           //           decoration: BoxDecoration(
-//           //             borderRadius: BorderRadius.only(
-//           //               topLeft: Radius.circular(10),
-//           //               topRight: Radius.circular(10)
-//           //             )
-//           //           ),
-//           //             child: Row(
-//           //               children: [
-//           //               ],
-//           //             )),
-//           //       );
-//           //     },
-//           //     childCount: 50, // Adjust the number of items as needed
-//           //   ),
-//           // ),
-//         ],
-//       ),
-//     );
-//   }
-// }
 ///Home Screen Old
 class home_screen extends StatefulWidget {
   const home_screen({super.key});
@@ -123,6 +40,8 @@ class _home_screenState extends State<home_screen> {
         setState(() {
           if (value.userId != null && value.userId != '') {
             uId = value.userId.toString();
+            Provider.of<UserProfileViewModel>(context, listen: false)
+                .fetchUserProfileViewModelApi(context, {"userId": uId});
           }
         });
       });
@@ -132,18 +51,20 @@ class _home_screenState extends State<home_screen> {
   bool loading = false;
   List<String> images = [
     packageImg,
-    tour1,
+    tour,
     tour2,
     viewImg,
     packageImg,
-    tour1,
+    tour,
     tour2,
     viewImg
   ];
-
+  ProfileData userdata = ProfileData();
   @override
   Widget build(BuildContext context) {
     // print("UserId here at homeScreen $uId");
+    userdata = context.watch<UserProfileViewModel>().DataList.data?.data ??
+        ProfileData();
     return PopScope(
         canPop: false,
         onPopInvoked: (val) async {
@@ -157,13 +78,67 @@ class _home_screenState extends State<home_screen> {
         },
         child: Scaffold(
           backgroundColor: background,
-          appBar: CustomAppBar(
-            leadingIcon: true,
-            trailingIcon: true,
-            rightIconImage: appLogo1,
-            appLeadingImage: menu,
-            onTap: () => context.push("/menuPage", extra: {'id': uId}),
+          appBar: AppBar(
+            backgroundColor: Colors.white,
+            automaticallyImplyLeading: false,
+            scrolledUnderElevation: 0,
+            titleSpacing: 0,
+            leading: IconButton(
+                onPressed: () => context.push("/menuPage", extra: {'id': uId}),
+                icon: const Icon(
+                  Icons.notes_rounded,
+                  size: 34,
+                )),
+            title: Row(
+              children: [
+                CircleAvatar(
+                  radius: 20, // Adjust the size of the avatar
+                  backgroundImage: NetworkImage(userdata
+                          .profileImageUrl.isNotEmpty
+                      ? userdata.profileImageUrl
+                      : 'https://up.yimg.com/ib/th?id=OIP.eCrcK2BiqwBGE1naWwK3UwHaHa&pid=Api&rs=1&c=1&qlt=95&w=115&h=115'),
+
+                  backgroundColor:
+                      Colors.grey[200], // Fallback color if image fails to load
+                ),
+                const SizedBox(
+                  width: 5,
+                ),
+                const Text(
+                  'Hi,',
+                  style: TextStyle(color: Colors.green),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(5.0),
+                  child: Text(
+                    userdata.firstName.capitalizeFirstOfEach,
+                    style: titleTextStyle,
+                  ),
+                )
+              ],
+            ),
+            actions: [
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                child: InkWell(
+                    onTap: () => print("Custom Appbar"),
+                    child: Image.asset(
+                      appLogo1,
+                      height: 25,
+                    )
+                    // child: Image.asset(appLogo1)
+                    ),
+              )
+            ],
           ),
+          // appBar: CustomAppBar(
+          //   leadingIcon: true,
+          //   trailingIcon: true,
+          //   rightIconImage: appLogo1,
+          //   appLeadingImage: menu,
+          //   onTap: () => context.push("/menuPage", extra: {'id': uId}),
+          // ),
           body: Container(
             color: bgGreyColor,
             child: ListView(
@@ -550,7 +525,9 @@ class ListContainerDesign extends StatelessWidget {
           // ),
           child: ClipRRect(
               borderRadius: BorderRadius.circular(10),
-              child: Image.asset(imageList, fit: BoxFit.fill)),
+              child: Image.asset(
+                  imageList != '' && imageList.isNotEmpty ? imageList : img1,
+                  fit: BoxFit.fill)),
         ),
         Positioned(
           right: 5,

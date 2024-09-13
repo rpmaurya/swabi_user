@@ -1,4 +1,3 @@
-
 const String menu = "assets/images/menu.png";
 const String holidays = "assets/images/holidays.png";
 const String carRental = "assets/images/car-rental.png";
@@ -37,7 +36,7 @@ const String car = "assets/images/car1.png";
 const String minus = "assets/images/cancel.png";
 const String packageImg = "assets/images/packageImg.png";
 const String tour = "assets/images/tour1.png";
-const String tour1 = "assets/images/tour2.png";
+const String tour1 = "assets/images/th.jpeg";
 const String tour2 = "assets/images/tour3.png";
 const String location = "assets/images/location.png";
 const String viewImg = "assets/images/viewImg.png";

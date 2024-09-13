@@ -17,7 +17,9 @@ class RentalCarBooking extends StatefulWidget {
   final String data;
   // final String logi;
   // final String lati;
-  const RentalCarBooking({super.key,required this.data,
+  const RentalCarBooking({
+    super.key,
+    required this.data,
     // required this.logi, required this.lati
   });
 
@@ -26,40 +28,28 @@ class RentalCarBooking extends StatefulWidget {
 }
 
 class _RentalCarBookingState extends State<RentalCarBooking> {
-
-  List<TextEditingController> controller = List.generate(1, (index) => TextEditingController());
-  var data1,vehicleData;
+  List<TextEditingController> controller =
+      List.generate(1, (index) => TextEditingController());
+  var data1, vehicleData;
   bool load = false;
   @override
   Widget build(BuildContext context) {
-    var status = context.watch<RentalBookingCancelViewModel>().DataList.status.toString();
-    var status1 = context.watch<RentalBookingViewModel>().DataList.status.toString();
+    var status = context
+        .watch<RentalBookingCancelViewModel>()
+        .DataList
+        .status
+        .toString();
+
     // if(status == "Status.completed"){
-      data1 = context.watch<RentalBookingViewModel>().DataList.data?.data ?? "";
-      // vehicleData = context.watch<RentalBookingViewModel>().DataList.data?.data.vehicle ?? "";
-    // }
-    // ///Vehicle Details Sub Data
-    // String vehicleString = vehicleData.replaceAll('{', '').replaceAll('}', '');
-    // List<String> vehicleAttributes = vehicleString.split(", ");
-    // Map<String, dynamic> vehicleMap = {};
-    // for (String attribute in vehicleAttributes) {
-    //   List<String> keyValue = attribute.split(":");
-    //   if (keyValue.length == 2) {
-    //     String key = keyValue[0].trim();
-    //     String value = keyValue[1].trim();
-    //     if (key.isNotEmpty && value.isNotEmpty) {
-    //       vehicleMap[key] = value;
-    //     }
-    //   }
-    // }
-    // print("Data h ye ${widget.lati}");
-    // print("Data h ye ${widget.logi}");
+    data1 = context.watch<RentalBookingViewModel>().DataList.data?.data ?? "";
+
     return Scaffold(
       appBar: CustomAppBar(
         heading: "Booked Ride",
         rightIconImage: history,
         rightIconOnTapReq: true,
-        rightIconOnTapOnTap: () => context.push('/rentalForm/rentalHistory',extra: {'myIdNo':widget.data}),
+        rightIconOnTapOnTap: () => context
+            .push('/rentalForm/rentalHistory', extra: {'myIdNo': widget.data}),
       ),
       body: PageLayout_Page(
           addtionalIconReq: true,
@@ -86,25 +76,31 @@ class _RentalCarBookingState extends State<RentalCarBooking> {
                     cancelTap: () {
                       showDialog(
                           context: context,
-                        builder: (context) =>  CancelContainerDialog(
-                          loading:status == "Status.loading" && load,
-                          controllerCancel: controller[0],
-                          onTap: () {
-                            load = true;
-                            if(controller[0].text.isEmpty || controller[0].text == 'null'){
-                              Utils.flushBarErrorMessage("Please enter the reason", context);
-                            } else {
-                              Provider.of<RentalBookingCancelViewModel>(context,listen: false).
-                              fetchRentalBookingCancelViewModelApi(context, {
-                                "id" : data1.id,
-                                "reason":controller[0].text
-                              },data1.carType);
-                              context.pop();
-                              context.pop();
-                            }
-
-                          },
-                        ));
+                          builder: (context) => CancelContainerDialog(
+                                loading: status == "Status.loading" && load,
+                                controllerCancel: controller[0],
+                                onTap: () {
+                                  load = true;
+                                  if (controller[0].text.isEmpty ||
+                                      controller[0].text == 'null') {
+                                    Utils.flushBarErrorMessage(
+                                        "Please enter the reason", context);
+                                  } else {
+                                    Provider.of<RentalBookingCancelViewModel>(
+                                            context,
+                                            listen: false)
+                                        .fetchRentalBookingCancelViewModelApi(
+                                            context,
+                                            {
+                                              "id": data1.id,
+                                              "reason": controller[0].text
+                                            },
+                                            data1.carType);
+                                    context.pop();
+                                    context.pop();
+                                  }
+                                },
+                              ));
                     },
                   )
                 ],
@@ -132,24 +128,24 @@ class BookingContainer extends StatelessWidget {
   final String mobile;
   final VoidCallback cancelTap;
 
-  const BookingContainer(
-      {super.key,
-      required this.carName,
-      required this.pickDate,
-      required this.pickTime,
-      required this.hour,
-      required this.seats,
-      required this.id,
-      required this.kilometer,
-      required this.status,
-      required this.rentalCharge,
-      required this.bookingId,
-        this.pessfirstName = "",
-        this.pesslastName = "",
-        this.email = "",
-        this.mobile = "",
-      required this.cancelTap,
-      });
+  const BookingContainer({
+    super.key,
+    required this.carName,
+    required this.pickDate,
+    required this.pickTime,
+    required this.hour,
+    required this.seats,
+    required this.id,
+    required this.kilometer,
+    required this.status,
+    required this.rentalCharge,
+    required this.bookingId,
+    this.pessfirstName = "",
+    this.pesslastName = "",
+    this.email = "",
+    this.mobile = "",
+    required this.cancelTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -169,18 +165,19 @@ class BookingContainer extends StatelessWidget {
             Container(
               height: 40,
               decoration: const BoxDecoration(
-                  borderRadius: BorderRadius.only(topRight: Radius.circular(10),topLeft: Radius.circular(10)),
-                color: btnColor,
+                  borderRadius: BorderRadius.only(
+                      topRight: Radius.circular(10),
+                      topLeft: Radius.circular(10)),
+                  color: btnColor,
                   border: Border(bottom: BorderSide(color: greyColor))),
               child: Align(
                   alignment: Alignment.center,
                   child: Text(
                     "Review Booking",
                     style: GoogleFonts.lato(
-                      color: background,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700
-                    ),
+                        color: background,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700),
                   )),
             ),
             // Align(
@@ -294,6 +291,7 @@ class BookingContainer extends StatelessWidget {
                   "Booking Details",
                   style: titleTextStyle,
                 )),
+
             ///3rd Container
             Container(
               // height: 100,
@@ -341,7 +339,6 @@ class BookingContainer extends StatelessWidget {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-
                           const SizedBox(height: 5),
                           RichText(
                               overflow: TextOverflow.ellipsis,
@@ -372,7 +369,6 @@ class BookingContainer extends StatelessWidget {
                           style: loginTextStyle,
                         ),
                       ])),
-
                 ],
               ),
             ),
@@ -429,7 +425,7 @@ class BookingContainer extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 CustomButtonSmall(
-                  width: AppDimension.getWidth(context)*.85,
+                    width: AppDimension.getWidth(context) * .85,
                     btnHeading: "Cancel",
                     onTap: cancelTap),
                 // CustomButtonSmall(
@@ -446,30 +442,28 @@ class BookingContainer extends StatelessWidget {
   }
 }
 
-
 class CancelContainerDialog extends StatelessWidget {
   final TextEditingController controllerCancel;
   final VoidCallback onTap;
   final bool loading;
-  const CancelContainerDialog({
-    required this.controllerCancel,
-    this.loading = false,
-    required this.onTap, super.key});
+  const CancelContainerDialog(
+      {required this.controllerCancel,
+      this.loading = false,
+      required this.onTap,
+      super.key});
 
   @override
   Widget build(BuildContext context) {
     return Dialog(
       shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(10))
-      ),
+          borderRadius: BorderRadius.all(Radius.circular(10))),
       child: Container(
         decoration: const BoxDecoration(
             color: background,
-            borderRadius: BorderRadius.all(Radius.circular(10))
-        ),
+            borderRadius: BorderRadius.all(Radius.circular(10))),
         // height: AppDimension.getHeight(context)*.4,
         padding: const EdgeInsets.only(bottom: 10),
-        width: AppDimension.getWidth(context)*.7,
+        width: AppDimension.getWidth(context) * .7,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -481,14 +475,14 @@ class CancelContainerDialog extends StatelessWidget {
                     borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(10),
                       topRight: Radius.circular(10),
-                    )
-                ),
-                child:Row(
+                    )),
+                child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     const SizedBox(
                       height: 30,
-                      width: 30,),
+                      width: 30,
+                    ),
                     const CustomTextWidget(
                       content: "Cancel Booking",
                       fontSize: 18,
@@ -500,25 +494,27 @@ class CancelContainerDialog extends StatelessWidget {
                       child: InkWell(
                         onTap: () {
                           context.pop();
-
-                        } ,
+                        },
                         child: Container(
                             padding: const EdgeInsets.all(2),
                             height: 30,
                             width: 30,
-                            child: const Icon(Icons.close,color: background,)),
+                            child: const Icon(
+                              Icons.close,
+                              color: background,
+                            )),
                       ),
                     ),
                   ],
                 )
-              // const Center(
-              //   child:
-              // ),
-            ),
+                // const Center(
+                //   child:
+                // ),
+                ),
             const SizedBox(height: 10),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10),
-              child:  Column(
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const CustomTextWidget(
@@ -529,20 +525,18 @@ class CancelContainerDialog extends StatelessWidget {
                   ),
                   const SizedBox(height: 25),
                   Container(
-                    height: AppDimension.getHeight(context)*.15,
+                    height: AppDimension.getHeight(context) * .15,
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: curvePageColor)
-                    ),
+                        border: Border.all(color: curvePageColor)),
                     child: TextFormField(
                       maxLines: 5,
                       controller: controllerCancel,
                       decoration: const InputDecoration(
-                          contentPadding: EdgeInsets.symmetric(horizontal: 5,vertical: 5),
+                          contentPadding:
+                              EdgeInsets.symmetric(horizontal: 5, vertical: 5),
                           border: UnderlineInputBorder(
-                              borderSide: BorderSide.none
-                          )
-                      ),
+                              borderSide: BorderSide.none)),
                     ),
                   ),
                   const SizedBox(height: 10),
@@ -550,9 +544,9 @@ class CancelContainerDialog extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       CustomButtonBig(
-                        loading: loading,
+                          loading: loading,
                           height: 40,
-                          widht: AppDimension.getWidth(context)*.25,
+                          widht: AppDimension.getWidth(context) * .25,
                           btnHeading: "Submit",
                           onTap: onTap),
                     ],

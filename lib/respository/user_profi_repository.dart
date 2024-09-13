@@ -84,14 +84,9 @@ class UserProfileUpdateRepository {
       print({"passord change response": response?.data});
       var resp = ChangePasswordModel.fromJson(response?.data);
       return resp;
-    } on DioException catch (error) {
-      BaseResponseModel baseResponseModel =
-          BaseResponseModel.fromJson(error.response?.data);
-      print(baseResponseModel.status?.message);
-
+    } catch (error) {
       print({'error..': error});
-      http.handleErrorResponse(
-          context: context, error: error, errorResponse: baseResponseModel);
+      http.handleErrorResponse(context: context, error: error);
     }
     return null;
   }

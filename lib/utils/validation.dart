@@ -13,7 +13,7 @@ class Validation {
 
   Future<bool> isPinCode(String value) async {
     return await Future.delayed(const Duration(seconds: 2),
-            () => RegExp(r'^(?:[+0][1-9])?[0-9]{6}$').hasMatch(value));
+        () => RegExp(r'^(?:[+0][1-9])?[0-9]{6}$').hasMatch(value));
   }
 
 //sync address check
@@ -36,6 +36,14 @@ class Validation {
     return await Future.delayed(const Duration(seconds: 2),
         () => RegExp(r'^(?:[+0][1-9])?[0-9]{10}$').hasMatch(value));
   }
+
+  String? validatePassword(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter a password';
+    }
+    if (value.length < 6) {
+      return 'Password must be at least 6 characters long';
+    }
+    return null;
+  }
 }
-
-

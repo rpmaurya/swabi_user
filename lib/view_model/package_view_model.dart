@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/response/api_response.dart';
+import 'package:flutter_cab/model/changeMobileModel.dart';
 import 'package:flutter_cab/model/packageModels.dart';
 import 'package:flutter_cab/respository/packageRepository.dart';
 import 'package:flutter_cab/utils/utils.dart';
@@ -96,84 +97,45 @@ class GetPackageBookingByIdViewModel with ChangeNotifier {
 class GetPackageHistoryViewModel with ChangeNotifier {
   final _myRepo = GetPackageHistoryRepository();
   ApiResponse<GetPackageHistoryModel> getBookedHistory = ApiResponse.loading();
-  ApiResponse<GetPackageHistoryModel> getUpcommingHistory =
-      ApiResponse.loading();
-  ApiResponse<GetPackageHistoryModel> getCompletedHistory =
-      ApiResponse.loading();
-  ApiResponse<GetPackageHistoryModel> getCancelledHistory =
-      ApiResponse.loading();
-
   setDataList(ApiResponse<GetPackageHistoryModel> response) {
     getBookedHistory = response;
     notifyListeners();
   }
 
-  setDataList1(ApiResponse<GetPackageHistoryModel> response) {
-    getCompletedHistory = response;
-    notifyListeners();
-  }
+// Asynchronous function to fetch data from the repository
+  Future<GetPackageHistoryModel?> fetchGetPackageHistoryBookedViewModelApi(
+      BuildContext context, Map<String, dynamic> data) async {
+    try {
+      // Set state to loading before starting the API call
+      setDataList(ApiResponse.loading());
 
-  setDataList2(ApiResponse<GetPackageHistoryModel> response) {
-    getCancelledHistory = response;
-    notifyListeners();
-  }
+      // Await the API call
+      final value = await _myRepo.getPackageHistoryRepositoryApi(data);
 
-  setDataList3(ApiResponse<GetPackageHistoryModel> response) {
-    getUpcommingHistory = response;
-    notifyListeners();
-  }
-
-  Future<void> fetchGetPackageHistoryBookedViewModelApi(
-      BuildContext context, data) async {
-    setDataList(ApiResponse.loading());
-    _myRepo.getPackageHistoryRepositoryApi(data).then((value) async {
+      // Set the state to completed when the API call is successful
       setDataList(ApiResponse.completed(value));
+
       debugPrint('Get Package History ViewModel Success');
-    }).onError((error, stackTrace) {
-      debugPrint(error.toString());
-      debugPrint('Get Package History ViewModel Failed');
+      return value;
+    } catch (error) {
+      // If there's an error, set the state to error
+      debugPrint('Get Package History ViewModel Failed: $error');
       setDataList(ApiResponse.error(error.toString()));
-    });
+    }
+    return null;
   }
-
-  Future<void> fetchGetPackageHistoryUpCommingViewModelApi(
-      BuildContext context, data) async {
-    setDataList3(ApiResponse.loading());
-    _myRepo.getPackageHistoryRepositoryApi(data).then((value) async {
-      setDataList3(ApiResponse.completed(value));
-      debugPrint('Get Package History ViewModel Success');
-    }).onError((error, stackTrace) {
-      debugPrint(error.toString());
-      debugPrint('Get Package History ViewModel Failed');
-      setDataList3(ApiResponse.error(error.toString()));
-    });
-  }
-
-  Future<void> fetchGetPackageHistoryCompletedViewModelApi(
-      BuildContext context, data) async {
-    setDataList1(ApiResponse.loading());
-    _myRepo.getPackageHistoryRepositoryApi(data).then((value) async {
-      setDataList1(ApiResponse.completed(value));
-      debugPrint('Get Package History ViewModel Success');
-    }).onError((error, stackTrace) {
-      debugPrint(error.toString());
-      debugPrint('Get Package History ViewModel Failed');
-      setDataList1(ApiResponse.error(error.toString()));
-    });
-  }
-
-  Future<void> fetchGetPackageHistoryCancelledViewModelApi(
-      BuildContext context, data) async {
-    setDataList2(ApiResponse.loading());
-    _myRepo.getPackageHistoryRepositoryApi(data).then((value) async {
-      setDataList2(ApiResponse.completed(value));
-      debugPrint('Get Package Canacelled ViewModel Success');
-    }).onError((error, stackTrace) {
-      debugPrint(error.toString());
-      debugPrint('Get Package History ViewModel Failed');
-      setDataList2(ApiResponse.error(error.toString()));
-    });
-  }
+  // Future<void> fetchGetPackageHistoryBookedViewModelApi(
+  //     BuildContext context, data) async {
+  //   setDataList(ApiResponse.loading());
+  //   _myRepo.getPackageHistoryRepositoryApi(data).then((value) async {
+  //     setDataList(ApiResponse.completed(value));
+  //     debugPrint('Get Package History ViewModel Success');
+  //   }).onError((error, stackTrace) {
+  //     debugPrint(error.toString());
+  //     debugPrint('Get Package History ViewModel Failed');
+  //     setDataList(ApiResponse.error(error.toString()));
+  //   });
+  // }
 }
 
 // Get Package History Detail By Id View Model
@@ -195,6 +157,21 @@ class GetPackageHistoryDetailByIdViewModel with ChangeNotifier {
       // context.push("/package/packageDetails",extra: {"packageID":packID,"userId":uId,"bookDate":dateBooking});
       context.push("/package/packageDetailsPageView",
           extra: {"user": userID, "book": bookingID});
+      debugPrint('Get Package History Detail By Id ViewModel Success');
+    }).onError((error, stackTrace) {
+      debugPrint(error.toString());
+      debugPrint('Get Package History Detail By Id ViewModel Failed');
+      setDataList(ApiResponse.error(error.toString()));
+    });
+  }
+
+  Future<void> fetchPackageHistoryDetailByIdViewModelApi(
+      BuildContext context, data, String bookingID) async {
+    setDataList(ApiResponse.loading());
+    _myRepo.getPackageHistoryDetailByIdRepositoryApi(data).then((value) async {
+      setDataList(ApiResponse.completed(value));
+      // context.push("/package/packageDetails",extra: {"packageID":packID,"userId":uId,"bookDate":dateBooking});
+
       debugPrint('Get Package History Detail By Id ViewModel Success');
     }).onError((error, stackTrace) {
       debugPrint(error.toString());
@@ -227,7 +204,7 @@ class PackageCancelViewModel with ChangeNotifier {
         "pageSize": "100",
       }).then((value) =>
               Provider.of<GetPackageHistoryViewModel>(context, listen: false)
-                  .fetchGetPackageHistoryCancelledViewModelApi(context, {
+                  .fetchGetPackageHistoryBookedViewModelApi(context, {
                 "userId": urId,
                 "bookingStatus": "CANCELLED",
                 "pageNumber": "0",
@@ -297,5 +274,41 @@ class GetPackageItineraryViewModel with ChangeNotifier {
       debugPrint('GetPackageItinerary ViewModel Failed');
       setDataList(ApiResponse.error(error.toString()));
     });
+  }
+}
+
+class ChangeMobileViewModel with ChangeNotifier {
+  final _myRepo = ChangeMobileRepository();
+  ApiResponse<ChangeMobileModel> changeMobile = ApiResponse.loading();
+
+  setDataList(ApiResponse<ChangeMobileModel> response) {
+    changeMobile = response;
+    notifyListeners();
+  }
+
+  Future<ChangeMobileModel?> changeMobileApi(
+      {required BuildContext context,
+      required Map<String, dynamic> body,
+      required String bookingId}) async {
+    try {
+      setDataList(ApiResponse.loading());
+      _myRepo.changeMobile(context: context, body: body).then((onValue) {
+        if (onValue?.status?.httpCode == '200') {
+          setDataList(ApiResponse.completed(onValue));
+          Provider.of<GetPackageHistoryDetailByIdViewModel>(context,
+                  listen: false)
+              .fetchPackageHistoryDetailByIdViewModelApi(
+                  context, {"packageBookingId": bookingId}, bookingId);
+          // print("Signup Success");
+          Utils.flushBarSuccessMessage("changed Successfully", context);
+        }
+        context.pop();
+      }).onError((error, stactrace) {
+        setDataList(ApiResponse.error(error.toString()));
+      });
+    } catch (e) {
+      print('errrrrrrrrrrrrrrrrrrrr$e');
+    }
+    return null;
   }
 }

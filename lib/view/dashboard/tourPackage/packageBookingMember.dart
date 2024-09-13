@@ -1,27 +1,27 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_cab/model/user_profile_model.dart';
-import 'package:flutter_cab/res/Common%20Widgets/common_alertTextfeild.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
+import 'package:flutter_cab/res/Custom%20%20Button/customdropdown_button.dart';
 import 'package:flutter_cab/res/Custom%20Page%20Layout/commonPage_Layout.dart';
+import 'package:flutter_cab/res/Custom%20Widgets/CustomTextFormfield.dart';
+import 'package:flutter_cab/res/Custom%20Widgets/customPhoneField.dart';
 import 'package:flutter_cab/res/customAppBar_widget.dart';
 import 'package:flutter_cab/res/customContainer.dart';
 import 'package:flutter_cab/res/customTextWidget.dart';
-import 'package:flutter_cab/res/login/login_customTextFeild.dart';
-import 'package:flutter_cab/res/razorPay_payment.dart';
-import 'package:flutter_cab/res/validationTextFeild.dart';
-import 'package:flutter_cab/utils/assets.dart';
 import 'package:flutter_cab/utils/color.dart';
 import 'package:flutter_cab/utils/dimensions.dart';
 import 'package:flutter_cab/utils/text_styles.dart';
 import 'package:flutter_cab/utils/utils.dart';
 import 'package:flutter_cab/view_model/package_view_model.dart';
 import 'package:flutter_cab/view_model/payment_gateway_view_model.dart';
+import 'package:flutter_cab/view_model/services/paymentService.dart';
 import 'package:flutter_cab/view_model/userProfile_view_model.dart';
-import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 
-import '../../../res/increaseORdiscreaseButton.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:intl_phone_field/countries.dart';
+import 'package:marquee/marquee.dart';
+
+import 'package:provider/provider.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 class PackageBookingMemberPage extends StatefulWidget {
   final String userID;
@@ -44,69 +44,89 @@ class PackageBookingMemberPage extends StatefulWidget {
 class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
   List<TextEditingController> controller =
       List.generate(2, (index) => TextEditingController());
+  final _formKey = GlobalKey<FormState>();
+  TextEditingController nameController = TextEditingController();
+  TextEditingController ageController = TextEditingController();
+  TextEditingController genderController = TextEditingController();
+  TextEditingController primaryNoController = TextEditingController();
+  TextEditingController secondaryNoController = TextEditingController();
+  FocusNode focusNode4 = FocusNode();
+  FocusNode focusNode5 = FocusNode();
 
+  FocusNode focusNode1 = FocusNode();
+  FocusNode focusNode2 = FocusNode();
+  FocusNode focusNode3 = FocusNode();
+  GlobalKey _phoneKey = GlobalKey();
+  bool tableIcon = false;
+
+  // String ageUnit = '';
   List<Map<String, dynamic>> members = [];
   double amount = 0.0;
   bool loader = false;
+  bool isAddAdultDisabled = false;
+  bool isAddChildDisabled = false;
+  bool isAddInfentDisabled = false;
+  String validationMessage = '';
+  String primaryCountryCode = '';
+  String secondaryCountryCode = '';
+  String initialCountryCode = 'AE';
 
-  int adultNumber = 0;
-  int childNumber = 0;
-  int infentNumber = 0;
-  bool isAddAdultDisabled = true;
-  bool isAddChildDisabled = true;
-  bool isAddInfentDisabled = true;
-  int intAdultNumber = 0;
-  int intChildNumber = 0;
-  int intInfentdNumber = 0;
-  bool tableIcon = false;
-  String type = "";
+  // int adultNumber = 0;
+  // int childNumber = 0;
+  // int infentNumber = 0;
+
+  // int intAdultNumber = 0;
+  // int intChildNumber = 0;
+  // int intInfentdNumber = 0;
+  // String type = "";
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    updateButtonStates();
+    // updateButtonStates();
     controller[0].text = widget.bookingDate;
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       Provider.of<UserProfileViewModel>(context, listen: false)
           .fetchUserProfileViewModelApi(context, {'userId': widget.userID});
+      getData();
     });
   }
 
-  void addAmount(List<Map<String, dynamic>> data, {bool onCreate = true}) {
-    amount = 0.0;
-    List<int> check = data.map((e) => int.parse(e["age"])).toList();
-    for (int i = 0; i < check.length; i++) {
-      if (check[i] > 5) {
-        setState(() {
-          amount += double.parse(widget.amt);
-        });
+  getData() async {
+    await Future.delayed(Duration(seconds: 2));
+    final userProfile =
+        await Provider.of<UserProfileViewModel>(context, listen: false)
+            .DataList
+            .data!
+            .data;
+
+    // Set the primary country code and primary number
+    setState(() {
+      primaryCountryCode = userProfile.countryCode;
+      primaryNoController.text = userProfile.mobile;
+      var list = countries
+          .where((code) => code.dialCode == primaryCountryCode)
+          .toList();
+      if (list.isNotEmpty) {
+        // controllers[4].text = list.first.dialCode;
+        initialCountryCode = list.first.code;
+        _phoneKey = GlobalKey();
+        //  = list.first.code;
+        print('isocode.................... ${list.first.code}');
       }
-    }
+    });
   }
 
-  ////Update DataTable button Condition
-  void updateButtonStates() {
-    int adultCount =
-        members.where((m) => int.parse(m['age'].toString()) >= 18).length;
-    int childCount =
-        members.where((m) => int.parse(m['age'].toString()) < 18).length;
-    int infentCount =
-        members.where((m) => int.parse(m['age'].toString()) < 2).length;
+  void _addAmount() {
     setState(() {
-      isAddAdultDisabled = adultCount >= adultNumber;
-      isAddChildDisabled = childCount >= childNumber;
-      isAddInfentDisabled = infentCount >= infentNumber;
-      // Enable buttons if there are fewer members than the selected counter values
-      if (adultCount < adultNumber) {
-        isAddAdultDisabled = false;
-      }
-      if (childCount < childNumber) {
-        isAddChildDisabled = false;
-      }
-      if (infentCount < infentNumber) {
-        isAddInfentDisabled = false;
-      }
+      amount += double.parse(widget.amt);
+    });
+  }
+
+  void _subAmount() {
+    setState(() {
+      amount -= double.parse(widget.amt);
     });
   }
 
@@ -116,145 +136,169 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
     return amount == 0.0 || noAdultsPresent;
   }
 
-  ///Adult Show Dialog member Added
-  void _addAdultMember() {
-    String name = "";
-    String age = "0";
-    String gender = "";
-    String ageUnit = '';
-    controller[1].clear();
+  /// Add memeber
+  void _addMember(
+      {required String title, required String ageUnit, required String type}) {
+    nameController.text = '';
+    ageController.text = '';
+    genderController.text = '';
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return SingleChildScrollView(
-          padding: const EdgeInsets.only(top: 70),
-          physics: const NeverScrollableScrollPhysics(),
-          child: AlertDialog(
-            backgroundColor: background,
-            surfaceTintColor: background,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-            title: const CustomTextWidget(
-                content: "ADD ADULT MEMBER",
-                align: TextAlign.center,
-                fontSize: 25),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                ValidationTextField(
-                    headingReq: true,
-                    heading: "Name",
-                    validation: true,
-                    prefixIcon: true,
-                    img: user,
-                    onChange: (p0) {
-                      name = p0;
-                    },
-                    hint: "Enter Name",
-                    controller: TextEditingController()),
-                // CustomTextFeild(
-                //   controller: TextEditingController(),
-                //   headingReq: true,
-                //   prefixIcon: true,
-                //   img: user,
-                //   onChange: (p0) {
-                //     name = p0;
-                //   },
-                //   heading: "Name",
-                //   hint: "Enter Name",
-                // ),
-                const SizedBox(height: 10),
-                CustomTextFeild(
-                  controller: TextEditingController(),
-                  // width: AppDimension.getWidth(context)*.9,
-                  headingReq: true,
-                  prefixIcon: true,
-                  img: user,
-                  number: true,
-                  digitNumber: 2,
-                  onChange: (p0) {
-                    age = p0;
-                  },
-                  heading: "Age",
-                  hint: "Enter Age",
-                ),
-                const SizedBox(height: 10),
-                FormCommonSingleAlertSelector(
-                  title: "Gender",
-                  controller: controller[1],
-                  textStyle: titleTextStyle,
-                  showIcon: const Icon(
-                    Icons.event_seat,
-                    color: naturalGreyColor,
-                  ),
-                  iconReq: false,
-                  data: const ["Male", "Female"],
-                  // icons: gender,
-                  icon: genderImg,
-                  elevation: 0,
+        return StatefulBuilder(
+            builder: (BuildContext context, StateSetter setstate) {
+          return SingleChildScrollView(
+            padding: const EdgeInsets.only(top: 70),
+            physics: const NeverScrollableScrollPhysics(),
+            child: AlertDialog(
+              backgroundColor: background,
+              surfaceTintColor: background,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10)),
+              title: CustomTextWidget(
+                  content: title, align: TextAlign.center, fontSize: 25),
+              content: Form(
+                key: _formKey,
+                // autovalidateMode: AutovalidateMode.disabled,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 5),
+                      child: Text(
+                        'Name',
+                        style: titleTextStyle,
+                      ),
+                    ),
+                    Customtextformfield(
+                      focusNode: focusNode1,
+                      controller: nameController,
+                      hintText: 'Enter Name',
+                      // errorText:
+                      //     validationMessage.isEmpty ? '' : validationMessage,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter name';
+                        }
+                        return null;
+                      },
+                      // onChanged: (p0) {
+                      //   if (p0 != '') {
+                      //     setstate(() {
+                      //       validationMessage = 'return error';
+                      //     });
+                      //   } else {
+                      //     validationMessage = '';
+                      //   }
+                      // },
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 5),
+                      child: Text(
+                        'Age',
+                        style: titleTextStyle,
+                      ),
+                    ),
+                    Customtextformfield(
+                      focusNode: focusNode2,
+                      controller: ageController,
+                      keyboardType: TextInputType.number,
+                      hintText: 'Enter Age',
+                      validator: (value) {
+                        int age = int.tryParse(value ?? '')?.toInt() ?? 0;
 
-                  ///Hint Color
-                  initialValue: "Select Gender",
-                  alertBoxTitle: "Select Gender",
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter age';
+                        } else if (type == 'Adult') {
+                          print('type of member1$type');
+                          if (age < 18 || age >= 60) {
+                            return 'Adult must be 18 Year or older';
+                          }
+                        } else if (type == 'Child') {
+                          print('type of member2$type');
+                          if (age <= 2 || age >= 18) {
+                            return 'Child must be under 2 to 18 Year';
+                          }
+                        } else if (type == 'Infant') {
+                          print('type of member3$type');
+                          if (age >= 24) {
+                            return 'Infant must be under 24 Month';
+                          }
+                        }
+                        return null;
+                      },
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 5),
+                      child: Text(
+                        'Gender',
+                        style: titleTextStyle,
+                      ),
+                    ),
+                    CustomDropdownButton(
+                        focusNode: focusNode3,
+                        itemsList: ['Male', 'Female'],
+                        onChanged: (value) {
+                          setState(() {
+                            genderController.text = value;
+                          });
+                        },
+                        hintText: 'Select Gender')
+                  ],
+                ),
+              ),
+              actions: [
+                CustomButtonSmall(
+                  width: 80,
+                  btnHeading: "CANCEL",
+                  onTap: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+                CustomButtonSmall(
+                  width: 80,
+                  onTap: () {
+                    if (_formKey.currentState!.validate()) {
+                      print('succes');
+                      setState(() {
+                        members.add({
+                          'name': nameController.text,
+                          'age': ageController.text,
+                          'gender': genderController.text,
+                          'ageUnit': ageUnit,
+                          'type': type
+                        });
+                        // updateButtonStates();
+                      });
+                      type == 'Infant' ? null : _addAmount();
+                      ageUnit = '';
+                      type = '';
+                      nameController.text = '';
+                      ageController.text = '';
+                      genderController.text = '';
+                      Navigator.of(context).pop();
+                    }
+                  },
+                  btnHeading: "ADD",
                 ),
               ],
             ),
-            actions: [
-              CustomButtonSmall(
-                width: 80,
-                btnHeading: "CANCEL",
-                onTap: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-              CustomButtonSmall(
-                width: 80,
-                onTap: () {
-                  ageUnit = 'Year';
-                  gender = controller[1].text;
-                  if (name.isEmpty || name.length >= 25) {
-                    Utils.flushBarErrorMessage("Please Enter Name", context);
-                  } else if (age.isEmpty || double.parse(age) <= 0) {
-                    Utils.flushBarErrorMessage("Please Enter Age", context);
-                  } else if (double.parse(age) < 18) {
-                    Utils.flushBarErrorMessage(
-                        "Adult must be 18 or older", context);
-                  } else if (controller[1].text.isEmpty) {
-                    Utils.flushBarErrorMessage("Please Enter Gender", context);
-                  } else {
-                    setState(() {
-                      members.add({
-                        'name': name,
-                        'age': age,
-                        'gender': gender,
-                        'ageUnit': ageUnit,
-                      });
-                      updateButtonStates();
-                    });
-                    addAmount(members);
-                    name = '';
-                    age = '';
-                    gender = '';
-                    ageUnit = '';
-                    Navigator.of(context).pop();
-                  }
-                },
-                btnHeading: "ADD",
-              ),
-            ],
-          ),
-        );
+          );
+        });
       },
     );
   }
 
-  ///Child Show Dialog member Added
-  void _addChildMember() {
-    String name = "";
-    String age = "0";
-    String gender = "";
-    String ageUnit = '';
-    controller[1].clear();
+  /// Update memeber
+  void _editMember(
+      {required String title,
+      required int index,
+      required String ageUnit,
+      required String type}) {
+    nameController.text = members[index]['name'];
+    ageController.text = members[index]['age'];
+    genderController.text = members[index]['gender'];
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -266,83 +310,88 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
             surfaceTintColor: background,
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-            title: const CustomTextWidget(
-                content: "ADD CHILD MEMBER",
-                align: TextAlign.center,
-                fontSize: 25),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                ValidationTextField(
-                    headingReq: true,
-                    heading: "Name",
-                    validation: true,
-                    prefixIcon: true,
-                    img: user,
-                    onChange: (p0) {
-                      name = p0;
-                    },
-                    hint: "Enter Name",
-                    controller: TextEditingController()),
-                // CustomTextFeild(
-                //   controller: TextEditingController(),
-                //   headingReq: true,
-                //   prefixIcon: true,
-                //   img: user,
-                //   onChange: (p0) {
-                //     name = p0;
-                //   },
-                //   heading: "Name",
-                //   hint: "Enter Name",
-                // ),
-                const SizedBox(height: 10),
-                CustomTextFeild(
-                  controller: TextEditingController(),
-                  // width: AppDimension.getWidth(context)*.9,
-                  headingReq: true,
-                  prefixIcon: true,
-                  img: user,
-                  number: true,
-                  digitNumber: 2,
-                  onChange: (p0) {
-                    age = p0;
-                  },
-                  heading: "Age",
-                  hint: "Enter Age",
-                ),
-                // CustomTextFeild(
-                //   controller: TextEditingController(),
-                //   // width: AppDimension.getWidth(context)*.9,
-                //   headingReq: true,
-                //   prefixIcon: true,
-                //   img: user,
-                //   number: true,
-                //   digitNumber: 2,
-                //   onChange: (p0) {
-                //     type = p0;
-                //   },
-                //   heading: "Type",
-                // ),
-                const SizedBox(height: 10),
-                FormCommonSingleAlertSelector(
-                  title: "Gender",
-                  controller: controller[1],
-                  textStyle: titleTextStyle,
-                  showIcon: const Icon(
-                    Icons.event_seat,
-                    color: naturalGreyColor,
+            title: CustomTextWidget(
+                content: title, align: TextAlign.center, fontSize: 25),
+            content: Form(
+              key: _formKey,
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 5),
+                    child: Text(
+                      'Name',
+                      style: titleTextStyle,
+                    ),
                   ),
-                  iconReq: false,
-                  data: const ["Male", "Female"],
-                  // icons: gender,
-                  icon: genderImg,
-                  elevation: 0,
+                  Customtextformfield(
+                    focusNode: focusNode1,
+                    controller: nameController,
+                    hintText: 'Enter Name',
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter name';
+                      }
+                      return null;
+                    },
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 5),
+                    child: Text(
+                      'Age',
+                      style: titleTextStyle,
+                    ),
+                  ),
+                  Customtextformfield(
+                    focusNode: focusNode2,
+                    controller: ageController,
+                    keyboardType: TextInputType.number,
+                    hintText: 'Enter Age',
+                    validator: (value) {
+                      int age = int.tryParse(value ?? '')?.toInt() ?? 0;
 
-                  ///Hint Color
-                  initialValue: "Select Gender",
-                  alertBoxTitle: "Select Gender",
-                ),
-              ],
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter age';
+                      } else if (type == 'Adult') {
+                        print('type of member1$type');
+                        if (age <= 18 || age >= 60) {
+                          return 'Adult must be 18 Year or older';
+                        }
+                      } else if (type == 'Child') {
+                        print('type of member2$type');
+                        if (age >= 18) {
+                          return 'Child must be under 18 Year';
+                        }
+                      } else if (type == 'Infant') {
+                        print('type of member3$type');
+                        if (age >= 24) {
+                          return 'Infant must be under 24 Month';
+                        }
+                      }
+                      return null;
+                    },
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 5),
+                    child: Text(
+                      'Age',
+                      style: titleTextStyle,
+                    ),
+                  ),
+                  CustomDropdownButton(
+                      selecteValue: genderController.text,
+                      focusNode: focusNode3,
+                      itemsList: ['Male', 'Female'],
+                      onChanged: (value) {
+                        setState(() {
+                          genderController.text = value;
+                        });
+                      },
+                      hintText: 'Select Gender')
+                ],
+              ),
             ),
             actions: [
               CustomButtonSmall(
@@ -355,166 +404,19 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
               CustomButtonSmall(
                 width: 80,
                 onTap: () {
-                  ageUnit = 'Year';
-                  gender = controller[1].text;
-                  if (name.isEmpty || name.length >= 25) {
-                    Utils.flushBarErrorMessage("Please Enter Name", context);
-                  } else if (age.isEmpty || double.parse(age) <= 0) {
-                    Utils.flushBarErrorMessage("Please Enter Age", context);
-                  } else if (double.parse(age) >= 18) {
-                    Utils.flushBarErrorMessage(
-                        "Child must be under 18", context);
-                  } else if (controller[1].text.isEmpty) {
-                    Utils.flushBarErrorMessage("Please Enter Gender", context);
-                  } else {
+                  if (_formKey.currentState!.validate()) {
+                    print('succes');
                     setState(() {
-                      members.add({
-                        'name': name,
-                        'age': age,
-                        'gender': gender,
+                      members[index] = {
+                        'name': nameController.text,
+                        'age': ageController.text,
+                        'gender': genderController.text,
                         'ageUnit': ageUnit,
-                      });
-                      updateButtonStates();
+                        'type': type
+                      };
+                      // updateButtonStates();
                     });
-                    addAmount(members);
-                    name = '';
-                    age = '';
-                    gender = '';
-                    ageUnit = '';
-                    Navigator.of(context).pop();
-                  }
-                },
-                btnHeading: "ADD",
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  ///Child Show Dialog member Added
-  void _addInfantdMember() {
-    String name = "";
-    String age = "0";
-    String gender = "";
-    String ageUnit = '';
-    controller[1].clear();
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return SingleChildScrollView(
-          padding: const EdgeInsets.only(top: 70),
-          physics: const NeverScrollableScrollPhysics(),
-          child: AlertDialog(
-            backgroundColor: background,
-            surfaceTintColor: background,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-            title: const CustomTextWidget(
-                content: "ADD INFANT MEMBER",
-                align: TextAlign.center,
-                fontSize: 25),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                ValidationTextField(
-                    headingReq: true,
-                    heading: "Name",
-                    validation: true,
-                    prefixIcon: true,
-                    img: user,
-                    onChange: (p0) {
-                      name = p0;
-                    },
-                    hint: "Enter Name",
-                    controller: TextEditingController()),
-                // CustomTextFeild(
-                //   controller: TextEditingController(),
-                //   headingReq: true,
-                //   prefixIcon: true,
-                //   img: user,
-                //   onChange: (p0) {
-                //     name = p0;
-                //   },
-                //   heading: "Name",
-                //   hint: "Enter Name",
-                // ),
-                const SizedBox(height: 10),
-                CustomTextFeild(
-                  controller: TextEditingController(),
-                  // width: AppDimension.getWidth(context)*.9,
-                  headingReq: true,
-                  prefixIcon: true,
-                  img: user,
-                  number: true,
-                  digitNumber: 2,
-                  onChange: (p0) {
-                    age = p0;
-                    // double age1 = double.parse('${age/12}');
-                    // print(age1);
-                  },
-                  heading: "Age",
-                  hint: "Enter Age",
-                ),
-                const SizedBox(height: 10),
-                FormCommonSingleAlertSelector(
-                  title: "Gender",
-                  controller: controller[1],
-                  textStyle: titleTextStyle,
-                  showIcon: const Icon(
-                    Icons.event_seat,
-                    color: naturalGreyColor,
-                  ),
-                  iconReq: false,
-                  data: const ["Male", "Female"],
-                  // icons: gender,
-                  icon: genderImg,
-                  elevation: 0,
-
-                  ///Hint Color
-                  initialValue: "Select Gender",
-                  alertBoxTitle: "Select Gender",
-                ),
-              ],
-            ),
-            actions: [
-              CustomButtonSmall(
-                width: 80,
-                btnHeading: "CANCEL",
-                onTap: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-              CustomButtonSmall(
-                width: 80,
-                onTap: () {
-                  ageUnit = 'Month';
-                  gender = controller[1].text;
-                  if (name.isEmpty || name.length >= 25) {
-                    Utils.flushBarErrorMessage("Please Enter Name", context);
-                  } else if (age.isEmpty || double.parse(age) <= 0) {
-                    Utils.flushBarErrorMessage("Please Enter Age", context);
-                  } else if (double.parse(age) >= 24) {
-                    Utils.flushBarErrorMessage(
-                        "Infant must be under 24 month", context);
-                  } else if (controller[1].text.isEmpty) {
-                    Utils.flushBarErrorMessage("Please Enter Gender", context);
-                  } else {
-                    setState(() {
-                      members.add({
-                        'name': name,
-                        'age': age,
-                        'gender': gender,
-                        'ageUnit': ageUnit
-                      });
-                      updateButtonStates();
-                    });
-                    addAmount(members);
-                    name = '';
-                    age = '';
-                    gender = '';
-                    ageUnit = '';
+                    // type == 'Infant' ? null : _subAmount();
                     Navigator.of(context).pop();
                   }
                 },
@@ -531,8 +433,16 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
   void dispose() {
     // TODO: implement dispose
     super.dispose();
-    controller[0].dispose();
-    controller[1].dispose();
+    nameController.dispose();
+    ageController.dispose();
+    genderController.dispose();
+    primaryNoController.dispose();
+    secondaryNoController.dispose();
+    focusNode4.dispose();
+    focusNode5.dispose();
+    focusNode1.dispose();
+    focusNode2.dispose();
+    focusNode3.dispose();
   }
 
   // bool tableIcon = false;
@@ -545,9 +455,17 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
         .status
         .toString();
     profileUser = context.watch<UserProfileViewModel>().DataList.data?.data;
+    // primaryCountryCode =
+    //     context.watch<UserProfileViewModel>().DataList.data?.data.countryCode ??
+    //         '';
+    // primaryNoController.text =
+    //     context.watch<UserProfileViewModel>().DataList.data?.data.mobile ?? '';
     debugPrint("${widget.userID}User");
     debugPrint("${widget.packageID}package");
     debugPrint("${widget.amt}amount");
+    debugPrint('${primaryCountryCode}countrycode,,,,');
+    debugPrint('${primaryNoController.text}primary number,,,,');
+
     return Scaffold(
       backgroundColor: bgGreyColor,
       resizeToAvoidBottomInset: false,
@@ -560,13 +478,35 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               const SizedBox(height: 5),
+
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: Column(
                   children: [
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
                       children: [
+                        SizedBox(
+                          height: 20,
+                          child: Marquee(
+                            showFadingOnlyWhenScrolling: false,
+                            text:
+                                '*Children under 2 years old can be booked for free. and Certain activities are not recommended for senior citizens due to potential health risks.*',
+                            style: const TextStyle(
+                                fontWeight: FontWeight.bold, color: redColor),
+                            scrollAxis: Axis.horizontal,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            blankSpace: AppDimension.getWidth(context),
+                            velocity: 100.0,
+                            pauseAfterRound: Duration(seconds: 1),
+                            startPadding: 0,
+                            accelerationDuration: Duration(seconds: 1),
+                            accelerationCurve: Curves.linear,
+                            decelerationDuration: Duration(milliseconds: 500),
+                            decelerationCurve: Curves.easeOut,
+                          ),
+                        ),
                         Container(
                           margin: const EdgeInsets.only(bottom: 5),
                           child: Text(
@@ -578,7 +518,7 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                         CommonContainer(
                           width: AppDimension.getWidth(context) * .94,
                           // width: AppDimension.getWidth(context) / 1.4,
-                          height: 50,
+                          height: 45,
                           padding: const EdgeInsets.symmetric(horizontal: 5),
                           borderReq: true,
                           elevation: 0,
@@ -600,51 +540,68 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                             ],
                           ),
                         ),
-                      ],
-                    ),
-                    const SizedBox(height: 10),
-                    Wrap(
-                      alignment: WrapAlignment.center,
-                      spacing: 30.0,
-                      runSpacing: 10.0,
-                      // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        DynamicCounter(
-                          label: "Adult:",
-                          initialValue: 0,
-                          limit: 10,
-                          onChanged: (adultVal) {
-                            setState(() {
-                              adultNumber = adultVal;
-                              updateButtonStates();
-                              // isAddAdultDisabled = adultNumber == 0;
-                            });
+                        const SizedBox(height: 5),
+                        Text(
+                          'Primary Number',
+                          style: titleTextStyle,
+                        ),
+                        Customphonefield(
+                          poneKey: _phoneKey,
+                          focusNode: focusNode4,
+                          initalCountryCode: initialCountryCode,
+                          controller: primaryNoController,
+                          onChanged: (phoneNumber) {
+                            primaryCountryCode = phoneNumber.countryCode
+                                .replaceFirst("+", '')
+                                .trim();
+                            debugPrint('phone number$primaryCountryCode');
+                            // primaryNoController.text = phoneNumber.number;
+                          },
+                          onCountryChanged: (country) {
+                            primaryCountryCode = country.dialCode;
+                          },
+                          validator: (p0) {
+                            return null;
                           },
                         ),
-                        DynamicCounter(
-                          label: "Child:",
-                          initialValue: 0,
-                          limit: 4,
-                          onChanged: (childVal) {
-                            setState(() {
-                              childNumber = childVal;
-                              updateButtonStates();
-                              // isAddChildDisabled = childNumber == 0;
-                            });
+                        const Text(
+                          'Secondary Number',
+                          textAlign: TextAlign.start,
+                          style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              height: 0),
+                        ),
+                        Customphonefield(
+                          focusNode: focusNode5,
+                          initalCountryCode: 'AE',
+                          controller: secondaryNoController,
+                          onChanged: (phoneNumber) {
+                            secondaryCountryCode = phoneNumber.countryCode
+                                .replaceFirst("+", '')
+                                .trim();
+                            // secondaryNoController.text = phoneNumber.number;
+
+                            debugPrint(
+                                "${secondaryCountryCode} secondarycode....");
+                            debugPrint(
+                                "${secondaryNoController.text} secondaryNumber....");
+                          },
+                          onCountryChanged: (country) {
+                            secondaryCountryCode = country.fullCountryCode;
+                            debugPrint(
+                                "${secondaryCountryCode} secondarycode....");
+                          },
+                          validator: (p0) async {
+                            // String pattern = r'^\+?[0-9]{10,15}$';
+                            // RegExp regex = RegExp(pattern);
+
+                            // if (!regex.hasMatch(p0!.completeNumber)) {
+                            //   return 'Please enter a valid phone number';
+                            // }
+                            return null;
                           },
                         ),
-                        DynamicCounter(
-                          label: "Infant:",
-                          initialValue: 0,
-                          limit: 4,
-                          onChanged: (infentdVal) {
-                            setState(() {
-                              infentNumber = infentdVal;
-                              updateButtonStates();
-                              // isAddChildDisabled = childNumber == 0;
-                            });
-                          },
-                        )
                       ],
                     ),
                     const SizedBox(height: 10),
@@ -662,11 +619,16 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                           disable: isAddAdultDisabled,
                           height: 40,
                           onTap: () {
-                            _addAdultMember();
-                            setState(() {
-                              type = 'Adult';
-                              updateButtonStates();
-                            });
+                            _addMember(
+                                title: 'Add Adult Member',
+                                ageUnit: 'Year',
+                                type: 'Adult');
+
+                            // _addAdultMember();
+                            // setState(() {
+                            //   type = 'Adult';
+                            //   updateButtonStates();
+                            // });
                           },
                         ),
                         const SizedBox(width: 20),
@@ -681,11 +643,16 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                           height: 40,
                           disable: isAddChildDisabled,
                           onTap: () {
-                            _addChildMember();
-                            setState(() {
-                              type = 'Child';
-                              updateButtonStates();
-                            });
+                            _addMember(
+                                title: 'Add Child Member',
+                                ageUnit: 'Year',
+                                type: 'Child');
+
+                            // _addChildMember();
+                            // setState(() {
+                            //   type = 'Child';
+                            //   updateButtonStates();
+                            // });
                           },
                         ),
                         const SizedBox(width: 20),
@@ -695,142 +662,30 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                           elevationReq: true,
                           buttonColor: btnColor,
                           borderRadius: BorderRadius.circular(5),
-                          width: AppDimension.getWidth(context) / 4.5,
-                          btnHeading: "infant",
+                          width: AppDimension.getWidth(context) / 4,
+                          btnHeading: "Add Infant",
                           height: 40,
                           disable: isAddInfentDisabled,
                           onTap: () {
-                            _addInfantdMember();
-                            setState(() {
-                              type = 'Infant';
-                              updateButtonStates();
-                            });
+                            _addMember(
+                                title: 'Add Infant Member',
+                                ageUnit: 'Month',
+                                type: 'Infant');
+
+                            // _addInfantdMember();
+                            // setState(() {
+                            //   type = 'Infant';
+                            //   updateButtonStates();
+                            // });
                           },
                         ),
                       ],
                     ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      child: CommonContainer(
-                        elevation: 0,
-                        height: 30,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 3),
-                        borderRadius: BorderRadius.circular(5),
-                        onTap: () {
-                          showModalBottomSheet(
-                            backgroundColor: background,
-                            shape: const RoundedRectangleBorder(
-                                borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(20),
-                                    topRight: Radius.circular(20))),
-                            context: context,
-                            builder: (context) {
-                              return Container(
-                                height: 300,
-                                decoration: const BoxDecoration(
-                                    borderRadius: BorderRadius.only(
-                                        topLeft: Radius.circular(20),
-                                        topRight: Radius.circular(20))),
-                                child: ClipRRect(
-                                  borderRadius: const BorderRadius.only(
-                                      topLeft: Radius.circular(20),
-                                      topRight: Radius.circular(20)),
-                                  child: Scaffold(
-                                    backgroundColor: background,
-                                    body: CommonContainer(
-                                      height: 300,
-                                      borderRadius: const BorderRadius.only(
-                                          topLeft: Radius.circular(20),
-                                          topRight: Radius.circular(20)),
-                                      child: Column(
-                                        children: [
-                                          Container(
-                                            height: 50,
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 10),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                const SizedBox(
-                                                  height: 40,
-                                                  width: 40,
-                                                ),
-                                                const CustomText(
-                                                    content: 'Information',
-                                                    fontWeight: FontWeight.w600,
-                                                    textColor: redColor),
-                                                CommonContainer(
-                                                  elevation: 0,
-                                                  height: 40,
-                                                  width: 40,
-                                                  onTap: () => context.pop(),
-                                                  child: const Icon(
-                                                      Icons.cancel_outlined),
-                                                )
-                                              ],
-                                            ),
-                                          ),
-                                          const SizedBox(height: 10),
-                                          CommonContainer(
-                                            // height: 50,
-                                            width:
-                                                AppDimension.getWidth(context) *
-                                                    .9,
-                                            borderColor: naturalGreyColor
-                                                .withOpacity(0.3),
-                                            borderReq: true,
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 10, vertical: 14),
-                                            child: const CustomText(
-                                              align: TextAlign.start,
-                                              maxline: 2,
-                                              content:
-                                                  "Children under 5 years old can be booked for free.",
-                                              textColor: redColor,
-                                            ),
-                                          ),
-                                          const SizedBox(height: 20),
-                                          CommonContainer(
-                                            borderColor: naturalGreyColor
-                                                .withOpacity(0.3),
-                                            borderReq: true,
-                                            width:
-                                                AppDimension.getWidth(context) *
-                                                    .9,
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 10, vertical: 14),
-                                            child: const CustomText(
-                                              align: TextAlign.start,
-                                              textEllipsis: false,
-                                              maxline: 5,
-                                              content:
-                                                  "Certain activities are not recommended for senior citizens due to potential health risks.*",
-                                              textColor: redColor,
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              );
-                            },
-                          );
-                        },
-                        child: const CustomText(
-                          content: "*Please Note*",
-                          textColor: btnColor,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    )
                   ],
                 ),
               ),
-              // const SizedBox(height: 5),
+
+              const SizedBox(height: 10),
               Flexible(
                 child: SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
@@ -970,18 +825,36 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                                                         member['ageUnit']
                                                             .toString();
                                                     if (ageunit == 'Month') {
-                                                      _editInfantdMember(index);
+                                                      // _editInfantdMember(index);
+                                                      _editMember(
+                                                          title:
+                                                              'Edit Infant Member',
+                                                          index: index,
+                                                          ageUnit: 'Month',
+                                                          type: 'Infant');
                                                     } else {
                                                       if (age >= 18) {
-                                                        _editAdultMember(index);
+                                                        // _editAdultMember(index);
+                                                        _editMember(
+                                                            title:
+                                                                'Edit Adult Member',
+                                                            index: index,
+                                                            ageUnit: 'Year',
+                                                            type: 'Adult');
                                                       } else {
-                                                        _editChildMember(index);
+                                                        // _editChildMember(index);
+                                                        _editMember(
+                                                            title:
+                                                                'Edit Child Member',
+                                                            index: index,
+                                                            ageUnit: 'Year',
+                                                            type: 'Child');
                                                         // addedChildCount++;
                                                       }
                                                     }
                                                     setState(() {
                                                       tableIcon = false;
-                                                      updateButtonStates();
+                                                      // updateButtonStates();
                                                     });
                                                   },
                                                 ),
@@ -993,9 +866,13 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                                                   onTap: () {
                                                     setState(() {
                                                       members.removeAt(index);
-                                                      addAmount(members);
+                                                      // addAmount(members);
+                                                      member['ageUnit']
+                                                                  .toString() ==
+                                                              'Month'
+                                                          ? null
+                                                          : _subAmount();
                                                       tableIcon = false;
-                                                      updateButtonStates();
                                                     });
                                                   },
                                                 ),
@@ -1011,212 +888,6 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                   ),
                 ),
               ),
-              // Flexible(
-              //   child: Container(
-              //       margin:
-              //           const EdgeInsets.symmetric(vertical: 0, horizontal: 0),
-              //       padding: const EdgeInsets.fromLTRB(0, 5, 0, 5),
-              //       decoration: ShapeDecoration(
-              //         color: Colors.white,
-              //         shape: RoundedRectangleBorder(
-              //             borderRadius: BorderRadius.circular(4)),
-              //       ),
-              //       child: Column(
-              //         children: [
-              //           Container(
-              //             padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
-              //             decoration: const BoxDecoration(
-              //                 border: Border(
-              //               bottom: BorderSide(
-              //                   width: 0.5, color: Color(0xFFC1C0C0)),
-              //             )),
-              //             child: const Row(
-              //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //                 children: [
-              //                   SizedBox(
-              //                       width: 60,
-              //                       child: CustomTextWidget(
-              //                         align: TextAlign.start,
-              //                         content: "Name",
-              //                         fontSize: 18,
-              //                         fontWeight: FontWeight.w700,
-              //                       )),
-              //                   SizedBox(
-              //                       width: 40,
-              //                       child: CustomTextWidget(
-              //                           content: "Age",
-              //                           fontSize: 18,
-              //                           fontWeight: FontWeight.w700)),
-              //                   SizedBox(
-              //                       width: 65,
-              //                       child: CustomTextWidget(
-              //                           content: "Gender",
-              //                           fontSize: 18,
-              //                           fontWeight: FontWeight.w700)),
-              //                   SizedBox(
-              //                       width: 60,
-              //                       child: CustomTextWidget(
-              //                           content: "Type",
-              //                           fontSize: 18,
-              //                           fontWeight: FontWeight.w700)),
-              //                   SizedBox(
-              //                       width: 60,
-              //                       child: CustomTextWidget(
-              //                           content: "Action",
-              //                           fontSize: 18,
-              //                           fontWeight: FontWeight.w700))
-              //                 ]),
-              //           ),
-
-              //           ///New Code
-              //           Expanded(
-              //             child: members.isEmpty
-              //                 ? const Row(
-              //                     mainAxisAlignment: MainAxisAlignment.center,
-              //                     children: [
-              //                       CustomText(
-              //                         content: 'No Members Added',
-              //                         textColor: redColor,
-              //                       ),
-              //                     ],
-              //                   )
-              //                 : SingleChildScrollView(
-              //                     child: Container(
-              //                       padding: const EdgeInsets.symmetric(
-              //                           horizontal: 10),
-              //                       child: Column(
-              //                         children:
-              //                             members.asMap().entries.map((entry) {
-              //                           int index = entry.key;
-              //                           Map<String, dynamic> member =
-              //                               entry.value;
-              //                           return Container(
-              //                             padding: const EdgeInsets.symmetric(
-              //                                 vertical: 10, horizontal: 5),
-              //                             child: Row(
-              //                               mainAxisAlignment:
-              //                                   MainAxisAlignment.spaceBetween,
-              //                               children: [
-              //                                 SizedBox(
-              //                                   // color: Colors.cyan,
-              //                                   width: 50,
-              //                                   child: CustomText(
-              //                                     align: TextAlign.start,
-              //                                     content:
-              //                                         member['name'].toString(),
-              //                                     textEllipsis: true,
-              //                                     // maxline: 2,
-              //                                   ),
-              //                                 ),
-              //                                 SizedBox(
-              //                                   // color: Colors.cyan,
-              //                                   width: 30,
-              //                                   child: CustomText(
-              //                                     textEllipsis: false,
-              //                                     align: TextAlign.start,
-              //                                     content:
-              //                                         "${member['age'].toString()}${member['ageUnit'].toString()}",
-              //                                   ),
-              //                                 ),
-              //                                 CustomText(
-              //                                   content:
-              //                                       member['gender'].toString(),
-              //                                   align: TextAlign.start,
-              //                                 ),
-              //                                 SizedBox(
-              //                                   // color: Colors.cyan,
-              //                                   // width: ,
-              //                                   child: CustomText(
-              //                                     align: TextAlign.start,
-              //                                     textColor: (() {
-              //                                       int age = int.parse(
-              //                                           member['age']
-              //                                               .toString());
-              //                                       return age >= 60
-              //                                           ? redColor
-              //                                           : null; // Set color to red for Senior, otherwise use default
-              //                                     })(),
-              //                                     content: (() {
-              //                                       int age = int.parse(
-              //                                           member['age']
-              //                                               .toString());
-              //                                       String ageunit =
-              //                                           member['ageUnit']
-              //                                               .toString();
-              //                                       print(ageunit);
-              //                                       if (ageunit == 'Month') {
-              //                                         return 'Infant';
-              //                                       } else {
-              //                                         if (age < 18) {
-              //                                           return 'Child';
-              //                                         }
-              //                                         if (age < 60) {
-              //                                           return 'Adult';
-              //                                         }
-              //                                       }
-
-              //                                       return 'Senior*';
-              //                                     })(),
-              //                                   ),
-              //                                 ),
-              //                                 Row(
-              //                                   mainAxisSize: MainAxisSize.min,
-              //                                   children: [
-              //                                     InkWell(
-              //                                       child: const Icon(
-              //                                           Icons.edit,
-              //                                           color: greenColor),
-              //                                       onTap: () {
-              //                                         int age = int.parse(
-              //                                             member['age']
-              //                                                 .toString());
-              //                                         String ageunit =
-              //                                             member['ageUnit']
-              //                                                 .toString();
-              //                                         if (ageunit == 'Month') {
-              //                                         } else {
-              //                                           if (age >= 18) {
-              //                                             _editAdultMember(
-              //                                                 index);
-              //                                           } else {
-              //                                             _editChildMember(
-              //                                                 index);
-              //                                             // addedChildCount++;
-              //                                           }
-              //                                         }
-              //                                         setState(() {
-              //                                           tableIcon = false;
-              //                                           updateButtonStates();
-              //                                         });
-              //                                       },
-              //                                     ),
-              //                                     const SizedBox(width: 10),
-              //                                     InkWell(
-              //                                       child: const Icon(
-              //                                           Icons.delete,
-              //                                           color: redColor),
-              //                                       onTap: () {
-              //                                         setState(() {
-              //                                           members.removeAt(index);
-              //                                           addAmount(members);
-              //                                           tableIcon = false;
-              //                                           updateButtonStates();
-              //                                         });
-              //                                       },
-              //                                     ),
-              //                                   ],
-              //                                 ),
-              //                               ],
-              //                             ),
-              //                           );
-              //                         }).toList(),
-              //                       ),
-              //                     ),
-              //                   ),
-              //           )
-              //         ],
-              //       )),
-              // ),
 
               ///Package Total Booking Container
               Container(
@@ -1256,6 +927,7 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                         disable: _shouldDisableButton(),
                         // disable: amount == 0.0 ?  true : false,
                         onTap: () {
+                          debugPrint('ghjkjhjkj$primaryCountryCode');
                           if (members.isEmpty) {
                             Utils.flushBarErrorMessage(
                                 "Please add Members First", context);
@@ -1264,48 +936,76 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                                 "Please select date", context);
                           } else {
                             loader = true;
-                            print('mobile....${profileUser.mobile}');
-                            showDialog(
+                            // ignore: unused_element
+                            // void initiatePayment(BuildContext context) {
+                            PaymentService paymentService = PaymentService(
                               context: context,
-                              builder: (context) {
-                                return RazorpayPayment(
-                                  userId: widget.userID.toString(),
-                                  amount: amount,
-                                  email: profileUser?.email,
-                                  coutryCode: profileUser?.countryCode,
-                                  mobileNo: profileUser?.mobile,
+                              onPaymentSuccess:
+                                  (PaymentSuccessResponse response) {
+                                print('paymentResponse#${response.orderId}');
+                                Provider.of<PaymentVerifyViewModel>(context,
+                                        listen: false)
+                                    .paymentVerifyViewModelApi(
+                                        context: context,
+                                        userId: widget.userID.toString(),
+                                        paymentId: response.paymentId,
+                                        razorpayOrderId: response.orderId,
+                                        razorpaySignature: response.signature)
+                                    .then(
+                                  (value) {
+                                    if (value?.status.httpCode == '200') {
+                                      print(
+                                          'payment verification is successfull${value?.data.transactionId}');
+                                      debugPrint(response.orderId);
+                                      debugPrint(
+                                        response.paymentId,
+                                      );
+                                      debugPrint(response.signature);
+                                      Provider.of<GetPackageBookingByIdViewModel>(
+                                              listen: false, context)
+                                          .fetchGetPackageBookingByIdViewModelApi(
+                                              context,
+                                              {
+                                                "userId":
+                                                    widget.userID.toString(),
+                                                "packageId":
+                                                    widget.packageID.toString(),
+                                                "bookingDate":
+                                                    controller[0].text,
+                                                "transactionId":
+                                                    value?.data.transactionId,
+                                                "countryCode":
+                                                    primaryCountryCode
+                                                        .replaceAll("+", '')
+                                                        .trim(),
+                                                "mobile":
+                                                    primaryNoController.text,
+                                                "alternateMobileCountryCode":
+                                                    secondaryCountryCode,
+                                                "alternateMobile":
+                                                    secondaryNoController.text,
+                                                "numberOfMembers":
+                                                    members.length.toString(),
+                                                "memberList": members,
+                                              },
+                                              widget.userID);
+                                      // context.pop();
+                                    }
+                                  },
                                 );
+                                // Call verify payment function after successful payment
+                                // _verifyPayment(context, response);
                               },
-                            ).then((_) async {
-                              if (!mounted) return;
+                            );
 
-                              // Retrieve transaction ID
-                              var transactionId =
-                                  await Provider.of<PaymentVerifyViewModel>(
-                                        context,
-                                        listen: false,
-                                      )
-                                          .paymentVerify
-                                          .data
-                                          ?.data
-                                          .transactionId ??
-                                      '';
-                              Provider.of<GetPackageBookingByIdViewModel>(
-                                      listen: false, context)
-                                  .fetchGetPackageBookingByIdViewModelApi(
-                                      context,
-                                      {
-                                        "userId": widget.userID.toString(),
-                                        "packageId":
-                                            widget.packageID.toString(),
-                                        "bookingDate": controller[0].text,
-                                        "transactionId": transactionId,
-                                        "numberOfMembers":
-                                            members.length.toString(),
-                                        "memberList": members,
-                                      },
-                                      widget.userID);
-                            });
+                            paymentService.openCheckout(
+                                amount: amount,
+                                userId: widget.userID.toString(),
+                                coutryCode: profileUser?.countryCode,
+                                mobileNo: profileUser?.mobile,
+                                email: profileUser?.email);
+
+                            // }
 
                             // Utils.flushBarSuccessMessage("Booking Success", context);
                           }
@@ -1315,337 +1015,6 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
               )
             ],
           )),
-    );
-  }
-
-  ///Edit Adult Alert Box
-  void _editAdultMember(int index) {
-    String name = members[index]['name'];
-    String age = members[index]['age'];
-    String gender = members[index]['gender'];
-    controller[1].text = gender;
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return SingleChildScrollView(
-          padding: const EdgeInsets.only(top: 70),
-          physics: const NeverScrollableScrollPhysics(),
-          child: AlertDialog(
-            backgroundColor: background,
-            surfaceTintColor: background,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-            title: const CustomTextWidget(
-                content: "EDIT MEMBER", align: TextAlign.center, fontSize: 25),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                ValidationTextField(
-                  headingReq: true,
-                  heading: "Name",
-                  validation: true,
-                  prefixIcon: true,
-                  img: user,
-                  onChange: (p0) {
-                    name = p0;
-                  },
-                  hint: "Enter Name",
-                  controller: TextEditingController(text: name),
-                ),
-                const SizedBox(height: 10),
-                CustomTextFeild(
-                  controller: TextEditingController(text: age),
-                  headingReq: true,
-                  prefixIcon: true,
-                  img: user,
-                  number: true,
-                  digitNumber: 2,
-                  onChange: (p0) {
-                    age = p0;
-                  },
-                  heading: "Age",
-                  hint: "Enter Age",
-                ),
-                const SizedBox(height: 10),
-                FormCommonSingleAlertSelector(
-                  title: "Gender",
-                  controller: controller[1],
-                  textStyle: titleTextStyle,
-                  showIcon: const Icon(
-                    Icons.event_seat,
-                    color: naturalGreyColor,
-                  ),
-                  data: const ["Male", "Female"],
-                  icon: genderImg,
-                  elevation: 0,
-                  initialValue: gender,
-                  alertBoxTitle: "Select Gender",
-                ),
-              ],
-            ),
-            actions: [
-              CustomButtonSmall(
-                width: 80,
-                btnHeading: "CANCEL",
-                onTap: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-              CustomButtonSmall(
-                width: 80,
-                onTap: () {
-                  gender = controller[1].text;
-                  if (name.isEmpty || name.length >= 25) {
-                    Utils.flushBarErrorMessage("Please Enter Name", context);
-                  } else if (age.isEmpty || double.parse(age) <= 0) {
-                    Utils.flushBarErrorMessage("Please Enter Age", context);
-                  } else if (double.parse(age) < 18) {
-                    Utils.flushBarErrorMessage(
-                        "Adult must be 18 or older", context);
-                  } else if (controller[1].text.isEmpty) {
-                    Utils.flushBarErrorMessage("Please Enter Gender", context);
-                  } else {
-                    setState(() {
-                      members[index] = {
-                        'name': name,
-                        'age': age,
-                        'gender': gender,
-                      };
-                      updateButtonStates();
-                    });
-                    addAmount(members);
-                    Navigator.of(context).pop();
-                  }
-                },
-                btnHeading: "UPDATE",
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  ///Edit Child Alert Box
-  void _editChildMember(int index) {
-    String name = members[index]['name'];
-    String age = members[index]['age'];
-    String ageUnit = members[index]['ageUnit'];
-    String gender = members[index]['gender'];
-    controller[1].text = gender;
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return SingleChildScrollView(
-          padding: const EdgeInsets.only(top: 70),
-          physics: const NeverScrollableScrollPhysics(),
-          child: AlertDialog(
-            backgroundColor: background,
-            surfaceTintColor: background,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-            title: const CustomTextWidget(
-                content: "EDIT CHILD MEMBER",
-                align: TextAlign.center,
-                fontSize: 25),
-            content: Column(mainAxisSize: MainAxisSize.min, children: [
-              ValidationTextField(
-                headingReq: true,
-                heading: "Name",
-                validation: true,
-                prefixIcon: true,
-                img: user,
-                onChange: (p0) {
-                  name = p0;
-                },
-                hint: "Enter Name",
-                controller: TextEditingController(text: name),
-              ),
-              const SizedBox(height: 10),
-              CustomTextFeild(
-                controller: TextEditingController(text: age),
-                headingReq: true,
-                prefixIcon: true,
-                img: user,
-                number: true,
-                digitNumber: 2,
-                onChange: (p0) {
-                  age = p0;
-                },
-                heading: "Age",
-                hint: "Enter Age",
-              ),
-              const SizedBox(height: 10),
-              FormCommonSingleAlertSelector(
-                title: "Gender",
-                controller: controller[1],
-                textStyle: titleTextStyle,
-                showIcon: const Icon(
-                  Icons.event_seat,
-                  color: naturalGreyColor,
-                ),
-                iconReq: false,
-                data: const ["Male", "Female"],
-                icon: genderImg,
-                elevation: 0,
-                initialValue: gender,
-                alertBoxTitle: "Select Gender",
-              ),
-            ]),
-            actions: [
-              CustomButtonSmall(
-                width: 80,
-                btnHeading: "CANCEL",
-                onTap: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-              CustomButtonSmall(
-                width: 80,
-                onTap: () {
-                  gender = controller[1].text;
-                  if (name.isEmpty || name.length >= 25) {
-                    Utils.flushBarErrorMessage("Please Enter Name", context);
-                  } else if (age.isEmpty || double.parse(age) <= 0) {
-                    Utils.flushBarErrorMessage("Please Enter Age", context);
-                  } else if (double.parse(age) >= 18) {
-                    Utils.flushBarErrorMessage(
-                        "Child must be under 18", context);
-                  } else if (controller[1].text.isEmpty) {
-                    Utils.flushBarErrorMessage("Please Enter Gender", context);
-                  } else {
-                    setState(() {
-                      members[index] = {
-                        'name': name,
-                        'age': age,
-                        'gender': gender,
-                        'ageUnit': ageUnit
-                      };
-                      updateButtonStates();
-                    });
-                    addAmount(members);
-                    Navigator.of(context).pop();
-                  }
-                },
-                btnHeading: "UPDATE",
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  ///Edit Child Alert Box
-  void _editInfantdMember(int index) {
-    String name = members[index]['name'];
-    String age = members[index]['age'];
-    String ageUnit = members[index]['ageUnit'];
-    String gender = members[index]['gender'];
-    controller[1].text = gender;
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return SingleChildScrollView(
-          padding: const EdgeInsets.only(top: 70),
-          physics: const NeverScrollableScrollPhysics(),
-          child: AlertDialog(
-            backgroundColor: background,
-            surfaceTintColor: background,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-            title: const CustomTextWidget(
-                content: "EDIT INFANT MEMBER",
-                align: TextAlign.center,
-                fontSize: 25),
-            content: Column(mainAxisSize: MainAxisSize.min, children: [
-              ValidationTextField(
-                headingReq: true,
-                heading: "Name",
-                validation: true,
-                prefixIcon: true,
-                img: user,
-                onChange: (p0) {
-                  name = p0;
-                },
-                hint: "Enter Name",
-                controller: TextEditingController(text: name),
-              ),
-              const SizedBox(height: 10),
-              CustomTextFeild(
-                controller: TextEditingController(text: age),
-                headingReq: true,
-                prefixIcon: true,
-                img: user,
-                number: true,
-                digitNumber: 2,
-                onChange: (p0) {
-                  age = p0;
-                },
-                heading: "Age",
-                hint: "Enter Age",
-              ),
-              const SizedBox(height: 10),
-              FormCommonSingleAlertSelector(
-                title: "Gender",
-                controller: controller[1],
-                textStyle: titleTextStyle,
-                showIcon: const Icon(
-                  Icons.event_seat,
-                  color: naturalGreyColor,
-                ),
-                iconReq: false,
-                data: const ["Male", "Female"],
-                icon: genderImg,
-                elevation: 0,
-                initialValue: gender,
-                alertBoxTitle: "Select Gender",
-              ),
-            ]),
-            actions: [
-              CustomButtonSmall(
-                width: 80,
-                btnHeading: "CANCEL",
-                onTap: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-              CustomButtonSmall(
-                width: 80,
-                onTap: () {
-                  gender = controller[1].text;
-                  if (name.isEmpty || name.length >= 25) {
-                    Utils.flushBarErrorMessage("Please Enter Name", context);
-                  } else if (age.isEmpty || double.parse(age) <= 0) {
-                    Utils.flushBarErrorMessage("Please Enter Age", context);
-                  } else if (double.parse(age) >= 24) {
-                    Utils.flushBarErrorMessage(
-                        "Infant must be under 24", context);
-                  } else if (controller[1].text.isEmpty) {
-                    Utils.flushBarErrorMessage("Please Enter Gender", context);
-                  } else {
-                    setState(() {
-                      members[index] = {
-                        'name': name,
-                        'age': age,
-                        'gender': gender,
-                        'ageUnit': ageUnit
-                      };
-                      updateButtonStates();
-                    });
-                    addAmount(members);
-                    Navigator.of(context).pop();
-                  }
-                },
-                btnHeading: "UPDATE",
-              ),
-            ],
-          ),
-        );
-      },
     );
   }
 }

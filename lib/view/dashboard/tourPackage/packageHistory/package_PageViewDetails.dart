@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_cab/model/packageModels.dart';
 import 'package:flutter_cab/model/paymentDetailsModel.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/res/Custom%20Page%20Layout/commonPage_Layout.dart';
+import 'package:flutter_cab/res/Custom%20Widgets/customPhoneField.dart';
 import 'package:flutter_cab/res/Custom%20Widgets/multi_imageSlider_ContainerWidget.dart';
 import 'package:flutter_cab/res/customAlertBox.dart';
 import 'package:flutter_cab/res/customAppBar_widget.dart';
 import 'package:flutter_cab/res/customContainer.dart';
+import 'package:flutter_cab/res/customRaiseIssueForm.dart';
 import 'package:flutter_cab/res/customTextWidget.dart';
 import 'package:flutter_cab/utils/color.dart';
 import 'package:flutter_cab/utils/dimensions.dart';
@@ -22,6 +25,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:google_places_flutter/google_places_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:intl_phone_field/countries.dart';
+import 'package:marquee/marquee.dart';
 import 'package:provider/provider.dart';
 import 'package:readmore/readmore.dart';
 import '../../../../view_model/package_view_model.dart';
@@ -60,7 +65,7 @@ class _PackagePageViewDetailsState extends State<PackagePageViewDetails> {
     // day = detailsData.bookingDate * pkgDetails.noOfDays;
   }
 
-  Future getPaymentDetail() async {
+  Future<void> getPaymentDetail() async {
     String paymentId = Provider.of<GetPackageHistoryDetailByIdViewModel>(
                 context,
                 listen: false)
@@ -95,96 +100,90 @@ class _PackagePageViewDetailsState extends State<PackagePageViewDetails> {
 
   @override
   Widget build(BuildContext context) {
-    detailsData = context
-            .watch<GetPackageHistoryDetailByIdViewModel>()
-            .getPackageHistoryDetailById
-            .data
-            ?.data ??
-        '';
-    memberListDetails = context
-            .watch<GetPackageHistoryDetailByIdViewModel>()
-            .getPackageHistoryDetailById
-            .data
-            ?.data
-            .memberList ??
-        [];
-    userDetails = context
-            .watch<GetPackageHistoryDetailByIdViewModel>()
-            .getPackageHistoryDetailById
-            .data
-            ?.data
-            .user ??
-        '';
-
-    pkgDetails = context
+    var httpStatus = context
         .watch<GetPackageHistoryDetailByIdViewModel>()
         .getPackageHistoryDetailById
-        .data
-        ?.data
-        .pkg;
+        .status
+        .toString();
+    if (httpStatus == "Status.completed") {
+      detailsData = context
+              .watch<GetPackageHistoryDetailByIdViewModel>()
+              .getPackageHistoryDetailById
+              .data
+              ?.data ??
+          [];
+      memberListDetails = context
+              .watch<GetPackageHistoryDetailByIdViewModel>()
+              .getPackageHistoryDetailById
+              .data
+              ?.data
+              .memberList ??
+          [];
+      userDetails = context
+              .watch<GetPackageHistoryDetailByIdViewModel>()
+              .getPackageHistoryDetailById
+              .data
+              ?.data
+              .user ??
+          '';
 
-    packageHistoryActivityList = context
-            .watch<GetPackageHistoryDetailByIdViewModel>()
-            .getPackageHistoryDetailById
-            .data
-            ?.data
-            .pkg
-            .packageActivities ??
-        [];
-    packageImage = context
-            .watch<GetPackageHistoryDetailByIdViewModel>()
-            .getPackageHistoryDetailById
-            .data
-            ?.data
-            .pkg
-            .packageImageUrl ??
-        [];
-    packageDriverDetails = context
-            .watch<GetPackageHistoryDetailByIdViewModel>()
-            .getPackageHistoryDetailById
-            .data
-            ?.data
-            .assignedDriverOnPackageBookings ??
-        [];
-    packageVehicleDetail = context
-            .watch<GetPackageHistoryDetailByIdViewModel>()
-            .getPackageHistoryDetailById
-            .data
-            ?.data
-            .assignedVehicleOnPackageBookings ??
-        [];
+      pkgDetails = context
+          .watch<GetPackageHistoryDetailByIdViewModel>()
+          .getPackageHistoryDetailById
+          .data
+          ?.data
+          .pkg;
 
-    ///package Details Sub Data
-    // String packageString = pkgDetails.replaceAll('{', '').replaceAll('}', '');
-    // List<String> packageAttributes = packageString.split(", ");
-    // Map<String, dynamic> packageMap = {};
-    // for (String attribute in packageAttributes) {
-    //   List<String> keyValue = attribute.split(":");
-    //   if (keyValue.length == 2) {
-    //     String key = keyValue[0].trim();
-    //     String value = keyValue[1].trim();
-    //     if (key.isNotEmpty && value.isNotEmpty) {
-    //       packageMap[key] = value;
-    //     }
-    //   }
-    // }
+      packageHistoryActivityList = context
+              .watch<GetPackageHistoryDetailByIdViewModel>()
+              .getPackageHistoryDetailById
+              .data
+              ?.data
+              .pkg
+              .packageActivities ??
+          [];
+      packageImage = context
+              .watch<GetPackageHistoryDetailByIdViewModel>()
+              .getPackageHistoryDetailById
+              .data
+              ?.data
+              .pkg
+              .packageActivities
+              .expand((e) => e.activity.activityImageUrl)
+              .toList() ??
+          [];
+      packageDriverDetails = context
+              .watch<GetPackageHistoryDetailByIdViewModel>()
+              .getPackageHistoryDetailById
+              .data
+              ?.data
+              .assignedDriverOnPackageBookings ??
+          [];
+      packageVehicleDetail = context
+              .watch<GetPackageHistoryDetailByIdViewModel>()
+              .getPackageHistoryDetailById
+              .data
+              ?.data
+              .assignedVehicleOnPackageBookings ??
+          [];
+    }
 
     getPackageItineraryList = context
             .watch<GetPackageItineraryViewModel>()
             .getPackageItineraryList
             .data
             ?.data
-            .itineraryDetails ??
+            ?.itineraryDetails ??
         [];
     getPackageItinerary = context
             .watch<GetPackageItineraryViewModel>()
             .getPackageItineraryList
             .data
             ?.data
-            .packageBookingId ??
+            ?.packageBookingId ??
         '';
     // debugPrint("${getPackageItineraryList.length} GetItineraryDetailsList");
-    debugPrint("${detailsData.paymentId} paymentId......");
+    // debugPrint("${detailsData.paymentId} paymentId......");
     return Scaffold(
       backgroundColor: bgGreyColor,
       appBar: const CustomAppBar(
@@ -205,193 +204,209 @@ class _PackagePageViewDetailsState extends State<PackagePageViewDetails> {
           // },
           child: ListView(
         children: [
-          PackageDetailsContainer(
-            id: widget.packageBookID,
-            pkgImage: packageImage,
-            packageName: pkgDetails.packageName,
-            bookingStatus: detailsData.bookingStatus,
-            location: pkgDetails.location,
-            startTime: detailsData.bookingDate,
-            endTime: detailsData.bookingDate,
-            totalMembers: memberListDetails.length.toString(),
-            days: pkgDetails.noOfDays,
-            cancelReason: detailsData.cancellationReason,
-            cancelledBy: detailsData.cancelledBy,
-            pickUpLocation: detailsData.pickupLocation,
-            controllerWidget: alertController,
-            alertOnTap: () {
-              if (alertController.text.isEmpty) {
-                Utils.flushBarErrorMessage(
-                    "Please enter your pickUp Location", context);
-              } else {
-                Provider.of<AddPickUpLocationPackageViewModel>(context,
-                        listen: false)
-                    .fetchAddPickUpLocationPackageViewModelApi(context, {
-                  "packageBookingId": widget.packageBookID,
-                  "pickupLocation": alertController.text
-                });
-                context.pop(context);
-              }
-              // setState(() {
-              //   debugPrint(alertController.text);
-              // });
-              alertController.clear();
-            },
-            totalAmt: detailsData.totalAmount,
-            paymentDetails: paymentDetails,
-            memberList: List.generate(
-                memberListDetails.length,
-                (index) => PackageHIstoryDetailsMemberList(
-                    memberId: memberListDetails[index].memberId,
-                    name: memberListDetails[index].name,
-                    age: memberListDetails[index].age,
-                    type: memberListDetails[index].type,
-                    gender: memberListDetails[index].gender)),
-            driverDetails: List.generate(
-                packageDriverDetails.length,
-                (index) => AssignedDriverOnPackageBooking(
-                    date: packageDriverDetails[index].date,
-                    driverAssignedId: "",
-                    isCancelled: false,
-                    driver: Driver(
-                        driverId: packageDriverDetails[index].driverAssignedId,
-                        firstName: packageDriverDetails[index].driver.firstName,
-                        lastName: packageDriverDetails[index].driver.lastName,
-                        driverAddress: "",
-                        emiratesId: "",
-                        mobile: packageDriverDetails[index].driver.mobile,
-                        countryCode: "",
-                        email: "",
-                        gender: packageDriverDetails[index].driver.gender,
-                        licenceNumber: "",
-                        createdDate: "",
-                        modifiedDate: "",
-                        profileImageUrl: "",
-                        userType: "",
-                        vendorId: "",
-                        driverStatus: ""))),
-            vehicleDetails: List.generate(
-                packageVehicleDetail.length,
-                (index) => AssignedVehicleOnPackageBooking(
-                      vehicle: Vehicle(
-                          vehicleId: "",
-                          carName: packageVehicleDetail[index].vehicle.carName,
-                          year: "",
-                          carType: "",
-                          brandName: "",
-                          fuelType: "",
-                          seats: "",
-                          color: "",
-                          vehicleNumber:
-                              packageVehicleDetail[index].vehicle.vehicleNumber,
-                          modelNo: "",
-                          createdDate: "",
-                          modifiedDate: "",
-                          images: [],
-                          vehicleStatus: ""),
-                      date: packageVehicleDetail[index].date,
-                      assignedId: "",
-                      isCancelled: false,
-                    )),
+          detailsData != []
+              ? PackageDetailsContainer(
+                  id: widget.packageBookID,
+                  pkgImage: packageImage,
+                  packageName: pkgDetails.packageName,
+                  bookingStatus: detailsData.bookingStatus,
+                  location: pkgDetails.location,
+                  primaryCountryCode: detailsData.countryCode,
+                  primaryMobileNo: detailsData.mobile,
+                  secondaryCountryCode: detailsData.alternateMobileCountryCode,
+                  secondaryMobileNo: detailsData.alternateMobile,
+                  country: pkgDetails.country,
+                  startTime: detailsData.bookingDate,
+                  endTime: detailsData.endDate,
+                  totalMembers: memberListDetails.length.toString(),
+                  days: pkgDetails.noOfDays,
+                  cancelReason: detailsData.cancellationReason,
+                  cancelledBy: detailsData.cancelledBy,
+                  pickUpLocation: detailsData.pickupLocation,
+                  controllerWidget: alertController,
+                  alertOnTap: () {
+                    if (alertController.text.isEmpty) {
+                      Utils.flushBarErrorMessage(
+                          "Please enter your pickUp Location", context);
+                    } else {
+                      Provider.of<AddPickUpLocationPackageViewModel>(context,
+                              listen: false)
+                          .fetchAddPickUpLocationPackageViewModelApi(context, {
+                        "packageBookingId": widget.packageBookID,
+                        "pickupLocation": alertController.text
+                      });
+                      context.pop(context);
+                    }
+                    // setState(() {
+                    //   debugPrint(alertController.text);
+                    // });
+                    alertController.clear();
+                  },
+                  totalAmt: detailsData.totalAmount,
+                  paymentDetails: paymentDetails,
+                  memberList: List.generate(
+                      memberListDetails.length,
+                      (index) => PackageHIstoryDetailsMemberList(
+                          memberId: memberListDetails[index].memberId,
+                          name: memberListDetails[index].name,
+                          ageUnit: memberListDetails[index].ageUnit,
+                          age: memberListDetails[index].age,
+                          gender: memberListDetails[index].gender)),
+                  driverDetails: List.generate(
+                      packageDriverDetails.length,
+                      (index) => AssignedDriverOnPackageBooking(
+                          date: packageDriverDetails[index].date,
+                          driverAssignedId: "",
+                          isCancelled: false,
+                          driver: Driver(
+                              driverId:
+                                  packageDriverDetails[index].driverAssignedId,
+                              firstName:
+                                  packageDriverDetails[index].driver.firstName,
+                              lastName:
+                                  packageDriverDetails[index].driver.lastName,
+                              driverAddress: "",
+                              emiratesId: "",
+                              mobile: packageDriverDetails[index].driver.mobile,
+                              countryCode: "",
+                              email: "",
+                              gender: packageDriverDetails[index].driver.gender,
+                              licenceNumber: "",
+                              createdDate: "",
+                              modifiedDate: "",
+                              profileImageUrl: "",
+                              userType: "",
+                              vendorId: "",
+                              driverStatus: ""))),
+                  vehicleDetails: List.generate(
+                      packageVehicleDetail.length,
+                      (index) => AssignedVehicleOnPackageBooking(
+                            vehicle: Vehicle(
+                                vehicleId: "",
+                                carName:
+                                    packageVehicleDetail[index].vehicle.carName,
+                                year: "",
+                                carType: "",
+                                brandName: "",
+                                fuelType: "",
+                                seats: "",
+                                color: "",
+                                vehicleNumber: packageVehicleDetail[index]
+                                    .vehicle
+                                    .vehicleNumber,
+                                modelNo: "",
+                                createdDate: "",
+                                modifiedDate: "",
+                                images: [],
+                                vehicleStatus: ""),
+                            date: packageVehicleDetail[index].date,
+                            assignedId: "",
+                            isCancelled: false,
+                          )),
 
-            ///Activity Details List
-            child: getPackageItineraryList.isNotEmpty
-                ? ItineraryActivityContainer(
-                    itineraryDataList: getPackageItineraryList.isNotEmpty
-                        ? getPackageItineraryList
-                        : packageHistoryActivityList,
-                    isPackageItinerary: getPackageItineraryList.isNotEmpty,
-                  )
+                  ///Activity Details List
+                  child: getPackageItineraryList.isNotEmpty
+                      ? ItineraryActivityContainer(
+                          itineraryDataList: getPackageItineraryList.isNotEmpty
+                              ? getPackageItineraryList
+                              : packageHistoryActivityList,
+                          isPackageItinerary:
+                              getPackageItineraryList.isNotEmpty,
+                        )
 
-                // ListView.builder(
-                //   shrinkWrap: true,
-                //   physics: const NeverScrollableScrollPhysics(),
-                //   itemCount: getPackageItineraryList.length,
-                //   itemBuilder: (context, index) {
-                //     final itineraryData = getPackageItineraryList[index];
-                //     final List image =
-                //         getPackageItineraryList[index].activity.activityImageUrl;
-                //     return ItineraryActivityContainer(
-                //       days: "Day ${itineraryData.day == "null" ? "" : itineraryData.day} Activity (${itineraryData.date})",
-                //       actyImage:
-                //       List.generate(image.length, (index) => image[index]),
-                //       activityName: itineraryData.activity.activityName,
-                //       description: itineraryData.activity.description,
-                //       activityHour: itineraryData.activity.activityHours,
-                //       activityVisit: itineraryData.activity.bestTimeToVisit,
-                //       openTime: itineraryData.activity.startTime,
-                //       closeTime: itineraryData.activity.endTime,
-                //       address: itineraryData.activity.address,
-                //     );
-                //   },
-                // )
-                : ListView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: packageHistoryActivityList.length,
-                    itemBuilder: (context, index) {
-                      final data = packageHistoryActivityList[index];
-                      final List image = packageHistoryActivityList[index]
-                          .activity
-                          .activityImageUrl;
-                      return ActivityContainer(
-                        days:
-                            "Activity ${data.day == "null" ? index + 1 : data.day}",
-                        actyImage: List.generate(
-                            image.length, (index) => image[index]),
-                        activityName: data.activity.activityName,
-                        description: data.activity.description,
-                        activityHour: data.activity.activityHours,
-                        activityVisit: data.activity.bestTimeToVisit,
-                        openTime: data.activity.startTime,
-                        closeTime: data.activity.endTime,
-                        address: data.activity.address,
-                      );
-                    },
-                  ),
-            onTap: () {
-              showDialog(
-                  context: context,
-                  builder: (context) {
-                    cancelController.clear();
-                    return SingleChildScrollView(
-                      physics: const NeverScrollableScrollPhysics(),
-                      padding: EdgeInsets.only(
-                          top: AppDimension.getHeight(context) * .2),
-                      child: CancelContainerDialog(
-                        loading: loading,
-                        controllerCancel: cancelController,
-                        onTap: () async {
-                          loading = true;
-                          if (cancelController.text.isEmpty ||
-                              cancelController.text == 'null') {
-                            Utils.flushBarErrorMessage(
-                                "Please enter the reason", context);
-                          } else {
-                            await Provider.of<PackageCancelViewModel>(context,
-                                    listen: false)
-                                .fetchPackageCancelViewModelApi(
-                                    context,
-                                    {
-                                      "packageBookingId": widget.packageBookID,
-                                      "cancellationReason":
-                                          cancelController.text,
-                                      "cancelledBy": "USER"
-                                    },
-                                    widget.userId)
-                                .then((value) {
-                              if (context.mounted) {
-                                cancelController.clear();
-                              }
-                            });
-                            // controller.dispose();
-                          }
-                        },
-                      ),
-                    );
-                  });
-            },
-          )
+                      // ListView.builder(
+                      //   shrinkWrap: true,
+                      //   physics: const NeverScrollableScrollPhysics(),
+                      //   itemCount: getPackageItineraryList.length,
+                      //   itemBuilder: (context, index) {
+                      //     final itineraryData = getPackageItineraryList[index];
+                      //     final List image =
+                      //         getPackageItineraryList[index].activity.activityImageUrl;
+                      //     return ItineraryActivityContainer(
+                      //       days: "Day ${itineraryData.day == "null" ? "" : itineraryData.day} Activity (${itineraryData.date})",
+                      //       actyImage:
+                      //       List.generate(image.length, (index) => image[index]),
+                      //       activityName: itineraryData.activity.activityName,
+                      //       description: itineraryData.activity.description,
+                      //       activityHour: itineraryData.activity.activityHours,
+                      //       activityVisit: itineraryData.activity.bestTimeToVisit,
+                      //       openTime: itineraryData.activity.startTime,
+                      //       closeTime: itineraryData.activity.endTime,
+                      //       address: itineraryData.activity.address,
+                      //     );
+                      //   },
+                      // )
+                      : ListView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: packageHistoryActivityList.length,
+                          itemBuilder: (context, index) {
+                            final data = packageHistoryActivityList[index];
+                            final List image = packageHistoryActivityList[index]
+                                .activity
+                                .activityImageUrl;
+                            return ActivityContainer(
+                              days:
+                                  "Activity ${data.day == "null" ? index + 1 : data.day}",
+                              actyImage: List.generate(
+                                  image.length, (index) => image[index]),
+                              activityName: data.activity.activityName,
+                              description: data.activity.description,
+                              activityHour: data.activity.activityHours,
+                              activityVisit: data.activity.bestTimeToVisit,
+                              openTime: data.activity.startTime,
+                              closeTime: data.activity.endTime,
+                              suitableFor: data.activity.participantType,
+                              address: data.activity.address,
+                            );
+                          },
+                        ),
+                  onTap: () {
+                    showDialog(
+                        context: context,
+                        builder: (context) {
+                          cancelController.clear();
+                          return SingleChildScrollView(
+                            physics: const NeverScrollableScrollPhysics(),
+                            padding: EdgeInsets.only(
+                                top: AppDimension.getHeight(context) * .2),
+                            child: CancelContainerDialog(
+                              loading: loading,
+                              controllerCancel: cancelController,
+                              onTap: () async {
+                                loading = true;
+                                if (cancelController.text.isEmpty ||
+                                    cancelController.text == 'null') {
+                                  Utils.flushBarErrorMessage(
+                                      "Please enter the reason", context);
+                                } else {
+                                  await Provider.of<PackageCancelViewModel>(
+                                          context,
+                                          listen: false)
+                                      .fetchPackageCancelViewModelApi(
+                                          context,
+                                          {
+                                            "packageBookingId":
+                                                widget.packageBookID,
+                                            "cancellationReason":
+                                                cancelController.text,
+                                            "cancelledBy": "USER"
+                                          },
+                                          widget.userId)
+                                      .then((value) {
+                                    if (context.mounted) {
+                                      cancelController.clear();
+                                    }
+                                  });
+                                  // controller.dispose();
+                                }
+                              },
+                            ),
+                          );
+                        });
+                  },
+                )
+              : SizedBox()
         ],
       )),
     );
@@ -410,6 +425,11 @@ class PackageDetailsContainer extends StatefulWidget {
   final String endTime;
   final String totalMembers;
   final String totalAmt;
+  final String primaryCountryCode;
+  final String primaryMobileNo;
+  final String secondaryCountryCode;
+  final String secondaryMobileNo;
+  final String country;
   final String pickUpLocation;
   final String days;
   final String cancelReason;
@@ -434,6 +454,11 @@ class PackageDetailsContainer extends StatefulWidget {
       required this.controllerWidget,
       this.alertOnTap,
       required this.totalAmt,
+      required this.primaryCountryCode,
+      required this.primaryMobileNo,
+      required this.secondaryCountryCode,
+      required this.secondaryMobileNo,
+      required this.country,
       required this.startTime,
       required this.endTime,
       required this.totalMembers,
@@ -455,6 +480,10 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
   String sourceLocation = "Source Location";
   double logitude = 0.0;
   double latitude = 0.0;
+  final _formKey = GlobalKey<FormState>();
+  TextEditingController primaryController = TextEditingController();
+  TextEditingController secondaryController = TextEditingController();
+  String initialCountryCode = 'AE';
 
   Future<List<double>?> getCoordinates(String location) async {
     try {
@@ -481,27 +510,212 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
     }
   }
 
+  String getIsoCode(String countryCode) {
+    var list = countries
+        .where(
+            (code) => code.dialCode == countryCode.replaceAll('+', '').trim())
+        .toList();
+    String countryCode1 = '';
+    if (list.isNotEmpty) {
+      // controllers[4].text = list.first.dialCode;
+      countryCode1 = list.first.code;
+
+      print('isocode.................... ${list.first.code}');
+    }
+    return countryCode1;
+  }
+
+  /// Add memeber
+  void _changeContact(
+      {required String primaryCode,
+      required String primaryNo,
+      required String secondaryCode,
+      required String secondaryNo}) {
+    String primaryCountry = getIsoCode(primaryCode);
+    String secondaryCountry = getIsoCode(secondaryCode);
+
+    primaryController.text = primaryNo;
+    secondaryController.text = secondaryNo;
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+            builder: (BuildContext context, StateSetter setstate) {
+          return SingleChildScrollView(
+            padding: const EdgeInsets.only(top: 70),
+            physics: const NeverScrollableScrollPhysics(),
+            child: Dialog(
+              backgroundColor: background,
+              surfaceTintColor: background,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10)),
+              insetPadding: EdgeInsets.all(30.0),
+              child: SizedBox(
+                width: double.infinity,
+                child: AlertDialog(
+                  contentPadding: EdgeInsets.zero,
+                  backgroundColor: background,
+                  surfaceTintColor: background,
+                  actionsAlignment: MainAxisAlignment.center,
+                  actionsPadding: EdgeInsets.only(top: 10),
+                  titlePadding: EdgeInsets.only(bottom: 20),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10)),
+                  title: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const CustomTextWidget(
+                          content: 'Change Contact',
+                          align: TextAlign.center,
+                          fontSize: 25),
+                      CustomButtonSmall(
+                        width: 30,
+                        height: 30,
+                        btnHeading: "X",
+                        onTap: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ],
+                  ),
+                  content: Form(
+                    key: _formKey,
+                    // autovalidateMode: AutovalidateMode.disabled,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 5),
+                          child: Text(
+                            'Primary Contact',
+                            style: titleTextStyle,
+                          ),
+                        ),
+                        Customphonefield(
+                          initalCountryCode: primaryCountry,
+                          controller: primaryController,
+                          onChanged: (phone) {
+                            setstate(() {
+                              primaryCode = phone.countryCode
+                                  .replaceFirst('+', '')
+                                  .trim();
+                              debugPrint('primarycountrycode.$primaryCode');
+                              debugPrint(
+                                  'primarycountrycode.${primaryController.text}');
+                            });
+                          },
+                          onCountryChanged: (p0) {
+                            setstate(() {
+                              primaryCode = p0.dialCode;
+                              debugPrint('primarycountrycode.$primaryCode');
+                            });
+                          },
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 5),
+                          child: Text(
+                            'Secondary Contact',
+                            style: titleTextStyle,
+                          ),
+                        ),
+                        Customphonefield(
+                          initalCountryCode: secondaryCountry,
+                          controller: secondaryController,
+                          onChanged: (phone) {
+                            setstate(() {
+                              secondaryCode = phone.countryCode
+                                  .replaceFirst('+', '')
+                                  .trim();
+                              debugPrint('secondarycountrycode.$secondaryCode');
+                              debugPrint(
+                                  'secondarycountrycode.${secondaryController.text}');
+                            });
+                          },
+                          onCountryChanged: (p0) {
+                            setstate(() {
+                              secondaryCode = p0.dialCode;
+                              debugPrint('secondarycountrycode.$secondaryCode');
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                  actions: [
+                    Align(
+                      alignment: Alignment.center,
+                      child: CustomButtonSmall(
+                        width: 140,
+                        height: 40,
+                        onTap: () {
+                          if (_formKey.currentState!.validate()) {
+                            print('succes');
+                            Map<String, dynamic> body = {
+                              "packageBookingId": widget.id,
+                              "mobile": primaryController.text,
+                              "countryCode": primaryCode,
+                              "alternateMobile": secondaryController.text,
+                              "alternateMobileCountryCode": secondaryCode
+                            };
+                            debugPrint('bodyData$body');
+                            Provider.of<ChangeMobileViewModel>(context,
+                                    listen: false)
+                                .changeMobileApi(
+                                    context: context,
+                                    body: body,
+                                    bookingId: widget.id);
+                          }
+                        },
+                        btnHeading: "Change Contact",
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        });
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(
-        (widget.paymentDetails?.data?.createdAt ?? 0) * 1000);
+        (widget.paymentDetails?.data?.createdAt ?? 0) * 1000,
+        isUtc: true);
+
+    Duration offset = Duration(hours: 5, minutes: 30);
+    DateTime adjustedTime = dateTime.add(offset);
+
+    String formattedTime =
+        '${DateFormat('HH:mm').format(adjustedTime)} GMT (+05:30)';
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const CustomTextWidget(
-                sideLogo: true,
-                content: "Package Images",
-                fontSize: 20,
-                fontWeight: FontWeight.w700,
-                textColor: textColor),
+            widget.bookingStatus == "BOOKED"
+                ? CustomButtonSmall(
+                    width: 140,
+                    height: 40,
+                    btnHeading: 'Change Contact',
+                    onTap: () {
+                      _changeContact(
+                          primaryCode: widget.primaryCountryCode,
+                          primaryNo: widget.primaryMobileNo,
+                          secondaryCode: widget.secondaryCountryCode,
+                          secondaryNo: widget.secondaryMobileNo);
+                    })
+                : SizedBox(),
             widget.bookingStatus == "BOOKED"
                 ? widget.pickUpLocation != "N/A" &&
                         widget.pickUpLocation.isEmpty
                     ? CustomButtonSmall(
                         height: 40,
+                        width: 140,
                         // width: AppDimension.getWidth(context) * .35,
                         btnHeading: "PickUp Location",
                         onTap: () {
@@ -643,90 +857,6 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
                                                 // default 600 ms ,
                                               ),
                                             ),
-                                            // StatefulBuilder(
-                                            //   builder: (context, setState) {
-                                            //     return CommonContainer(
-                                            //       elevation: 0,
-                                            //       borderReq: true,
-                                            //       height: 50,
-                                            //       width: AppDimension.getWidth(context) * .7,
-                                            //       borderColor: naturalGreyColor.withOpacity(0.3),
-                                            //       padding: const EdgeInsets.only(left: 0),
-                                            //       borderRadius: BorderRadius.circular(5),
-                                            //       child: GestureDetector(
-                                            //         onTap: () async {
-                                            //           widget.controllerWidget.text = sourceLocation; // Set the current location to the controller
-                                            //           var sourcePlace = await PlacesAutocomplete.show(
-                                            //             context: context,
-                                            //             apiKey: apiKey,
-                                            //             mode: Mode.overlay,
-                                            //             strictbounds: false,
-                                            //             hint: 'Search for a place',
-                                            //             language: 'en',
-                                            //             // location: Location(context,logitude,latitude),
-                                            //             types: [],
-                                            //             onError: (err) {
-                                            //               print(err);
-                                            //             },
-                                            //           );
-                                            //
-                                            //           if (sourcePlace != null) {
-                                            //             String limitedSourceLocation = sourcePlace.description != null && sourcePlace.description!.length > 150
-                                            //                 ? "${sourcePlace.description!.substring(0, 150)}..."
-                                            //                 : sourcePlace.description ?? "";
-                                            //
-                                            //             widget.controllerWidget.text = limitedSourceLocation;
-                                            //
-                                            //             // Initialize the GoogleMapsPlaces instance
-                                            //             final places = GoogleMapsPlaces(apiKey: apiKey);
-                                            //
-                                            //             // Fetching place details to get latitude and longitude
-                                            //             final placeDetails = await places.getDetailsByPlaceId(sourcePlace.placeId!);
-                                            //             final lat = placeDetails.result.geometry!.location.lat;
-                                            //             final lng = placeDetails.result.geometry!.location.lng;
-                                            //
-                                            //             setState(() {
-                                            //               sourceLocation = (sourcePlace.description?.length ?? 0) > 150
-                                            //                   ? "$limitedSourceLocation..."
-                                            //                   : limitedSourceLocation;
-                                            //
-                                            //               print("${widget.controllerWidget.text} PlacesDubai");
-                                            //               print("${lat.toString()} latitudeDubai");
-                                            //               print("${lng.toString()} longitudeDubai");
-                                            //             });
-                                            //           }
-                                            //         },
-                                            //         child: Padding(
-                                            //           padding: const EdgeInsets.symmetric(horizontal: 10),
-                                            //           child: Row(
-                                            //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            //             children: [
-                                            //               SizedBox(
-                                            //                 width: 230,
-                                            //                 child: CustomText(
-                                            //                   content: sourceLocation.isNotEmpty ? sourceLocation : 'Source Location',
-                                            //                   fontSize: 16,
-                                            //                   align: TextAlign.start,
-                                            //                   fontWeight: FontWeight.w600,
-                                            //                   textColor: sourceLocation != "Source Location" ? blackColor : greyColor1,
-                                            //                 ),
-                                            //               ),
-                                            //               InkWell(
-                                            //                 onTap: () {
-                                            //                   setState(() {
-                                            //                     print("presss");
-                                            //                     sourceLocation = ''; // Clear the source location
-                                            //                   });
-                                            //                 },
-                                            //                 child: const Icon(Icons.clear, color: greyColor1, size: 15,),
-                                            //               ),
-                                            //             ],
-                                            //           ),
-                                            //         ),
-                                            //       ),
-                                            //     );
-                                            //   },
-                                            // ),
                                             const SizedBox(height: 20),
                                             Row(
                                               mainAxisAlignment:
@@ -757,6 +887,13 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
           ],
         ),
         const SizedBox(height: 10),
+        const CustomTextWidget(
+            sideLogo: true,
+            content: "Package Images",
+            fontSize: 20,
+            fontWeight: FontWeight.w700,
+            textColor: textColor),
+        const SizedBox(height: 10),
         CommonContainer(
             height: 150,
             elevation: 0,
@@ -767,13 +904,37 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
             child: MultiImageSlider(
               images: widget.pkgImage,
             )),
-        const Padding(
+        Padding(
           padding: EdgeInsets.symmetric(vertical: 10),
-          child: CustomTextWidget(
-            content: "Booking Details",
-            sideLogo: true,
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const CustomTextWidget(
+                content: "Booking Details",
+                sideLogo: true,
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+              ),
+              Row(
+                children: [
+                  Text(
+                    'Price :',
+                    style: titleTextStyle,
+                  ),
+                  RichText(
+                      text: TextSpan(children: [
+                    const TextSpan(
+                        text: ' AED ',
+                        style: TextStyle(
+                            color: Colors.black, fontWeight: FontWeight.w600)),
+                    TextSpan(
+                        text: widget.totalAmt,
+                        style: const TextStyle(
+                            color: Colors.green, fontWeight: FontWeight.w600))
+                  ]))
+                ],
+              )
+            ],
           ),
         ),
 
@@ -790,290 +951,89 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  const CustomTextWidget(
-                    content: "Id : ",
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
-                  CustomTextWidget(
-                    content: widget.id,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w400,
-                  ),
-                ],
-              ),
-              const SizedBox(height: 15),
-              SizedBox(
-                // width: 190,
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    const CustomTextWidget(
-                      content: "Package Name : ",
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
-                    SizedBox(
-                      width: 210,
-                      child: CustomText(
-                        align: TextAlign.start,
-                        content: widget.packageName.capitalizeFirstOfEach,
-                        maxline: 4,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              const SizedBox(height: 15),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const CustomText(
-                        content: "Status : ",
-                        fontSize: 16,
-                        align: TextAlign.start,
-                        fontWeight: FontWeight.w600,
-                      ),
-                      SizedBox(
-                        width: 100,
-                        child: CustomText(
-                          content: widget.bookingStatus,
-                          fontSize: 16,
-                          // textColor: widget.bookingStatus == "CANCELLED" ? redColor : greenColor,
-                          align: TextAlign.start,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ],
-                  ),
-                  // const Spacer(),
-                  SizedBox(
-                    width: 190,
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        const CustomTextWidget(
-                          content: "Days : ",
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                        ),
-                        SizedBox(
-                          // width: 120,
-                          child: CustomTextWidget(
-                            align: TextAlign.start,
-                            content: "${widget.days} Days",
-                            maxline: 4,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w400,
-                            textEllipsis: false,
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 15),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       const CustomTextWidget(
-                        content: "Start Date : ",
+                        content: "Booking Id : ",
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                       ),
                       CustomTextWidget(
-                        content: widget.startTime,
+                        content: widget.id,
                         fontSize: 16,
                         fontWeight: FontWeight.w400,
                       ),
                     ],
                   ),
-                  // const Spacer(),
-                  SizedBox(
-                    width: 175,
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const CustomTextWidget(
-                          content: "End Date : ",
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                        ),
-                        SizedBox(
-                          // width: 120,
-                          child: CustomTextWidget(
-                            align: TextAlign.start,
-                            content: widget.endTime,
-                            maxline: 4,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w400,
-                            textEllipsis: false,
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 15),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  const CustomTextWidget(
-                    content: "Total Members : ",
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
-                  CustomTextWidget(
-                    content: widget.totalMembers,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w400,
-                  ),
-                ],
-              ),
-              widget.bookingStatus == "CANCELLED"
-                  ? Padding(
-                      padding: const EdgeInsets.only(top: 15),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          const CustomTextWidget(
-                            content: "Cancelled By : ",
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                          ),
-                          SizedBox(
-                            // color: Colors.cyan,
-                            width: AppDimension.getWidth(context) * .58,
-                            child: CustomText(
-                              content: widget.cancelledBy,
-                              fontSize: 16,
-                              maxline: 5,
-                              align: TextAlign.start,
-                              fontWeight: FontWeight.w400,
-                            ),
-                          ),
-                        ],
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      const CustomTextWidget(
+                        content: "Status : ",
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
                       ),
-                    )
+                      Container(
+                        height: 25,
+                        width: 90,
+                        decoration: BoxDecoration(
+                            color: Colors.green,
+                            borderRadius: BorderRadius.circular(10)),
+                        child: Center(
+                            child: Text(
+                          widget.bookingStatus,
+                          style: TextStyle(color: background),
+                        )),
+                      )
+                    ],
+                  ),
+                ],
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              bookingItem(
+                  lable: 'Package Name',
+                  value: '${widget.packageName.capitalizeFirstOfEach}'),
+              bookingItem(
+                  lable: 'Numbers Of Member', value: widget.totalMembers),
+              bookingItem(lable: 'Booking Start Date', value: widget.startTime),
+              bookingItem(lable: 'Booking End Date', value: widget.endTime),
+              widget.primaryMobileNo.isNotEmpty
+                  ? bookingItem(
+                      lable: 'Primary Contact',
+                      value:
+                          '+ ${widget.primaryCountryCode} ${widget.primaryMobileNo}')
+                  : SizedBox(),
+              widget.secondaryMobileNo.isNotEmpty
+                  ? bookingItem(
+                      lable: 'Secondary Contact',
+                      value:
+                          '+ ${widget.secondaryCountryCode ?? ''} ${widget.secondaryMobileNo ?? ''}')
+                  : SizedBox(),
+              bookingItem(
+                  lable: 'Duration',
+                  value:
+                      '${widget.days}Days / ${int.parse(widget.days) - 1}Nights'),
+              bookingItem(lable: 'Country', value: widget.country),
+              bookingItem(
+                  lable: 'Pickup Location',
+                  value: widget.pickUpLocation.isEmpty
+                      ? 'N/A'
+                      : widget.pickUpLocation),
+              widget.bookingStatus == "CANCELLED"
+                  ? bookingItem(
+                      lable: 'Cancelled By', value: widget.cancelledBy)
                   : const SizedBox(),
               widget.bookingStatus == "CANCELLED"
-                  ? Padding(
-                      padding: const EdgeInsets.only(top: 15),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          const CustomTextWidget(
-                            content: "Cancel Reason : ",
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                          ),
-                          SizedBox(
-                            // color: Colors.cyan,
-                            width: AppDimension.getWidth(context) * .58,
-                            child: CustomText(
-                              content: widget.cancelReason,
-                              fontSize: 16,
-                              maxline: 5,
-                              align: TextAlign.start,
-                              fontWeight: FontWeight.w400,
-                            ),
-                          ),
-                        ],
-                      ),
-                    )
+                  ? bookingItem(
+                      lable: 'Cancel Reason', value: widget.cancelReason)
                   : const SizedBox(),
-              Padding(
-                padding: const EdgeInsets.only(top: 15),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    const CustomTextWidget(
-                      content: "Location : ",
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
-                    SizedBox(
-                      width: AppDimension.getWidth(context) * .6,
-                      child: CustomText(
-                        align: TextAlign.start,
-                        content: widget.location,
-                        maxline: 4,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w400,
-                        textEllipsis: false,
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 15),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    const CustomTextWidget(
-                      content: "PickUp Location : ",
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
-                    SizedBox(
-                      width: AppDimension.getWidth(context) * .55,
-                      child: CustomText(
-                        maxline: 5,
-                        align: TextAlign.start,
-                        content: widget.pickUpLocation.isEmpty
-                            ? "N/A"
-                            : widget.pickUpLocation,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              // : const SizedBox(),
-              const SizedBox(height: 15),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  const CustomTextWidget(
-                    content: "Total Amount : ",
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
-                  CustomTextWidget(
-                    content: "AED ${widget.totalAmt}",
-                    fontSize: 20,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ],
-              ),
             ],
           ),
         ),
@@ -1104,14 +1064,13 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
                         value: widget.paymentDetails?.data?.id ?? ''),
                     textItem(
                         lable: 'Amount',
-                        value: 'AED ${widget.paymentDetails?.data?.amount}'),
+                        value:
+                            'AED ${double.parse(widget.paymentDetails?.data?.amount.toString() ?? '') / 100}'),
                     textItem(
                       lable: 'PaymentDate',
                       value: DateFormat('dd-MM-yyyy').format(dateTime),
                     ),
-                    textItem(
-                        lable: 'PaymentTime',
-                        value: DateFormat('hh:mm a').format(dateTime))
+                    textItem(lable: 'PaymentTime', value: formattedTime)
                   ],
                 ),
               )
@@ -1119,7 +1078,7 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
         const Padding(
           padding: EdgeInsets.symmetric(vertical: 10),
           child: CustomTextWidget(
-            content: "Members Details",
+            content: "Travellers Details",
             fontSize: 20,
             sideLogo: true,
             fontWeight: FontWeight.w600,
@@ -1135,7 +1094,7 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
           borderReq: true,
           borderColor: naturalGreyColor.withOpacity(0.3),
           child: DataTable(
-              columnSpacing: 30,
+              columnSpacing: 18,
               headingRowHeight: 40,
               dividerThickness: 0,
               dataTextStyle: titleTextStyle1,
@@ -1183,7 +1142,8 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
                                   align: TextAlign.start,
                                   textEllipsis: true,
                                   content: members.name.toString()))),
-                          DataCell(CustomText(content: members.age.toString())),
+                          DataCell(CustomText(
+                              content: '${members.age}${members.ageUnit}')),
                           DataCell(CustomText(
                             textColor: (() {
                               int age = int.parse(members.age.toString());
@@ -1193,46 +1153,61 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
                             })(),
                             content: (() {
                               int age = int.parse(members.age.toString());
-                              if (age < 5) return 'Infant';
+
+                              if (members.ageUnit == 'Month') return 'Infant';
                               if (age < 18) return 'Child';
                               if (age < 60) return 'Adult';
                               return 'Senior*';
                               // return age.toString();  // Display the age as-is for other cases
                             })(),
                           )),
-                          DataCell(
-                              CustomText(content: members.gender.toString())),
+                          DataCell(CustomText(content: members.gender)),
                         ],
                       ))
                   .toList()),
         ),
-        const Padding(
+        Padding(
           padding: EdgeInsets.symmetric(vertical: 10),
-          child: CustomTextWidget(
-            content: "Activities Details",
-            fontSize: 20,
-            sideLogo: true,
-            fontWeight: FontWeight.w600,
+          child: Column(
+            children: [
+              const CustomTextWidget(
+                content: "Activities Details",
+                fontSize: 20,
+                sideLogo: true,
+                fontWeight: FontWeight.w600,
+              ),
+              // const Text(
+              //   '*The itinerary will be shared 24 hours before the package start *',
+              //   textAlign: TextAlign.start,
+              // ),
+              SizedBox(
+                height: 20,
+                child: Marquee(
+                  showFadingOnlyWhenScrolling: false,
+                  text:
+                      '*The itinerary will be shared 24 hours before the package start *',
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, color: redColor),
+                  scrollAxis: Axis.horizontal,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  blankSpace: AppDimension.getWidth(context),
+                  velocity: 100.0,
+                  pauseAfterRound: Duration(seconds: 1),
+                  startPadding: 0,
+                  accelerationDuration: Duration(seconds: 1),
+                  accelerationCurve: Curves.linear,
+                  decelerationDuration: Duration(milliseconds: 500),
+                  decelerationCurve: Curves.easeOut,
+                ),
+              ),
+            ],
           ),
         ),
+
         Container(
           child: widget.child,
         ),
-        const SizedBox(height: 10),
-        widget.bookingStatus == "BOOKED"
-            ? Align(
-                alignment: Alignment.bottomRight,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 5),
-                  child: CustomButtonSmall(
-                    height: 40,
-                    width: AppDimension.getWidth(context) * .35,
-                    btnHeading: "Cancel Booking",
-                    onTap: widget.onTap ?? () => print("Cancel Button Press"),
-                  ),
-                ),
-              )
-            : const SizedBox(),
+
         widget.driverDetails.isNotEmpty
             ? const Padding(
                 padding: EdgeInsets.symmetric(vertical: 10),
@@ -1376,6 +1351,40 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
                         .toList()),
               )
             : const SizedBox(),
+        const SizedBox(height: 10),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            widget.bookingStatus == "BOOKED"
+                ? CustomButtonSmall(
+                    width: 120,
+                    height: 40,
+                    btnHeading: 'Raise Issue',
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return RaiseIssueDialog(
+                            bookingId: widget.id,
+                            bookingType: 'PACKAGE_BOOKING',
+                          );
+                        },
+                      );
+                    })
+                : SizedBox(),
+            widget.bookingStatus == "BOOKED"
+                ? Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 5),
+                    child: CustomButtonSmall(
+                      height: 40,
+                      width: AppDimension.getWidth(context) * .35,
+                      btnHeading: "Cancel Booking",
+                      onTap: widget.onTap ?? () => print("Cancel Button Press"),
+                    ),
+                  )
+                : const SizedBox(),
+          ],
+        ),
       ],
     );
   }
@@ -1401,6 +1410,42 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
           ),
           Expanded(
             flex: 3,
+            child: Text(
+              value,
+              style: titleTextStyle1,
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  bookingItem({required String lable, required String value}) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 5),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Expanded(
+            flex: 4,
+            child: Text(
+              lable,
+              style: titleTextStyle,
+            ),
+          ),
+          const SizedBox(
+            width: 10,
+          ),
+          Text(
+            ':',
+            style: titleTextStyle,
+          ),
+          const SizedBox(
+            width: 10,
+          ),
+          Flexible(
+            flex: 4,
             child: Text(
               value,
               style: titleTextStyle1,
@@ -1616,6 +1661,29 @@ class _ItineraryActivityContainerState
         const SizedBox(height: 10),
         _buildInfoRow("Opening Time", data.activity.startTime, "Closing Time",
             data.activity.endTime),
+        data.activity.participantType.isNotEmpty
+            ? const SizedBox(height: 10)
+            : SizedBox(),
+        data.activity.participantType.isNotEmpty
+            ? Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    'Suitable For : ',
+                    style: titleTextStyle,
+                  ),
+                  Row(
+                    children: List.generate(
+                        data.activity.participantType.length, (e) {
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 2),
+                        child: Text(data.activity.participantType[e]),
+                      );
+                    }),
+                  )
+                ],
+              )
+            : SizedBox(),
         const SizedBox(height: 10),
         _buildLocationInfo(data.activity.address),
         const SizedBox(height: 5),
@@ -1665,7 +1733,7 @@ class _ItineraryActivityContainerState
       text: TextSpan(
         children: [
           TextSpan(
-            text: "Location: ",
+            text: "Address: ",
             style: GoogleFonts.lato(
               fontSize: 14,
               fontWeight: FontWeight.w600,
@@ -1685,185 +1753,3 @@ class _ItineraryActivityContainerState
     );
   }
 }
-
-///OLD CODE
-// class ItineraryActivityContainer extends StatefulWidget {
-//   final List<String> actyImage;
-//   final String days;
-//   final String activityName;
-//   final String description;
-//   final String activityHour;
-//   final String activityVisit;
-//   final String openTime;
-//   final String closeTime;
-//   final String address;
-//
-//   const ItineraryActivityContainer(
-//       {required this.actyImage,
-//       required this.days,
-//       required this.activityName,
-//       required this.description,
-//       required this.activityHour,
-//       required this.activityVisit,
-//       required this.openTime,
-//       required this.closeTime,
-//       required this.address,
-//       super.key});
-//
-//   @override
-//   State<ItineraryActivityContainer> createState() =>
-//       _ItineraryActivityContainerState();
-// }
-//
-// class _ItineraryActivityContainerState
-//     extends State<ItineraryActivityContainer> {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Padding(
-//       padding: const EdgeInsets.only(bottom: 5),
-//       child: CommonContainer(
-//         borderReq: true,
-//         elevation: 0,
-//         padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-//         borderColor: naturalGreyColor.withOpacity(.3),
-//         child: Column(
-//           crossAxisAlignment: CrossAxisAlignment.start,
-//           children: [
-//             const SizedBox(height: 10),
-//             CustomTextWidget(
-//               sideLogo: true,
-//               align: TextAlign.start,
-//               content: widget.days == "null" ? "" : widget.days,
-//               fontSize: 16,
-//               fontWeight: FontWeight.w700,
-//               textColor: blackColor,
-//             ),
-//             const SizedBox(height: 10),
-//             CommonContainer(
-//               elevation: 0,
-//               height: 150,
-//               borderRadius: BorderRadius.circular(10),
-//               child: MultiImageSlider(
-//                 images: widget.actyImage,
-//               ),
-//             ),
-//             const SizedBox(height: 5),
-//             CustomText(
-//               align: TextAlign.start,
-//               content: widget.activityName,
-//               maxline: 3,
-//               fontSize: 16,
-//               fontWeight: FontWeight.w700,
-//               textColor: blackColor,
-//             ),
-//             const SizedBox(height: 5),
-//             ReadMoreText(
-//               widget.description,
-//               style: GoogleFonts.lato(
-//                 fontSize: 14,
-//                 // textEllipsis: true,
-//                 color: blackColor,
-//                 fontWeight: FontWeight.w400,
-//               ),
-//               moreStyle: const TextStyle(
-//                   fontWeight: FontWeight.w500, color: redColor, fontSize: 15),
-//               lessStyle: const TextStyle(
-//                   fontWeight: FontWeight.w500, color: redColor, fontSize: 15),
-//             ),
-//             const SizedBox(height: 5),
-//             Row(
-//               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//               children: [
-//                 RichText(
-//                     text: TextSpan(children: [
-//                   TextSpan(
-//                       text: "Activity Hours : ",
-//                       style: GoogleFonts.lato(
-//                           fontSize: 14,
-//                           fontWeight: FontWeight.w600,
-//                           color: textColor)),
-//                   TextSpan(
-//                       text: widget.activityHour,
-//                       style: GoogleFonts.lato(
-//                           fontSize: 14,
-//                           fontWeight: FontWeight.w400,
-//                           color: textColor))
-//                 ])),
-//                 RichText(
-//                     text: TextSpan(children: [
-//                   TextSpan(
-//                       text: "Time To Visit : ",
-//                       style: GoogleFonts.lato(
-//                           fontSize: 14,
-//                           fontWeight: FontWeight.w600,
-//                           color: textColor)),
-//                   TextSpan(
-//                       text: widget.activityVisit,
-//                       style: GoogleFonts.lato(
-//                           fontSize: 14,
-//                           fontWeight: FontWeight.w400,
-//                           color: textColor))
-//                 ]))
-//               ],
-//             ),
-//             const SizedBox(height: 10),
-//             Row(
-//               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//               children: [
-//                 RichText(
-//                     text: TextSpan(children: [
-//                   TextSpan(
-//                       text: "Opening Time : ",
-//                       style: GoogleFonts.lato(
-//                           fontSize: 14,
-//                           fontWeight: FontWeight.w600,
-//                           color: textColor)),
-//                   TextSpan(
-//                       text: widget.openTime,
-//                       style: GoogleFonts.lato(
-//                           fontSize: 14,
-//                           fontWeight: FontWeight.w400,
-//                           color: textColor))
-//                 ])),
-//                 RichText(
-//                     text: TextSpan(children: [
-//                   TextSpan(
-//                       text: "Closing Time : ",
-//                       style: GoogleFonts.lato(
-//                           fontSize: 14,
-//                           fontWeight: FontWeight.w600,
-//                           color: textColor)),
-//                   TextSpan(
-//                       text: widget.closeTime,
-//                       style: GoogleFonts.lato(
-//                           fontSize: 14,
-//                           fontWeight: FontWeight.w400,
-//                           color: textColor))
-//                 ]))
-//               ],
-//             ),
-//             const SizedBox(height: 10),
-//             RichText(
-//                 textAlign: TextAlign.start,
-//                 text: TextSpan(children: [
-//                   TextSpan(
-//                       text: "Location : ",
-//                       style: GoogleFonts.lato(
-//                           fontSize: 14,
-//                           fontWeight: FontWeight.w600,
-//                           color: textColor)),
-//                   TextSpan(
-//                       text: widget.address,
-//                       style: GoogleFonts.lato(
-//                           fontSize: 14,
-//                           fontWeight: FontWeight.w400,
-//                           color: textColor))
-//                 ])),
-//             const SizedBox(height: 5),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
-//

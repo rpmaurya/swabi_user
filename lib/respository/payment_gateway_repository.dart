@@ -25,14 +25,13 @@ class PaymentCreateOrderIDRepository {
       print({"CreatePaymentOrderresponse": response?.data});
       var resp = PaymentCreateOderIdModel.fromJson(response?.data);
       return resp;
-    } on DioException catch (error) {
-      BaseResponseModel baseResponseModel =
-          BaseResponseModel.fromJson(error.response?.data);
-      print(baseResponseModel.status?.message);
+    } catch (error) {
+      // BaseResponseModel baseResponseModel =
+      //     BaseResponseModel.fromJson(error.response?.data);
+      // print(baseResponseModel.status?.message);
 
       print({'error..': error});
-      http.handleErrorResponse(
-          context: context, error: error, errorResponse: baseResponseModel);
+      http.handleErrorResponse(context: context, error: error);
     }
     return null;
   }
@@ -71,14 +70,16 @@ class PaymentVerifyRepository {
       print({"paymentVerifyresponse": response?.data});
       var resp = PaymentVerifyModel.fromJson(response?.data);
       return resp;
-    } on DioException catch (error) {
-      BaseResponseModel baseResponseModel =
-          BaseResponseModel.fromJson(error.response?.data);
-      print(baseResponseModel.status?.message);
+    } catch (error) {
+      // BaseResponseModel baseResponseModel =
+      //     BaseResponseModel.fromJson(error.response?.data);
+      // print(baseResponseModel.status?.message);
 
       print({'error..': error});
       http.handleErrorResponse(
-          context: context, error: error, errorResponse: baseResponseModel);
+        context: context,
+        error: error,
+      );
     }
     return null;
   }
