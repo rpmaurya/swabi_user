@@ -12,7 +12,7 @@ String paymentDetailsModelToJson(PaymentDetailsModel data) =>
 
 class PaymentDetailsModel {
   Status? status;
-  Data? data;
+  PaymentData? data;
 
   PaymentDetailsModel({
     this.status,
@@ -22,7 +22,7 @@ class PaymentDetailsModel {
   factory PaymentDetailsModel.fromJson(Map<String, dynamic> json) =>
       PaymentDetailsModel(
         status: json["status"] == null ? null : Status.fromJson(json["status"]),
-        data: json["data"] == null ? null : Data.fromJson(json["data"]),
+        data: json["data"] == null ? null : PaymentData.fromJson(json["data"]),
       );
 
   Map<String, dynamic> toJson() => {
@@ -31,7 +31,7 @@ class PaymentDetailsModel {
       };
 }
 
-class Data {
+class PaymentData {
   String? id;
   String? entity;
   int? amount;
@@ -63,7 +63,7 @@ class Data {
   int? createdAt;
   Upi? upi;
 
-  Data({
+  PaymentData({
     this.id,
     this.entity,
     this.amount,
@@ -96,7 +96,7 @@ class Data {
     this.upi,
   });
 
-  factory Data.fromJson(Map<String, dynamic> json) => Data(
+  factory PaymentData.fromJson(Map<String, dynamic> json) => PaymentData(
         id: json["id"],
         entity: json["entity"],
         amount: json["amount"],

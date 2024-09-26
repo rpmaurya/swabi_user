@@ -11,6 +11,7 @@ import 'package:flutter_cab/res/customAppBar_widget.dart';
 import 'package:flutter_cab/res/customContainer.dart';
 import 'package:flutter_cab/res/customRaiseIssueForm.dart';
 import 'package:flutter_cab/res/customTextWidget.dart';
+import 'package:flutter_cab/res/custom_mobileNumber.dart';
 import 'package:flutter_cab/utils/color.dart';
 import 'package:flutter_cab/utils/dimensions.dart';
 import 'package:flutter_cab/utils/string_extenstion.dart';
@@ -34,12 +35,12 @@ import '../../../../view_model/package_view_model.dart';
 class PackagePageViewDetails extends StatefulWidget {
   final String userId;
   final String packageBookID;
-
-  const PackagePageViewDetails({
-    super.key,
-    required this.userId,
-    required this.packageBookID,
-  });
+  final String paymentId;
+  const PackagePageViewDetails(
+      {super.key,
+      required this.userId,
+      required this.packageBookID,
+      required this.paymentId});
 
   @override
   State<PackagePageViewDetails> createState() => _PackagePageViewDetailsState();
@@ -66,18 +67,8 @@ class _PackagePageViewDetailsState extends State<PackagePageViewDetails> {
   }
 
   Future<void> getPaymentDetail() async {
-    String paymentId = Provider.of<GetPackageHistoryDetailByIdViewModel>(
-                context,
-                listen: false)
-            .getPackageHistoryDetailById
-            .data
-            ?.data
-            .paymentId ??
-        '';
-    print('paymentid:...$paymentId');
-
     await Provider.of<RentalPaymentDetailsViewModel>(context, listen: false)
-        .rentalPaymentDetail(context: context, paymentId: paymentId)
+        .rentalPaymentDetail(context: context, paymentId: widget.paymentId)
         .then((onValue) {
       if (onValue?.status?.httpCode == '200') {
         setState(() {
@@ -183,7 +174,7 @@ class _PackagePageViewDetailsState extends State<PackagePageViewDetails> {
             ?.packageBookingId ??
         '';
     // debugPrint("${getPackageItineraryList.length} GetItineraryDetailsList");
-    // debugPrint("${detailsData.paymentId} paymentId......");
+    debugPrint("${widget.paymentId} paymentId......ramji");
     return Scaffold(
       backgroundColor: bgGreyColor,
       appBar: const CustomAppBar(
@@ -242,7 +233,10 @@ class _PackagePageViewDetailsState extends State<PackagePageViewDetails> {
                     // });
                     alertController.clear();
                   },
-                  totalAmt: detailsData.totalAmount,
+                  totalAmt: detailsData.discountAmount.toString() == '0' ||
+                          detailsData.discountAmount.toString().isEmpty
+                      ? detailsData.totalAmount
+                      : detailsData.discountAmount,
                   paymentDetails: paymentDetails,
                   memberList: List.generate(
                       memberListDetails.length,
@@ -484,6 +478,10 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
   TextEditingController primaryController = TextEditingController();
   TextEditingController secondaryController = TextEditingController();
   String initialCountryCode = 'AE';
+  @override
+  void initState() {
+    super.initState();
+  }
 
   Future<List<double>?> getCoordinates(String location) async {
     try {
@@ -531,8 +529,13 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
       required String primaryNo,
       required String secondaryCode,
       required String secondaryNo}) {
-    String primaryCountry = getIsoCode(primaryCode);
-    String secondaryCountry = getIsoCode(secondaryCode);
+    // String primaryCountry = getIsoCode(primaryCode);
+    // String secondaryCountry = getIsoCode(secondaryCode);
+    final focusNode1 = FocusNode();
+    final focusNode2 = FocusNode();
+
+    String primaryCountryCode = primaryCode;
+    String secondaryCountryCode = secondaryCode;
 
     primaryController.text = primaryNo;
     secondaryController.text = secondaryNo;
@@ -541,6 +544,7 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
       builder: (BuildContext context) {
         return StatefulBuilder(
             builder: (BuildContext context, StateSetter setstate) {
+          debugPrint('Country code on dialog open: $secondaryCountryCode');
           return SingleChildScrollView(
             padding: const EdgeInsets.only(top: 70),
             physics: const NeverScrollableScrollPhysics(),
@@ -580,65 +584,83 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
                   ),
                   content: Form(
                     key: _formKey,
-                    // autovalidateMode: AutovalidateMode.disabled,
+                    // autovalidateMode: AutovalidateMode.onUserInteraction,
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Padding(
                           padding: const EdgeInsets.only(bottom: 5),
-                          child: Text(
-                            'Primary Contact',
-                            style: titleTextStyle,
-                          ),
+                          child: Text.rich(TextSpan(children: [
+                            TextSpan(
+                                text: 'Primary Contact', style: titleTextStyle),
+                            const TextSpan(
+                                text: ' *', style: TextStyle(color: redColor))
+                          ])),
                         ),
-                        Customphonefield(
-                          initalCountryCode: primaryCountry,
-                          controller: primaryController,
-                          onChanged: (phone) {
-                            setstate(() {
-                              primaryCode = phone.countryCode
-                                  .replaceFirst('+', '')
-                                  .trim();
-                              debugPrint('primarycountrycode.$primaryCode');
-                              debugPrint(
-                                  'primarycountrycode.${primaryController.text}');
-                            });
-                          },
-                          onCountryChanged: (p0) {
-                            setstate(() {
-                              primaryCode = p0.dialCode;
-                              debugPrint('primarycountrycode.$primaryCode');
-                            });
-                          },
-                        ),
+                        CustomMobilenumber(
+                            textLength: 9,
+                            focusNode: focusNode1,
+                            controller: primaryController,
+                            hintText: 'Enter Primary number',
+                            countryCode: primaryCountryCode),
+                        // Customphonefield(
+                        //   initalCountryCode: primaryCountry,
+                        //   controller: primaryController,
+                        //   onChanged: (phone) {
+                        //     setstate(() {
+                        //       primaryCode = phone.countryCode
+                        //           .replaceFirst('+', '')
+                        //           .trim();
+                        //       debugPrint('primarycountrycode.$primaryCode');
+                        //       debugPrint(
+                        //           'primarycountrycode.${primaryController.text}');
+                        //     });
+                        //   },
+                        //   onCountryChanged: (p0) {
+                        //     setstate(() {
+                        //       primaryCode = p0.dialCode;
+                        //       debugPrint('primarycountrycode.$primaryCode');
+                        //     });
+                        //   },
+                        // ),
+                        SizedBox(height: 10),
                         Padding(
                           padding: const EdgeInsets.only(bottom: 5),
-                          child: Text(
-                            'Secondary Contact',
-                            style: titleTextStyle,
-                          ),
+                          child: Text.rich(TextSpan(children: [
+                            TextSpan(
+                                text: 'Secondary Contact',
+                                style: titleTextStyle),
+                            const TextSpan(
+                                text: ' *', style: TextStyle(color: redColor))
+                          ])),
                         ),
-                        Customphonefield(
-                          initalCountryCode: secondaryCountry,
-                          controller: secondaryController,
-                          onChanged: (phone) {
-                            setstate(() {
-                              secondaryCode = phone.countryCode
-                                  .replaceFirst('+', '')
-                                  .trim();
-                              debugPrint('secondarycountrycode.$secondaryCode');
-                              debugPrint(
-                                  'secondarycountrycode.${secondaryController.text}');
-                            });
-                          },
-                          onCountryChanged: (p0) {
-                            setstate(() {
-                              secondaryCode = p0.dialCode;
-                              debugPrint('secondarycountrycode.$secondaryCode');
-                            });
-                          },
-                        ),
+                        // Customphonefield(
+                        //   initalCountryCode: secondaryCountry,
+                        //   controller: secondaryController,
+                        //   onChanged: (phone) {
+                        //     setstate(() {
+                        //       secondaryCode = phone.countryCode
+                        //           .replaceFirst('+', '')
+                        //           .trim();
+                        //       debugPrint('secondarycountrycode.$secondaryCode');
+                        //       debugPrint(
+                        //           'secondarycountrycode.${secondaryController.text}');
+                        //     });
+                        //   },
+                        //   onCountryChanged: (p0) {
+                        //     setstate(() {
+                        //       secondaryCode = p0.dialCode;
+                        //       debugPrint('secondarycountrycode.$secondaryCode');
+                        //     });
+                        //   },
+                        // ),
+                        CustomMobilenumber(
+                            textLength: 9,
+                            focusNode: focusNode2,
+                            controller: secondaryController,
+                            hintText: 'Enter phone number',
+                            countryCode: secondaryCountryCode)
                       ],
                     ),
                   ),
@@ -654,9 +676,12 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
                             Map<String, dynamic> body = {
                               "packageBookingId": widget.id,
                               "mobile": primaryController.text,
-                              "countryCode": primaryCode,
+                              // "countryCode": primaryCode,
+                              "countryCode": primaryCountryCode,
+
                               "alternateMobile": secondaryController.text,
-                              "alternateMobileCountryCode": secondaryCode
+                              // "alternateMobileCountryCode": secondaryCode
+                              "alternateMobileCountryCode": secondaryCountryCode
                             };
                             debugPrint('bodyData$body');
                             Provider.of<ChangeMobileViewModel>(context,
@@ -703,10 +728,16 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
                     height: 40,
                     btnHeading: 'Change Contact',
                     onTap: () {
+                      // String code = '971';
+                      // setState(() {
+                      //   code = widget.secondaryCountryCode.isEmpty
+                      //       ? '971'
+                      //       : widget.secondaryCountryCode;
+                      // });
                       _changeContact(
                           primaryCode: widget.primaryCountryCode,
                           primaryNo: widget.primaryMobileNo,
-                          secondaryCode: widget.secondaryCountryCode,
+                          secondaryCode: '971',
                           secondaryNo: widget.secondaryMobileNo);
                     })
                 : SizedBox(),
@@ -742,8 +773,15 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                            Text("Location",
-                                                style: titleTextStyle),
+                                            Text.rich(TextSpan(children: [
+                                              TextSpan(
+                                                  text: 'Location',
+                                                  style: titleTextStyle),
+                                              const TextSpan(
+                                                  text: ' *',
+                                                  style: TextStyle(
+                                                      color: redColor))
+                                            ])),
                                             const SizedBox(height: 5),
                                             Container(
                                               padding:
@@ -1542,26 +1580,45 @@ class _ItineraryActivityContainerState
                           ],
                         ),
                         const SizedBox(height: 10),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 5),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              CustomTextWidget(
-                                content:
-                                    "Start Time : ${widget.itineraryDataList[index].startTimestamp.toString().isEmpty ? "N/A" : widget.itineraryDataList[index].startTimestamp.toString().split(' ')[1].substring(0, 5)}",
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
+                        widget.itineraryDataList[index].startTimestamp
+                                .toString()
+                                .isNotEmpty
+                            ? Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 5),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    CustomTextWidget(
+                                      content:
+                                          "Start Time : ${widget.itineraryDataList[index].startTimestamp.toString().isEmpty ? "N/A" : widget.itineraryDataList[index].startTimestamp.toString().split(' ')[1].substring(0, 5)}",
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                    CustomTextWidget(
+                                      content:
+                                          "End Time : ${widget.itineraryDataList[index].endTimestamp.toString().isEmpty ? "N/A" : widget.itineraryDataList[index].endTimestamp.toString().split(' ')[1].substring(0, 5)}",
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ],
+                                ),
+                              )
+                            : Row(
+                                children: [
+                                  Text(
+                                    'Pickup Time : ',
+                                    style: titleTextStyle,
+                                  ),
+                                  Text(
+                                    widget.itineraryDataList[index].pickupTime
+                                            .toString() ??
+                                        '',
+                                    style: titleTextStyle1,
+                                  ),
+                                ],
                               ),
-                              CustomTextWidget(
-                                content:
-                                    "End Time : ${widget.itineraryDataList[index].endTimestamp.toString().isEmpty ? "N/A" : widget.itineraryDataList[index].endTimestamp.toString().split(' ')[1].substring(0, 5)}",
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ],
-                          ),
-                        ),
                       ],
                     ),
                   ),

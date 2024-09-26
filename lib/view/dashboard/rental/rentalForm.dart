@@ -122,7 +122,11 @@ class _RentalFormState extends State<RentalForm> with RouteAware {
             children: [
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: Text("Pickup Location", style: titleTextStyle),
+                child: Text.rich(TextSpan(children: [
+                  TextSpan(text: 'Pickup Location', style: titleTextStyle),
+                  TextSpan(text: ' *', style: TextStyle(color: redColor))
+                ])),
+                // child: Text("Pickup Location", style: titleTextStyle),
               ),
               const SizedBox(height: 5),
               Container(
@@ -215,10 +219,10 @@ class _RentalFormState extends State<RentalForm> with RouteAware {
             alignment: Alignment.centerLeft,
             child: Padding(
               padding: const EdgeInsets.only(left: 10),
-              child: Text(
-                'Pickup Time',
-                style: titleTextStyle,
-              ),
+              child: Text.rich(TextSpan(children: [
+                TextSpan(text: 'Pickup Time', style: titleTextStyle),
+                TextSpan(text: ' *', style: TextStyle(color: redColor))
+              ])),
             ),
           ),
           const SizedBox(height: 5),

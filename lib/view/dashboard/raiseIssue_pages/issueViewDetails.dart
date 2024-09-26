@@ -70,11 +70,17 @@ class _IssueviewdetailsState extends State<Issueviewdetails> {
                                   color: issueData?.issueStatus.toString() ==
                                           'OPEN'
                                       ? redColor
-                                      : Colors.green,
+                                      : issueData?.issueStatus.toString() ==
+                                              'IN_PROGRESS'
+                                          ? Colors.yellow[300]
+                                          : Colors.green,
                                   borderRadius: BorderRadius.circular(5)),
                               child: Center(
                                   child: Text(
-                                issueData?.issueStatus.toString() ?? '',
+                                issueData?.issueStatus.toString() ==
+                                        'IN_PROGRESS'
+                                    ? 'INPROGRESS'
+                                    : issueData?.issueStatus.toString() ?? '',
                                 style: TextStyle(color: background),
                               )),
                             )

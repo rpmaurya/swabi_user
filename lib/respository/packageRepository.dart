@@ -97,14 +97,16 @@ class GetPackageHistoryRepository {
 class GetPackageHistoryDetailByIdRepository {
   final BaseApiServices _apiServices = NetworkApiService();
 
-  Future<dynamic> getPackageHistoryDetailByIdRepositoryApi(data) async {
+  Future<GetPackageHIstoryDetailsModel?>
+      getPackageHistoryDetailByIdRepositoryApi(data) async {
     try {
       // dynamic response = await _apiServices.getGetApiResponse(AppUrl.getPackageList);
       dynamic response = await _apiServices.getGetApiResponse(
           "http://swabi.ap-south-1.elasticbeanstalk.com"
           "/package_booking/get_package_booking_by_id?packageBookingId=${data["packageBookingId"]}");
       print("Get Package History Detail By Id Repo Success");
-      return response = GetPackageHIstoryDetailsModel.fromJson(response);
+      var resp = GetPackageHIstoryDetailsModel.fromJson(response);
+      return resp;
     } catch (e) {
       print("Get Package History Detail By Id Repo Field");
       print(e);

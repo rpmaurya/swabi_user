@@ -75,7 +75,7 @@ dependencies:
   
   intl_phone_field: ^3.2.0
   time_picker_spinner_pop_up: ^1.0.3
-
+  html: ^0.15.4
 
 
 
@@ -87,6 +87,10 @@ dependencies:
   http_parser: any
   dio: ^5.4.3+1
   marquee: 
+  currency_picker: ^2.0.21
+  country_currency_pickers: ^3.0.0
+  image: ^4.2.0
+ 
 
   # country_codes: ^2.0.0
 dev_dependencies:

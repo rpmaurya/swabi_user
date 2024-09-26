@@ -1,7 +1,8 @@
-import 'dart:ui';
-
+// import 'package:country_currency_pickers/utils/utils.dart';
+// import 'package:currency_picker/currency_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/model/paymentDetailsModel.dart';
+import 'package:flutter_cab/model/rentalBooking_model.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/res/Custom%20Page%20Layout/commonPage_Layout.dart';
 import 'package:flutter_cab/res/Custom%20Widgets/customPaymentDetailsContainer.dart';
@@ -32,15 +33,18 @@ class RentalBookedPageView extends StatefulWidget {
 
 class _RentalBookedPageViewState extends State<RentalBookedPageView> {
   TextEditingController controller = TextEditingController();
-  var fulldata, userData, vehicleDetails, driverDetails, guestDetails;
-  Data? paymentDetails;
+  RentalDetailsSingleData? fulldata;
+  PaymentData? paymentDetails;
   bool loading = false;
+  String? currency;
   @override
   void initState() {
     // TODO: implement initState
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       getPaymentDetail();
     });
+    // currency = getCurrencyByCountryCode('IN');
+    // print('Currency for IN: ${currency} - ${currency}');
     super.initState();
   }
 
@@ -82,24 +86,27 @@ class _RentalBookedPageViewState extends State<RentalBookedPageView> {
         .rentalBookingList
         .status
         .toString();
-    fulldata =
-        context.watch<RentalViewDetailViewModel>().DataList.data?.data ?? "";
-    userData =
-        context.watch<RentalViewDetailViewModel>().DataList.data?.data.user ??
-            "";
-    guestDetails =
-        context.watch<RentalViewDetailViewModel>().DataList.data?.data.guest ??
-            "";
-    vehicleDetails = context
-            .watch<RentalViewDetailViewModel>()
-            .DataList
-            .data
-            ?.data
-            .vehicle ??
-        "";
-    driverDetails =
-        context.watch<RentalViewDetailViewModel>().DataList.data?.data.driver ??
-            "";
+    fulldata = context.watch<RentalViewDetailViewModel>().DataList.data?.data;
+    // userData =
+    //     context.watch<RentalViewDetailViewModel>().DataList.data?.data.user ??
+    //         "";
+    // guestDetails =
+    //     context.watch<RentalViewDetailViewModel>().DataList.data?.data.guest ??
+    //         "";
+    // vehicleDetails = context
+    //         .watch<RentalViewDetailViewModel>()
+    //         .DataList
+    //         .data
+    //         ?.data
+    //         .vehicle ??
+    //     "";
+    // driverDetails =
+    //     context.watch<RentalViewDetailViewModel>().DataList.data?.data.driver ??
+    //
+    //      "";
+    DateTime dateTime1 = DateTime.fromMillisecondsSinceEpoch(
+      (int.tryParse(fulldata?.createdDate ?? '')) ?? 0 * 1000,
+    );
 
     DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(
         (paymentDetails?.createdAt ?? 0) * 1000,
@@ -110,8 +117,7 @@ class _RentalBookedPageViewState extends State<RentalBookedPageView> {
     String formattedTime =
         '${DateFormat('HH:mm').format(adjustedTime)} GMT (+05:30)';
     print('paymentdewatil.......${paymentDetails?.amount}');
-    print("${driverDetails.firstName}Name");
-    print("${vehicleDetails.carName}Name");
+
     debugPrint('hjkhkkjkjjkjk$formattedTime');
 
     return Scaffold(
@@ -127,32 +133,42 @@ class _RentalBookedPageViewState extends State<RentalBookedPageView> {
                 RentalBookingContainer(
                   // bookingId: fulldata.bookerId,
                   // carName: vehicleMap['carName'] ?? 'N/A',
-                  vehicleType: fulldata.vehicle.carType,
+                  createdDate: DateFormat('dd-MM-yyyy').format(dateTime1),
+                  rideStartTime: fulldata?.rideStartTime ?? '',
+                  extraRideDistance: fulldata?.extraKilometers ?? '',
+                  extraRideTime: fulldata?.extraMinutes ?? '',
+                  totalRideTime: fulldata?.totalRentTime ?? '',
+                  vehicleType: fulldata?.vehicle.carType ?? '',
                   id: widget.bookedId,
-                  kilometer: fulldata.kilometers,
-                  pickDate: fulldata.date,
-                  pickTime: fulldata.pickupTime,
-                  rentalCharge: fulldata.rentalCharge,
-                  status: fulldata.bookingStatus,
-                  fuel: fulldata.vehicle!.fuelType?.toString() ?? '',
-                  pickUpLocation: fulldata.pickupLocation != 'null'
-                      ? fulldata.pickupLocation
+                  kilometer: fulldata?.kilometers ?? '',
+                  pickDate: fulldata?.date ?? '',
+                  pickTime: fulldata?.pickupTime ?? '',
+                  rentalCharge: (fulldata?.discountAmount ?? '').isEmpty ||
+                          fulldata?.discountAmount == '0'
+                      ? fulldata?.rentalCharge ?? ''
+                      : fulldata?.discountAmount ?? '',
+                  status: fulldata?.bookingStatus ?? '',
+                  fuel: fulldata?.vehicle.fuelType?.toString() ?? '',
+                  pickUpLocation: fulldata?.pickupLocation != null
+                      ? fulldata?.pickupLocation ?? ''
                       : 'N/A',
-                  paid: fulldata.paidStatus,
-                  vehicleNo: fulldata.vehicle!.vehicleNumber?.toString() ?? '',
-                  color: fulldata.vehicle!.color?.toString() ?? '',
+                  paid: fulldata?.paidStatus ?? '',
+                  vehicleNo: fulldata?.vehicle.vehicleNumber?.toString() ?? '',
+                  color: fulldata?.vehicle.color?.toString() ?? '',
                   // seats: vehicleMap['seats'] ?? 'N/A',
-                  carType: fulldata.carType,
-                  brandName: fulldata.vehicle!.brandName?.toString() ?? '',
+                  carType: fulldata?.carType ?? '',
+                  brandName: fulldata?.vehicle.brandName?.toString() ?? '',
                   /////////////////Guest Detail////////////////////////
-                  guestId: fulldata.guest!.guestId?.toString() ?? '',
-                  firstName: fulldata.guest!.guestName?.toString() ?? '',
-                  lastName:
-                      guestDetails.toString().isEmpty || guestDetails != "null"
-                          ? ""
-                          : "",
-                  contact: fulldata.guest!.guestMobile?.toString() ?? '',
-                  gender: fulldata.guest!.gender?.toString() ?? '',
+                  guestId: fulldata?.guest.guestId?.toString() ?? '',
+                  firstName: fulldata?.guest.guestName?.toString() ?? '',
+                  lastName: fulldata!.guest.guestName!.isEmpty ||
+                          fulldata?.guest.guestName != null
+                      ? ""
+                      : "",
+                  contact:
+                      '+ ${fulldata?.guest.countryCode?.toString() ?? '971'} ${fulldata?.guest.guestMobile?.toString()}' ??
+                          '',
+                  gender: fulldata?.guest.gender?.toString() ?? '',
                   btn: Container(),
                 ),
                 const SizedBox(height: 10),
@@ -165,41 +181,42 @@ class _RentalBookedPageViewState extends State<RentalBookedPageView> {
                         paymentTime: formattedTime)
                     : Container(),
                 const SizedBox(height: 10),
-                vehicleDetails != null &&
-                        vehicleDetails.carName != null &&
-                        vehicleDetails.carName!.isNotEmpty
+                fulldata?.vehicle != null &&
+                        fulldata?.vehicle.carName != null &&
+                        fulldata!.vehicle.carName!.isNotEmpty
                     ? VechicleDetailsContainer(
-                        color: vehicleDetails.color ?? '',
-                        vehicleName: vehicleDetails.carName ?? '',
-                        brandName: vehicleDetails.brandName ?? '',
-                        vehicleNo: vehicleDetails.vehicleNumber ?? '',
-                        fuelType: vehicleDetails.fuelType ?? '',
-                        seats: vehicleDetails.seats ?? '',
-                        vehicleImage: vehicleDetails.images ?? '',
+                        color: fulldata?.vehicle.color ?? '',
+                        vehicleName: fulldata?.vehicle.carName ?? '',
+                        brandName: fulldata?.vehicle.brandName ?? '',
+                        vehicleNo: fulldata?.vehicle.vehicleNumber ?? '',
+                        fuelType: fulldata?.vehicle.fuelType ?? '',
+                        seats: fulldata?.vehicle.seats ?? '',
+                        vehicleImage: fulldata?.vehicle.images ?? [],
                       )
                     : Container(),
                 const SizedBox(
                   height: 10,
                 ),
-                driverDetails != null &&
-                        driverDetails.firstName != null &&
-                        driverDetails.firstName!.isNotEmpty
+                fulldata?.driver != null &&
+                        fulldata?.driver.firstName != null &&
+                        fulldata!.driver.firstName!.isNotEmpty
                     ? DriverDetailsContainer(
-                        firstName: fulldata.driver.firstName?.toString() ?? '',
-                        lastName: fulldata.driver.lastName?.toString() ?? '',
-                        gender: fulldata.driver.gender?.toString() ?? '',
+                        firstName: fulldata?.driver.firstName?.toString() ?? '',
+                        lastName: fulldata?.driver.lastName?.toString() ?? '',
+                        gender: fulldata?.driver.gender?.toString() ?? '',
                         countryCode:
-                            fulldata.driver.countryCode?.toString() ?? '',
-                        mobile: fulldata.driver.mobile?.toString() ?? '',
-                        email: fulldata.driver.email?.toString() ?? '',
-                        address: fulldata.driver.driverAddress,
+                            fulldata?.driver.countryCode?.toString() ?? '',
+                        mobile: fulldata?.driver.mobile?.toString() ?? '',
+                        email: fulldata?.driver.email?.toString() ?? '',
+                        address:
+                            fulldata?.driver.driverAddress.toString() ?? '',
                       )
                     : Container(),
                 const SizedBox(height: 10),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    fulldata.bookingStatus == "BOOKED"
+                    fulldata?.bookingStatus == "BOOKED"
                         ? CustomButtonSmall(
                             height: 40,
                             width: 120,
@@ -216,7 +233,7 @@ class _RentalBookedPageViewState extends State<RentalBookedPageView> {
                               );
                             })
                         : Container(),
-                    fulldata.bookingStatus == "BOOKED"
+                    fulldata?.bookingStatus == "BOOKED"
                         ? Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 10),
                             child: CustomButtonSmall(
@@ -318,6 +335,11 @@ class _RentalBookedPageViewState extends State<RentalBookedPageView> {
 
 class RentalBookingContainer extends StatelessWidget {
   // final String carName;
+  final String createdDate;
+  final String rideStartTime;
+  final String extraRideDistance;
+  final String extraRideTime;
+  final String totalRideTime;
   final String pickDate;
   final String pickTime;
   final String vehicleType;
@@ -346,6 +368,11 @@ class RentalBookingContainer extends StatelessWidget {
   const RentalBookingContainer({
     super.key,
     // required this.carName,
+    required this.createdDate,
+    required this.rideStartTime,
+    required this.extraRideDistance,
+    required this.extraRideTime,
+    required this.totalRideTime,
     required this.pickDate,
     required this.pickTime,
     required this.vehicleType,
@@ -410,52 +437,6 @@ class RentalBookingContainer extends StatelessWidget {
                         fontWeight: FontWeight.w700),
                   )),
             ),
-            // Align(
-            //     alignment: Alignment.center,
-            //     child: Text(
-            //       "Car Details",
-            //       style: titleTextStyle,
-            //     )),
-            // Container(
-            //   // height: 50,
-            //   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-            //   decoration: const BoxDecoration(
-            //       border: Border(bottom: BorderSide(color: greyColor))),
-            //   child: Column(
-            //     crossAxisAlignment: CrossAxisAlignment.start,
-            //     children: [
-            //       Row(
-            //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //         crossAxisAlignment: CrossAxisAlignment.start,
-            //         children: [
-            //           Column(
-            //             crossAxisAlignment: CrossAxisAlignment.start,
-            //             children: [
-            //               RichText(
-            //                   overflow: TextOverflow.ellipsis,
-            //                   text: TextSpan(children: [
-            //                     TextSpan(
-            //                       text: "Car Type : ",
-            //                       style: titleTextStyle,
-            //                     ),
-            //                     TextSpan(
-            //                       text: carType,
-            //                       style: textTextStyle,
-            //                     ),
-            //                   ])),
-            //             ],
-            //           ),
-            //         ],
-            //       ),
-            //     ],
-            //   ),
-            // ),
-            // Align(
-            //     alignment: Alignment.center,
-            //     child: Text(
-            //       "Booking Details",
-            //       style: titleTextStyle,
-            //     )),
 
             ///3rd Container
             Container(
@@ -467,136 +448,172 @@ class RentalBookingContainer extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text("BookingId : ", style: titleTextStyle),
-                              SizedBox(
-                                // width: 100,
-                                child: Text(id, style: titleTextStyle1),
-                              )
-                            ],
-                          ),
-                          const SizedBox(height: 5),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text("Kilometer : ", style: titleTextStyle),
-                              SizedBox(
-                                // width: 100,
-                                child: Text(kilometer, style: titleTextStyle1),
-                              )
-                            ],
-                          ),
-                          const SizedBox(height: 5),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text("Date : ", style: titleTextStyle),
-                              SizedBox(
-                                // width: 100,
-                                child: Text(pickDate, style: titleTextStyle1),
-                              )
-                            ],
-                          ),
-                        ],
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text("Booking Status : ", style: titleTextStyle),
-                              SizedBox(
-                                // width: 100,
-                                child: Text(status, style: titleTextStyle1),
-                              )
-                            ],
-                          ),
-                          const SizedBox(height: 5),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text("Bookin Price : ", style: titleTextStyle),
-                              SizedBox(
-                                // width: 100,
-                                child: Text('AED ${rentalCharge}',
-                                    style: titleTextStyle1),
-                              )
-                            ],
-                          ),
-                          const SizedBox(height: 5),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text("Pick-Up Time : ", style: titleTextStyle),
-                              SizedBox(
-                                // width: 100,
-                                child: Text(pickTime, style: titleTextStyle1),
-                              )
-                            ],
-                          ),
-                          const SizedBox(height: 5),
-                        ],
-                      )
-                    ],
-                  ),
+                  bookingItem(lable: 'Booking ID', value: id),
+                  const SizedBox(height: 5),
+                  bookingItem(lable: 'Booking Status', value: status),
+                  const SizedBox(height: 5),
+
+                  bookingItem(lable: 'Created Date', value: createdDate),
+                  const SizedBox(height: 5),
+
+                  bookingItem(lable: 'Ride Date', value: pickDate),
+                  const SizedBox(height: 5),
+
+                  bookingItem(lable: 'PickUpTime', value: pickTime),
+                  const SizedBox(height: 5),
+
+                  bookingItem(
+                      lable: 'Ride Start Time',
+                      value: rideStartTime.isNotEmpty
+                          ? rideStartTime
+                          : 'Ride not started'),
+                  const SizedBox(height: 5),
+
+                  bookingItem(lable: 'Ride Distance', value: '$kilometer KM'),
+                  const SizedBox(height: 5),
+
+                  bookingItem(
+                      lable: 'Extra Ride Distance',
+                      value: extraRideDistance.isNotEmpty
+                          ? extraRideDistance
+                          : 'N/A'),
+                  const SizedBox(height: 5),
+
+                  bookingItem(
+                      lable: 'Extra Ride Time',
+                      value:
+                          '0 Hour : ${extraRideTime.isNotEmpty ? extraRideTime : '0'} Min'),
+                  const SizedBox(height: 5),
+
+                  bookingItem(
+                      lable: 'Total Ride Time', value: '$totalRideTime Hour'),
+                  const SizedBox(height: 5),
+
+                  vehicleType.isNotEmpty
+                      ? bookingItem(lable: 'Car Type', value: vehicleType)
+                      : SizedBox(),
+                  const SizedBox(height: 5),
+
+                  bookingItem(
+                      lable: 'Booking Price', value: 'AED $rentalCharge'),
+                  const SizedBox(height: 5),
+
+                  bookingItem(lable: 'Pickup Location', value: pickUpLocation),
+                  // Row(
+                  //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  //   crossAxisAlignment: CrossAxisAlignment.start,
+                  //   children: [
+                  //     Column(
+                  //       crossAxisAlignment: CrossAxisAlignment.start,
+                  //       mainAxisAlignment: MainAxisAlignment.start,
+                  //       children: [
+                  //         Row(
+                  //           mainAxisAlignment: MainAxisAlignment.start,
+                  //           crossAxisAlignment: CrossAxisAlignment.start,
+                  //           children: [
+                  //             Text("BookingId : ", style: titleTextStyle),
+                  //             SizedBox(
+                  //               // width: 100,
+                  //               child: Text(id, style: titleTextStyle1),
+                  //             )
+                  //           ],
+                  //         ),
+                  //         const SizedBox(height: 5),
+                  //         Row(
+                  //           mainAxisAlignment: MainAxisAlignment.start,
+                  //           crossAxisAlignment: CrossAxisAlignment.start,
+                  //           children: [
+                  //             Text("Kilometer : ", style: titleTextStyle),
+                  //             SizedBox(
+                  //               // width: 100,
+                  //               child: Text(kilometer, style: titleTextStyle1),
+                  //             )
+                  //           ],
+                  //         ),
+                  //         const SizedBox(height: 5),
+                  //         Row(
+                  //           mainAxisAlignment: MainAxisAlignment.start,
+                  //           crossAxisAlignment: CrossAxisAlignment.start,
+                  //           children: [
+                  //             Text("Date : ", style: titleTextStyle),
+                  //             SizedBox(
+                  //               // width: 100,
+                  //               child: Text(pickDate, style: titleTextStyle1),
+                  //             )
+                  //           ],
+                  //         ),
+                  //       ],
+                  //     ),
+                  //     Column(
+                  //       crossAxisAlignment: CrossAxisAlignment.start,
+                  //       children: [
+                  //         Row(
+                  //           mainAxisAlignment: MainAxisAlignment.start,
+                  //           crossAxisAlignment: CrossAxisAlignment.start,
+                  //           children: [
+                  //             Text("Status : ", style: titleTextStyle),
+                  //             SizedBox(
+                  //               // width: 100,
+                  //               child: Text(status, style: titleTextStyle1),
+                  //             )
+                  //           ],
+                  //         ),
+                  //         const SizedBox(height: 5),
+                  //         Row(
+                  //           mainAxisAlignment: MainAxisAlignment.start,
+                  //           crossAxisAlignment: CrossAxisAlignment.start,
+                  //           children: [
+                  //             Text("Price : ", style: titleTextStyle),
+                  //             SizedBox(
+                  //               // width: 100,
+                  //               child: Text('AED ${rentalCharge}',
+                  //                   style: titleTextStyle1),
+                  //             )
+                  //           ],
+                  //         ),
+                  //         const SizedBox(height: 5),
+                  //         Row(
+                  //           mainAxisAlignment: MainAxisAlignment.start,
+                  //           crossAxisAlignment: CrossAxisAlignment.start,
+                  //           children: [
+                  //             Text("Pick-Up Time : ", style: titleTextStyle),
+                  //             SizedBox(
+                  //               // width: 100,
+                  //               child: Text(pickTime, style: titleTextStyle1),
+                  //             )
+                  //           ],
+                  //         ),
+                  //         const SizedBox(height: 5),
+                  //       ],
+                  //     )
+                  //   ],
+                  // ),
+                  // vehicleType.isNotEmpty
+                  //     ? Row(
+                  //         mainAxisAlignment: MainAxisAlignment.start,
+                  //         crossAxisAlignment: CrossAxisAlignment.start,
+                  //         children: [
+                  //           Text("Vehicle Type : ", style: titleTextStyle),
+                  //           SizedBox(
+                  //             // width: 100,
+                  //             child: Text(vehicleType, style: titleTextStyle1),
+                  //           )
+                  //         ],
+                  //       )
+                  //     : SizedBox(),
                   // const SizedBox(height: 5),
                   // Row(
                   //     mainAxisAlignment: MainAxisAlignment.start,
                   //     crossAxisAlignment: CrossAxisAlignment.start,
                   //     children: [
-                  //       Text("Booking ID : ", style: titleTextStyle),
+                  //       Text("PickUp Location : ", style: titleTextStyle),
                   //       SizedBox(
-                  //         width: 220,
-                  //         child: Text(
-                  //           bookingId,
-                  //           style: titleTextStyle1,
-                  //           textAlign: TextAlign.start,
-                  //           maxLines: 2,
-                  //         ),
+                  //         width: 210,
+                  //         child: Text(pickUpLocation,
+                  //             style: titleTextStyle1,
+                  //             textAlign: TextAlign.start),
                   //       ),
                   //     ]),
-
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text("Vehicle Type : ", style: titleTextStyle),
-                      SizedBox(
-                        // width: 100,
-                        child: Text(vehicleType, style: titleTextStyle1),
-                      )
-                    ],
-                  ),
-                  const SizedBox(height: 5),
-                  Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text("PickUp Location : ", style: titleTextStyle),
-                        SizedBox(
-                          width: 210,
-                          child: Text(pickUpLocation,
-                              style: titleTextStyle1,
-                              textAlign: TextAlign.start),
-                        ),
-                      ]),
                 ],
               ),
             ),
@@ -682,6 +699,19 @@ class RentalBookingContainer extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  bookingItem({required String lable, required String value}) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(flex: 2, child: Text(lable, style: titleTextStyle)),
+        Text(':', style: titleTextStyle),
+        const SizedBox(width: 10),
+        Expanded(flex: 2, child: Text(value, style: titleTextStyle1))
+      ],
     );
   }
 }
@@ -942,110 +972,81 @@ class DriverDetailsContainer extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text("Name : ", style: titleTextStyle),
-                              SizedBox(
-                                width: 100,
-                                child: Text(
-                                  "$firstName $lastName",
-                                  style: titleTextStyle1,
-                                  maxLines: 3,
-                                ),
-                              )
-                            ],
-                          ),
-                          const SizedBox(height: 5),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text("Contact No. : ", style: titleTextStyle),
-                              SizedBox(
-                                // width: 100,
-                                child: Text(
-                                  '+${countryCode} ${mobile}',
-                                  style: titleTextStyle1,
-                                  maxLines: 3,
-                                ),
-                              )
-                            ],
-                          ),
-                          const SizedBox(height: 5),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text("Email : ", style: titleTextStyle),
-                              SizedBox(
-                                // width: 100,
-                                child: Text(
-                                  email,
-                                  style: titleTextStyle1,
-                                  maxLines: 3,
-                                ),
-                              )
-                            ],
-                          ),
-                          const SizedBox(height: 5),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text("Address : ", style: titleTextStyle),
-                              SizedBox(
-                                // width: 100,
-                                child: Text(
-                                  address,
-                                  style: titleTextStyle1,
-                                  maxLines: 3,
-                                ),
-                              )
-                            ],
-                          ),
-                        ],
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Row(
-                          //   mainAxisAlignment: MainAxisAlignment.start,
-                          //   crossAxisAlignment: CrossAxisAlignment.start,
-                          //   children: [
-                          //     Text( "Last Name : ",
-                          //         style: titleTextStyle),
-                          //     SizedBox(
-                          //       width: 70,
-                          //       child: Text(,
-                          //         style: titleTextStyle1,maxLines: 3,),
-                          //     )
-                          //   ],
-                          // ),
-                          // const SizedBox(height: 5),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text("Gender : ", style: titleTextStyle),
-                              SizedBox(
-                                // width: 100,
-                                child: Text(
-                                  gender,
-                                  style: titleTextStyle1,
-                                  maxLines: 3,
-                                ),
-                              )
-                            ],
-                          ),
-                        ],
+                      Text("Name : ", style: titleTextStyle),
+                      SizedBox(
+                        // width: 100,
+                        child: Text(
+                          "$firstName $lastName",
+                          style: titleTextStyle1,
+                          maxLines: 3,
+                        ),
+                      )
+                    ],
+                  ),
+                  const SizedBox(height: 5),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text("Gender : ", style: titleTextStyle),
+                      SizedBox(
+                        // width: 100,
+                        child: Text(
+                          gender,
+                          style: titleTextStyle1,
+                          maxLines: 3,
+                        ),
+                      )
+                    ],
+                  ),
+                  const SizedBox(height: 5),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text("Contact No. : ", style: titleTextStyle),
+                      SizedBox(
+                        // width: 100,
+                        child: Text(
+                          '+${countryCode} ${mobile}',
+                          style: titleTextStyle1,
+                          maxLines: 3,
+                        ),
+                      )
+                    ],
+                  ),
+                  const SizedBox(height: 5),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text("Email : ", style: titleTextStyle),
+                      SizedBox(
+                        // width: 100,
+                        child: Text(
+                          email,
+                          style: titleTextStyle1,
+                          maxLines: 3,
+                        ),
+                      )
+                    ],
+                  ),
+                  const SizedBox(height: 5),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text("Address : ", style: titleTextStyle),
+                      SizedBox(
+                        // width: 100,
+                        child: Text(
+                          address,
+                          style: titleTextStyle1,
+                          maxLines: 3,
+                        ),
                       )
                     ],
                   ),

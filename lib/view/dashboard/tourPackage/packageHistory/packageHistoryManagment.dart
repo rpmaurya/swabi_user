@@ -185,7 +185,16 @@ class _PackageHistoryManagementState extends State<PackageHistoryManagement>
                           bookingDate: bookedHistory[index].bookingDate,
                           members:
                               bookedHistory[index].memberList.length.toString(),
-                          price: bookedHistory[index].totalAmount,
+                          price: bookedHistory[index]
+                                      .discountAmount
+                                      .toString()
+                                      .isEmpty ||
+                                  bookedHistory[index]
+                                          .discountAmount
+                                          .toString() ==
+                                      '0'
+                              ? bookedHistory[index].totalAmount
+                              : bookedHistory[index].discountAmount,
                           pkgName: bookedHistory[index].pkg.packageName,
                           location: bookedHistory[index].pkg.country,
                           imageList: bookedHistory[index]

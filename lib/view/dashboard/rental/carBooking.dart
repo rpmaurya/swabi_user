@@ -517,11 +517,19 @@ class CancelContainerDialog extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const CustomTextWidget(
-                    content: "Reason for cancel booking",
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    textColor: greyColor,
+                  const Row(
+                    children: [
+                      CustomTextWidget(
+                        content: "Reason for cancel booking",
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        textColor: greyColor,
+                      ),
+                      Text(
+                        ' *',
+                        style: TextStyle(color: redColor),
+                      )
+                    ],
                   ),
                   const SizedBox(height: 25),
                   Container(

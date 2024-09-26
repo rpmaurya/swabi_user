@@ -17,7 +17,7 @@ class Raiseissuedetails extends StatefulWidget {
 
 class _RaiseissuedetailsState extends State<Raiseissuedetails>
     with SingleTickerProviderStateMixin {
-  List<String> tabList = ['ALL', 'OPEN', 'IN_PROGRESS', 'RESOLVED'];
+  List<String> tabList = ['ALL', 'OPEN', 'INPROGRESS', 'RESOLVED'];
   TabController? _tabController;
   final ScrollController _scrollController = ScrollController();
 
@@ -71,7 +71,9 @@ class _RaiseissuedetailsState extends State<Raiseissuedetails>
     setState(() {
       isLoadingMore = true;
     });
-    String status = tabList[intialIndex];
+    String status = tabList[intialIndex] == 'INPROGRESS'
+        ? 'IN_PROGRESS'
+        : tabList[intialIndex];
     try {
       var resp = await Provider.of<RaiseissueViewModel>(context, listen: false)
           .getRaiseIssue(

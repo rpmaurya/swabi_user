@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/res/Custom%20Page%20Layout/commonPage_Layout.dart';
+import 'package:flutter_cab/utils/assets.dart';
 import 'package:flutter_cab/utils/utils.dart';
 import 'package:flutter_cab/view_model/userProfile_view_model.dart';
+import 'package:flutter_cab/view_model/user_view_model.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 import '../../../res/customAppBar_widget.dart';
@@ -18,6 +21,7 @@ class ChangePassword extends StatefulWidget {
 }
 
 class _ChangePasswordState extends State<ChangePassword> {
+  UserViewModel userViewModel = UserViewModel();
   final _formKey = GlobalKey<FormState>();
   final _oldPasswordController = TextEditingController();
   final _newPasswordController = TextEditingController();
@@ -148,78 +152,108 @@ class _ChangePasswordState extends State<ChangePassword> {
         heading: "Change Password",
       ),
       body: PageLayout_Page(
-          child: Form(
-        // autovalidateMode: AutovalidateMode.onUserInteraction,
-        key: _formKey,
-        child: Column(
-          children: [
-            customtextformfield(
-                focusNode: _focasNode1,
-                controller: _oldPasswordController,
-                obscureText: _obscureOldPassword,
-                hinttext: 'Old Password',
-                errorText: _oldPasswordError,
-                onIconPress: _toggleOldPasswordVisibility,
-                validator: _validatePassword),
-            const SizedBox(height: 16.0),
-            customtextformfield(
-                focusNode: _focasNode2,
-                controller: _newPasswordController,
-                obscureText: _obscureNewPassword,
-                hinttext: 'New Password',
-                errorText: _newPasswordError,
-                onIconPress: _toggleNewPasswordVisibility,
-                validator: _validatePassword),
+          child: SingleChildScrollView(
+        child: Form(
+          // autovalidateMode: AutovalidateMode.onUserInteraction,
+          key: _formKey,
+          child: Column(
+            children: [
+              const SizedBox(height: 50),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 50),
+                child: Center(child: Image.asset(appLogo1)),
+                // child: Center(child: Image.asset(appLogo1)),
+              ),
+              customtextformfield(
+                  focusNode: _focasNode1,
+                  controller: _oldPasswordController,
+                  obscureText: _obscureOldPassword,
+                  hinttext: 'Old Password',
+                  errorText: _oldPasswordError,
+                  onIconPress: _toggleOldPasswordVisibility,
+                  validator: _validatePassword),
+              const SizedBox(height: 16.0),
+              customtextformfield(
+                  focusNode: _focasNode2,
+                  controller: _newPasswordController,
+                  obscureText: _obscureNewPassword,
+                  hinttext: 'New Password',
+                  errorText: _newPasswordError,
+                  onIconPress: _toggleNewPasswordVisibility,
+                  validator: _validatePassword),
 
-            const SizedBox(height: 16.0),
-            customtextformfield(
-                focusNode: _focasNode3,
-                controller: _confirmPasswordController,
-                obscureText: _obscureConfirmPassword,
-                hinttext: 'Confirm New Password',
-                errorText: _confirmPasswordError,
-                onIconPress: _toggleConfirmPasswordVisibility,
-                validator: _validateConfirmPassword),
+              const SizedBox(height: 16.0),
+              customtextformfield(
+                  focusNode: _focasNode3,
+                  controller: _confirmPasswordController,
+                  obscureText: _obscureConfirmPassword,
+                  hinttext: 'Confirm New Password',
+                  errorText: _confirmPasswordError,
+                  onIconPress: _toggleConfirmPasswordVisibility,
+                  validator: _validateConfirmPassword),
+              const SizedBox(height: 20),
 
-            // LoginTextFeild(
-            //   headingReq: true,
-            //   controller: TextEditingController(),
-            //   hint: "Enter your old password",
-            //   suffixIcon: true,
-            //   obscure: true,
-            //   prefixIcon: true,
-            //   img: pass,
-            //   heading: "Old Password",
-            // ),
-            // const SizedBox(height: 10),
-            // LoginTextFeild(
-            //   headingReq: true,
-            //   controller: TextEditingController(),
-            //   hint: "Enter your new password",
-            //   suffixIcon: true,
-            //   obscure: true,
-            //   prefixIcon: true,
-            //   img: pass,
-            //   heading: "New Password",
-            // ),
-            // const SizedBox(height: 10),
-            // LoginTextFeild(
-            //   headingReq: true,
-            //   controller: TextEditingController(),
-            //   hint: "Enter your confirm password",
-            //   suffixIcon: true,
-            //   obscure: true,
-            //   prefixIcon: true,
-            //   img: pass,
-            //   heading: "Confirm New Password",
-            // ),
-            const Spacer(),
-            CustomButtonBig(
-              btnHeading: "Change Password",
-              onTap: () => _updatePassword(),
-            ),
-            const SizedBox(height: 10),
-          ],
+              // LoginTextFeild(
+              //   headingReq: true,
+              //   controller: TextEditingController(),
+              //   hint: "Enter your old password",
+              //   suffixIcon: true,
+              //   obscure: true,
+              //   prefixIcon: true,
+              //   img: pass,
+              //   heading: "Old Password",
+              // ),
+              // const SizedBox(height: 10),
+              // LoginTextFeild(
+              //   headingReq: true,
+              //   controller: TextEditingController(),
+              //   hint: "Enter your new password",
+              //   suffixIcon: true,
+              //   obscure: true,
+              //   prefixIcon: true,
+              //   img: pass,
+              //   heading: "New Password",
+              // ),
+              // const SizedBox(height: 10),
+              // LoginTextFeild(
+              //   headingReq: true,
+              //   controller: TextEditingController(),
+              //   hint: "Enter your confirm password",
+              //   suffixIcon: true,
+              //   obscure: true,
+              //   prefixIcon: true,
+              //   img: pass,
+              //   heading: "Confirm New Password",
+              // ),
+              // const Spacer(),
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.end,
+              //   children: [
+              //     Container(
+              //       child: TextButton(
+              //         onPressed: () {
+              //           // userViewModel.remove(context);
+              //           context.push('/forgotPassword');
+              //           // Navigator.push(
+              //           //     context,
+              //           //     MaterialPageRoute(
+              //           //         builder: (context) => ForgotPassword()));
+              //         },
+              //         child: Text('Forgot your password?',
+              //             style: GoogleFonts.lato(
+              //                 fontWeight: FontWeight.w700,
+              //                 color: Colors.green)),
+              //       ),
+              //     ),
+              //   ],
+              // ),
+              CustomButtonBig(
+                btnHeading: "Change Password",
+                onTap: () => _updatePassword(),
+              ),
+              const SizedBox(height: 10),
+            ],
+          ),
         ),
       )),
     );
@@ -237,6 +271,7 @@ class _ChangePasswordState extends State<ChangePassword> {
       focusNode: focusNode,
       controller: controller,
       obscureText: obscureText,
+      obscuringCharacter: '*',
       decoration: InputDecoration(
         // labelText: 'Old Password',
         fillColor: Colors.white,
@@ -282,7 +317,7 @@ class _ChangePasswordState extends State<ChangePassword> {
         ),
 
         hintText: hinttext,
-        prefixIcon: Icon(Icons.lock),
+        // prefixIcon: Icon(Icons.lock),
         suffixIcon: IconButton(
           icon: Icon(
             obscureText ? Icons.visibility_off : Icons.visibility,

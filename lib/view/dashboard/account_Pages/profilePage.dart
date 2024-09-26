@@ -16,6 +16,7 @@ import 'package:flutter_cab/view_model/userProfile_view_model.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:image/image.dart' as img;
 
 class ProfilePage extends StatefulWidget {
   final String user;
@@ -79,12 +80,14 @@ class _ProfilePageState extends State<ProfilePage> {
       imgFile = File(imgGallery!.path);
       debugPrint("${imgFile!.path}Gallery");
     });
+    File resizedFile = await resizeImage(imgFile!);
+    debugPrint("${resizedFile.path}Gallery.....,.,,,");
     if (imgFile != null) {
       // debugPrint("chli");
-      Provider.of<ProfileImageViewModel>(context, listen: false)
+      await Provider.of<ProfileImageViewModel>(context, listen: false)
           .postProfileImageApi(context, {
         "userId": widget.user,
-        "image": imgFile,
+        "image": resizedFile,
       });
     }
     Navigator.of(context).pop();
@@ -97,13 +100,29 @@ class _ProfilePageState extends State<ProfilePage> {
       imgFile = File(imgCamera!.path);
       debugPrint(imgFile!.path.toString());
     });
+    File resizedFile = await resizeImage(imgFile!);
+    debugPrint("${resizedFile.path}Gallery.....,.,,,");
     if (imgFile != null) {
       // debugPrint("chli");
-      Provider.of<ProfileImageViewModel>(context, listen: false)
+      await Provider.of<ProfileImageViewModel>(context, listen: false)
           .postProfileImageApi(
-              context, {"userId": widget.user, "image": imgFile});
+              context, {"userId": widget.user, "image": resizedFile});
     }
     Navigator.of(context).pop();
+  }
+
+  /// Helper function to resize the image
+  Future<File> resizeImage(File imageFile) async {
+    final img.Image? image = img.decodeImage(imageFile.readAsBytesSync());
+
+    // Resize the image to a smaller size (e.g., 300px width)
+    final resizedImage = img.copyResize(image!, width: 300);
+
+    // Save the resized image to a file
+    final resizedFile = File(imageFile.path)
+      ..writeAsBytesSync(img.encodeJpg(resizedImage, quality: 85));
+
+    return resizedFile;
   }
 
   @override
@@ -367,7 +386,7 @@ class ProfileContainer extends StatelessWidget {
                                   // AppUrl.userProfileUpdate +
                                   imgPath),
                               // image: AssetImage(imgPath),
-                              fit: BoxFit.cover)))
+                              fit: BoxFit.fill)))
                   : Container(
                       decoration: BoxDecoration(
                           shape: BoxShape.circle,

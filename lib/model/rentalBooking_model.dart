@@ -677,62 +677,63 @@ class Content {
   String pickupLocation;
   String cancellationReason;
   String userDetails;
+  String discountAmount;
 
-  Content({
-    required this.id,
-    required this.rentalBookingId,
-    required this.date,
-    required this.pickupTime,
-    required this.locationLongitude,
-    required this.locationLatitude,
-    required this.bookingStatus,
-    required this.totalRentTime,
-    required this.kilometers,
-    required this.paidStatus,
-    required this.userId,
-    required this.rentalCharge,
-    required this.carType,
-    required this.extraMinutes,
-    required this.extraKilometers,
-    required this.createdDate,
-    required this.modifiedDate,
-    required this.rentalManagement,
-    required this.vehicle,
-    required this.driver,
-    required this.rideStartTime,
-    required this.rideEndTime,
-    required this.pickupLocation,
-    required this.cancellationReason,
-    required this.userDetails,
-  });
+  Content(
+      {required this.id,
+      required this.rentalBookingId,
+      required this.date,
+      required this.pickupTime,
+      required this.locationLongitude,
+      required this.locationLatitude,
+      required this.bookingStatus,
+      required this.totalRentTime,
+      required this.kilometers,
+      required this.paidStatus,
+      required this.userId,
+      required this.rentalCharge,
+      required this.carType,
+      required this.extraMinutes,
+      required this.extraKilometers,
+      required this.createdDate,
+      required this.modifiedDate,
+      required this.rentalManagement,
+      required this.vehicle,
+      required this.driver,
+      required this.rideStartTime,
+      required this.rideEndTime,
+      required this.pickupLocation,
+      required this.cancellationReason,
+      required this.userDetails,
+      required this.discountAmount});
 
   factory Content.fromJson(Map<String, dynamic> json) => Content(
-        id: json["id"].toString(),
-        rentalBookingId: json["rentalBookingId"].toString(),
-        date: json["date"] ?? "",
-        pickupTime: json["pickupTime"].toString() ?? '',
-        locationLongitude: json["locationLongitude"].toString(),
-        locationLatitude: json["locationLatitude"].toString(),
-        bookingStatus: json["bookingStatus"] ?? '',
-        totalRentTime: json["totalRentTime"].toString(),
-        kilometers: json["kilometers"].toString(),
-        paidStatus: json["paidStatus"].toString(),
-        userId: json["userId"].toString(),
-        rentalCharge: json["rentalCharge"].toString(),
-        carType: json["carType"] ?? '',
-        extraMinutes: json["extraMinutes"].toString(),
-        extraKilometers: json["extraKilometers"] ?? '',
-        createdDate: json["createdDate"].toString(),
-        modifiedDate: json["modifiedDate"].toString(),
-        rentalManagement: json["rentalManagement"].toString(),
-        vehicle: json["vehicle"].toString(),
-        driver: json["driver"].toString(),
-        rideStartTime: json["rideStartTime"].toString(),
-        rideEndTime: json["rideEndTime"].toString(),
-        pickupLocation: json["pickupLocation"].toString(),
-        cancellationReason: json["cancellationReason"].toString(),
-        userDetails: json["userDetails"].toString(),
-      );
+      id: json["id"].toString(),
+      rentalBookingId: json["rentalBookingId"].toString(),
+      date: json["date"] ?? "",
+      pickupTime: json["pickupTime"].toString() ?? '',
+      locationLongitude: json["locationLongitude"].toString(),
+      locationLatitude: json["locationLatitude"].toString(),
+      bookingStatus: json["bookingStatus"] ?? '',
+      totalRentTime: json["totalRentTime"].toString(),
+      kilometers: json["kilometers"].toString(),
+      paidStatus: json["paidStatus"].toString(),
+      userId: json["userId"].toString(),
+      rentalCharge: json["rentalCharge"].toString(),
+      carType: json["carType"] ?? '',
+      extraMinutes: json["extraMinutes"].toString(),
+      extraKilometers: json["extraKilometers"] ?? '',
+      createdDate: json["createdDate"].toString(),
+      modifiedDate: json["modifiedDate"].toString(),
+      rentalManagement: json["rentalManagement"].toString(),
+      vehicle: json["vehicle"].toString(),
+      driver: json["driver"].toString(),
+      rideStartTime: json["rideStartTime"].toString(),
+      rideEndTime: json["rideEndTime"].toString(),
+      pickupLocation: json["pickupLocation"].toString(),
+      cancellationReason: json["cancellationReason"].toString(),
+      userDetails: json["userDetails"].toString(),
+      discountAmount: json["discountAmount"]?.toString() ?? '');
 
   Map<String, dynamic> toJson() => {
         "id": id,
@@ -760,6 +761,7 @@ class Content {
         "pickupLocation": pickupLocation,
         "cancellationReason": cancellationReason,
         "userDetails": userDetails,
+        "discountAmount": discountAmount
       };
 }
 
@@ -1139,38 +1141,41 @@ class RentalDetailsSingleData {
   Guest guest;
   String cancelledBy;
   String paymentId;
+  String discountAmount;
 
-  RentalDetailsSingleData(
-      {required this.id,
-      required this.rentalBookingId,
-      required this.date,
-      required this.pickupTime,
-      required this.locationLongitude,
-      required this.locationLatitude,
-      required this.bookingStatus,
-      required this.totalRentTime,
-      required this.kilometers,
-      required this.paidStatus,
-      required this.userId,
-      required this.rentalCharge,
-      required this.carType,
-      required this.extraMinutes,
-      required this.extraKilometers,
-      required this.createdDate,
-      required this.modifiedDate,
-      required this.rentalManagement,
-      required this.vehicle,
-      required this.driver,
-      required this.rideStartTime,
-      required this.rideEndTime,
-      required this.pickupLocation,
-      required this.cancellationReason,
-      required this.bookerId,
-      required this.bookingForId,
-      required this.user,
-      required this.guest,
-      required this.cancelledBy,
-      required this.paymentId});
+  RentalDetailsSingleData({
+    required this.id,
+    required this.rentalBookingId,
+    required this.date,
+    required this.pickupTime,
+    required this.locationLongitude,
+    required this.locationLatitude,
+    required this.bookingStatus,
+    required this.totalRentTime,
+    required this.kilometers,
+    required this.paidStatus,
+    required this.userId,
+    required this.rentalCharge,
+    required this.carType,
+    required this.extraMinutes,
+    required this.extraKilometers,
+    required this.createdDate,
+    required this.modifiedDate,
+    required this.rentalManagement,
+    required this.vehicle,
+    required this.driver,
+    required this.rideStartTime,
+    required this.rideEndTime,
+    required this.pickupLocation,
+    required this.cancellationReason,
+    required this.bookerId,
+    required this.bookingForId,
+    required this.user,
+    required this.guest,
+    required this.cancelledBy,
+    required this.paymentId,
+    required this.discountAmount,
+  });
 
   factory RentalDetailsSingleData.fromJson(Map<String, dynamic> json) =>
       RentalDetailsSingleData(
@@ -1187,14 +1192,14 @@ class RentalDetailsSingleData {
           userId: json["userId"].toString(),
           rentalCharge: json["rentalCharge"].toString(),
           carType: json["carType"] ?? "",
-          extraMinutes: json["extraMinutes"].toString(),
-          extraKilometers: json["extraKilometers"].toString(),
+          extraMinutes: json["extraMinutes"]?.toString() ?? '',
+          extraKilometers: json["extraKilometers"]?.toString() ?? '',
           createdDate: json["createdDate"].toString(),
           modifiedDate: json["modifiedDate"].toString(),
           rentalManagement: json["rentalManagement"].toString(),
           vehicle: RentalDetialsSingleVehicle.fromJson(json["vehicle"] ?? {}),
           driver: RentalDetialsSingleDriver.fromJson(json["driver"] ?? {}),
-          rideStartTime: json["rideStartTime"].toString(),
+          rideStartTime: json["rideStartTime"]?.toString() ?? '',
           rideEndTime: json["rideEndTime"].toString(),
           pickupLocation: json["pickupLocation"] ?? "",
           cancellationReason: json["cancellationReason"].toString(),
@@ -1203,7 +1208,8 @@ class RentalDetailsSingleData {
           user: User.fromJson(json["user"] ?? {}),
           guest: Guest.fromJson(json["guest"] ?? {}),
           cancelledBy: json["cancelledBy"].toString(),
-          paymentId: json["paymentId"].toString());
+          paymentId: json["paymentId"].toString(),
+          discountAmount: json["discountAmount"]?.toString() ?? '');
 
   Map<String, dynamic> toJson() => {
         "id": id,
@@ -1236,12 +1242,14 @@ class RentalDetailsSingleData {
         "guest": guest,
         "cancelledBy": cancelledBy,
         "paymentId": paymentId,
+        "discountAmount": discountAmount
       };
 }
 
 class Guest {
   String? guestId;
   String? guestName;
+  String? countryCode;
   String? guestMobile;
   String? gender;
   String? userId;
@@ -1252,6 +1260,7 @@ class Guest {
   Guest({
     this.guestId,
     this.guestName,
+    this.countryCode,
     this.guestMobile,
     this.gender,
     this.userId,
@@ -1263,6 +1272,7 @@ class Guest {
   factory Guest.fromJson(Map<String, dynamic> json) => Guest(
         guestId: json["guestId"]?.toString() ?? "",
         guestName: json["guestName"]?.toString() ?? "",
+        countryCode: json["countryCode"]?.toString() ?? '',
         guestMobile: json["guestMobile"]?.toString() ?? "",
         gender: json["gender"]?.toString() ?? "",
         userId: json["userId"]?.toString() ?? "",
@@ -1274,6 +1284,7 @@ class Guest {
   Map<String, dynamic> toJson() => {
         "guestId": guestId,
         "guestName": guestName,
+        "countryCode": countryCode,
         "guestMobile": guestMobile,
         "gender": gender,
         "userId": userId,

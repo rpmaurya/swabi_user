@@ -5,6 +5,7 @@ import 'package:flutter_cab/res/Common%20Widgets/common_alertTextfeild.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/res/Custom%20Widgets/CustomTextFormfield.dart';
 import 'package:flutter_cab/res/customTextWidget.dart';
+import 'package:flutter_cab/res/custom_mobileNumber.dart';
 import 'package:flutter_cab/utils/assets.dart';
 import 'package:flutter_cab/utils/color.dart';
 import 'package:flutter_cab/utils/dimensions.dart';
@@ -43,7 +44,9 @@ class _registration_screenState extends State<registration_screen> {
   bool obscurePassword = true;
   bool obscureConfirmPassword = true;
 
-  String? countryCode;
+  // String? countryCode;
+  String countryCode = '971';
+
   String? mobileNumber;
   String? _emailValidation(String? value) {
     const pattern = r"(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'"
@@ -190,7 +193,11 @@ class _registration_screenState extends State<registration_screen> {
                     //     hint: "Enter your address",
                     //     controller: controller[3]),
 
-                    Text("Address", style: titleTextStyle),
+                    Text.rich(TextSpan(children: [
+                      TextSpan(text: 'Address', style: titleTextStyle),
+                      const TextSpan(
+                          text: ' *', style: TextStyle(color: redColor))
+                    ])),
                     const SizedBox(height: 5),
                     FormField<String>(validator: (value) {
                       if (controller[3].text.isEmpty) {
@@ -320,89 +327,101 @@ class _registration_screenState extends State<registration_screen> {
                             textColor: blackColor,
                             fontSize: 16,
                             fontWeight: FontWeight.w700),
+                        Text(
+                          ' *',
+                          style: TextStyle(color: redColor),
+                        )
                       ],
                     ),
                     const SizedBox(height: 5),
-                    SizedBox(
-                      width: AppDimension.getWidth(context) * .9,
-                      child: IntlPhoneField(
-                        focusNode: phoneFocus,
-                        key: _phoneFieldKey,
-                        flagsButtonPadding: EdgeInsets.only(left: 10),
-                        style: titleTextStyle,
-                        showCountryFlag: true,
-                        dropdownTextStyle: titleTextStyle,
-                        dropdownIconPosition: IconPosition.trailing,
-                        dropdownDecoration: const BoxDecoration(
-                            borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(5),
-                                bottomLeft: Radius.circular(5))),
-                        initialCountryCode: 'AE',
+                    CustomMobilenumber(
                         controller: controller[5],
-                        pickerDialogStyle: PickerDialogStyle(
-                          // searchFieldCursorColor: blackColor,
-                          searchFieldInputDecoration: InputDecoration(
-                              contentPadding: const EdgeInsets.symmetric(
-                                  vertical: 10, horizontal: 10),
-                              hintText: "Enter Country Code or Name",
-                              // fillColor: background,
-                              isDense: true,
-                              hintStyle: titleTextStyle1,
-                              focusedBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(
-                                      color:
-                                          naturalGreyColor.withOpacity(0.3))),
-                              labelStyle: titleTextStyle,
-                              counterStyle: titleTextStyle,
-                              suffixStyle: titleTextStyle),
-                          countryCodeStyle: titleTextStyle,
-                          countryNameStyle: titleTextStyle,
-                          // backgroundColor: background,
-                        ),
-                        decoration: InputDecoration(
-                          hintText: 'Enter Your Number',
-                          filled: true,
-                          fillColor: background,
-                          helperStyle: titleTextStyle1,
-                          errorStyle: GoogleFonts.lato(color: redColor),
-                          hintStyle: textTitleHint,
-                          isDense: true,
-                          errorBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                                color: naturalGreyColor.withOpacity(0.3)),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                                color: naturalGreyColor.withOpacity(0.3)),
-                          ),
-                          border: OutlineInputBorder(
-                            borderSide: BorderSide(
-                                color: naturalGreyColor.withOpacity(0.3)),
-                            // borderSide: BorderSide.none,
-                          ),
-                          contentPadding: const EdgeInsets.only(bottom: 30),
-                          suffixStyle: titleTextStyle1,
-                          focusedErrorBorder: const OutlineInputBorder(
-                              borderSide: BorderSide(color: redColor)),
-                          enabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                  color: naturalGreyColor.withOpacity(0.3))),
-                        ),
-                        validator: (value) async {
-                          print('phone number validation $value');
-                          if (value == null || value.number.isEmpty) {
-                            return 'Enter your Number';
-                          }
-                          return null;
-                        },
-                        onChanged: (phone) {
-                          countryCode = phone.countryCode;
-                          mobileNumber = phone.number;
-                          debugPrint("${phone.number}Phone Number");
-                          debugPrint("${phone.countryCode}Phone Code");
-                        },
-                      ),
-                    ),
+                        fillColor: background,
+                        textLength: 9,
+                        hintText: 'Enter phone number',
+                        countryCode: countryCode),
+                    SizedBox(height: 10),
+                    // SizedBox(
+                    //   width: AppDimension.getWidth(context) * .9,
+                    //   child: IntlPhoneField(
+                    //     focusNode: phoneFocus,
+                    //     key: _phoneFieldKey,
+                    //     flagsButtonPadding: EdgeInsets.only(left: 10),
+                    //     style: titleTextStyle,
+                    //     showCountryFlag: true,
+                    //     dropdownTextStyle: titleTextStyle,
+                    //     dropdownIconPosition: IconPosition.trailing,
+                    //     dropdownDecoration: const BoxDecoration(
+                    //         borderRadius: BorderRadius.only(
+                    //             topLeft: Radius.circular(5),
+                    //             bottomLeft: Radius.circular(5))),
+                    //     initialCountryCode: 'AE',
+                    //     controller: controller[5],
+                    //     pickerDialogStyle: PickerDialogStyle(
+                    //       // searchFieldCursorColor: blackColor,
+                    //       searchFieldInputDecoration: InputDecoration(
+                    //           contentPadding: const EdgeInsets.symmetric(
+                    //               vertical: 10, horizontal: 10),
+                    //           hintText: "Enter Country Code or Name",
+                    //           // fillColor: background,
+                    //           isDense: true,
+                    //           hintStyle: titleTextStyle1,
+                    //           focusedBorder: UnderlineInputBorder(
+                    //               borderSide: BorderSide(
+                    //                   color:
+                    //                       naturalGreyColor.withOpacity(0.3))),
+                    //           labelStyle: titleTextStyle,
+                    //           counterStyle: titleTextStyle,
+                    //           suffixStyle: titleTextStyle),
+                    //       countryCodeStyle: titleTextStyle,
+                    //       countryNameStyle: titleTextStyle,
+                    //       // backgroundColor: background,
+                    //     ),
+                    //     decoration: InputDecoration(
+                    //       hintText: 'Enter Your Number',
+                    //       filled: true,
+                    //       fillColor: background,
+                    //       helperStyle: titleTextStyle1,
+                    //       errorStyle: GoogleFonts.lato(color: redColor),
+                    //       hintStyle: textTitleHint,
+                    //       isDense: true,
+                    //       errorBorder: OutlineInputBorder(
+                    //         borderSide: BorderSide(
+                    //             color: naturalGreyColor.withOpacity(0.3)),
+                    //       ),
+                    //       focusedBorder: OutlineInputBorder(
+                    //         borderSide: BorderSide(
+                    //             color: naturalGreyColor.withOpacity(0.3)),
+                    //       ),
+                    //       border: OutlineInputBorder(
+                    //         borderSide: BorderSide(
+                    //             color: naturalGreyColor.withOpacity(0.3)),
+                    //         // borderSide: BorderSide.none,
+                    //       ),
+                    //       contentPadding: const EdgeInsets.only(bottom: 30),
+                    //       suffixStyle: titleTextStyle1,
+                    //       focusedErrorBorder: const OutlineInputBorder(
+                    //           borderSide: BorderSide(color: redColor)),
+                    //       enabledBorder: OutlineInputBorder(
+                    //           borderSide: BorderSide(
+                    //               color: naturalGreyColor.withOpacity(0.3))),
+                    //     ),
+                    //     validator: (value) async {
+                    //       print('phone number validation $value');
+                    //       if (value == null || value.number.isEmpty) {
+                    //         return 'Enter your Number';
+                    //       }
+                    //       return null;
+                    //     },
+                    //     onChanged: (phone) {
+                    //       countryCode = phone.countryCode;
+                    //       mobileNumber = phone.number;
+                    //       debugPrint("${phone.number}Phone Number");
+                    //       debugPrint("${phone.countryCode}Phone Code");
+                    //     },
+                    //   ),
+                    // ),
+
                     // const SizedBox(height: 10),
                     // LoginTextFeild(
                     //   headingReq: true,
@@ -427,7 +446,7 @@ class _registration_screenState extends State<registration_screen> {
                       hintText: 'Enter Your Password',
                       suffixIcons: IconButton(
                         icon: Icon(
-                          obscureConfirmPassword
+                          obscurePassword
                               ? Icons.visibility_off
                               : Icons.visibility,
                         ),
@@ -603,10 +622,10 @@ class _registration_screenState extends State<registration_screen> {
   lableText(String title) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 5.0),
-      child: Text(
-        title,
-        style: titleTextStyle,
-      ),
+      child: Text.rich(TextSpan(children: [
+        TextSpan(text: title, style: titleTextStyle),
+        TextSpan(text: ' *', style: TextStyle(color: redColor))
+      ])),
     );
   }
 }

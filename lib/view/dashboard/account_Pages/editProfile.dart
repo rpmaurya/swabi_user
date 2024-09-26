@@ -4,6 +4,7 @@ import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/res/Custom%20Page%20Layout/commonPage_Layout.dart';
 import 'package:flutter_cab/res/customAppBar_widget.dart';
 import 'package:flutter_cab/res/customTextWidget.dart';
+import 'package:flutter_cab/res/custom_mobileNumber.dart';
 import 'package:flutter_cab/res/login/login_customTextFeild.dart';
 import 'package:flutter_cab/utils/assets.dart';
 import 'package:flutter_cab/utils/color.dart';
@@ -114,15 +115,20 @@ class _EditProfiePageState extends State<EditProfiePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: Text("Address", style: titleTextStyle),
-              ),
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: Text.rich(TextSpan(children: [
+                    TextSpan(text: 'Address', style: titleTextStyle),
+                    TextSpan(text: ' *', style: TextStyle(color: redColor))
+                  ]))
+                  // child: Text("Address", style: titleTextStyle),
+                  ),
               const SizedBox(height: 5),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 height: 50,
                 child: GooglePlaceAutoCompleteTextField(
                   textEditingController: controllers[2],
+                  containerHorizontalPadding: 10,
                   boxDecoration: BoxDecoration(
                       color: background,
                       borderRadius: BorderRadius.circular(5),
@@ -131,6 +137,11 @@ class _EditProfiePageState extends State<EditProfiePage> {
                   googleAPIKey: "AIzaSyADRdiTbSYUR8oc6-ryM1F1NDNjkHDr0Yo",
                   inputDecoration: InputDecoration(
                     isDense: true,
+                    prefixIconConstraints: const BoxConstraints(maxWidth: 50),
+                    prefixIcon: const Icon(
+                      Icons.location_on,
+                      size: 24,
+                    ),
                     contentPadding:
                         const EdgeInsets.symmetric(vertical: 0, horizontal: 5),
                     hintText: "Search your location",
@@ -212,102 +223,111 @@ class _EditProfiePageState extends State<EditProfiePage> {
             alertBoxTitle: "Select Gender",
           ),
           const SizedBox(height: 10),
-          const Row(
+          Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10),
-                child: CustomText(
-                    content: "Mobile",
-                    textColor: blackColor,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700),
-              ),
+                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  child: Text.rich(TextSpan(children: [
+                    TextSpan(text: 'Mobile', style: titleTextStyle),
+                    const TextSpan(
+                        text: ' *', style: TextStyle(color: redColor))
+                  ]))),
             ],
           ),
           const SizedBox(height: 5),
-          SizedBox(
-            width: AppDimension.getWidth(context) * .9,
-            child: IntlPhoneField(
-              key: _phoneFieldKey,
-              style: titleTextStyle,
-              showCountryFlag: true,
-              dropdownTextStyle: titleTextStyle,
-              dropdownIconPosition: IconPosition.trailing,
-              dropdownDecoration: const BoxDecoration(
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(5),
-                      bottomLeft: Radius.circular(5))),
-              initialCountryCode: countryCode1,
+          CustomMobilenumber(
+              width: AppDimension.getWidth(context) * .9,
+              fillColor: background,
+              textLength: 9,
+              keyboardType: TextInputType.phone,
+              countryCode: controllers[4].text,
               controller: controllers[5],
-              pickerDialogStyle: PickerDialogStyle(
-                // searchFieldCursorColor: blackColor,
-                searchFieldInputDecoration: InputDecoration(
-                    contentPadding: const EdgeInsets.symmetric(
-                        vertical: 10, horizontal: 10),
-                    hintText: "Enter Country Code or Name",
-                    // fillColor: background,
-                    isDense: true,
-                    hintStyle: titleTextStyle1,
-                    focusedBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(
-                            color: naturalGreyColor.withOpacity(0.3))),
-                    labelStyle: titleTextStyle,
-                    counterStyle: titleTextStyle,
-                    suffixStyle: titleTextStyle),
-                countryCodeStyle: titleTextStyle,
-                countryNameStyle: titleTextStyle,
-                // backgroundColor: background,
-              ),
-              decoration: InputDecoration(
-                filled: true,
-                fillColor: background,
-                helperStyle: titleTextStyle1,
-                errorStyle: GoogleFonts.lato(color: redColor),
-                hintStyle: titleTextStyle,
-                isDense: true,
-                errorBorder: OutlineInputBorder(
-                  borderSide:
-                      BorderSide(color: naturalGreyColor.withOpacity(0.3)),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide:
-                      BorderSide(color: naturalGreyColor.withOpacity(0.3)),
-                ),
-                border: OutlineInputBorder(
-                  borderSide:
-                      BorderSide(color: naturalGreyColor.withOpacity(0.3)),
-                  // borderSide: BorderSide.none,
-                ),
-                contentPadding: const EdgeInsets.only(bottom: 30),
-                suffixStyle: titleTextStyle1,
-                focusedErrorBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(color: redColor)),
-                enabledBorder: OutlineInputBorder(
-                    borderSide:
-                        BorderSide(color: naturalGreyColor.withOpacity(0.3))),
-              ),
-              onChanged: (phone) {
-                setState(() {
-                  controllers[4].text =
-                      phone.countryCode.replaceFirst('+', '').trim();
-                  controllers[5].text = phone.number;
-                  // mobileNumber = phone.number;
-                  debugPrint("${phone.number}Phone Number");
-                  debugPrint("${controllers[4].text}Phone Code..........");
-                });
-              },
-              onCountryChanged: (value) {
-                setState(() {
-                  controllers[4].text = value.fullCountryCode;
-                  debugPrint("${controllers[4].text} Code......mnbmn....");
-                });
-              },
-              validator: (p0) {
-                return null;
-              },
-            ),
-          ),
+              hintText: 'Enter Mobile Number'),
+
+          // const SizedBox(height: 10),
+          // SizedBox(
+          //   width: AppDimension.getWidth(context) * .9,
+          //   child: IntlPhoneField(
+          //     key: _phoneFieldKey,
+          //     style: titleTextStyle,
+          //     showCountryFlag: true,
+          //     dropdownTextStyle: titleTextStyle,
+          //     dropdownIconPosition: IconPosition.trailing,
+          //     dropdownDecoration: const BoxDecoration(
+          //         borderRadius: BorderRadius.only(
+          //             topLeft: Radius.circular(5),
+          //             bottomLeft: Radius.circular(5))),
+          //     initialCountryCode: countryCode1,
+          //     controller: controllers[5],
+          //     pickerDialogStyle: PickerDialogStyle(
+          //       // searchFieldCursorColor: blackColor,
+          //       searchFieldInputDecoration: InputDecoration(
+          //           contentPadding: const EdgeInsets.symmetric(
+          //               vertical: 10, horizontal: 10),
+          //           hintText: "Enter Country Code or Name",
+          //           // fillColor: background,
+          //           isDense: true,
+          //           hintStyle: titleTextStyle1,
+          //           focusedBorder: UnderlineInputBorder(
+          //               borderSide: BorderSide(
+          //                   color: naturalGreyColor.withOpacity(0.3))),
+          //           labelStyle: titleTextStyle,
+          //           counterStyle: titleTextStyle,
+          //           suffixStyle: titleTextStyle),
+          //       countryCodeStyle: titleTextStyle,
+          //       countryNameStyle: titleTextStyle,
+          //       // backgroundColor: background,
+          //     ),
+          //     decoration: InputDecoration(
+          //       filled: true,
+          //       fillColor: background,
+          //       helperStyle: titleTextStyle1,
+          //       errorStyle: GoogleFonts.lato(color: redColor),
+          //       hintStyle: titleTextStyle,
+          //       isDense: true,
+          //       errorBorder: OutlineInputBorder(
+          //         borderSide:
+          //             BorderSide(color: naturalGreyColor.withOpacity(0.3)),
+          //       ),
+          //       focusedBorder: OutlineInputBorder(
+          //         borderSide:
+          //             BorderSide(color: naturalGreyColor.withOpacity(0.3)),
+          //       ),
+          //       border: OutlineInputBorder(
+          //         borderSide:
+          //             BorderSide(color: naturalGreyColor.withOpacity(0.3)),
+          //         // borderSide: BorderSide.none,
+          //       ),
+          //       contentPadding: const EdgeInsets.only(bottom: 30),
+          //       suffixStyle: titleTextStyle1,
+          //       focusedErrorBorder: const OutlineInputBorder(
+          //           borderSide: BorderSide(color: redColor)),
+          //       enabledBorder: OutlineInputBorder(
+          //           borderSide:
+          //               BorderSide(color: naturalGreyColor.withOpacity(0.3))),
+          //     ),
+          //     onChanged: (phone) {
+          //       setState(() {
+          //         controllers[4].text =
+          //             phone.countryCode.replaceFirst('+', '').trim();
+          //         controllers[5].text = phone.number;
+          //         // mobileNumber = phone.number;
+          //         debugPrint("${phone.number}Phone Number");
+          //         debugPrint("${controllers[4].text}Phone Code..........");
+          //       });
+          //     },
+          //     onCountryChanged: (value) {
+          //       setState(() {
+          //         controllers[4].text = value.fullCountryCode;
+          //         debugPrint("${controllers[4].text} Code......mnbmn....");
+          //       });
+          //     },
+          //     validator: (p0) {
+          //       return null;
+          //     },
+          //   ),
+          // ),
 
           ////////////////////////////////////////////////////////
           // LoginTextFeild(

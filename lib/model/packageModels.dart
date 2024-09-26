@@ -1524,6 +1524,7 @@ class PackageHistoryContent {
   // PackageHistoryUser user;
   // String pkg;
   PackageHistoryPkg pkg;
+  String discountAmount;
   String totalAmount;
   String numberOfMembers;
   List<PackageHistoryMemberList> memberList;
@@ -1538,6 +1539,7 @@ class PackageHistoryContent {
     required this.user,
     required this.pkg,
     required this.totalAmount,
+    required this.discountAmount,
     required this.numberOfMembers,
     required this.memberList,
   });
@@ -1554,6 +1556,7 @@ class PackageHistoryContent {
         // user: PackageHistoryUser.fromJson(json["user"]),
         // pkg: json["pkg"].toString(),
         pkg: PackageHistoryPkg.fromJson(json["pkg"]),
+        discountAmount: json["discountAmount"]?.toString() ?? '',
         totalAmount: json["totalAmount"].toString(),
         numberOfMembers: json["numberOfMembers"].toString(),
         memberList: List<PackageHistoryMemberList>.from(json["memberList"]
@@ -1571,6 +1574,7 @@ class PackageHistoryContent {
         "user": user,
         "pkg": pkg,
         // "pkg": pkg.toJson(),
+        "discountAmount": discountAmount,
         "totalAmount": totalAmount,
         "numberOfMembers": numberOfMembers,
         "memberList": List<dynamic>.from(memberList.map((x) => x.toJson())),
@@ -2252,6 +2256,7 @@ class PackageHIstoryDetailsData {
   String mobile;
   String alternateMobileCountryCode;
   String alternateMobile;
+  String discountAmount;
 
   PackageHIstoryDetailsData({
     required this.packageBookingId,
@@ -2275,43 +2280,44 @@ class PackageHIstoryDetailsData {
     required this.mobile,
     required this.alternateMobileCountryCode,
     required this.alternateMobile,
+    required this.discountAmount,
   });
 
   factory PackageHIstoryDetailsData.fromJson(Map<String, dynamic> json) =>
       PackageHIstoryDetailsData(
-        packageBookingId: json["packageBookingId"].toString(),
-        bookingDate: json["bookingDate"] ?? "",
-        bookingStatus: json["bookingStatus"] ?? "",
-        cancellationReason: json["cancellationReason"] ?? "",
-        createdDate: json["createdDate"].toString(),
-        modifiedDate: json["modifiedDate"].toString(),
-        user: json["user"].toString(),
-        // pkg: json["pkg"].toString(),
-        // user: PackageHIstoryDetailsUser.fromJson(json["user"]),
-        pkg: PackageHIstoryDetailsPkg.fromJson(json["pkg"]),
-        totalAmount: json["totalAmount"].toString(),
-        numberOfMembers: json["numberOfMembers"].toString(),
-        memberList: List<PackageHIstoryDetailsMemberList>.from(
-            json["memberList"]
-                .map((x) => PackageHIstoryDetailsMemberList.fromJson(x))),
-        assignedVehicleOnPackageBookings:
-            List<AssignedVehicleOnPackageBooking>.from(
-                json["assignedVehicleOnPackageBookings"]
-                    .map((x) => AssignedVehicleOnPackageBooking.fromJson(x))),
-        assignedDriverOnPackageBookings:
-            List<AssignedDriverOnPackageBooking>.from(
-                json["assignedDriverOnPackageBookings"]
-                    .map((x) => AssignedDriverOnPackageBooking.fromJson(x))),
-        pickupLocation: json["pickupLocation"]?.toString() ?? "",
-        cancelledBy: json["cancelledBy"]?.toString() ?? "",
-        endDate: json["endDate"] ?? "",
-        paymentId: json["paymentId"].toString(),
-        countryCode: json["countryCode"]?.toString() ?? "",
-        mobile: json["mobile"]?.toString() ?? "",
-        alternateMobileCountryCode:
-            json["alternateMobileCountryCode"]?.toString() ?? "",
-        alternateMobile: json["alternateMobile"]?.toString() ?? "",
-      );
+          packageBookingId: json["packageBookingId"].toString(),
+          bookingDate: json["bookingDate"] ?? "",
+          bookingStatus: json["bookingStatus"] ?? "",
+          cancellationReason: json["cancellationReason"] ?? "",
+          createdDate: json["createdDate"].toString(),
+          modifiedDate: json["modifiedDate"].toString(),
+          user: json["user"].toString(),
+          // pkg: json["pkg"].toString(),
+          // user: PackageHIstoryDetailsUser.fromJson(json["user"]),
+          pkg: PackageHIstoryDetailsPkg.fromJson(json["pkg"]),
+          totalAmount: json["totalAmount"].toString(),
+          numberOfMembers: json["numberOfMembers"].toString(),
+          memberList: List<PackageHIstoryDetailsMemberList>.from(
+              json["memberList"]
+                  .map((x) => PackageHIstoryDetailsMemberList.fromJson(x))),
+          assignedVehicleOnPackageBookings:
+              List<AssignedVehicleOnPackageBooking>.from(
+                  json["assignedVehicleOnPackageBookings"]
+                      .map((x) => AssignedVehicleOnPackageBooking.fromJson(x))),
+          assignedDriverOnPackageBookings:
+              List<AssignedDriverOnPackageBooking>.from(
+                  json["assignedDriverOnPackageBookings"]
+                      .map((x) => AssignedDriverOnPackageBooking.fromJson(x))),
+          pickupLocation: json["pickupLocation"]?.toString() ?? "",
+          cancelledBy: json["cancelledBy"]?.toString() ?? "",
+          endDate: json["endDate"] ?? "",
+          paymentId: json["paymentId"].toString(),
+          countryCode: json["countryCode"]?.toString() ?? "",
+          mobile: json["mobile"]?.toString() ?? "",
+          alternateMobileCountryCode:
+              json["alternateMobileCountryCode"]?.toString() ?? "",
+          alternateMobile: json["alternateMobile"]?.toString() ?? "",
+          discountAmount: json["discountAmount"]?.toString() ?? '');
 
   Map<String, dynamic> toJson() => {
         "packageBookingId": packageBookingId,
@@ -2338,7 +2344,8 @@ class PackageHIstoryDetailsData {
         "countryCode": countryCode,
         "mobile": mobile,
         "alternateMobileCountryCode": alternateMobileCountryCode,
-        "alternateMobile": alternateMobile
+        "alternateMobile": alternateMobile,
+        "discountAmount": discountAmount
       };
 }
 
@@ -3535,6 +3542,7 @@ class ItineraryDetail {
   String dayStatus;
   String startTimestamp;
   String endTimestamp;
+  String pickupTime;
   String completedBy;
 
   ItineraryDetail({
@@ -3547,6 +3555,7 @@ class ItineraryDetail {
     required this.dayStatus,
     required this.startTimestamp,
     required this.endTimestamp,
+    required this.pickupTime,
     required this.completedBy,
   });
 
@@ -3561,6 +3570,7 @@ class ItineraryDetail {
         dayStatus: json["dayStatus"] ?? "",
         startTimestamp: json["startTimestamp"] ?? "",
         endTimestamp: json["endTimestamp"] ?? "",
+        pickupTime: json["pickupTime"] ?? '',
         completedBy: json["completedBy"] ?? "",
       );
 
@@ -3574,6 +3584,7 @@ class ItineraryDetail {
         "dayStatus": dayStatus,
         "startTimestamp": startTimestamp,
         "endTimestamp": endTimestamp,
+        "pickupTime": pickupTime,
         "completedBy": completedBy,
       };
 }

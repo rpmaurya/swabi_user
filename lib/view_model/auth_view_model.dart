@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/view_model/user_view_model.dart';
@@ -36,8 +34,8 @@ class AuthViewModel with ChangeNotifier {
       _myRepo.loginApi(data).then((value) async {
         // print(value);
         setLoading(false);
-        final userPreference = Provider.of<UserViewModel>(
-            context, listen: false);
+        final userPreference =
+            Provider.of<UserViewModel>(context, listen: false);
         print("save token");
         // userPreference.saveEmail(value['user']);
         print(value['data']['userId'].toString());
@@ -47,11 +45,13 @@ class AuthViewModel with ChangeNotifier {
         userPreference.saveUserId(UserModel(userId: userID));
         print('userId: $userID');
         print('token: ${token1.toString()}');
-        Utils.flushBarSuccessMessage("Login Successfully",context);
+        Utils.flushBarSuccessMessage("Login Successfully", context);
         context.go('/');
       }).onError((error, stackTrace) {
         setLoading(false);
-        Utils.flushBarErrorMessage("Email and Password is not present!", context);
+        FocusScope.of(context).unfocus();
+        Utils.flushBarErrorMessage(
+            "Email and Password is not present!", context);
         if (kDebugMode) {
           print(error.toString());
         }
@@ -90,6 +90,4 @@ class AuthViewModel with ChangeNotifier {
   //     });
   //   }
   // }
-
-
 }

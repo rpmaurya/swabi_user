@@ -46,7 +46,10 @@ class ValidationTextField extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         headingReq
-            ? Text(heading, style: titleTextStyle)
+            ? Text.rich(TextSpan(children: [
+                TextSpan(text: heading, style: titleTextStyle),
+                TextSpan(text: ' *', style: TextStyle(color: redColor))
+              ]))
             : const SizedBox.shrink(),
         headingReq ? const SizedBox(height: 5) : const SizedBox(),
         Material(

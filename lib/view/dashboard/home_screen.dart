@@ -1,5 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_cab/model/offerListModel.dart';
 
 import 'package:flutter_cab/model/user_profile_model.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
@@ -12,10 +14,12 @@ import 'package:flutter_cab/utils/color.dart';
 import 'package:flutter_cab/utils/dimensions.dart';
 import 'package:flutter_cab/utils/string_extenstion.dart';
 import 'package:flutter_cab/utils/text_styles.dart';
+import 'package:flutter_cab/view_model/offer_view_model.dart';
 import 'package:flutter_cab/view_model/userProfile_view_model.dart';
 import 'package:flutter_cab/view_model/user_view_model.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 ///Home Screen Old
@@ -28,21 +32,56 @@ class home_screen extends StatefulWidget {
 
 class _home_screenState extends State<home_screen> {
   UserViewModel userViewModel = UserViewModel();
-
+  final ScrollController _scrollController = ScrollController();
+  DateTime dateTime = DateTime.now();
   String uId = '';
-
+  int selectIndex = -1;
+  int initialIndex = 0;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
-      userViewModel.getUserId().then((value) async {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      userViewModel.getUserId().then((value) {
         setState(() {
           if (value.userId != null && value.userId != '') {
             uId = value.userId.toString();
-            Provider.of<UserProfileViewModel>(context, listen: false)
-                .fetchUserProfileViewModelApi(context, {"userId": uId});
           }
+        });
+        Provider.of<UserProfileViewModel>(context, listen: false)
+            .fetchUserProfileViewModelApi(context, {"userId": uId});
+      });
+
+      Provider.of<OfferViewModel>(context, listen: false).getOfferList(
+          context: context, date: DateFormat('dd-MM-yyyy').format(dateTime));
+    });
+    _scrollController.addListener(_scrollListener);
+  }
+
+  void _scrollListener() {
+    double offset = _scrollController.offset;
+    int newIndex = (offset / 310)
+        .round(); // Adjust this divisor based on card width and padding
+    if (newIndex != initialIndex) {
+      setState(() {
+        initialIndex = newIndex;
+        print('indexvalue $initialIndex');
+      });
+    }
+  }
+
+  bool isCopied = false; // To manage the "Copied" text visibility
+
+  // Function to copy the text to the clipboard
+  void copyToClipboard(String text) {
+    Clipboard.setData(ClipboardData(text: text)).then((_) {
+      setState(() {
+        isCopied = true;
+      });
+      // Optionally reset "Copied" text after a few seconds
+      Future.delayed(Duration(seconds: 2), () {
+        setState(() {
+          isCopied = false;
         });
       });
     });
@@ -59,12 +98,14 @@ class _home_screenState extends State<home_screen> {
     tour2,
     viewImg
   ];
-  ProfileData userdata = ProfileData();
+  ProfileData? userdata;
+  OfferListModel? offerListData;
   @override
   Widget build(BuildContext context) {
     // print("UserId here at homeScreen $uId");
-    userdata = context.watch<UserProfileViewModel>().DataList.data?.data ??
-        ProfileData();
+    userdata = context.watch<UserProfileViewModel>().DataList.data?.data;
+
+    offerListData = context.watch<OfferViewModel>().offerListModel;
     return PopScope(
         canPop: false,
         onPopInvoked: (val) async {
@@ -84,22 +125,36 @@ class _home_screenState extends State<home_screen> {
             scrolledUnderElevation: 0,
             titleSpacing: 0,
             leading: IconButton(
-                onPressed: () => context.push("/menuPage", extra: {'id': uId}),
+                onPressed: () =>
+                    context.push("/menuPage", extra: {'id': uId}).then((value) {
+                      Provider.of<UserProfileViewModel>(context, listen: false)
+                          .fetchUserProfileViewModelApi(
+                              context, {"userId": uId});
+                    }),
                 icon: const Icon(
                   Icons.notes_rounded,
                   size: 34,
                 )),
             title: Row(
               children: [
-                CircleAvatar(
-                  radius: 20, // Adjust the size of the avatar
-                  backgroundImage: NetworkImage(userdata
-                          .profileImageUrl.isNotEmpty
-                      ? userdata.profileImageUrl
-                      : 'https://up.yimg.com/ib/th?id=OIP.eCrcK2BiqwBGE1naWwK3UwHaHa&pid=Api&rs=1&c=1&qlt=95&w=115&h=115'),
-
-                  backgroundColor:
-                      Colors.grey[200], // Fallback color if image fails to load
+                Container(
+                  width: 40, // Adjust to match the radius
+                  height: 40, // Adjust to match the radius
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    image: DecorationImage(
+                      image: NetworkImage(
+                        (userdata?.profileImageUrl ?? '').isNotEmpty
+                            ? userdata?.profileImageUrl ?? ''
+                            : 'https://up.yimg.com/ib/th?id=OIP.eCrcK2BiqwBGE1naWwK3UwHaHa&pid=Api&rs=1&c=1&qlt=95&w=115&h=115',
+                      ),
+                      fit: BoxFit.cover, // Ensures the image covers the circle
+                    ),
+                  ),
+                  // Fallback color when the image is loading or fails
+                  child: userdata?.profileImageUrl == null
+                      ? Icon(Icons.person, size: 20, color: Colors.grey[700])
+                      : null,
                 ),
                 const SizedBox(
                   width: 5,
@@ -111,7 +166,7 @@ class _home_screenState extends State<home_screen> {
                 Padding(
                   padding: const EdgeInsets.all(5.0),
                   child: Text(
-                    userdata.firstName.capitalizeFirstOfEach,
+                    userdata?.firstName.capitalizeFirstOfEach ?? '',
                     style: titleTextStyle,
                   ),
                 )
@@ -143,70 +198,8 @@ class _home_screenState extends State<home_screen> {
             color: bgGreyColor,
             child: ListView(
               children: [
-                ///Top Offer Container
-                CommonContainer(
-                  height: 50,
-                  elevation: 0,
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  color: bgGreyColor,
-                  borderRadius: BorderRadius.circular(0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const CustomText(
-                        content: "Offers",
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700,
-                      ),
-                      CommonContainer(
-                        color: bgGreyColor,
-                        onTap: () {
-                          context.push("/package", extra: {"user": uId});
-                        },
-                        elevation: 0,
-                        borderRadius: BorderRadius.circular(0),
-                        child: Row(
-                          children: [
-                            const CustomText(
-                                content: "View All",
-                                textColor: blueTextColor,
-                                fontSize: 20),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 5),
-                              child: Container(
-                                height: 15,
-                                width: 15,
-                                decoration: const BoxDecoration(
-                                    color: blueTextColor,
-                                    shape: BoxShape.circle),
-                                child: const Icon(
-                                  Icons.arrow_forward_ios,
-                                  color: background,
-                                  size: 10,
-                                ),
-                              ),
-                            )
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  height: 140,
-                  child: ListView.separated(
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      scrollDirection: Axis.horizontal,
-                      itemBuilder: (context, index) => ListContainerDesign(
-                            imageList: images[index],
-                          ),
-                      separatorBuilder: (context, index) =>
-                          const SizedBox(width: 10),
-                      itemCount: images.length),
-                ),
                 const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                   child: CustomText(
                     content: "Discover more then travel",
                     align: TextAlign.start,
@@ -275,6 +268,207 @@ class _home_screenState extends State<home_screen> {
                       ],
                     ),
                   ),
+                ),
+
+                ///Top Offer Container
+                CommonContainer(
+                  height: 50,
+                  elevation: 0,
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  color: bgGreyColor,
+                  borderRadius: BorderRadius.circular(0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const CustomText(
+                        content: "Offers",
+                        fontSize: 20,
+                        fontWeight: FontWeight.w700,
+                      ),
+                      CommonContainer(
+                        color: bgGreyColor,
+                        onTap: () {
+                          context.push('/allOffer');
+                        },
+                        elevation: 0,
+                        borderRadius: BorderRadius.circular(0),
+                        child: Row(
+                          children: [
+                            const CustomText(
+                                content: "View All",
+                                textColor: blueTextColor,
+                                fontSize: 20),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 5),
+                              child: Container(
+                                height: 15,
+                                width: 15,
+                                decoration: const BoxDecoration(
+                                    color: blueTextColor,
+                                    shape: BoxShape.circle),
+                                child: const Icon(
+                                  Icons.arrow_forward_ios,
+                                  color: background,
+                                  size: 10,
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  height: 160,
+                  child: ListView.separated(
+                    controller: _scrollController,
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    scrollDirection: Axis.horizontal,
+                    itemCount: offerListData?.data?.length ?? 0,
+                    itemBuilder: (context, index) {
+                      var data = offerListData?.data?[index];
+                      return GestureDetector(
+                        onTap: () {
+                          Provider.of<OfferViewModel>(context, listen: false)
+                              .getOfferDetails(
+                                  context: context,
+                                  offerId: data?.offerId ?? 0);
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(10),
+                          width: 300,
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(colors: [
+                              Colors.pinkAccent,
+                              Colors.purpleAccent
+                            ]),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Stack(
+                            children: [
+                              Positioned(
+                                  bottom: 0,
+                                  right: 0,
+                                  child: Container(
+                                    height: 100,
+                                    width: 120,
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                        border: Border.all(
+                                            color: background, width: 2)),
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(10),
+                                      child: Image.network(
+                                        data?.imageUrl ??
+                                            'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTePpXbUcvlhV4a1px1UFFfXeZWZANowRWZXw&s',
+                                        fit: BoxFit.fill,
+                                      ),
+                                    ),
+                                  )),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    '${data?.offerName}',
+                                    style: const TextStyle(
+                                        color: background,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w600),
+                                  ),
+                                  const SizedBox(height: 5),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(20),
+                                      color: Colors.white.withOpacity(0.5),
+                                    ),
+                                    child: Text(
+                                      data?.bookingType == 'RENTAL_BOOKING'
+                                          ? 'Rental Booking'
+                                          : 'Package Booking',
+                                      style: const TextStyle(
+                                          color: background,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w600),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 5),
+                                  Text('Valid till : ${data?.endDate}',
+                                      style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w600)),
+                                  const Spacer(),
+                                  Container(
+                                    width: 150,
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8, vertical: 4),
+                                    decoration: BoxDecoration(
+                                        color: background,
+                                        borderRadius: BorderRadius.circular(8)),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          data?.offerCode ?? '',
+                                          style: titleTextStyle,
+                                        ),
+                                        GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              selectIndex = index;
+                                            });
+                                            copyToClipboard(
+                                                data?.offerCode ?? '');
+                                          },
+                                          child:
+                                              isCopied && selectIndex == index
+                                                  ? const Icon(
+                                                      Icons.check,
+                                                      color: Colors.green,
+                                                    )
+                                                  : const Icon(Icons.copy),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                    separatorBuilder: (context, index) =>
+                        const SizedBox(width: 10),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: List.generate((offerListData?.data ?? []).length,
+                      (index) {
+                    return AnimatedContainer(
+                      height: initialIndex == index ? 12 : 10,
+                      width: initialIndex == index ? 20 : 10,
+                      duration: const Duration(milliseconds: 200),
+                      margin: const EdgeInsets.symmetric(horizontal: 4),
+                      decoration: BoxDecoration(
+                          border: Border.all(
+                              color: Colors.black12,
+                              strokeAlign: BorderSide.strokeAlignOutside),
+                          borderRadius: BorderRadius.circular(5),
+                          // shape: initialIndex == index
+                          //     ? BoxShape.rectangle
+                          //     : BoxShape.circle,
+                          color:
+                              initialIndex == index ? redColor : Colors.white),
+                    );
+                  }),
                 ),
                 const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
@@ -390,10 +584,11 @@ class _home_screenState extends State<home_screen> {
             child: Column(
               children: [
                 const Padding(
-                  padding: EdgeInsets.only(top: 50, bottom: 20),
+                  padding: EdgeInsets.only(top: 50, bottom: 20, left: 20),
                   child: CustomTextWidget(
                       content: "Are you sure want to exit ?",
                       fontSize: 18,
+                      align: TextAlign.center,
                       fontWeight: FontWeight.w600,
                       textColor: textColor),
                 ),

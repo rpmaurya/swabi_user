@@ -73,12 +73,17 @@ class IssueContainer extends StatelessWidget {
                     // width: 120,
                     padding: EdgeInsets.only(left: 10, right: 10),
                     decoration: BoxDecoration(
-                        color: status == 'OPEN' ? redColor : Colors.green,
+                        color: status == 'OPEN'
+                            ? redColor
+                            : status == 'IN_PROGRESS'
+                                ? Colors.yellow[400]
+                                : Colors.green,
                         borderRadius: BorderRadius.circular(5)),
                     child: Center(
                         child: Text(
-                      status,
-                      style: TextStyle(color: background),
+                      status == 'IN_PROGRESS' ? 'INPROGRESS' : status,
+                      style: const TextStyle(
+                          color: background, fontWeight: FontWeight.w500),
                     )),
                   )
                 ],

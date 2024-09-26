@@ -202,7 +202,7 @@ class HttpService<T> {
   }
 
   handleErrorResponse({
-    BuildContext? context,
+    required BuildContext context,
     dynamic error,
     BaseResponseModel? errorResponse,
     bool tryParse = true,
@@ -243,7 +243,7 @@ class HttpService<T> {
         // bad request
         // print({"error 400": error.response.data["message"]});
         if (message != null) {
-          Utils.flushBarErrorMessage(message, context!);
+          Utils.flushBarErrorMessage(message, context);
           break;
         } else {
           Fluttertoast.showToast(msg: kStringBadRequest);

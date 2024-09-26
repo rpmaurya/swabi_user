@@ -167,18 +167,12 @@ class TransContainer extends StatelessWidget {
                                 fontWeight: FontWeight.w600),
                           ),
                           Text(
-                            "Date : $pickDate",
+                            "⭐ 4.8",
                             style: GoogleFonts.lato(
                                 color: greyColor,
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600),
                           ),
-
-                          // Text("⭐ 4.8",style: GoogleFonts.lato(
-                          //     color: greyColor,
-                          //     fontSize: 14,
-                          //     fontWeight: FontWeight.w600
-                          // ),),
                         ],
                       ),
                       subtitle: Column(
@@ -203,12 +197,24 @@ class TransContainer extends StatelessWidget {
                               ),
                             ],
                           ),
-                          Text(
-                            "Seats : $seats",
-                            style: GoogleFonts.lato(
-                                color: greyColor,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w700),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                "Seats : $seats",
+                                style: GoogleFonts.lato(
+                                    color: greyColor,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w700),
+                              ),
+                              Text(
+                                "Date : $pickDate",
+                                style: GoogleFonts.lato(
+                                    color: greyColor,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600),
+                              ),
+                            ],
                           ),
                         ],
                       ),

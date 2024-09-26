@@ -28,6 +28,8 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _rememberMe = false;
   List<TextEditingController> controller =
       List.generate(2, (index) => TextEditingController());
+  final FocusNode focusNode1 = FocusNode();
+  final FocusNode focusNode2 = FocusNode();
 
   @override
   void initState() {
@@ -55,6 +57,16 @@ class _LoginScreenState extends State<LoginScreen> {
       // Handle the case where 'saveCredential' is not set or doesn't have enough data
       print("No credentials found or incomplete data");
     }
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    controller[0].dispose();
+    controller[1].dispose();
+    focusNode1.dispose();
+    focusNode2.dispose();
   }
 
   @override
@@ -91,6 +103,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                   ///Login Field
                   LoginTextFeild(
+                    focusNode: focusNode1,
                     headingReq: true,
                     controller: controller[0]..text = usr.toString(),
                     img: email,
@@ -99,6 +112,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   const SizedBox(height: 8),
                   LoginTextFeild(
+                    focusNode: focusNode2,
                     headingReq: true,
                     controller: controller[1]..text = pass.toString(),
                     obscure: true,
@@ -126,6 +140,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       Container(
                         child: TextButton(
                           onPressed: () {
+                            context.push('/forgotPassword');
                             // Navigator.push(
                             //     context,
                             //     MaterialPageRoute(

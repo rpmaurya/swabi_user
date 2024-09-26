@@ -102,6 +102,7 @@ class CustomTextFeild extends StatelessWidget {
 }
 
 class LoginTextFeild extends StatefulWidget {
+  final FocusNode? focusNode;
   final String heading;
   final bool headingReq;
   final bool prefixIcon;
@@ -114,7 +115,8 @@ class LoginTextFeild extends StatefulWidget {
   final String hint;
   final String? Function(String?)? validator;
   LoginTextFeild(
-      {this.heading = "",
+      {this.focusNode,
+      this.heading = "",
       this.img = "",
       required this.headingReq,
       this.controller,
@@ -140,7 +142,10 @@ class _LoginTextFeildState extends State<LoginTextFeild> {
         widget.headingReq
             ? Padding(
                 padding: const EdgeInsets.only(bottom: 5),
-                child: Text(widget.heading, style: titleTextStyle),
+                child: Text.rich(TextSpan(children: [
+                  TextSpan(text: widget.heading, style: titleTextStyle),
+                  TextSpan(text: ' *', style: TextStyle(color: redColor))
+                ])),
               )
             : const SizedBox.shrink(),
         Material(
@@ -155,6 +160,7 @@ class _LoginTextFeildState extends State<LoginTextFeild> {
                 borderRadius: BorderRadius.circular(5),
                 color: widget.readOnly ? curvePageColor : background),
             child: TextFormField(
+              focusNode: widget.focusNode,
               obscuringCharacter: '*',
               readOnly: widget.readOnly,
               style: titleTextStyle,

@@ -4,6 +4,7 @@ import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/res/Custom%20Page%20Layout/commonPage_Layout.dart';
 import 'package:flutter_cab/res/Custom%20Widgets/customPhoneField.dart';
 import 'package:flutter_cab/res/customAppBar_widget.dart';
+import 'package:flutter_cab/res/custom_mobileNumber.dart';
 import 'package:flutter_cab/res/validationTextFeild.dart';
 import 'package:flutter_cab/utils/assets.dart';
 import 'package:flutter_cab/utils/color.dart';
@@ -50,20 +51,24 @@ class GuestRentalBookingForm extends StatefulWidget {
   final String pickUpLocation;
   final String longi;
   final String lati;
-
-  const GuestRentalBookingForm(
-      {super.key,
-      // required this.data,
-      required this.date,
-      required this.pickUpTime,
-      required this.bookerId,
-      required this.carType,
-      required this.kilometer,
-      required this.hour,
-      required this.price,
-      required this.pickUpLocation,
-      required this.longi,
-      required this.lati});
+  final String offerCode;
+  final double discountAmount;
+  const GuestRentalBookingForm({
+    super.key,
+    // required this.data,
+    required this.date,
+    required this.pickUpTime,
+    required this.bookerId,
+    required this.carType,
+    required this.kilometer,
+    required this.hour,
+    required this.price,
+    required this.pickUpLocation,
+    required this.longi,
+    required this.lati,
+    required this.offerCode,
+    required this.discountAmount,
+  });
 
   @override
   State<GuestRentalBookingForm> createState() => _GuestRentalBookingFormState();
@@ -76,7 +81,9 @@ class _GuestRentalBookingFormState extends State<GuestRentalBookingForm> {
   final focusNode2 = FocusNode();
   final focusNode3 = FocusNode();
 
-  String countryCode = 'AE';
+  // String countryCode = 'AE';
+  String countryCode = '971';
+
   bool loader = false;
   bool isloading = false;
   var profileUser;
@@ -120,8 +127,7 @@ class _GuestRentalBookingFormState extends State<GuestRentalBookingForm> {
                 hint: "Enter your name",
                 heading: "Guest Name",
                 controller: controller[0]),
-            // const SizedBox(height: 10),
-
+            const SizedBox(height: 5),
             FormCommonSingleAlertSelector(
               title: "Gender",
               controller: controller[2],
@@ -142,29 +148,43 @@ class _GuestRentalBookingFormState extends State<GuestRentalBookingForm> {
               initialValue: "Select Gender",
               alertBoxTitle: "Select Gender",
             ),
-            Text(
-              'Mobile',
-              textAlign: TextAlign.left,
-              style: titleTextStyle,
+            const SizedBox(
+              height: 5,
             ),
-            Customphonefield(
-              initalCountryCode: countryCode,
-              controller: controller[1],
-              focusNode: focusNode3,
-              onChanged: (phoneNumber) {
-                countryCode =
-                    phoneNumber.countryCode.replaceFirst("+", '').trim();
-                debugPrint('phone number$countryCode');
-                // primaryNoController.text = phoneNumber.number;
-              },
-              onCountryChanged: (country) {
-                countryCode = country.dialCode;
-              },
-              validator: (p0) {
-                return null;
-              },
+            Text.rich(TextSpan(children: [
+              TextSpan(text: 'Mobile', style: titleTextStyle),
+              const TextSpan(
+                  text: ' *',
+                  style: TextStyle(
+                    color: redColor,
+                  ))
+            ])),
+            const SizedBox(
+              height: 5,
             ),
-
+            CustomMobilenumber(
+                textLength: 9,
+                controller: controller[1],
+                hintText: 'Enter phone number',
+                fillColor: background,
+                countryCode: countryCode),
+            // Customphonefield(
+            //   initalCountryCode: countryCode,
+            //   controller: controller[1],
+            //   focusNode: focusNode3,
+            //   onChanged: (phoneNumber) {
+            //     countryCode =
+            //         phoneNumber.countryCode.replaceFirst("+", '').trim();
+            //     debugPrint('phone number$countryCode');
+            //     // primaryNoController.text = phoneNumber.number;
+            //   },
+            //   onCountryChanged: (country) {
+            //     countryCode = country.dialCode;
+            //   },
+            //   validator: (p0) {
+            //     return null;
+            //   },
+            // ),
             const Spacer(),
             CustomButtonBig(
               btnHeading: "Book Now",
@@ -175,6 +195,9 @@ class _GuestRentalBookingFormState extends State<GuestRentalBookingForm> {
                 } else if (controller[1].text.isEmpty) {
                   Utils.flushBarErrorMessage(
                       "Kindly Enter Mobile No.", context);
+                } else if (int.tryParse(controller[1].text) == 0) {
+                  Utils.flushBarErrorMessage(
+                      "Kindly Enter Valid Mobile No.", context);
                 } else if (controller[2].text.isEmpty) {
                   Utils.flushBarErrorMessage("Kindly Select Gender", context);
                 } else {
@@ -219,7 +242,9 @@ class _GuestRentalBookingFormState extends State<GuestRentalBookingForm> {
                               "guestMobile": controller[1].text,
                               "gender": controller[2].text,
                               "locationLatitude": widget.lati,
-                              "locationLongitude": widget.longi
+                              "locationLongitude": widget.longi,
+                              "offerCode": widget.offerCode,
+                              "discountAmount": widget.discountAmount,
                             };
                             Provider.of<RentalBookingViewModel>(
                               context,
@@ -248,7 +273,9 @@ class _GuestRentalBookingFormState extends State<GuestRentalBookingForm> {
                   );
 
                   paymentService.openCheckout(
-                      amount: amt,
+                      amount: widget.discountAmount == 0
+                          ? amt
+                          : widget.discountAmount,
                       userId: widget.bookerId.toString(),
                       coutryCode: profileUser?.countryCode,
                       mobileNo: profileUser?.mobile,

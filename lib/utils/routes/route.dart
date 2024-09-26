@@ -16,6 +16,8 @@ import 'package:flutter_cab/view/dashboard/account_Pages/transaction.dart';
 import 'package:flutter_cab/view/dashboard/account_Pages/verifyPassword.dart';
 import 'package:flutter_cab/view/dashboard/home_screen.dart';
 import 'package:flutter_cab/view/dashboard/menuList.dart';
+import 'package:flutter_cab/view/dashboard/offers_pages/allOffers_screen.dart';
+import 'package:flutter_cab/view/dashboard/offers_pages/offerDetails_screen.dart';
 import 'package:flutter_cab/view/dashboard/raiseIssue_pages/issueViewDetails.dart';
 import 'package:flutter_cab/view/dashboard/rental/bookYourCab.dart';
 import 'package:flutter_cab/view/dashboard/rental/carBooking.dart';
@@ -34,9 +36,12 @@ import 'package:flutter_cab/view/dashboard/tourPackage/packageHistory/packageHis
 import 'package:flutter_cab/view/dashboard/tourPackage/tourPackageForm.dart';
 import 'package:flutter_cab/view/one_way_trip.dart';
 import 'package:flutter_cab/view/dashboard/account_Pages/editProfile.dart';
+import 'package:flutter_cab/view/registration/forgot_screen.dart';
 import 'package:flutter_cab/view/registration/login_screen.dart';
+import 'package:flutter_cab/view/registration/otp_verification_screen.dart';
 import 'package:flutter_cab/view/registration/registration_screen.dart';
 import 'package:flutter_cab/view/registration/splash_screen.dart';
+import 'package:flutter_cab/view/reset_password_screen.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../view/dashboard/tourPackage/packageHistory/package_PageViewDetails.dart';
@@ -216,6 +221,34 @@ final GoRouter myRouter = GoRouter(
       },
     ),
     GoRoute(
+      path: '/forgotPassword',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (BuildContext context, GoRouterState state) {
+        return const ForgotPassword();
+      },
+    ),
+    GoRoute(
+      path: '/verifyOtp',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (BuildContext context, GoRouterState state) {
+        var data = state.extra as Map<String, dynamic>;
+        return OtpVerificationScreen(
+          email: data["email"],
+        );
+      },
+    ),
+    GoRoute(
+      path: '/resetPassword',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (BuildContext context, GoRouterState state) {
+        var data = state.extra as Map<String, dynamic>;
+
+        return ResetPasswordScreen(
+          email: data["email"],
+        );
+      },
+    ),
+    GoRoute(
       path: '/faqPage',
       parentNavigatorKey: _rootNavigatorKey,
       builder: (BuildContext context, GoRouterState state) {
@@ -262,6 +295,20 @@ final GoRouter myRouter = GoRouter(
       parentNavigatorKey: _rootNavigatorKey,
       builder: (BuildContext context, GoRouterState state) {
         return const CardPage();
+      },
+    ),
+    GoRoute(
+      path: '/allOffer',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (BuildContext context, GoRouterState state) {
+        return const AlloffersScreen();
+      },
+    ),
+    GoRoute(
+      path: '/OfferDetails',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (BuildContext context, GoRouterState state) {
+        return const OfferdetailsScreen();
       },
     ),
     GoRoute(
@@ -361,9 +408,11 @@ final GoRouter myRouter = GoRouter(
             builder: (BuildContext context, GoRouterState state) {
               final userID = state.extra as Map<String, dynamic>;
               final bookID = state.extra as Map<String, dynamic>;
+              final paymentId = state.extra as Map<String, dynamic>;
               return PackagePageViewDetails(
                 userId: userID['user'],
                 packageBookID: bookID['book'],
+                paymentId: paymentId['paymentId'],
               );
             },
           ),
@@ -434,20 +483,23 @@ final GoRouter myRouter = GoRouter(
               var pickUpTime = state.extra as Map<String, dynamic>;
               var longitude = state.extra as Map<String, dynamic>;
               var latitude = state.extra as Map<String, dynamic>;
+              var offerCode = state.extra as Map<String, dynamic>;
+              var discountAmount = state.extra as Map<String, dynamic>;
               // final List guestData = data[''] ?? [];
               return GuestRentalBookingForm(
-                // data: {},
-                date: date['date'],
-                pickUpLocation: pickUpLocation['pickUpLocation'],
-                price: price['price'],
-                hour: hour['hour'],
-                carType: carType['carType'],
-                bookerId: bookerId['bookerId'],
-                kilometer: kilometer['kilometer'],
-                pickUpTime: pickUpTime['pickUpTime'],
-                longi: longitude['longi'],
-                lati: latitude['lati'],
-              );
+                  // data: {},
+                  date: date['date'],
+                  pickUpLocation: pickUpLocation['pickUpLocation'],
+                  price: price['price'],
+                  hour: hour['hour'],
+                  carType: carType['carType'],
+                  bookerId: bookerId['bookerId'],
+                  kilometer: kilometer['kilometer'],
+                  pickUpTime: pickUpTime['pickUpTime'],
+                  longi: longitude['longi'],
+                  lati: latitude['lati'],
+                  offerCode: offerCode['offerCode'],
+                  discountAmount: discountAmount['discountAmount']);
             },
           ),
           GoRoute(

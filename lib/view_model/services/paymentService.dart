@@ -37,7 +37,7 @@ class PaymentService {
     print('paymentId:....$paymentOrderId');
     var options = {
       'key': 'rzp_test_6RDAELPDeFpXXx',
-      'amount': (amount).toInt(),
+      'amount': (amount).toInt() * 100,
       'name': 'SWABI',
       // 'order_id': widget.orderId,
       'order_id': paymentOrderId,

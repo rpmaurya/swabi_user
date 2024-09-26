@@ -155,8 +155,11 @@ class GetPackageHistoryDetailByIdViewModel with ChangeNotifier {
     _myRepo.getPackageHistoryDetailByIdRepositoryApi(data).then((value) async {
       setDataList(ApiResponse.completed(value));
       // context.push("/package/packageDetails",extra: {"packageID":packID,"userId":uId,"bookDate":dateBooking});
-      context.push("/package/packageDetailsPageView",
-          extra: {"user": userID, "book": bookingID});
+      context.push("/package/packageDetailsPageView", extra: {
+        "user": userID,
+        "book": bookingID,
+        "paymentId": value?.data.paymentId
+      });
       debugPrint('Get Package History Detail By Id ViewModel Success');
     }).onError((error, stackTrace) {
       debugPrint(error.toString());

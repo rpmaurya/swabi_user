@@ -19,7 +19,8 @@ class PageLayout_Curve extends StatelessWidget {
   final VoidCallback? iconOnTap;
   final String addtionalIcon;
   final bool addtionalIconReq;
-  const PageLayout_Curve({super.key,
+  const PageLayout_Curve({
+    super.key,
     required this.appHeading,
     this.btnHeading = "Save",
     this.addtionalIconReq = false,
@@ -27,83 +28,91 @@ class PageLayout_Curve extends StatelessWidget {
     this.iconOnTap,
     this.bgColor,
     this.icon,
-    this.saveBtn=false,
+    this.saveBtn = false,
     required this.child,
     this.backBtn,
-     this.onTap,
+    this.onTap,
   });
   @override
   Widget build(BuildContext context) {
     return SizedBox(
         child: Scaffold(
-          backgroundColor: bgColor ?? curvePageColor,
-          resizeToAvoidBottomInset: false,
-          appBar: PreferredSize(
-              preferredSize: Size(0, AppDimension.getHeight(context) * .12),
-              child: AppBar(
-                backgroundColor: curvePageColor,
-                surfaceTintColor: curvePageColor,
-                toolbarHeight: 180,
-                leading: IconButton(
-                  icon: const Icon(Icons.arrow_back),
-                  onPressed: backBtn ?? () => Navigator.pop(context),
-                ),
-                title: Text(appHeading, style: appbarTextStyle,),
-                centerTitle: true,
-                titleTextStyle: appbarTextStyle,
-                actions: [
-                  Padding(padding: const EdgeInsets.symmetric(horizontal: 15),
-                  child: Material(
-                    color: curvePageColor,
+      backgroundColor: bgColor ?? curvePageColor,
+      resizeToAvoidBottomInset: false,
+      appBar: PreferredSize(
+          preferredSize: Size(0, AppDimension.getHeight(context) * .12),
+          child: AppBar(
+            backgroundColor: curvePageColor,
+            surfaceTintColor: curvePageColor,
+            toolbarHeight: 180,
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: backBtn ?? () => Navigator.pop(context),
+            ),
+            title: Text(
+              appHeading,
+              style: appbarTextStyle,
+            ),
+            centerTitle: true,
+            titleTextStyle: appbarTextStyle,
+            actions: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 15),
+                child: Material(
+                  color: curvePageColor,
+                  borderRadius: BorderRadius.circular(5),
+                  child: InkWell(
                     borderRadius: BorderRadius.circular(5),
-                    child: InkWell(
-                      borderRadius: BorderRadius.circular(5),
-                      onTap: addtionalIconReq ? iconOnTap:()=> print("Icon Btn Press"),
-                      child: SizedBox(
-                        height: 30,
-                        width: 30,
-                        // padding: EdgeInsets.symmetric(vertical: 5,horizontal: 5),
-                        child: addtionalIconReq ?Image.asset(addtionalIcon,height: 30,width: 30):null,
-                      ),
-                    ),
-                  ),
-                  )
-                ],
-              )
-          ),
-          body: LayoutBuilder(
-            builder: (context, constraints) =>
-                ClipRRect(
-                  borderRadius: const BorderRadius.only(topRight: Radius.circular(30),
-                      topLeft: Radius.circular(30)),
-                  child: Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.only(
-                        left: 10, right: 10, top: 20, bottom: 10),
-                    decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.only(
-                          topRight: Radius.circular(30),
-                          topLeft: Radius.circular(30)),
-                      color: Colors.white,
-                    ),
-                    ///jdh
-                    child: Column(
-                      children: [
-                        Expanded(child: Container(
-                          child: child,
-                        )),
-                        saveBtn ?
-                        // CustomButtonSmall()
-                        CustomButtonBig(btnHeading: btnHeading, onTap: onTap ?? ()=> print("onTap"))
-                            : const SizedBox.shrink()
-                      ],
+                    onTap: addtionalIconReq
+                        ? iconOnTap
+                        : () => print("Icon Btn Press"),
+                    child: SizedBox(
+                      height: 30,
+                      width: 30,
+                      // padding: EdgeInsets.symmetric(vertical: 5,horizontal: 5),
+                      child: addtionalIconReq
+                          ? Image.asset(addtionalIcon, height: 30, width: 30)
+                          : null,
                     ),
                   ),
                 ),
-          ),
+              )
+            ],
+          )),
+      body: LayoutBuilder(
+        builder: (context, constraints) => ClipRRect(
+          borderRadius: const BorderRadius.only(
+              topRight: Radius.circular(30), topLeft: Radius.circular(30)),
+          child: Container(
+            width: double.infinity,
+            padding:
+                const EdgeInsets.only(left: 10, right: 10, top: 20, bottom: 10),
+            decoration: const BoxDecoration(
+              borderRadius: BorderRadius.only(
+                  topRight: Radius.circular(30), topLeft: Radius.circular(30)),
+              color: Colors.white,
+            ),
 
-        )
-    );
+            ///jdh
+            child: Column(
+              children: [
+                Expanded(
+                    child: Container(
+                  child: child,
+                )),
+                saveBtn
+                    ?
+                    // CustomButtonSmall()
+                    CustomButtonBig(
+                        btnHeading: btnHeading,
+                        onTap: onTap ?? () => print("onTap"))
+                    : const SizedBox.shrink()
+              ],
+            ),
+          ),
+        ),
+      ),
+    ));
   }
 }
 
@@ -256,18 +265,19 @@ class PageLayout_Page extends StatelessWidget {
                   color: bgGreyColor, // Replace bgGreyColor with Colors.grey
                   child: RefreshIndicator(
                     color: btnColor,
-                    onRefresh: onRefresh ?? () async {
-                      // Utils.toastMessage("Data Refresh",isSuccess: true);
-                      }, // Provide a default no-op if onRefresh is null
+                    onRefresh: onRefresh ??
+                        () async {
+                          // Utils.toastMessage("Data Refresh",isSuccess: true);
+                        }, // Provide a default no-op if onRefresh is null
                     child: child,
                   ),
                 ),
               ),
               saveBtn
                   ? CustomButtonBig(
-                btnHeading: btnHeading,
-                onTap: onTap ?? () => print("onTap"),
-              )
+                      btnHeading: btnHeading,
+                      onTap: onTap ?? () => print("onTap"),
+                    )
                   : const SizedBox.shrink(),
             ],
           ),
@@ -326,7 +336,8 @@ class CommonPageLayout extends StatelessWidget {
     this.onCreate,
     this.onRefresh,
     this.customButton = false,
-    this.customWidget, this.backgroundColor,
+    this.customWidget,
+    this.backgroundColor,
   });
 
   @override
@@ -339,16 +350,16 @@ class CommonPageLayout extends StatelessWidget {
       backgroundColor: background,
       floatingActionButton: floatingActionButton
           ? FloatingActionButton(
-        onPressed: floatingTap,
-        shape: const StadiumBorder(),
-        backgroundColor: btnColor,
-        child: const Icon(
-          Icons.add,
-          size: 50,
-          color: Colors.white,
-          weight: 4,
-        ),
-      )
+              onPressed: floatingTap,
+              shape: const StadiumBorder(),
+              backgroundColor: btnColor,
+              child: const Icon(
+                Icons.add,
+                size: 50,
+                color: Colors.white,
+                weight: 4,
+              ),
+            )
           : null,
       body: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
@@ -378,18 +389,23 @@ class CommonPageLayout extends StatelessWidget {
                               child: Padding(
                                 padding: const EdgeInsets.only(left: 5),
                                 child: IconButton(
-                                    onPressed: backButton ?? () => context.pop(),
-                                    icon: backButtonIcon ?? const Icon(Icons.arrow_back_sharp,color: Colors.black,)
-                                  // Image.asset(
-                                  //   backIcon,
-                                  //   height: 10,
-                                  // ),
-                                ),
+                                    onPressed:
+                                        backButton ?? () => context.pop(),
+                                    icon: backButtonIcon ??
+                                        const Icon(
+                                          Icons.arrow_back_sharp,
+                                          color: Colors.black,
+                                        )
+                                    // Image.asset(
+                                    //   backIcon,
+                                    //   height: 10,
+                                    // ),
+                                    ),
                               ),
                             ),
                             Align(
                               alignment: Alignment.center,
-                              child:CustomAppBar(
+                              child: CustomAppBar(
                                 heading: heading,
                               ),
                               // Text(heading,
@@ -397,84 +413,88 @@ class CommonPageLayout extends StatelessWidget {
                             ),
                             tick && create == false
                                 ? Align(
-                              alignment: Alignment.centerRight,
-                              child: Padding(
-                                padding: const EdgeInsets.only(right: 17),
-                                child: IconButton(
-                                    onPressed:
-                                    onTick,
-                                    icon: const Icon(Icons.check,color: Colors.white,)
-                                  // Image.asset(
-                                  //   tickIcon,
-                                  //   height: 10,
-                                  // ),
-                                ),
-                              ),
-                            )
+                                    alignment: Alignment.centerRight,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(right: 17),
+                                      child: IconButton(
+                                          onPressed: onTick,
+                                          icon: const Icon(
+                                            Icons.check,
+                                            color: Colors.white,
+                                          )
+                                          // Image.asset(
+                                          //   tickIcon,
+                                          //   height: 10,
+                                          // ),
+                                          ),
+                                    ),
+                                  )
                                 : Container(),
                             create && tick == false
                                 ? Align(
-                              alignment: Alignment.centerRight,
-                              child: Padding(
-                                  padding: const EdgeInsets.only(right: 17),
-                                  child: Material(
-                                    color: const Color(0x1CEC642A),
-                                    borderRadius:
-                                    BorderRadius.circular(3),
-                                    child: InkWell(
-                                      onTap: onCreate,
-                                      borderRadius:
-                                      BorderRadius.circular(3),
-                                      child: Container(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 10,
-                                            vertical: 4),
-                                        decoration: ShapeDecoration(
-                                          shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                              BorderRadius.circular(
-                                                  3)),
-                                        ),
-                                        child: Text(
-                                          onCreateTitle,
-                                          style: GoogleFonts.lato(
-                                            color: textColor,
-                                            fontSize: 8,
-                                            fontWeight: FontWeight.w600,
+                                    alignment: Alignment.centerRight,
+                                    child: Padding(
+                                        padding:
+                                            const EdgeInsets.only(right: 17),
+                                        child: Material(
+                                          color: const Color(0x1CEC642A),
+                                          borderRadius:
+                                              BorderRadius.circular(3),
+                                          child: InkWell(
+                                            onTap: onCreate,
+                                            borderRadius:
+                                                BorderRadius.circular(3),
+                                            child: Container(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 10,
+                                                      vertical: 4),
+                                              decoration: ShapeDecoration(
+                                                shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            3)),
+                                              ),
+                                              child: Text(
+                                                onCreateTitle,
+                                                style: GoogleFonts.lato(
+                                                  color: textColor,
+                                                  fontSize: 8,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
+                                            ),
                                           ),
-                                        ),
-                                      ),
-                                    ),
-                                  )),
-                            )
+                                        )),
+                                  )
                                 : Container(),
                             customButton
                                 ? Align(
-                                alignment: Alignment.centerRight,
-                                child: customWidget ?? Container())
+                                    alignment: Alignment.centerRight,
+                                    child: customWidget ?? Container())
                                 : Container(),
                           ],
                         ),
                       ),
                       Expanded(
                           child: RefreshIndicator(
-                            color: btnColor,
-                            onRefresh: onRefresh ?? () async {},
-                            child: Padding(
-                              padding: padding,
-                              child: child,
-                            ),
-                          )),
+                        color: btnColor,
+                        onRefresh: onRefresh ?? () async {},
+                        child: Padding(
+                          padding: padding,
+                          child: child,
+                        ),
+                      )),
                       submitButton
                           ? Padding(
-                        padding: padding,
-                        child: CustomButtonSmall(
-                          btnHeading: submitTitle,
-                          onTap: onCancel ?? () => context.pop(),
-                          // linearGradient: submitColorGradient,
-                          // : onSubmit ?? () => print('Add a onSubmit here'),
-                        ),
-                      )
+                              padding: padding,
+                              child: CustomButtonSmall(
+                                btnHeading: submitTitle,
+                                onTap: onCancel ?? () => context.pop(),
+                                // linearGradient: submitColorGradient,
+                                // : onSubmit ?? () => print('Add a onSubmit here'),
+                              ),
+                            )
                           : Container()
                     ],
                   ),

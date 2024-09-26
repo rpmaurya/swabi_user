@@ -1,5 +1,3 @@
-
-
 import 'dart:async';
 
 import 'package:dropdown_button2/dropdown_button2.dart';
@@ -33,7 +31,8 @@ class FormTextField extends StatelessWidget {
     this.hint = '',
     this.icon,
     this.numberOnly = false,
-    this.length = 0, this.status = "Status.completed",
+    this.length = 0,
+    this.status = "Status.completed",
   }) : super(key: key);
 
   @override
@@ -77,10 +76,10 @@ class FormTextField extends StatelessWidget {
                           minWidth: AppDimension.getWidth(context) * .8),
                       child: TextFormField(
                         style: const TextStyle(
-                            fontWeight: FontWeight.w500,
-                            fontSize: 10,
-                            color: naturalGreyColor,
-                            ),
+                          fontWeight: FontWeight.w500,
+                          fontSize: 10,
+                          color: naturalGreyColor,
+                        ),
                         enabled: isEnabled,
                         onTap: onTap,
                         maxLines: 1,
@@ -95,10 +94,10 @@ class FormTextField extends StatelessWidget {
                             prefixIcon: icons,
                             hintText: hint,
                             hintStyle: const TextStyle(
-                                fontWeight: FontWeight.w500,
-                                fontSize: 10,
-                                color: naturalGreyColor,
-                              ),
+                              fontWeight: FontWeight.w500,
+                              fontSize: 10,
+                              color: naturalGreyColor,
+                            ),
                             border: InputBorder.none,
                             isDense: true,
                             contentPadding: const EdgeInsets.symmetric(
@@ -109,15 +108,17 @@ class FormTextField extends StatelessWidget {
                   ),
                 ),
               ),
-              status == "Status.loading" ? const Padding(
-                padding: EdgeInsets.only(right: 10),
-                child: SizedBox(
-                    height: 20,
-                    width: 20,
-                    child: CircularProgressIndicator(
-                      color: naturalGreyColor,
-                    )),
-              ) : Container()
+              status == "Status.loading"
+                  ? const Padding(
+                      padding: EdgeInsets.only(right: 10),
+                      child: SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                            color: naturalGreyColor,
+                          )),
+                    )
+                  : Container()
             ],
           ),
         ),
@@ -136,7 +137,8 @@ class FormDatePicker extends StatefulWidget {
     Key? key,
     required this.title,
     required this.controller,
-    this.hint = '', this.enabled = true,
+    this.hint = '',
+    this.enabled = true,
   }) : super(key: key);
 
   @override
@@ -172,7 +174,8 @@ class _FormDatePickerState extends State<FormDatePicker> {
             colorScheme: const ColorScheme.light(
               primary: naturalGreyColor, // Change this to the desired color
             ),
-            buttonTheme: const ButtonThemeData(textTheme: ButtonTextTheme.primary),
+            buttonTheme:
+                const ButtonThemeData(textTheme: ButtonTextTheme.primary),
           ),
           child: child!,
         );
@@ -180,7 +183,6 @@ class _FormDatePickerState extends State<FormDatePicker> {
     );
 
     if (picked != null && picked != selectedDate) {
-
       setState(() {
         selectedDate = picked;
         widget.controller.text =
@@ -221,14 +223,14 @@ class _FormDatePickerState extends State<FormDatePicker> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 const Padding(
-                  padding: EdgeInsets.only(right: 10.0),
-                  child: Icon(Icons.calendar_month)
-                  // Image.asset(
-                  //   calendarIcon,
-                  //   height: 15.h,
-                  //   width: 15.h,
-                  // ),
-                ),
+                    padding: EdgeInsets.only(right: 10.0),
+                    child: Icon(Icons.calendar_month)
+                    // Image.asset(
+                    //   calendarIcon,
+                    //   height: 15.h,
+                    //   width: 15.h,
+                    // ),
+                    ),
                 Text(
                     widget.controller.text.isNotEmpty
                         ? widget.controller.text
@@ -295,7 +297,8 @@ class _DatePickerFormState extends State<DatePickerForm> {
             colorScheme: const ColorScheme.light(
               primary: lightBrownColor, // Change this to the desired color
             ),
-            buttonTheme: const ButtonThemeData(textTheme: ButtonTextTheme.primary),
+            buttonTheme:
+                const ButtonThemeData(textTheme: ButtonTextTheme.primary),
           ),
           child: child!,
         );
@@ -317,14 +320,16 @@ class _DatePickerFormState extends State<DatePickerForm> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          widget.reqTitle?Container(
-              color: Colors.white,
-              // margin: const EdgeInsets.only(left: 14),
-              padding: const EdgeInsets.symmetric(horizontal: 3),
-              child: Text(widget.title,
-                  style:titleTextStyle
-              )):Container(),
-          const SizedBox(height: 5,),
+          widget.reqTitle
+              ? Container(
+                  color: Colors.white,
+                  // margin: const EdgeInsets.only(left: 14),
+                  padding: const EdgeInsets.symmetric(horizontal: 3),
+                  child: Text(widget.title, style: titleTextStyle))
+              : Container(),
+          const SizedBox(
+            height: 5,
+          ),
           Material(
             elevation: 5,
             borderRadius: BorderRadius.circular(10),
@@ -335,7 +340,7 @@ class _DatePickerFormState extends State<DatePickerForm> {
               padding: const EdgeInsets.only(left: 15),
               decoration: ShapeDecoration(
                 shape: RoundedRectangleBorder(
-                  side: const BorderSide(color:curvePageColor),
+                  side: const BorderSide(color: curvePageColor),
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
@@ -365,7 +370,6 @@ class _DatePickerFormState extends State<DatePickerForm> {
               ),
             ),
           ),
-
         ],
       ),
     );
@@ -377,7 +381,8 @@ class TextFeildTiming extends StatefulWidget {
   final String hint;
   final double? width;
   final TextEditingController controller;
-  const TextFeildTiming({ Key? key,
+  const TextFeildTiming({
+    Key? key,
     required this.title,
     required this.controller,
     this.hint = '',
@@ -393,8 +398,6 @@ class _TextFeildTimingState extends State<TextFeildTiming> {
 
   TimeOfDay? timing;
 
-
-
   Future<void> _selectTiming(BuildContext context) async {
     final TimeOfDay? timingPick = await showTimePicker(
       context: context,
@@ -406,16 +409,14 @@ class _TextFeildTimingState extends State<TextFeildTiming> {
           data: ThemeData.light().copyWith(
             colorScheme: const ColorScheme.light(
               primary: btnColor, // Change this to the desired color
-            ),//dsd
+            ), //dsd
             timePickerTheme: TimePickerThemeData(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              backgroundColor: bgGreyColor,
-              dialBackgroundColor: background,
-              dialTextStyle: titleTextStyle
-
-            ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                backgroundColor: bgGreyColor,
+                dialBackgroundColor: background,
+                dialTextStyle: titleTextStyle),
             textTheme: TextTheme(
               bodyLarge: titleTextStyle,
               bodyMedium: titleTextStyle,
@@ -426,8 +427,6 @@ class _TextFeildTimingState extends State<TextFeildTiming> {
               headlineLarge: titleTextStyle,
               labelSmall: titleTextStyle,
               titleSmall: titleTextStyle,
-
-
             ),
             // buttonTheme: const ButtonThemeData(textTheme: ButtonTextTheme.primary),
           ),
@@ -439,12 +438,11 @@ class _TextFeildTimingState extends State<TextFeildTiming> {
     if (timingPick != null && timingPick != timing) {
       setState(() {
         timing = timingPick;
-        widget.controller.text = timingPick.format(context).toString().split(' ')[0];
+        widget.controller.text =
+            timingPick.format(context).toString().split(' ')[0];
       });
     }
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -452,17 +450,18 @@ class _TextFeildTimingState extends State<TextFeildTiming> {
       children: [
         InkWell(
           onTap: () => _selectTiming(context),
-              // _showTimePicker(),
-              // _selectDate(context),
-          child:  Column(
+          // _showTimePicker(),
+          // _selectDate(context),
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
                   // margin: const EdgeInsets.only(left: 14),
                   padding: const EdgeInsets.symmetric(horizontal: 3),
-                  child: Text(widget.title,
-                      style: titleTextStyle)),
-              const SizedBox(height: 5,),
+                  child: Text(widget.title, style: titleTextStyle)),
+              const SizedBox(
+                height: 5,
+              ),
               Material(
                 borderRadius: BorderRadius.circular(10),
                 elevation: 0,
@@ -475,7 +474,8 @@ class _TextFeildTimingState extends State<TextFeildTiming> {
                   decoration: ShapeDecoration(
                     color: background,
                     shape: RoundedRectangleBorder(
-                      side: BorderSide(color: naturalGreyColor.withOpacity(0.3)),
+                      side:
+                          BorderSide(color: naturalGreyColor.withOpacity(0.3)),
                       borderRadius: BorderRadius.circular(5),
                     ),
                   ),
@@ -632,27 +632,26 @@ class CustomDropDownButton extends StatefulWidget {
   final bool iconReq;
   final String hint;
   final bool headingReq;
-  const CustomDropDownButton({
-    required this.width,
-    required this.title,
-    required this.selectedValue,
-    required this.dropDownValues,
-    required this.controller,
-    this.iconImg = '',
-    this.iconImgReq = false,
-    required this.icon,
-    this.iconReq = false,
-    this.onTap,
-    this.hint = "",
-    this.headingReq = false,
-    super.key });
+  const CustomDropDownButton(
+      {required this.width,
+      required this.title,
+      required this.selectedValue,
+      required this.dropDownValues,
+      required this.controller,
+      this.iconImg = '',
+      this.iconImgReq = false,
+      required this.icon,
+      this.iconReq = false,
+      this.onTap,
+      this.hint = "",
+      this.headingReq = false,
+      super.key});
 
   @override
   State<CustomDropDownButton> createState() => _CustomDropDownButtonState();
 }
 
 class _CustomDropDownButtonState extends State<CustomDropDownButton> {
-
   late String selectedValue; // Initial selected value
   late List<String> dropdownValues; // Dropdown options
   // late AnimationController _controller;
@@ -664,13 +663,19 @@ class _CustomDropDownButtonState extends State<CustomDropDownButton> {
     dropdownValues = widget.dropDownValues;
     widget.controller.text = selectedValue;
   }
+
   // String? selectedValue;
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        widget.headingReq?Text(widget.title,style: titleTextStyle,):const SizedBox.shrink(),
+        widget.headingReq
+            ? Text(
+                widget.title,
+                style: titleTextStyle,
+              )
+            : const SizedBox.shrink(),
         const SizedBox(height: 5),
         Material(
           elevation: 5,
@@ -680,14 +685,11 @@ class _CustomDropDownButtonState extends State<CustomDropDownButton> {
             width: widget.width,
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(5),
-                border: Border.all(color: btnColor)
-            ),
+                border: Border.all(color: btnColor)),
             child: DropdownButtonHideUnderline(
               child: DropdownButton2<String>(
                 iconStyleData: const IconStyleData(
-                    icon:  Icon(Icons.keyboard_arrow_down),
-                    iconSize: 30
-                ),
+                    icon: Icon(Icons.keyboard_arrow_down), iconSize: 30),
                 isExpanded: false,
                 hint: Text(
                   widget.hint,
@@ -696,28 +698,37 @@ class _CustomDropDownButtonState extends State<CustomDropDownButton> {
                     color: Theme.of(context).hintColor,
                   ),
                 ),
-                items:dropdownValues
+                items: dropdownValues
                     .map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
                     child: Row(
                       children: [
-                        widget.iconImgReq?Image.asset(widget.iconImg,color: naturalGreyColor,height: 30,) : widget.iconReq ? widget.icon: const SizedBox(),
+                        widget.iconImgReq
+                            ? Image.asset(
+                                widget.iconImg,
+                                color: naturalGreyColor,
+                                height: 30,
+                              )
+                            : widget.iconReq
+                                ? widget.icon
+                                : const SizedBox(),
                         const SizedBox(width: 10),
                         Text(value, style: titleTextStyle),
                       ],
                     ),
                   );
                 }).toList(),
-                value: widget.controller.text.isNotEmpty ? widget.controller.text : null,
+                value: widget.controller.text.isNotEmpty
+                    ? widget.controller.text
+                    : null,
                 onChanged: (String? newValue) {
                   widget.onTap?.call();
                   setState(() {
                     // _isArrow = !_isArrow;
                     selectedValue = newValue!;
-                    widget.controller.text = selectedValue; // Update the controller
-
-
+                    widget.controller.text =
+                        selectedValue; // Update the controller
                   });
                 },
                 buttonStyleData: const ButtonStyleData(
@@ -861,29 +872,28 @@ class CustomDropDown1Button extends StatefulWidget {
   final bool iconReq;
   final String hint;
   final bool headingReq;
-  const CustomDropDown1Button({
-    required this.width,
-    required this.title,
-    required this.selectedValue,
-    required this.dropDownValues,
-    required this.controller,
-    this.iconImg = '',
-    this.iconImgReq = false,
-    this.borderChange = false,
-    required this.borderColor,
-    required this.icon,
-    this.iconReq = false,
-    this.onTap,
-    this.hint = "",
-    this.headingReq = false,
-    super.key });
+  const CustomDropDown1Button(
+      {required this.width,
+      required this.title,
+      required this.selectedValue,
+      required this.dropDownValues,
+      required this.controller,
+      this.iconImg = '',
+      this.iconImgReq = false,
+      this.borderChange = false,
+      required this.borderColor,
+      required this.icon,
+      this.iconReq = false,
+      this.onTap,
+      this.hint = "",
+      this.headingReq = false,
+      super.key});
 
   @override
   State<CustomDropDown1Button> createState() => _CustomDropDown1ButtonState();
 }
 
 class _CustomDropDown1ButtonState extends State<CustomDropDown1Button> {
-
   late String selectedValue; // Initial selected value
   late List<String> dropdownValues; // Dropdown options
   // late AnimationController _controller;
@@ -895,13 +905,19 @@ class _CustomDropDown1ButtonState extends State<CustomDropDown1Button> {
     dropdownValues = widget.dropDownValues;
     widget.controller.text = selectedValue;
   }
+
   // String? selectedValue;
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        widget.headingReq?Text(widget.title,style: loginTextStyle,):const SizedBox.shrink(),
+        widget.headingReq
+            ? Text(
+                widget.title,
+                style: loginTextStyle,
+              )
+            : const SizedBox.shrink(),
         const SizedBox(height: 5),
         Material(
           elevation: 2,
@@ -911,14 +927,13 @@ class _CustomDropDown1ButtonState extends State<CustomDropDown1Button> {
             width: widget.width,
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(5),
-                border: Border.all(color: widget.borderChange?widget.borderColor: btnColor)
-            ),
+                border: Border.all(
+                    color:
+                        widget.borderChange ? widget.borderColor : btnColor)),
             child: DropdownButtonHideUnderline(
               child: DropdownButton2<String>(
                 iconStyleData: const IconStyleData(
-                    icon:  Icon(Icons.keyboard_arrow_down),
-                    iconSize: 30
-                ),
+                    icon: Icon(Icons.keyboard_arrow_down), iconSize: 30),
                 isExpanded: false,
                 hint: Text(
                   widget.hint,
@@ -927,28 +942,37 @@ class _CustomDropDown1ButtonState extends State<CustomDropDown1Button> {
                     color: Theme.of(context).hintColor,
                   ),
                 ),
-                items:dropdownValues
+                items: dropdownValues
                     .map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
                     child: Row(
                       children: [
-                        widget.iconImgReq?Image.asset(widget.iconImg,color: naturalGreyColor,height: 30,) : widget.iconReq ? widget.icon: const SizedBox(),
+                        widget.iconImgReq
+                            ? Image.asset(
+                                widget.iconImg,
+                                color: naturalGreyColor,
+                                height: 30,
+                              )
+                            : widget.iconReq
+                                ? widget.icon
+                                : const SizedBox(),
                         const SizedBox(width: 10),
                         Text(value, style: titleTextStyle),
                       ],
                     ),
                   );
                 }).toList(),
-                value: widget.controller.text.isNotEmpty ? widget.controller.text : null,
+                value: widget.controller.text.isNotEmpty
+                    ? widget.controller.text
+                    : null,
                 onChanged: (String? newValue) {
                   widget.onTap?.call();
                   setState(() {
                     // _isArrow = !_isArrow;
                     selectedValue = newValue!;
-                    widget.controller.text = selectedValue; // Update the controller
-
-
+                    widget.controller.text =
+                        selectedValue; // Update the controller
                   });
                 },
                 buttonStyleData: const ButtonStyleData(
@@ -1000,10 +1024,11 @@ class _FormDatePickerExpenseState extends State<FormDatePickerExpense> {
 
   DateTime? selectedDate;
   Future<void> _selectDate(BuildContext context) async {
-    widget.controller.text = DateFormat('dd-MM-yyyy').format(selectedDate!.toLocal());
+    widget.controller.text =
+        DateFormat('dd-MM-yyyy').format(selectedDate!.toLocal());
     final DateTime? picked = await showDatePicker(
       context: context,
-       initialDate: selectedDate ?? DateTime.now().add(const Duration(days: 1)),
+      initialDate: selectedDate ?? DateTime.now().add(const Duration(days: 1)),
       // firstDate: DateTime(DateTime.now().year),
       // lastDate: DateTime(DateTime.now().year + 1),
       //initialDate: DateTime(now.year, now.month, now.day),
@@ -1021,9 +1046,7 @@ class _FormDatePickerExpenseState extends State<FormDatePickerExpense> {
                 ),
                 backgroundColor: bgGreyColor,
                 dialBackgroundColor: background,
-                dialTextStyle: titleTextStyle
-
-            ),
+                dialTextStyle: titleTextStyle),
             textTheme: TextTheme(
               bodyLarge: titleTextStyle,
               bodyMedium: titleTextStyle,
@@ -1034,10 +1057,9 @@ class _FormDatePickerExpenseState extends State<FormDatePickerExpense> {
               headlineLarge: titleTextStyle,
               labelSmall: titleTextStyle,
               titleSmall: titleTextStyle,
-
-
             ),
-            buttonTheme: const ButtonThemeData(textTheme: ButtonTextTheme.primary),
+            buttonTheme:
+                const ButtonThemeData(textTheme: ButtonTextTheme.primary),
           ),
           child: child!,
         );
@@ -1045,7 +1067,6 @@ class _FormDatePickerExpenseState extends State<FormDatePickerExpense> {
     );
 
     if (picked != null && picked != selectedDate) {
-
       setState(() {
         selectedDate = picked;
         widget.controller.text =
@@ -1059,14 +1080,15 @@ class _FormDatePickerExpenseState extends State<FormDatePickerExpense> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        widget.headingReq ? Container(
-          margin: const EdgeInsets.only(bottom: 5),
-          child: Text(
-            widget.title,
-            overflow: TextOverflow.ellipsis,
-            style: titleTextStyle,
-          ),
-        ) : const SizedBox(),
+        widget.headingReq
+            ? Container(
+                margin: const EdgeInsets.only(bottom: 5),
+                child: Text.rich(TextSpan(children: [
+                  TextSpan(text: widget.title, style: titleTextStyle),
+                  TextSpan(text: ' *', style: TextStyle(color: redColor))
+                ])),
+              )
+            : const SizedBox(),
         // const SizedBox(height: 5,),
         Material(
           borderRadius: BorderRadius.circular(10),
@@ -1077,7 +1099,7 @@ class _FormDatePickerExpenseState extends State<FormDatePickerExpense> {
             borderRadius: BorderRadius.circular(5),
             child: Container(
               height: 50,
-              width: widget.width ?? AppDimension.getWidth(context)*.9,
+              width: widget.width ?? AppDimension.getWidth(context) * .9,
               // margin: EdgeInsets.only(top: 5, bottom: 15),
               padding: const EdgeInsets.only(left: 12),
               decoration: BoxDecoration(
@@ -1090,7 +1112,10 @@ class _FormDatePickerExpenseState extends State<FormDatePickerExpense> {
                 children: [
                   const Padding(
                     padding: EdgeInsets.only(right: 10.0),
-                    child: Icon(Icons.calendar_month_outlined,color: naturalGreyColor,),
+                    child: Icon(
+                      Icons.calendar_month_outlined,
+                      color: naturalGreyColor,
+                    ),
                   ),
                   Text(
                       widget.controller.text.isNotEmpty
@@ -1098,8 +1123,7 @@ class _FormDatePickerExpenseState extends State<FormDatePickerExpense> {
                           : widget.hint,
                       style: widget.controller.text.isNotEmpty
                           ? titleTextStyle
-                          : loginTextStyle
-                  ),
+                          : loginTextStyle),
                 ],
               ),
             ),
@@ -1109,9 +1133,6 @@ class _FormDatePickerExpenseState extends State<FormDatePickerExpense> {
     );
   }
 }
-
-
-
 
 // class FilterDatePickerForm extends StatefulWidget {
 //   final String title;
@@ -1250,7 +1271,10 @@ class CommonTextField extends StatelessWidget {
     this.hint = '',
     this.icon,
     this.numberOnly = false,
-    this.length = 0, this.status = "Status.completed", this.height, this.padding,
+    this.length = 0,
+    this.status = "Status.completed",
+    this.height,
+    this.padding,
   }) : super(key: key);
 
   @override
@@ -1258,13 +1282,15 @@ class CommonTextField extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        title1 ? Container(
-          child: Text(
-            title,
-            overflow: TextOverflow.ellipsis,
-            style: appbarTextStyle,
-          ),
-        ) : const SizedBox.shrink(),
+        title1
+            ? Container(
+                child: Text(
+                  title,
+                  overflow: TextOverflow.ellipsis,
+                  style: appbarTextStyle,
+                ),
+              )
+            : const SizedBox.shrink(),
         Container(
           height: height ?? 22,
           margin: padding ?? EdgeInsets.zero,
@@ -1280,7 +1306,7 @@ class CommonTextField extends StatelessWidget {
             children: [
               icon != null
                   ? Image.asset(icon!,
-                  height: 15, width: 15, color: const Color(0xFFC1C0C0))
+                      height: 15, width: 15, color: const Color(0xFFC1C0C0))
                   : Container(),
               Expanded(
                 child: SingleChildScrollView(
@@ -1291,10 +1317,10 @@ class CommonTextField extends StatelessWidget {
                           minWidth: AppDimension.getWidth(context) * .8),
                       child: TextFormField(
                         style: const TextStyle(
-                            fontWeight: FontWeight.w500,
-                            fontSize: 10,
-                            color: naturalGreyColor,
-                            ),
+                          fontWeight: FontWeight.w500,
+                          fontSize: 10,
+                          color: naturalGreyColor,
+                        ),
                         enabled: isEnabled,
                         onTap: onTap,
                         maxLines: 1,
@@ -1309,10 +1335,10 @@ class CommonTextField extends StatelessWidget {
                             prefixIcon: icons,
                             hintText: hint,
                             hintStyle: const TextStyle(
-                                fontWeight: FontWeight.w500,
-                                fontSize: 10,
-                                color: naturalGreyColor,
-                                ),
+                              fontWeight: FontWeight.w500,
+                              fontSize: 10,
+                              color: naturalGreyColor,
+                            ),
                             border: InputBorder.none,
                             isDense: true,
                             contentPadding: const EdgeInsets.symmetric(
@@ -1323,15 +1349,17 @@ class CommonTextField extends StatelessWidget {
                   ),
                 ),
               ),
-              status == "Status.loading" ? const Padding(
-                padding: EdgeInsets.only(right: 10),
-                child: SizedBox(
-                    height: 20,
-                    width: 20,
-                    child: CircularProgressIndicator(
-                      color: naturalGreyColor,
-                    )),
-              ) : Container()
+              status == "Status.loading"
+                  ? const Padding(
+                      padding: EdgeInsets.only(right: 10),
+                      child: SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                            color: naturalGreyColor,
+                          )),
+                    )
+                  : Container()
             ],
           ),
         ),
@@ -1339,8 +1367,3 @@ class CommonTextField extends StatelessWidget {
     );
   }
 }
-
-
-
-
-

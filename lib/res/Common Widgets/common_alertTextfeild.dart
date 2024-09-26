@@ -71,13 +71,18 @@ class _FormCommonSingleAlertSelectorState
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Container(
-          child: Text(
-            widget.title,
-            overflow: TextOverflow.ellipsis,
+        Text.rich(TextSpan(children: [
+          TextSpan(
+            text: widget.title,
             style: widget.textStyle ?? titleTextStyle,
           ),
-        ),
+          TextSpan(text: ' *', style: TextStyle(color: redColor))
+        ])),
+        // Text(
+        //   widget.title,
+        //   overflow: TextOverflow.ellipsis,
+        //   style: widget.textStyle ?? titleTextStyle,
+        // ),
         const SizedBox(height: 5),
         GestureDetector(
           onTap: () {

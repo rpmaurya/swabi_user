@@ -30,7 +30,7 @@ class RaiseissueRepository {
         throw ApiException('Server returned an error: ${response?.statusCode}');
       }
     } catch (dioError) {
-      http.handleErrorResponse(error: dioError);
+      http.handleErrorResponse(context: context, error: dioError);
     }
     return null;
   }
@@ -57,7 +57,7 @@ class RaiseissueRepository {
         throw ApiException('Server returned an error: ${response?.statusCode}');
       }
     } catch (dioError) {
-      http.handleErrorResponse(error: dioError);
+      http.handleErrorResponse(context: context, error: dioError);
     }
     return null;
   }
@@ -84,7 +84,7 @@ class RaiseissueRepository {
         throw ApiException('Server returned an error: ${response?.statusCode}');
       }
     } catch (dioError) {
-      http.handleErrorResponse(error: dioError);
+      http.handleErrorResponse(context: context, error: dioError);
       //   if (dioError.type == DioExceptionType.connectionTimeout ||
       //       dioError.type == DioExceptionType.receiveTimeout) {
       //     throw TimeoutException('Connection TimeOut');
