@@ -1071,19 +1071,6 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
                   value:
                       '${widget.days}Days / ${int.parse(widget.days) - 1}Nights'),
               bookingItem(lable: 'Country', value: widget.country),
-              bookingItem(
-                  lable: 'Pickup Location',
-                  value: widget.pickUpLocation.isEmpty
-                      ? 'N/A'
-                      : widget.pickUpLocation),
-              widget.bookingStatus == "CANCELLED"
-                  ? bookingItem(
-                      lable: 'Cancelled By', value: widget.cancelledBy)
-                  : const SizedBox(),
-              widget.bookingStatus == "CANCELLED"
-                  ? bookingItem(
-                      lable: 'Cancel Reason', value: widget.cancelReason)
-                  : const SizedBox(),
               (widget.getIssueByBookingId?.data ?? []).isEmpty
                   ? Container()
                   : Row(
@@ -1105,7 +1092,20 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
                               }),
                         )
                       ],
-                    )
+                    ),
+              bookingItem(
+                  lable: 'Pickup Location',
+                  value: widget.pickUpLocation.isEmpty
+                      ? 'N/A'
+                      : widget.pickUpLocation),
+              widget.bookingStatus == "CANCELLED"
+                  ? bookingItem(
+                      lable: 'Cancelled By', value: widget.cancelledBy)
+                  : const SizedBox(),
+              widget.bookingStatus == "CANCELLED"
+                  ? bookingItem(
+                      lable: 'Cancel Reason', value: widget.cancelReason)
+                  : const SizedBox(),
             ],
           ),
         ),
@@ -1431,7 +1431,7 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
                 ? CustomButtonSmall(
                     width: 120,
                     height: 40,
-                    btnHeading: 'Raise Issue',
+                    btnHeading: 'Create Issue',
                     onTap: () {
                       showDialog(
                         context: context,
@@ -1506,9 +1506,9 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
               style: titleTextStyle,
             ),
           ),
-          const SizedBox(
-            width: 10,
-          ),
+          // const SizedBox(
+          //   width: 10,
+          // ),
           Text(
             ':',
             style: titleTextStyle,

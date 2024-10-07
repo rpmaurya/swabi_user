@@ -83,6 +83,7 @@ class _CarsDetailsAvailableState extends State<CarsDetailsAvailable> {
                         "carType": rentalData[index].carType,
                         "userId": widget.id.toString(),
                         "bookdate": rentalData[index].date,
+                        "totalAmt": rentalData[index].totalPrice,
                         "longitude": rentalData[index].longitude,
                         "latitude": rentalData[index].latitude
                       });

@@ -9,8 +9,13 @@ class PaymentService {
   late Razorpay _razorpay;
   final BuildContext context;
   final Function onPaymentSuccess;
+  final Function onPaymentError;
+
   bool islodingpayment = false;
-  PaymentService({required this.context, required this.onPaymentSuccess}) {
+  PaymentService(
+      {required this.context,
+      required this.onPaymentSuccess,
+      required this.onPaymentError}) {
     _razorpay = Razorpay();
     _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
     _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
@@ -69,7 +74,8 @@ class PaymentService {
   }
 
   void _handlePaymentError(PaymentFailureResponse response) {
-    Utils.toastMessage("ERROR: ${response.code} - ${response.message!}");
+    Utils.toastMessage(response.message!);
+    onPaymentError(response);
   }
 
   void _handleExternalWallet(ExternalWalletResponse response) {

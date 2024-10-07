@@ -26,11 +26,12 @@ class AppUrl {
   static var raiseIssueUrl = "/booking_issue/raise_issue";
   static var getIssueUrl = "/booking_issue/get_issue_raised_by";
   static var getIssueDetailsUrl = "/booking_issue/get_issue_detail";
-  static var getIssueBybbokingId = "/get_issue_by_booking_id";
+  static var getIssueBybbokingId = "/booking_issue/get_issue_by_booking_id";
   static var sendOtpsUrl = "/otp_send";
   static var verifyOtpUrl = "/otp_verify";
   static var resetPassordUrl = "/password_update";
   static var getOfferListUrl = "/offer/get_available_offer";
   static var getOfferDetailUrl = "/offer/get_offer_by_id";
   static var validateOfferUrl = "/offer/validate_offer";
+  static var getTransactionByIdUrl = "/payment/get_transaction_by_userId";
 }

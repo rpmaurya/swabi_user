@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/app_url.dart';
 import 'package:flutter_cab/data/network/base_apiservices.dart';
 import 'package:flutter_cab/data/network/network_apiservice.dart';
+import 'package:flutter_cab/model/getTrasactionByIdModel.dart';
 import 'package:flutter_cab/model/paymentGetWay_model.dart';
 import 'package:flutter_cab/view_model/services/httpService.dart';
 
@@ -33,7 +34,6 @@ class PaymentCreateOrderIDRepository {
       http.handleErrorResponse(context: context, error: error);
       rethrow;
     }
-    return null;
   }
 
   Future<dynamic> paymentCreateOrderIDRepositoryApi(data) async {
@@ -95,6 +95,30 @@ class PaymentVerifyRepository {
     } catch (e) {
       print("PaymentVerify Repo api not successful error");
       print(e);
+      rethrow;
+    }
+  }
+}
+
+class PaymentTrasactionRespository {
+  Future<GetTransactionByIdModel?> getTrasactionByIdApi(
+      {required BuildContext context,
+      required Map<String, dynamic> query}) async {
+    var http = HttpService(
+        isAuthorizeRequest: false,
+        baseURL: AppUrl.baseUrl,
+        endURL: AppUrl.getTransactionByIdUrl,
+        methodType: HttpMethodType.GET,
+        bodyType: HttpBodyType.JSON,
+        queryParameters: query);
+    try {
+      Response<dynamic>? response = await http.request<dynamic>();
+      print({"GetTrasactionresponse": response?.data});
+      var resp = GetTransactionByIdModel.fromJson(response?.data);
+      return resp;
+    } catch (error) {
+      print({'error..': error});
+      http.handleErrorResponse(context: context, error: error);
       rethrow;
     }
   }

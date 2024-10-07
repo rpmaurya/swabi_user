@@ -96,11 +96,12 @@ class _MenuListState extends State<MenuList> {
               //   heading: "Cards Details",
               //   onTap: () => context.push("/myCards"),
               // ),
-              // Custom_ListTile(
-              //   img: transaction,
-              //   heading: "Transaction",
-              //   onTap: () => context.push("/myTransaction"),
-              // ),
+              Custom_ListTile(
+                img: transaction,
+                heading: "Transaction",
+                onTap: () => context
+                    .push("/myTransaction", extra: {"userId": widget.userId}),
+              ),
               // Custom_ListTile(
               //   img: settingimg,
               //   heading: "Settings",

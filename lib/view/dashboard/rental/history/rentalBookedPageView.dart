@@ -509,7 +509,6 @@ class RentalBookingContainer extends StatelessWidget {
                       lable: 'Booking Price', value: 'AED $rentalCharge'),
                   const SizedBox(height: 5),
 
-                  bookingItem(lable: 'Pickup Location', value: pickUpLocation),
                   (getIssueByBookingId?.data ?? []).isEmpty
                       ? Container()
                       : Row(
@@ -524,14 +523,16 @@ class RentalBookingContainer extends StatelessWidget {
                             const SizedBox(width: 10),
                             Expanded(
                               child: CustomButtonSmall(
-                                  height: 40,
+                                  height: 35,
                                   btnHeading: 'Show IssueDetails',
                                   onTap: () {
                                     context.push("/raiseIssueDetail");
                                   }),
                             )
                           ],
-                        )
+                        ),
+                  bookingItem(lable: 'Pickup Location', value: pickUpLocation),
+
                   // Row(
                   //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   //   crossAxisAlignment: CrossAxisAlignment.start,

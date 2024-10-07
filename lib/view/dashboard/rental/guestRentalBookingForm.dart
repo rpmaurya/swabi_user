@@ -55,22 +55,28 @@ class GuestRentalBookingForm extends StatefulWidget {
   final String lati;
   final String offerCode;
   final double discountAmount;
-  const GuestRentalBookingForm({
-    super.key,
-    // required this.data,
-    required this.date,
-    required this.pickUpTime,
-    required this.bookerId,
-    required this.carType,
-    required this.kilometer,
-    required this.hour,
-    required this.price,
-    required this.pickUpLocation,
-    required this.longi,
-    required this.lati,
-    required this.offerCode,
-    required this.discountAmount,
-  });
+  final double taxAmount;
+  final double taxPercentage;
+  final double payableAmount;
+
+  const GuestRentalBookingForm(
+      {super.key,
+      // required this.data,
+      required this.date,
+      required this.pickUpTime,
+      required this.bookerId,
+      required this.carType,
+      required this.kilometer,
+      required this.hour,
+      required this.price,
+      required this.pickUpLocation,
+      required this.longi,
+      required this.lati,
+      required this.offerCode,
+      required this.discountAmount,
+      required this.taxAmount,
+      required this.taxPercentage,
+      required this.payableAmount});
 
   @override
   State<GuestRentalBookingForm> createState() => _GuestRentalBookingFormState();
@@ -262,6 +268,11 @@ class _GuestRentalBookingFormState extends State<GuestRentalBookingForm> {
                   double amt = double.parse(widget.price);
                   PaymentService paymentService = PaymentService(
                     context: context,
+                    onPaymentError: () {
+                      setState(() {
+                        loader = false;
+                      });
+                    },
                     onPaymentSuccess: (PaymentSuccessResponse response) {
                       print('paymentResponse#${response.orderId}');
 
@@ -302,6 +313,10 @@ class _GuestRentalBookingFormState extends State<GuestRentalBookingForm> {
                               "locationLongitude": widget.longi,
                               "offerCode": widget.offerCode,
                               "discountAmount": widget.discountAmount,
+                              "taxAmount": widget.taxAmount,
+                              "taxPercentage": widget.taxPercentage,
+                              "totalPayableAmount":
+                                  widget.payableAmount.toInt(),
                             };
                             Provider.of<RentalBookingViewModel>(
                               context,
@@ -331,15 +346,12 @@ class _GuestRentalBookingFormState extends State<GuestRentalBookingForm> {
 
                   paymentService.openCheckout(
                       amount: widget.discountAmount == 0
-                          ? amt
+                          ? widget.payableAmount
                           : widget.discountAmount,
                       userId: widget.bookerId.toString(),
                       coutryCode: profileUser?.countryCode,
                       mobileNo: profileUser?.mobile,
                       email: profileUser?.email);
-                  setState(() {
-                    loader = false;
-                  });
                 }
               },
             )

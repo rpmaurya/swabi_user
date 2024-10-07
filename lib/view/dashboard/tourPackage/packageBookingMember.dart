@@ -18,6 +18,7 @@ import 'package:flutter_cab/view_model/payment_gateway_view_model.dart';
 import 'package:flutter_cab/view_model/services/paymentService.dart';
 import 'package:flutter_cab/view_model/userProfile_view_model.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:go_router/go_router.dart';
 
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl_phone_field/countries.dart';
@@ -66,7 +67,8 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
 
   // String ageUnit = '';
   List<Map<String, dynamic>> members = [];
-  double amount = 0.0;
+  double sumAmount = 0;
+  double payAbleAmount = 0.0;
   bool loader = false;
   bool isAddAdultDisabled = false;
   bool isAddChildDisabled = false;
@@ -124,28 +126,42 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
     });
   }
 
+  double taxPercentage = 5;
+  double taxAmount = 0;
+  double taxamount() {
+    return (taxPercentage / 100) * sumAmount;
+    // return sumAmount + taxamt;
+  }
+
   void _addAmount() {
     setState(() {
-      amount += double.parse(widget.amt);
-      discountAmount == 0
-          ? null
-          : discountAmount = getPercentage(totalAmount: amount);
+      sumAmount += double.parse(widget.amt);
+      taxAmount = taxamount();
+      // amount += double.parse(widget.amt);
+      payAbleAmount = sumAmount + taxAmount;
+      debugPrint('taxamount....$taxAmount');
+      debugPrint('totalPayableAmount....$payAbleAmount');
+      discountAmount == 0 ? null : discountAmount = getPercentage();
     });
   }
 
   void _subAmount() {
     setState(() {
-      amount -= double.parse(widget.amt);
-      discountAmount == 0
-          ? null
-          : discountAmount = getPercentage(totalAmount: amount);
+      sumAmount -= double.parse(widget.amt);
+      taxAmount = taxamount();
+
+      // amount += double.parse(widget.amt);
+      payAbleAmount = sumAmount + taxAmount;
+      debugPrint('taxamount....$taxAmount');
+      debugPrint('totalPayableAmount....$payAbleAmount');
+      discountAmount == 0 ? null : discountAmount = getPercentage();
     });
   }
 
   bool _shouldDisableButton() {
     bool noAdultsPresent =
         !members.any((member) => int.parse(member['age'].toString()) >= 18);
-    return amount == 0.0 || noAdultsPresent;
+    return payAbleAmount == 0.0 || noAdultsPresent;
   }
 
   /// Add memeber
@@ -461,15 +477,16 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
   }
 
   bool offerVisible = false;
+
   double disCountPer = 0;
   double maxDisAmount = 0;
   String? offerCode;
   double discountAmount = 0;
   double disAmount = 0;
-  double getPercentage({required double totalAmount}) {
-    double amt = (disCountPer / 100) * totalAmount;
+  double getPercentage() {
+    double amt = (disCountPer / 100) * payAbleAmount;
     disAmount = amt > maxDisAmount ? maxDisAmount : amt;
-    return totalAmount - disAmount;
+    return payAbleAmount - disAmount;
   }
 
   @override
@@ -707,8 +724,9 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                                         width: 80,
                                         btnHeading: 'Apply',
                                         onTap: () {
-                                          double? amoun =
-                                              double.parse(amount.toString());
+                                          // double? amoun =
+                                          //     double.parse(amount.toString());
+                                          // taxAmount = taxamount();
                                           if (members.isEmpty) {
                                             // Utils.flushBarErrorMessage(
                                             //     "Please add Members First", context);
@@ -729,7 +747,8 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                                                         couponController.text,
                                                     bookingType:
                                                         'PACKAGE_BOOKING',
-                                                    bookigAmount: amoun.toInt())
+                                                    bookigAmount:
+                                                        payAbleAmount.toInt())
                                                 .then((onValue) {
                                               if (onValue?.status?.httpCode ==
                                                   '200') {
@@ -747,8 +766,7 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                                                 setState(() {
                                                   offerVisible = true;
                                                   discountAmount =
-                                                      getPercentage(
-                                                          totalAmount: amount);
+                                                      getPercentage();
                                                   debugPrint(
                                                       'discountpercentage.....,..,.,$discountAmount');
                                                 });
@@ -1222,44 +1240,84 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            RichText(
-                text: TextSpan(children: [
-              TextSpan(
-                  text: "Price : ",
-                  style: GoogleFonts.lato(
-                    color: blackColor,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  )),
-              //Total Amt
-              TextSpan(
-                  text: 'AED ',
-                  style: GoogleFonts.lato(
-                    color: blackColor,
-                    fontSize: 20,
-                    fontWeight: FontWeight.w600,
-                  )),
-              TextSpan(
-                text: "$amount",
-                style: GoogleFonts.lato(
-                  decoration:
-                      discountAmount == 0 ? null : TextDecoration.lineThrough,
-                  decorationColor: redColor,
-                  color: blackColor,
-                  fontSize: 20,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              TextSpan(text: ' '),
-              TextSpan(
-                text: discountAmount == 0 ? '' : " $discountAmount",
-                style: GoogleFonts.lato(
-                  color: discountAmount == 0 ? background : greenColor,
-                  fontSize: 20,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ])),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                RichText(
+                    text: TextSpan(children: [
+                  //Total Amt
+                  TextSpan(
+                      text: 'AED ',
+                      style: GoogleFonts.lato(
+                        color: blackColor,
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600,
+                      )),
+                  TextSpan(
+                    text: discountAmount == 0
+                        ? "${payAbleAmount.toInt()} "
+                        : "${discountAmount.toInt()} ",
+                    style: GoogleFonts.lato(
+                      color: blackColor,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const TextSpan(
+                      text: '(Inclusive of taxs)',
+                      style: TextStyle(color: blackColor)),
+                ])),
+                InkWell(
+                  onTap: _showPaymentDailog,
+                  child: const Text(
+                    'Show Details',
+                    style: TextStyle(
+                        decoration: TextDecoration.underline,
+                        // decorationColor: greenColor,
+                        fontWeight: FontWeight.w600,
+                        color: greenColor),
+                  ),
+                )
+              ],
+            ),
+            // RichText(
+            //     text: TextSpan(children: [
+            //   TextSpan(
+            //       text: "Price : ",
+            //       style: GoogleFonts.lato(
+            //         color: blackColor,
+            //         fontSize: 16,
+            //         fontWeight: FontWeight.w600,
+            //       )),
+            //   //Total Amt
+            //   TextSpan(
+            //       text: 'AED ',
+            //       style: GoogleFonts.lato(
+            //         color: blackColor,
+            //         fontSize: 20,
+            //         fontWeight: FontWeight.w600,
+            //       )),
+            //   TextSpan(
+            //     text: "$payAbleAmount",
+            //     style: GoogleFonts.lato(
+            //       decoration:
+            //           discountAmount == 0 ? null : TextDecoration.lineThrough,
+            //       decorationColor: redColor,
+            //       color: blackColor,
+            //       fontSize: 20,
+            //       fontWeight: FontWeight.w600,
+            //     ),
+            //   ),
+            //   TextSpan(text: ' '),
+            //   TextSpan(
+            //     text: discountAmount == 0 ? '' : " $discountAmount",
+            //     style: GoogleFonts.lato(
+            //       color: discountAmount == 0 ? background : greenColor,
+            //       fontSize: 20,
+            //       fontWeight: FontWeight.w600,
+            //     ),
+            //   ),
+            // ])),
             CustomButtonSmall(
                 width: 120,
                 borderRadius: BorderRadius.circular(5),
@@ -1278,11 +1336,18 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                     Utils.toastMessage('Please select date');
                     // Utils.flushBarErrorMessage("Please select date", context);
                   } else {
-                    loader = true;
+                    setState(() {
+                      loader = true;
+                    });
                     // ignore: unused_element
                     // void initiatePayment(BuildContext context) {
                     PaymentService paymentService = PaymentService(
                       context: context,
+                      onPaymentError: (PaymentFailureResponse response) {
+                        setState(() {
+                          loader = false;
+                        });
+                      },
                       onPaymentSuccess: (PaymentSuccessResponse response) {
                         print('paymentResponse#${response.orderId}');
                         Provider.of<PaymentVerifyViewModel>(context,
@@ -1327,6 +1392,10 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                                         "numberOfMembers":
                                             members.length.toString(),
                                         "memberList": members,
+                                        "packagePrice": sumAmount,
+                                        "taxAmount": taxAmount,
+                                        "taxPercentage": taxPercentage,
+                                        "totalPayableAmount": payAbleAmount
                                       },
                                       widget.userID);
                               // context.pop();
@@ -1339,12 +1408,16 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                     );
 
                     paymentService.openCheckout(
-                        amount: discountAmount == 0 ? amount : discountAmount,
+                        amount: discountAmount == 0
+                            ? payAbleAmount
+                            : discountAmount,
                         userId: widget.userID.toString(),
                         coutryCode: profileUser?.countryCode,
                         mobileNo: profileUser?.mobile,
                         email: profileUser?.email);
-
+                    // setState(() {
+                    //   loader = false;
+                    // });
                     // }
 
                     // Utils.flushBarSuccessMessage("Booking Success", context);
@@ -1353,6 +1426,143 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
           ],
         ),
       ),
+    );
+  }
+
+  void _showPaymentDailog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          backgroundColor: background,
+          surfaceTintColor: background,
+          insetPadding: const EdgeInsets.all(20),
+          child: Container(
+            width: double.infinity,
+            height: 250,
+            child: Column(
+              children: [
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Payable Amount Details',
+                        style: titleTextStyle,
+                      ),
+                      CustomButtonSmall(
+                          height: 35,
+                          width: 35,
+                          btnHeading: 'X',
+                          onTap: () {
+                            context.pop();
+                          }),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        flex: 4,
+                        child: Text(
+                          'Package Amount',
+                          style: titleTextStyle,
+                        ),
+                      ),
+                      const Text(':'),
+                      const SizedBox(width: 10),
+                      Expanded(
+                          flex: 2,
+                          child: Text(
+                            sumAmount.toString(),
+                            style: titleTextStyle1,
+                          ))
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                          flex: 4,
+                          child: Text(
+                            'Tax Amount (5 %)',
+                            style: titleTextStyle,
+                          )),
+                      const Text(':'),
+                      const SizedBox(width: 10),
+                      Expanded(
+                          flex: 2,
+                          child: Text(
+                            '+ $taxAmount',
+                            style: titleTextStyle1,
+                          ))
+                    ],
+                  ),
+                ),
+                discountAmount == 0
+                    ? Container()
+                    : Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              flex: 4,
+                              child: Text(
+                                'Save Amount',
+                                style: titleTextStyle,
+                              ),
+                            ),
+                            const Text(':'),
+                            const SizedBox(width: 10),
+                            Expanded(
+                                flex: 2,
+                                child: Text(
+                                  '- ${payAbleAmount - discountAmount}',
+                                  style: titleTextStyle1,
+                                ))
+                          ],
+                        ),
+                      ),
+                const Divider(),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        flex: 4,
+                        child: Text(
+                          'Payable Amount',
+                          style: titleTextStyle,
+                        ),
+                      ),
+                      const Text(':'),
+                      const SizedBox(width: 10),
+                      Expanded(
+                          flex: 2,
+                          child: Text(
+                            discountAmount == 0
+                                ? payAbleAmount.toString()
+                                : discountAmount.toString(),
+                            style: titleTextStyle1,
+                          ))
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }

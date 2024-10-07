@@ -315,7 +315,11 @@ final GoRouter myRouter = GoRouter(
       path: '/myTransaction',
       parentNavigatorKey: _rootNavigatorKey,
       builder: (BuildContext context, GoRouterState state) {
-        return const MyTransaction();
+        var userId = state.extra as Map<String, dynamic>;
+
+        return MyTransaction(
+          userId: userId["userId"],
+        );
       },
     ),
     GoRoute(
@@ -458,12 +462,12 @@ final GoRouter myRouter = GoRouter(
               var bookDate = state.extra as Map<String, dynamic>;
               var logi = state.extra as Map<String, dynamic>;
               var lati = state.extra as Map<String, dynamic>;
-              // var amt = state.extra as Map<String, dynamic>;
+              var totalAmt = state.extra as Map<String, dynamic>;
               return BookYourCab(
                 carType: data['carType'],
                 userId: userId['userId'],
                 bookingDate: bookDate['bookdate'],
-                // totalAmt: amt['totalAmt'],
+                totalAmt: totalAmt['totalAmt'],
                 latitude: logi['longitude'],
                 logitude: lati['latitude'],
               );
@@ -485,21 +489,29 @@ final GoRouter myRouter = GoRouter(
               var latitude = state.extra as Map<String, dynamic>;
               var offerCode = state.extra as Map<String, dynamic>;
               var discountAmount = state.extra as Map<String, dynamic>;
+              var taxAmount = state.extra as Map<String, dynamic>;
+              var taxPercentage = state.extra as Map<String, dynamic>;
+
+              var payableAmount = state.extra as Map<String, dynamic>;
               // final List guestData = data[''] ?? [];
               return GuestRentalBookingForm(
-                  // data: {},
-                  date: date['date'],
-                  pickUpLocation: pickUpLocation['pickUpLocation'],
-                  price: price['price'],
-                  hour: hour['hour'],
-                  carType: carType['carType'],
-                  bookerId: bookerId['bookerId'],
-                  kilometer: kilometer['kilometer'],
-                  pickUpTime: pickUpTime['pickUpTime'],
-                  longi: longitude['longi'],
-                  lati: latitude['lati'],
-                  offerCode: offerCode['offerCode'],
-                  discountAmount: discountAmount['discountAmount']);
+                // data: {},
+                date: date['date'],
+                pickUpLocation: pickUpLocation['pickUpLocation'],
+                price: price['price'],
+                hour: hour['hour'],
+                carType: carType['carType'],
+                bookerId: bookerId['bookerId'],
+                kilometer: kilometer['kilometer'],
+                pickUpTime: pickUpTime['pickUpTime'],
+                longi: longitude['longi'],
+                lati: latitude['lati'],
+                offerCode: offerCode['offerCode'],
+                discountAmount: discountAmount['discountAmount'],
+                taxAmount: taxAmount["taxAmount"],
+                taxPercentage: taxPercentage["taxPercentage"],
+                payableAmount: payableAmount['payableAmount'],
+              );
             },
           ),
           GoRoute(

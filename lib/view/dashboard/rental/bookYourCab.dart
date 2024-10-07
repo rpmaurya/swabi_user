@@ -24,19 +24,18 @@ class BookYourCab extends StatefulWidget {
   final String carType;
   final String userId;
   final String bookingDate;
-  // final int totalAmt;
+  final String totalAmt;
   final String logitude;
   final String latitude;
 
-  const BookYourCab({
-    super.key,
-    required this.carType,
-    required this.userId,
-    required this.logitude,
-    required this.latitude,
-    required this.bookingDate,
-    // required this.totalAmt
-  });
+  const BookYourCab(
+      {super.key,
+      required this.carType,
+      required this.userId,
+      required this.logitude,
+      required this.latitude,
+      required this.bookingDate,
+      required this.totalAmt});
 
   @override
   State<BookYourCab> createState() => _BookYourCabState();
@@ -87,6 +86,15 @@ class _BookYourCabState extends State<BookYourCab> {
   double discountAmount = 0;
   bool visibleCoupon = false;
   double disAmount = 0;
+  double taxPercentage = 5;
+  double payableAmount = 0;
+  double taxAmount = 0;
+  double taxamount() {
+    double amt = double.parse(widget.totalAmt);
+    return (taxPercentage / 100) * amt;
+    // return sumAmount + taxamt;
+  }
+
   double getPercentage(
       {required double discountAmount,
       required double totalAmount,
@@ -115,6 +123,12 @@ class _BookYourCabState extends State<BookYourCab> {
         .data
         ?.status
         .message;
+    taxAmount = taxamount();
+    payableAmount = double.parse(widget.totalAmt) + taxAmount;
+    debugPrint('fhjhjbdhdhjdhjdhjdjh${widget.totalAmt.toString()}');
+    debugPrint('taxamount.......$taxAmount');
+    debugPrint('payAbleamount.......$payableAmount');
+
     // paymentOrderId = context
     //     .watch<PaymentCreateOrderIdViewModel>()
     //     .paymentOrderID
@@ -160,6 +174,8 @@ class _BookYourCabState extends State<BookYourCab> {
                       discountedAmount: discountAmount,
                       couponVisible: visibleCoupon,
                       offerDisAmount: disAmount,
+                      taxAmount: taxAmount,
+                      payableAmount: payableAmount,
                       onCouponRemoveTap: () {
                         setState(() {
                           visibleCoupon = false;
@@ -167,7 +183,7 @@ class _BookYourCabState extends State<BookYourCab> {
                         });
                       },
                       onCouponTap: () {
-                        double? amount = double.parse(rental.totalPrice);
+                        // double? amount = double.parse(rental.totalPrice);
                         if (couponController.text.isEmpty) {
                           Utils.toastMessage('Please Enter Offer Coupon');
                         } else {
@@ -176,7 +192,7 @@ class _BookYourCabState extends State<BookYourCab> {
                                   context: context,
                                   offerCode: couponController.text,
                                   bookingType: 'RENTAL_BOOKING',
-                                  bookigAmount: amount.toInt())
+                                  bookigAmount: payableAmount.toInt())
                               .then((onValue) {
                             if (onValue?.status?.httpCode == '200') {
                               Utils.toastSuccessMessage(
@@ -189,7 +205,7 @@ class _BookYourCabState extends State<BookYourCab> {
                                         onValue?.data?.discountPercentage ?? 0,
                                     maxDisAmount:
                                         onValue?.data?.maxDiscountAmount ?? 0,
-                                    totalAmount: amount);
+                                    totalAmount: payableAmount);
                                 print(
                                     'discountpercentage.....,..,.,$discountAmount');
                               });
@@ -219,6 +235,7 @@ class _BookYourCabState extends State<BookYourCab> {
                                       PaymentService paymentService =
                                           PaymentService(
                                         context: context,
+                                        onPaymentError: () {},
                                         onPaymentSuccess:
                                             (PaymentSuccessResponse response) {
                                           print(
@@ -272,6 +289,11 @@ class _BookYourCabState extends State<BookYourCab> {
                                                   "offerCode": offerCode,
                                                   "discountAmount":
                                                       discountAmount,
+                                                  "taxAmount": taxAmount,
+                                                  "taxPercentage":
+                                                      taxPercentage,
+                                                  "totalPayableAmount":
+                                                      payableAmount,
                                                   "pickUpLocation": rental
                                                       .pickUpLocation
                                                       .trim()
@@ -333,6 +355,9 @@ class _BookYourCabState extends State<BookYourCab> {
                                             "pickUpTime": rental.pickupTime,
                                             "offerCode": offerCode ?? '',
                                             "discountAmount": discountAmount,
+                                            "taxAmount": taxAmount,
+                                            "taxPercentage": taxPercentage,
+                                            "payableAmount": payableAmount,
                                             "longi": widget.logitude,
                                             "lati": widget.latitude
                                           });
@@ -375,6 +400,7 @@ class _BookYourCabState extends State<BookYourCab> {
                                                       paymentService =
                                                       PaymentService(
                                                     context: _savedContext,
+                                                    onPaymentError: () {},
                                                     onPaymentSuccess:
                                                         (PaymentSuccessResponse
                                                             response) {
@@ -447,6 +473,12 @@ class _BookYourCabState extends State<BookYourCab> {
                                                                   offerCode,
                                                               "discountAmount":
                                                                   discountAmount,
+                                                              "taxAmount":
+                                                                  taxAmount,
+                                                              "taxPercentage":
+                                                                  taxPercentage,
+                                                              "totalPayableAmount":
+                                                                  payableAmount,
                                                               "pickUpLocation": rental
                                                                   .pickUpLocation
                                                                   .trim()
@@ -533,6 +565,11 @@ class _BookYourCabState extends State<BookYourCab> {
                                                             offerCode ?? '',
                                                         "discountAmount":
                                                             discountAmount,
+                                                        "taxAmount": taxAmount,
+                                                        "taxPercentage":
+                                                            taxPercentage,
+                                                        "payableAmount":
+                                                            payableAmount,
                                                       });
                                                 }
                                                 checkBox = 0;
@@ -749,6 +786,9 @@ class BookingContainer extends StatefulWidget {
   final VoidCallback onTap;
   final double discountedAmount;
   final double offerDisAmount;
+  final double taxAmount;
+  final double payableAmount;
+
   const BookingContainer(
       {this.carName = "",
       this.pickTime = "",
@@ -767,6 +807,8 @@ class BookingContainer extends StatefulWidget {
       required this.couponVisible,
       required this.discountedAmount,
       required this.offerDisAmount,
+      required this.taxAmount,
+      required this.payableAmount,
       super.key});
 
   @override
@@ -987,40 +1029,63 @@ class _BookingContainerState extends State<BookingContainer> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            'Amount ',
-                            style: appbarTextStyle,
+                            'Rental Amount',
+                            style: titleTextStyle,
                           ),
                           Text(
                             "AED ${widget.totalPrice}",
-                            style: widget.discountedAmount == 0
-                                ? appbarTextStyle
-                                : const TextStyle(
-                                    decoration: TextDecoration.lineThrough,
-                                    decorationColor: redColor,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600),
+                            style: titleTextStyle1,
+                          ),
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Tax Amount  (5 %)',
+                            style: titleTextStyle,
+                          ),
+                          Text(
+                            "+ AED ${widget.taxAmount}",
+                            style: titleTextStyle1,
                           ),
                         ],
                       ),
                       widget.discountedAmount == 0
-                          ? const SizedBox()
+                          ? Container()
                           : Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  'PayableAmount ',
-                                  style: appbarTextStyle,
+                                  'Save Amount',
+                                  style: titleTextStyle,
                                 ),
                                 Text(
-                                  "AED ${widget.discountedAmount}",
-                                  style: appbarTextStyle,
+                                  "- AED ${widget.offerDisAmount.toInt()}",
+                                  style: titleTextStyle1,
                                 ),
                               ],
                             ),
+                      Divider(),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'PayableAmount ',
+                            style: appbarTextStyle,
+                          ),
+                          Text(
+                            widget.discountedAmount == 0
+                                ? 'AED ${widget.payableAmount}'
+                                : "AED ${widget.discountedAmount}",
+                            style: appbarTextStyle,
+                          ),
+                        ],
+                      ),
                       Align(
                         alignment: Alignment.centerRight,
                         child: Text(
-                          "Inclusive of GST",
+                          "Inclusive of Taxes",
                           style: titleTextStyle1,
                         ),
                       ),

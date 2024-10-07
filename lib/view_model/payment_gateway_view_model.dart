@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/response/api_response.dart';
+import 'package:flutter_cab/model/getTrasactionByIdModel.dart';
 import 'package:flutter_cab/model/paymentGetWay_model.dart';
 import 'package:flutter_cab/respository/payment_gateway_repository.dart';
 import 'package:flutter_cab/utils/utils.dart';
@@ -111,5 +112,31 @@ class PaymentVerifyViewModel with ChangeNotifier {
       );
       setDataList(ApiResponse.error(error.toString()));
     });
+  }
+}
+
+class GetTranactionViewModel with ChangeNotifier {
+  final _myRepo = PaymentTrasactionRespository();
+  ApiResponse<GetTransactionByIdModel> getTrasaction = ApiResponse.loading();
+  setDataList(ApiResponse<GetTransactionByIdModel> response) {
+    getTrasaction = response;
+    notifyListeners();
+  }
+
+  Future<GetTransactionByIdModel?> getTranactionApi(
+      {required BuildContext context,
+      required Map<String, dynamic> query}) async {
+    try {
+      print('bodyofpaymentverification..$query');
+      setDataList(ApiResponse.loading());
+      var resp =
+          await _myRepo.getTrasactionByIdApi(context: context, query: query);
+      setDataList(ApiResponse.completed(resp));
+      // Utils.flushBarSuccessMessage("Payment paymentVerify Success", context);
+      return resp;
+    } catch (e) {
+      print(e);
+    }
+    return null;
   }
 }
