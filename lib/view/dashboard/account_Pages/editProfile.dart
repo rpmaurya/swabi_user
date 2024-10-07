@@ -229,7 +229,7 @@ class _EditProfiePageState extends State<EditProfiePage> {
               Padding(
                   padding: EdgeInsets.symmetric(horizontal: 10),
                   child: Text.rich(TextSpan(children: [
-                    TextSpan(text: 'Mobile', style: titleTextStyle),
+                    TextSpan(text: 'Contact No', style: titleTextStyle),
                     const TextSpan(
                         text: ' *', style: TextStyle(color: redColor))
                   ]))),
@@ -341,7 +341,7 @@ class _EditProfiePageState extends State<EditProfiePage> {
           // ),
           const Spacer(),
           CustomButtonBig(
-              btnHeading: "Save",
+              btnHeading: "UPDATE",
               // loading: status == "Status.loading" && load,
               onTap: () {
                 // load = true;

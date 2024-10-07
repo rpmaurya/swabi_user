@@ -74,7 +74,7 @@ class GetPackageBookingByIdViewModel with ChangeNotifier {
     setDataList(ApiResponse.loading());
     _myRepo.getPackageBookedByIdRepositoryApi(data).then((value) async {
       // setDataList(ApiResponse.completed(value));
-      Utils.flushBarSuccessMessage("Your Package Booked", context);
+      Utils.toastSuccessMessage("Your Package Booked");
       Provider.of<GetPackageHistoryViewModel>(context, listen: false)
           .fetchGetPackageHistoryBookedViewModelApi(context, {
         "userId": urId,
@@ -216,8 +216,7 @@ class PackageCancelViewModel with ChangeNotifier {
 
       context.pop();
       context.pop();
-      Utils.flushBarSuccessMessage(
-          packageCancel.data?.data.body ?? '', context);
+      Utils.toastSuccessMessage(packageCancel.data?.data.body ?? '');
       debugPrint('Get Package Cancel Api Success');
     }).onError((error, stackTrace) {
       debugPrint(error.toString());
@@ -245,7 +244,9 @@ class AddPickUpLocationPackageViewModel with ChangeNotifier {
       // setDataList(ApiResponse.completed(value));
       context.pop(context);
       // context.pop(context);
-      Utils.flushBarSuccessMessage("PickUp Location Add Success", context);
+      Utils.toastSuccessMessage(
+        "PickUp Location Add Success",
+      );
       debugPrint('Get Package Activity By Id ViewModel Success');
     }).onError((error, stackTrace) {
       debugPrint(error.toString());
@@ -303,7 +304,7 @@ class ChangeMobileViewModel with ChangeNotifier {
               .fetchPackageHistoryDetailByIdViewModelApi(
                   context, {"packageBookingId": bookingId}, bookingId);
           // print("Signup Success");
-          Utils.flushBarSuccessMessage("changed Successfully", context);
+          Utils.toastSuccessMessage("changed Successfully");
         }
         context.pop();
       }).onError((error, stactrace) {

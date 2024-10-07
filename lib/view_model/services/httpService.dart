@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/app_url.dart';
 import 'package:flutter_cab/data/response/baseResponse.dart';
 import 'package:flutter_cab/data/string.dart';
+import 'package:flutter_cab/utils/color.dart';
 import 'package:flutter_cab/utils/utils.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -243,7 +244,9 @@ class HttpService<T> {
         // bad request
         // print({"error 400": error.response.data["message"]});
         if (message != null) {
-          Utils.flushBarErrorMessage(message, context);
+          // Utils.flushBarErrorMessage(message, context);
+          Fluttertoast.showToast(
+              msg: message, backgroundColor: redColor, textColor: background);
           break;
         } else {
           Fluttertoast.showToast(msg: kStringBadRequest);

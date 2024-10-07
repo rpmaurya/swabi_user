@@ -47,7 +47,7 @@ class IssueContainer extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  itemtile(lable: 'User Id', vale: userId),
+                  itemtile(lable: 'Customer Id', vale: userId),
                   itemText(lable: 'Issue Date', value: issueDate),
                 ],
               ),

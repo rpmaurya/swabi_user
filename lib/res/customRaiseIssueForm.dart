@@ -55,6 +55,7 @@ class _RaiseIssueDialogState extends State<RaiseIssueDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
+      insetPadding: EdgeInsets.zero,
       surfaceTintColor: background,
       backgroundColor: background,
       contentPadding: const EdgeInsets.all(10),
@@ -150,8 +151,9 @@ class _RaiseIssueDialogState extends State<RaiseIssueDialog> {
                 };
                 Provider.of<RaiseissueViewModel>(context, listen: false)
                     .requestRaiseIssue(context: context, body: body);
-                Utils.flushBarSuccessMessage(
-                    'Raise Request Successfully', context);
+                Utils.toastSuccessMessage(
+                  'Raise Request Successfully',
+                );
                 Navigator.of(context).pop();
               }
             }),

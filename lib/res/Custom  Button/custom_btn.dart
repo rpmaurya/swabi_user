@@ -98,7 +98,7 @@ class CustomButtonSmall extends StatelessWidget {
   final String title;
   final bool titleReq;
   final bool disable;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
   final double? elevation;
   final bool elevationReq;
   final double? width;
@@ -137,7 +137,7 @@ class CustomButtonSmall extends StatelessWidget {
             : const SizedBox(),
         Material(
           borderRadius: borderRadius ?? BorderRadius.circular(5),
-          color: disable ? buttonColor?.withOpacity(.4) : btnColor,
+          color: disable ? btnColor.withOpacity(.3) : btnColor,
           // color: disable ? buttonColor?.withOpacity(.7) ?? btnColor.withOpacity(.7) : (buttonColor ?? btnColor),
           elevation: elevationReq ? elevation ?? 5 : 0,
           child: InkWell(
@@ -146,15 +146,16 @@ class CustomButtonSmall extends StatelessWidget {
             child: Container(
               height: height ?? 50,
               width: width,
+              // color: disable ? btnColor.withOpacity(0.4) : btnColor,
               // ?? AppDimension.getWidth(context)*.6,
-              padding: const EdgeInsets.symmetric(horizontal: 5),
+              padding: const EdgeInsets.symmetric(horizontal: 10),
               child: Center(
                   child: loading
                       ? const CircularProgressIndicator(color: background)
                       : Text(btnHeading,
                           style: GoogleFonts.lato(
                               color: disable
-                                  ? background.withOpacity(.6)
+                                  ? background.withOpacity(.9)
                                   : background,
                               fontSize: 16,
                               fontWeight: FontWeight.w700),
@@ -193,8 +194,7 @@ class Login_SignUpBtn extends StatelessWidget {
           child: Text(
             " $btnHeading",
             style: GoogleFonts.lato(
-                fontWeight: FontWeight.w700,
-                color: const Color.fromRGBO(69, 30, 243, 1)),
+                fontWeight: FontWeight.w700, color: greenColor),
           ),
         ),
       ],

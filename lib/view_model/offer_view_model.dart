@@ -9,20 +9,31 @@ class OfferViewModel with ChangeNotifier {
   OfferListModel? offerListModel;
   OfferDetailByIdModel? offerDetailByIdModel;
   bool isLoading = false;
+  bool isLoading1 = false;
   Future<void> getOfferList(
-      {required BuildContext context, required String date}) async {
-    Map<String, dynamic> query = {"date": date, "bookingType": "ALL"};
+      {required BuildContext context,
+      required String date,
+      required String bookingType}) async {
+    Map<String, dynamic> query = {"date": date, "bookingType": bookingType};
     try {
+      isLoading1 = true;
+      notifyListeners();
       await _myRepo
           .offerListApi(context: context, query: query)
           .then((onValue) {
         if (onValue?.status?.httpCode == '200') {
           offerListModel = onValue;
+          isLoading1 = false;
           notifyListeners();
         }
       });
     } catch (e) {
       debugPrint('error..$e');
+      isLoading1 = false;
+      notifyListeners();
+    } finally {
+      isLoading1 = false;
+      notifyListeners();
     }
   }
 

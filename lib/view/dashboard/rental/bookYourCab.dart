@@ -85,12 +85,14 @@ class _BookYourCabState extends State<BookYourCab> {
 
   String? offerCode;
   double discountAmount = 0;
+  bool visibleCoupon = false;
+  double disAmount = 0;
   double getPercentage(
       {required double discountAmount,
       required double totalAmount,
       required double maxDisAmount}) {
     double amt = (discountAmount / 100) * totalAmount;
-    double disAmount = amt > maxDisAmount ? maxDisAmount : amt;
+    disAmount = amt > maxDisAmount ? maxDisAmount : amt;
     return totalAmount - disAmount;
   }
 
@@ -156,11 +158,18 @@ class _BookYourCabState extends State<BookYourCab> {
                       totalPrice: rental.totalPrice,
                       couponController: couponController,
                       discountedAmount: discountAmount,
+                      couponVisible: visibleCoupon,
+                      offerDisAmount: disAmount,
+                      onCouponRemoveTap: () {
+                        setState(() {
+                          visibleCoupon = false;
+                          discountAmount = 0;
+                        });
+                      },
                       onCouponTap: () {
                         double? amount = double.parse(rental.totalPrice);
                         if (couponController.text.isEmpty) {
-                          Utils.flushBarErrorMessage(
-                              'Please Enter Offer Coupon', context);
+                          Utils.toastMessage('Please Enter Offer Coupon');
                         } else {
                           Provider.of<OfferViewModel>(context, listen: false)
                               .validateOffer(
@@ -170,10 +179,11 @@ class _BookYourCabState extends State<BookYourCab> {
                                   bookigAmount: amount.toInt())
                               .then((onValue) {
                             if (onValue?.status?.httpCode == '200') {
-                              Utils.flushBarSuccessMessage(
-                                  onValue?.status?.message, context);
+                              Utils.toastSuccessMessage(
+                                  onValue?.status?.message ?? '');
                               offerCode = onValue?.data?.offerCode;
                               setState(() {
+                                visibleCoupon = true;
                                 discountAmount = getPercentage(
                                     discountAmount:
                                         onValue?.data?.discountPercentage ?? 0,
@@ -734,8 +744,11 @@ class BookingContainer extends StatefulWidget {
   final String pickUpLocation;
   final TextEditingController couponController;
   final VoidCallback onCouponTap;
+  final VoidCallback onCouponRemoveTap;
+  final bool couponVisible;
   final VoidCallback onTap;
   final double discountedAmount;
+  final double offerDisAmount;
   const BookingContainer(
       {this.carName = "",
       this.pickTime = "",
@@ -750,7 +763,10 @@ class BookingContainer extends StatefulWidget {
       required this.couponController,
       required this.onTap,
       required this.onCouponTap,
+      required this.onCouponRemoveTap,
+      required this.couponVisible,
       required this.discountedAmount,
+      required this.offerDisAmount,
       super.key});
 
   @override
@@ -801,7 +817,7 @@ class _BookingContainerState extends State<BookingContainer> {
                                 fontWeight: FontWeight.w600),
                           ),
                           Text(
-                            "Timing : ${widget.pickTime}",
+                            "Pickup Time : ${widget.pickTime}",
                             style: GoogleFonts.lato(
                                 color: greyColor,
                                 fontSize: 14,
@@ -876,7 +892,7 @@ class _BookingContainerState extends State<BookingContainer> {
                                   fontWeight: FontWeight.w700),
                             ),
                             Text(
-                              widget.kilometers,
+                              '${widget.kilometers}/KM',
                               style: GoogleFonts.lato(
                                   color: greyColor,
                                   fontSize: 14,
@@ -978,7 +994,7 @@ class _BookingContainerState extends State<BookingContainer> {
                             "AED ${widget.totalPrice}",
                             style: widget.discountedAmount == 0
                                 ? appbarTextStyle
-                                : TextStyle(
+                                : const TextStyle(
                                     decoration: TextDecoration.lineThrough,
                                     decorationColor: redColor,
                                     fontSize: 16,
@@ -1021,19 +1037,39 @@ class _BookingContainerState extends State<BookingContainer> {
                 color: background,
                 borderRadius: const BorderRadius.all(Radius.circular(10)),
                 border: Border.all(color: naturalGreyColor.withOpacity(.3))),
-            child: Row(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(
-                  child: Customtextformfield(
-                      controller: widget.couponController,
-                      hintText: 'Coupon code'),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Customtextformfield(
+                          controller: widget.couponController,
+                          readOnly: widget.couponVisible ? true : false,
+                          hintText: 'Coupon code'),
+                    ),
+                    const SizedBox(width: 10),
+                    widget.couponVisible
+                        ? CustomButtonSmall(
+                            // disable: widget.couponVisible ?? false,
+                            height: 45,
+                            width: 80,
+                            btnHeading: 'Remove',
+                            onTap: widget.onCouponRemoveTap)
+                        : CustomButtonSmall(
+                            // disable: widget.couponVisible ?? false,
+                            height: 45,
+                            width: 80,
+                            btnHeading: 'Apply',
+                            onTap: widget.onCouponTap)
+                  ],
                 ),
-                const SizedBox(width: 10),
-                CustomButtonSmall(
-                    height: 45,
-                    width: 80,
-                    btnHeading: 'Apply',
-                    onTap: widget.onCouponTap)
+                widget.couponVisible
+                    ? Text(
+                        'Congrats!  You have availed discount of AED ${widget.offerDisAmount.toInt()}.',
+                        style: TextStyle(color: greenColor),
+                      )
+                    : Container()
               ],
             ),
           ),

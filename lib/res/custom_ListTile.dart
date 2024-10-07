@@ -5,12 +5,14 @@ import 'package:flutter_cab/utils/text_styles.dart';
 
 class Custom_ListTile extends StatelessWidget {
   final String img;
+  final Color? iconColor;
   final String headingTitle;
   final bool headingTitleReq;
   final VoidCallback onTap;
   final String heading;
   const Custom_ListTile(
       {this.img = "",
+      this.iconColor,
       this.headingTitle = "",
       this.headingTitleReq = false,
       this.heading = "",
@@ -51,6 +53,7 @@ class Custom_ListTile extends StatelessWidget {
                     Image.asset(
                       img,
                       height: 20,
+                      color: iconColor,
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(

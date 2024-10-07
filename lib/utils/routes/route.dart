@@ -531,9 +531,11 @@ final GoRouter myRouter = GoRouter(
             builder: (BuildContext context, GoRouterState state) {
               var data = state.extra as Map<String, dynamic>;
               var uid = state.extra as Map<String, dynamic>;
+              var paymentId = state.extra as Map<String, dynamic>;
               return RentalBookedPageView(
                 bookedId: data["bookedId"].toString(),
                 useriD: uid['useriD'],
+                paymentId: paymentId['paymentId'],
               );
             },
           ),

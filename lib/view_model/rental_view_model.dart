@@ -35,9 +35,8 @@ class RentalViewModel with ChangeNotifier {
       setDataList(ApiResponse.completed(value));
       // debugPrint('Rental Api Success');
       (DataList.data?.data.body ?? []).isEmpty
-          ? Utils.flushBarErrorMessage(
-              DataList.data?.data.errorMessage ?? "Something went wrong",
-              context)
+          ? Utils.toastMessage(
+              DataList.data?.data.errorMessage ?? "Something went wrong")
           : null;
       (DataList.data?.data.body ?? []).isNotEmpty
           ? context.push('/rentalForm/carsDetails',
@@ -105,7 +104,7 @@ class RentalBookingViewModel with ChangeNotifier {
           context.pop();
           isLoading == false;
           notifyListeners();
-          Utils.flushBarSuccessMessage("Ride Booked Successfully", context);
+          Utils.toastSuccessMessage("Ride Booked Successfully");
           context.replace("/rentalForm/happyScreen", extra: {'userId': userId});
 
           // }
@@ -133,7 +132,7 @@ class RentalBookingViewModel with ChangeNotifier {
       debugPrint(error.toString());
       // debugPrint('RentalBooking Api Failed');
       // Utils.flushBarErrorMessage(DataList.data?.data.toString(), context);
-      Utils.flushBarErrorMessage("Enter valid phone number", context);
+      Utils.toastMessage("Enter valid phone number");
       setDataList(ApiResponse.error(error.toString()));
     });
   }
@@ -173,7 +172,7 @@ class RentalBookingCancelViewModel with ChangeNotifier {
       context.pop();
       context.pop();
       // context.pop();
-      Utils.flushBarSuccessMessage(DataList.data?.data.body ?? '', context);
+      Utils.toastSuccessMessage(DataList.data?.data.body ?? '');
     }).onError((error, stackTrace) {
       // debugPrint(error.toString());
       setDataList(ApiResponse.error(error.toString()));
@@ -303,16 +302,16 @@ class RentalBookingListViewModel with ChangeNotifier {
 // Rental View Detail View Model
 class RentalViewDetailViewModel with ChangeNotifier {
   final _myRepo = RentalViewDetailsRepository();
-  ApiResponse<RentalDetailsSingleModel> DataList = ApiResponse.loading();
-  ApiResponse<RentalDetailsSingleModel> DataList1 = ApiResponse.loading();
+  ApiResponse<RentalDetailsSingleModel> dataList = ApiResponse.loading();
+  ApiResponse<RentalDetailsSingleModel> dataList1 = ApiResponse.loading();
 
   setDataList(ApiResponse<RentalDetailsSingleModel> response) {
-    DataList = response;
+    dataList = response;
     notifyListeners();
   }
 
   setDataList1(ApiResponse<RentalDetailsSingleModel> response) {
-    DataList1 = response;
+    dataList1 = response;
     notifyListeners();
   }
 
@@ -322,8 +321,11 @@ class RentalViewDetailViewModel with ChangeNotifier {
     debugPrint(bookid);
     _myRepo.rentalViewDetailsRepositoryApi(data).then((value) async {
       setDataList(ApiResponse.completed(value));
-      context.push('/rentalForm/rentalBookedPageView',
-          extra: {"bookedId": bookid, "useriD": uid});
+      context.push('/rentalForm/rentalBookedPageView', extra: {
+        "bookedId": bookid,
+        "useriD": uid,
+        "paymentId": value.data.paymentId
+      });
       // Utils.toastMessage("Rental Car View Detail Booking");
     }).onError((error, stackTrace) {
       debugPrint(error.toString());

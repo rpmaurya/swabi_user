@@ -17,6 +17,7 @@ import 'package:flutter_cab/view_model/package_view_model.dart';
 import 'package:flutter_cab/view_model/payment_gateway_view_model.dart';
 import 'package:flutter_cab/view_model/services/paymentService.dart';
 import 'package:flutter_cab/view_model/userProfile_view_model.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl_phone_field/countries.dart';
@@ -59,6 +60,7 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
   FocusNode focusNode1 = FocusNode();
   FocusNode focusNode2 = FocusNode();
   FocusNode focusNode3 = FocusNode();
+  FocusNode couponFocus = FocusNode();
   GlobalKey _phoneKey = GlobalKey();
   bool tableIcon = false;
 
@@ -176,10 +178,10 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                   children: [
                     Padding(
                       padding: const EdgeInsets.only(bottom: 5),
-                      child: Text(
-                        'Name',
-                        style: titleTextStyle,
-                      ),
+                      child: Text.rich(TextSpan(children: [
+                        TextSpan(text: 'Name', style: titleTextStyle),
+                        TextSpan(text: ' *', style: TextStyle(color: redColor))
+                      ])),
                     ),
                     Customtextformfield(
                       focusNode: focusNode1,
@@ -204,11 +206,11 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                       // },
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(bottom: 5),
-                      child: Text(
-                        'Age',
-                        style: titleTextStyle,
-                      ),
+                      padding: const EdgeInsets.only(bottom: 5, top: 5),
+                      child: Text.rich(TextSpan(children: [
+                        TextSpan(text: 'Age', style: titleTextStyle),
+                        TextSpan(text: ' *', style: TextStyle(color: redColor))
+                      ])),
                     ),
                     Customtextformfield(
                       focusNode: focusNode2,
@@ -221,8 +223,8 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                         if (value == null || value.isEmpty) {
                           return 'Please enter age';
                         } else if (type == 'Adult') {
-                          print('type of member1$type');
-                          if (age < 18 || age >= 60) {
+                          debugPrint('type of member1$type');
+                          if (age < 18 || age >= 100) {
                             return 'Adult must be 18 Year or older';
                           }
                         } else if (type == 'Child') {
@@ -240,21 +242,30 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                       },
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(bottom: 5),
-                      child: Text(
-                        'Gender',
-                        style: titleTextStyle,
-                      ),
+                      padding: const EdgeInsets.only(bottom: 5, top: 5),
+                      child: Text.rich(TextSpan(children: [
+                        TextSpan(text: 'Gender', style: titleTextStyle),
+                        TextSpan(text: ' *', style: TextStyle(color: redColor))
+                      ])),
                     ),
                     CustomDropdownButton(
-                        focusNode: focusNode3,
-                        itemsList: ['Male', 'Female'],
-                        onChanged: (value) {
-                          setState(() {
-                            genderController.text = value;
-                          });
-                        },
-                        hintText: 'Select Gender')
+                      controller: genderController,
+                      focusNode: focusNode3,
+                      itemsList: ['Male', 'Female'],
+                      onChanged: (value) {
+                        setState(() {
+                          genderController.text = value ?? '';
+                          print('validate gender ${genderController.text}');
+                        });
+                      },
+                      hintText: 'Select Gender',
+                      validator: (p0) {
+                        if (p0 == null || p0.isEmpty) {
+                          return 'Please select gender';
+                        }
+                        return null;
+                      },
+                    )
                   ],
                 ),
               ),
@@ -287,7 +298,10 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                       nameController.text = '';
                       ageController.text = '';
                       genderController.text = '';
+
                       Navigator.of(context).pop();
+                    } else {
+                      print('jhhjhjcgnxbcnbxcnxbcxjc');
                     }
                   },
                   btnHeading: "ADD",
@@ -331,10 +345,10 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                 children: [
                   Padding(
                     padding: const EdgeInsets.only(bottom: 5),
-                    child: Text(
-                      'Name',
-                      style: titleTextStyle,
-                    ),
+                    child: Text.rich(TextSpan(children: [
+                      TextSpan(text: 'Name', style: titleTextStyle),
+                      TextSpan(text: ' *', style: TextStyle(color: redColor))
+                    ])),
                   ),
                   Customtextformfield(
                     focusNode: focusNode1,
@@ -348,11 +362,11 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                     },
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(bottom: 5),
-                    child: Text(
-                      'Age',
-                      style: titleTextStyle,
-                    ),
+                    padding: const EdgeInsets.only(bottom: 5, top: 5),
+                    child: Text.rich(TextSpan(children: [
+                      TextSpan(text: 'Age', style: titleTextStyle),
+                      TextSpan(text: ' *', style: TextStyle(color: redColor))
+                    ])),
                   ),
                   Customtextformfield(
                     focusNode: focusNode2,
@@ -366,7 +380,7 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                         return 'Please enter age';
                       } else if (type == 'Adult') {
                         print('type of member1$type');
-                        if (age <= 18 || age >= 60) {
+                        if (age <= 18 || age >= 100) {
                           return 'Adult must be 18 Year or older';
                         }
                       } else if (type == 'Child') {
@@ -384,22 +398,29 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                     },
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(bottom: 5),
-                    child: Text(
-                      'Age',
-                      style: titleTextStyle,
-                    ),
+                    padding: const EdgeInsets.only(bottom: 5, top: 5),
+                    child: Text.rich(TextSpan(children: [
+                      TextSpan(text: 'Gender', style: titleTextStyle),
+                      TextSpan(text: ' *', style: TextStyle(color: redColor))
+                    ])),
                   ),
                   CustomDropdownButton(
-                      selecteValue: genderController.text,
-                      focusNode: focusNode3,
-                      itemsList: ['Male', 'Female'],
-                      onChanged: (value) {
-                        setState(() {
-                          genderController.text = value;
-                        });
-                      },
-                      hintText: 'Select Gender')
+                    controller: genderController,
+                    focusNode: focusNode3,
+                    itemsList: ['Male', 'Female'],
+                    onChanged: (value) {
+                      setState(() {
+                        genderController.text = value ?? '';
+                      });
+                    },
+                    hintText: 'Select Gender',
+                    validator: (p0) {
+                      if (p0 == null || p0.isEmpty) {
+                        return 'Please select gender';
+                      }
+                      return null;
+                    },
+                  )
                 ],
               ),
             ),
@@ -439,13 +460,15 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
     );
   }
 
+  bool offerVisible = false;
   double disCountPer = 0;
   double maxDisAmount = 0;
   String? offerCode;
   double discountAmount = 0;
+  double disAmount = 0;
   double getPercentage({required double totalAmount}) {
     double amt = (disCountPer / 100) * totalAmount;
-    double disAmount = amt > maxDisAmount ? maxDisAmount : amt;
+    disAmount = amt > maxDisAmount ? maxDisAmount : amt;
     return totalAmount - disAmount;
   }
 
@@ -520,18 +543,19 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               blankSpace: AppDimension.getWidth(context),
                               velocity: 100.0,
-                              pauseAfterRound: Duration(seconds: 1),
+                              pauseAfterRound: const Duration(seconds: 1),
                               startPadding: 0,
-                              accelerationDuration: Duration(seconds: 1),
+                              accelerationDuration: const Duration(seconds: 1),
                               accelerationCurve: Curves.linear,
-                              decelerationDuration: Duration(milliseconds: 500),
+                              decelerationDuration:
+                                  const Duration(milliseconds: 500),
                               decelerationCurve: Curves.easeOut,
                             ),
                           ),
                           Container(
                             margin: const EdgeInsets.only(bottom: 5),
                             child: Text(
-                              "Booking Date",
+                              "Travel Date",
                               overflow: TextOverflow.ellipsis,
                               style: titleTextStyle,
                             ),
@@ -563,7 +587,7 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                           ),
                           const SizedBox(height: 5),
                           Text(
-                            'Primary Number',
+                            'Primary Contact',
                             style: titleTextStyle,
                           ),
                           const SizedBox(height: 5),
@@ -594,15 +618,10 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                           //     return null;
                           //   },
                           // ),
-                          SizedBox(height: 5),
-                          const Text(
-                            'Secondary Number',
-                            textAlign: TextAlign.start,
-                            style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                                height: 0),
-                          ),
+                          const SizedBox(height: 5),
+                          Text('Secondary Contact',
+                              textAlign: TextAlign.start,
+                              style: titleTextStyle),
                           const SizedBox(height: 5),
 
                           CustomMobilenumber(
@@ -646,66 +665,110 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                       ),
                       const SizedBox(height: 10),
                       Container(
-                        padding: EdgeInsets.all(10),
+                        padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
                             color: background,
                             borderRadius:
                                 const BorderRadius.all(Radius.circular(10)),
                             border: Border.all(
                                 color: naturalGreyColor.withOpacity(.3))),
-                        child: Row(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Expanded(
-                              child: Customtextformfield(
-                                  controller: couponController,
-                                  hintText: 'Coupon code'),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Customtextformfield(
+                                    focusNode: couponFocus,
+                                    controller: couponController,
+                                    hintText: 'Coupon code',
+                                    readOnly: offerVisible ? true : false,
+                                  ),
+                                ),
+                                const SizedBox(width: 10),
+                                offerVisible
+                                    ? CustomButtonSmall(
+                                        height: 45,
+                                        width: 80,
+                                        btnHeading: 'Remove',
+                                        onTap: () {
+                                          FocusScope.of(context).unfocus();
+
+                                          // Optionally, unfocus specific fields
+                                          couponFocus.unfocus();
+                                          setState(() {
+                                            offerVisible = false;
+                                            discountAmount = 0;
+                                          });
+                                        },
+                                      )
+                                    : CustomButtonSmall(
+                                        height: 45,
+                                        width: 80,
+                                        btnHeading: 'Apply',
+                                        onTap: () {
+                                          double? amoun =
+                                              double.parse(amount.toString());
+                                          if (members.isEmpty) {
+                                            // Utils.flushBarErrorMessage(
+                                            //     "Please add Members First", context);
+                                            Utils.toastMessage(
+                                                'Please add Members First');
+                                          } else if (couponController
+                                              .text.isEmpty) {
+                                            // Utils.flushBarErrorMessage(
+                                            //     'Please Enter Offer Coupon', context);
+                                            Utils.toastMessage(
+                                                'Please Enter Offer Coupon');
+                                          } else {
+                                            Provider.of<OfferViewModel>(context,
+                                                    listen: false)
+                                                .validateOffer(
+                                                    context: context,
+                                                    offerCode:
+                                                        couponController.text,
+                                                    bookingType:
+                                                        'PACKAGE_BOOKING',
+                                                    bookigAmount: amoun.toInt())
+                                                .then((onValue) {
+                                              if (onValue?.status?.httpCode ==
+                                                  '200') {
+                                                Utils.toastSuccessMessage(
+                                                    onValue?.status?.message ??
+                                                        '');
+                                                offerCode =
+                                                    onValue?.data?.offerCode;
+                                                disCountPer = onValue?.data
+                                                        ?.discountPercentage ??
+                                                    0;
+                                                maxDisAmount = onValue?.data
+                                                        ?.maxDiscountAmount ??
+                                                    0;
+                                                setState(() {
+                                                  offerVisible = true;
+                                                  discountAmount =
+                                                      getPercentage(
+                                                          totalAmount: amount);
+                                                  debugPrint(
+                                                      'discountpercentage.....,..,.,$discountAmount');
+                                                });
+                                              } else {
+                                                setState(() {
+                                                  discountAmount = 0;
+                                                });
+                                              }
+                                            });
+                                          }
+                                        },
+                                      )
+                              ],
                             ),
-                            const SizedBox(width: 10),
-                            CustomButtonSmall(
-                              height: 45,
-                              width: 80,
-                              btnHeading: 'Apply',
-                              onTap: () {
-                                double? amoun = double.parse(amount.toString());
-                                if (members.isEmpty) {
-                                  Utils.flushBarErrorMessage(
-                                      "Please add Members First", context);
-                                } else if (couponController.text.isEmpty) {
-                                  Utils.flushBarErrorMessage(
-                                      'Please Enter Offer Coupon', context);
-                                } else {
-                                  Provider.of<OfferViewModel>(context,
-                                          listen: false)
-                                      .validateOffer(
-                                          context: context,
-                                          offerCode: couponController.text,
-                                          bookingType: 'PACKAGE_BOOKING',
-                                          bookigAmount: amoun.toInt())
-                                      .then((onValue) {
-                                    if (onValue?.status?.httpCode == '200') {
-                                      Utils.flushBarSuccessMessage(
-                                          onValue?.status?.message, context);
-                                      offerCode = onValue?.data?.offerCode;
-                                      disCountPer =
-                                          onValue?.data?.discountPercentage ??
-                                              0;
-                                      maxDisAmount =
-                                          onValue?.data?.maxDiscountAmount ?? 0;
-                                      setState(() {
-                                        discountAmount =
-                                            getPercentage(totalAmount: amount);
-                                        print(
-                                            'discountpercentage.....,..,.,$discountAmount');
-                                      });
-                                    } else {
-                                      setState(() {
-                                        discountAmount = 0;
-                                      });
-                                    }
-                                  });
-                                }
-                              },
-                            )
+                            offerVisible
+                                ? Text(
+                                    'Congrats!  You have availed discount of AED ${disAmount.toInt()}.',
+                                    style: TextStyle(color: greenColor),
+                                  )
+                                : Container(),
                           ],
                         ),
                       ),
@@ -719,11 +782,17 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                             elevationReq: true,
                             buttonColor: btnColor,
                             borderRadius: BorderRadius.circular(5),
-                            width: AppDimension.getWidth(context) / 4.5,
+                            // width: AppDimension.getWidth(context) / 4.5,
                             btnHeading: "Add Adult",
                             disable: isAddAdultDisabled,
                             height: 40,
                             onTap: () {
+                              FocusScope.of(context).unfocus();
+
+                              // Optionally, unfocus specific fields
+                              focusNode4.unfocus();
+                              focusNode5.unfocus();
+                              couponFocus.unfocus();
                               _addMember(
                                   title: 'Add Adult Member',
                                   ageUnit: 'Year',
@@ -743,11 +812,17 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                             elevationReq: true,
                             buttonColor: btnColor,
                             borderRadius: BorderRadius.circular(5),
-                            width: AppDimension.getWidth(context) / 4.5,
+                            // width: AppDimension.getWidth(context) / 4.5,
                             btnHeading: "Add Child",
                             height: 40,
                             disable: isAddChildDisabled,
                             onTap: () {
+                              FocusScope.of(context).unfocus();
+
+                              // Optionally, unfocus specific fields
+                              focusNode4.unfocus();
+                              focusNode5.unfocus();
+                              couponFocus.unfocus();
                               _addMember(
                                   title: 'Add Child Member',
                                   ageUnit: 'Year',
@@ -767,11 +842,17 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                             elevationReq: true,
                             buttonColor: btnColor,
                             borderRadius: BorderRadius.circular(5),
-                            width: AppDimension.getWidth(context) / 4,
+                            // width: AppDimension.getWidth(context) / 4,
                             btnHeading: "Add Infant",
                             height: 40,
                             disable: isAddInfentDisabled,
                             onTap: () {
+                              FocusScope.of(context).unfocus();
+
+                              // Optionally, unfocus specific fields
+                              focusNode4.unfocus();
+                              focusNode5.unfocus();
+                              couponFocus.unfocus();
                               _addMember(
                                   title: 'Add Infant Member',
                                   ageUnit: 'Month',
@@ -905,8 +986,16 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                                             ? 'Infant'
                                             : int.parse(member['age']) < 18
                                                 ? 'Child'
-                                                : 'Adult',
-                                        style: titleTextStyle1,
+                                                : int.parse(member['age']) < 60
+                                                    ? 'Adult'
+                                                    : 'Senior*',
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w400,
+                                            color:
+                                                int.parse(member['age']) >= 60
+                                                    ? redColor
+                                                    : blackColor),
                                       ),
                                     ),
                                     Padding(
@@ -1184,10 +1273,10 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                 onTap: () {
                   debugPrint('ghjkjhjkj$primaryCountryCode');
                   if (members.isEmpty) {
-                    Utils.flushBarErrorMessage(
-                        "Please add Members First", context);
+                    Utils.toastMessage('Please add Members First');
                   } else if (controller[0].text.isEmpty) {
-                    Utils.flushBarErrorMessage("Please select date", context);
+                    Utils.toastMessage('Please select date');
+                    // Utils.flushBarErrorMessage("Please select date", context);
                   } else {
                     loader = true;
                     // ignore: unused_element

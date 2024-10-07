@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/model/packageModels.dart';
+import 'package:flutter_cab/res/Common%20Widgets/common_offer_container.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/res/Custom%20Page%20Layout/commonPage_Layout.dart';
 import 'package:flutter_cab/res/Custom%20Widgets/multi_imageSlider_ContainerWidget.dart';
@@ -12,7 +13,9 @@ import 'package:flutter_cab/utils/assets.dart';
 import 'package:flutter_cab/utils/color.dart';
 import 'package:flutter_cab/utils/dimensions.dart';
 import 'package:flutter_cab/utils/text_styles.dart';
+import 'package:flutter_cab/view_model/offer_view_model.dart';
 import 'package:flutter_cab/view_model/package_view_model.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -100,7 +103,7 @@ class _PackagesState extends State<Packages> {
 
   bool loader = false;
   int selectedIndex = -1;
-
+  bool isLoadingData = false;
   // List<Content> imgList = [];
   @override
   Widget build(BuildContext context) {
@@ -121,6 +124,8 @@ class _PackagesState extends State<Packages> {
             ?.data
             .content ??
         [];
+    isLoadingData = context.watch<OfferViewModel>().isLoading1;
+
     // activityData = context
     //     .watch<GetPackageListViewModel>()
     //     .getPackageList
@@ -128,171 +133,174 @@ class _PackagesState extends State<Packages> {
     //     ?.data.content.
     // imgList = context.watch<GetPackageListViewModel>().getPackageList.data?.data.content ?? [];
     print(packageList.length);
-    return Scaffold(
-      backgroundColor: bgGreyColor,
-      appBar: const CustomAppBar(
-        heading: "Packages",
-      ),
-      body: PageLayout_Page(
-          child: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.only(bottom: 10),
-            color: bgGreyColor,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                // FormDatePickerExpense(
-                //   width: AppDimension.getWidth(context) / 1.4,
-                //   title: "Select Date",
-                //   headingReq: false,
-                //   controller: controller,
-                //   hint: "PickUp Date",
-                // ),
-                Material(
-                  borderRadius: BorderRadius.circular(5),
-                  elevation: 0,
-                  child: Container(
-                    width: AppDimension.getWidth(context) * .92,
-                    height: 50,
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: naturalGreyColor.withOpacity(0.3),
-                      ),
-                      color: background,
-                      borderRadius: BorderRadius.circular(5),
+    // return Scaffold(
+    //   backgroundColor: bgGreyColor,
+    //   appBar: const CustomAppBar(
+    //     heading: "Packages",
+    //   ),
+    //   body:
+    return Stack(
+      children: [
+        Column(
+          children: [
+            const SizedBox(height: 10),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              color: bgGreyColor,
+              child: Material(
+                borderRadius: BorderRadius.circular(5),
+                elevation: 0,
+                child: Container(
+                  // width: AppDimension.getWidth(context) * .92,
+                  // height: 50,
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: naturalGreyColor.withOpacity(0.3),
                     ),
-                    child: TextField(
-                      controller: controller,
-                      readOnly: true,
-                      onTap: () async {
-                        await _selectDate(context);
-                      },
-                      style: titleTextStyle,
-                      decoration: const InputDecoration(
-                        border:
-                            UnderlineInputBorder(borderSide: BorderSide.none),
-                        prefixIcon: Icon(
+                    color: background,
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  child: TextField(
+                    controller: controller,
+                    textAlignVertical: TextAlignVertical.center,
+                    readOnly: true,
+                    onTap: () async {
+                      await _selectDate(context);
+                    },
+                    style: titleTextStyle,
+                    decoration: InputDecoration(
+                        border: const UnderlineInputBorder(
+                            borderSide: BorderSide.none),
+                        prefixIcon: const Icon(
                           Icons.calendar_month_outlined,
                           color: naturalGreyColor,
                         ),
-                      ),
-                    ),
+                        suffixIcon: Container(
+                            margin: const EdgeInsets.all(0.5),
+                            width: 50,
+                            decoration: const BoxDecoration(
+                                borderRadius: BorderRadius.only(
+                                    topRight: Radius.circular(5),
+                                    bottomRight: Radius.circular(5)),
+                                color: btnColor),
+                            child: const Icon(
+                              Icons.search,
+                              color: background,
+                            ))),
                   ),
                 ),
-                // CustomTextFeild(
-                //   headingReq: false,
-                //   prefixIcon: true,
-                //   hint: "Search",
-                //   controller: TextEditingController(),
-                //   img: search,
-                // ),
-                // Material(
-                //   elevation: 5,
-                //   color: btnColor,
-                //   borderRadius: BorderRadius.circular(10),
-                //   child: InkWell(
-                //     borderRadius: BorderRadius.circular(10),
-                //     child: SizedBox(
-                //         height: 50,
-                //         width: 80,
-                //         child: Center(
-                //             child: Text(
-                //               "Filter",
-                //               style: GoogleFonts.lato(
-                //                   color: background,
-                //                   fontWeight: FontWeight.w600,
-                //                   fontSize: 16),
-                //             ))),
-                //     // onTap: () => _selectDate(context),
-                //     onTap: () {
-                //       setState(() {
-                //         print(controller.text);
-                //       });
-                //     },
-                //   ),
-                // )
-              ],
+              ),
             ),
-          ),
-          Expanded(
-            child: status == "Status.completed"
-                ? packageList.isNotEmpty
-                    ? ListView.builder(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 5, horizontal: 5),
-                        itemCount: packageList.length,
-                        itemBuilder: (context, index) {
-                          List<PackageActivity> activityData =
-                              packageList[index].packageActivities;
-                          return PackageContainer(
-                              packageImg: packageList[index]
-                                  .packageActivities
-                                  .expand((e) => e.activity.activityImageUrl)
-                                  .toList(),
-                              //     .map((url) {
-                              //   return url;
-                              // }).toList(),
-                              packageName: packageList[index].packageName,
-                              noOfDays: packageList[index].noOfDays,
-                              // noOfNights: "0",
-                              country: packageList[index].country,
-                              state: packageList[index].state,
-                              location: packageList[index].location,
-                              total: packageList[index].totalPrice,
-                              activityName: List.generate(
-                                  activityData.length,
-                                  (index) => activityData[index]
-                                      .activity
-                                      .activityName),
-                              activity: packageList[index]
-                                  .packageActivities
-                                  .length
-                                  .toString(),
-                              loader: statusDetails == "Status.loading" &&
-                                  loader &&
-                                  selectedIndex == index,
-                              ontap: () {
-                                setState(() {
-                                  selectedIndex = index;
-                                  loader = true;
-                                });
-                                Provider.of<GetPackageActivityByIdViewModel>(
-                                        context,
-                                        listen: false)
-                                    .fetchGetPackageActivityByIdViewModelApi(
-                                        context,
-                                        {
-                                          "packageId":
-                                              packageList[index].packageId
-                                        },
-                                        packageList[index].packageId,
-                                        widget.ursID,
-                                        controller.text);
-                              }
-                              // ()=> context.push("/package/packageDetails"),
-                              );
-                        },
-                        // PackageContainer(
-                        //   packageImg: List.generate(packageList[index].packageImageUrl.length, (ind) =>),
-                        // ),
-                      )
-                    : Center(
-                        child: Container(
-                            decoration: const BoxDecoration(),
-                            child: Image.asset(
-                              folder,
-                              height: 150,
-                            )))
-                : const Center(
-                    child: CircularProgressIndicator(
-                      color: Colors.green,
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    const SizedBox(height: 10),
+                    const CommonOfferContainer(
+                      bookingType: 'PACKAGE_BOOKING',
                     ),
-                  ),
-          )
-        ],
-      )),
+                    const SizedBox(height: 10),
+                    status == "Status.completed"
+                        ? packageList.isNotEmpty
+                            ? ListView.builder(
+                                shrinkWrap: true,
+                                physics: NeverScrollableScrollPhysics(),
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 5, horizontal: 10),
+                                itemCount: packageList.length,
+                                itemBuilder: (context, index) {
+                                  List<PackageActivity> activityData =
+                                      packageList[index].packageActivities;
+                                  return PackageContainer(
+                                      packageImg: packageList[index]
+                                          .packageActivities
+                                          .expand((e) =>
+                                              e.activity.activityImageUrl)
+                                          .toList(),
+                                      //     .map((url) {
+                                      //   return url;
+                                      // }).toList(),
+                                      packageName:
+                                          packageList[index].packageName,
+                                      noOfDays: packageList[index].noOfDays,
+                                      // noOfNights: "0",
+                                      country: packageList[index].country,
+                                      state: packageList[index].state,
+                                      location: packageList[index].location,
+                                      total: packageList[index].totalPrice,
+                                      activityName: List.generate(
+                                          activityData.length,
+                                          (index) => activityData[index]
+                                              .activity
+                                              .activityName),
+                                      activity: packageList[index]
+                                          .packageActivities
+                                          .length
+                                          .toString(),
+                                      loader:
+                                          statusDetails == "Status.loading" &&
+                                              loader &&
+                                              selectedIndex == index,
+                                      ontap: () {
+                                        setState(() {
+                                          selectedIndex = index;
+                                          loader = true;
+                                        });
+                                        Provider.of<GetPackageActivityByIdViewModel>(
+                                                context,
+                                                listen: false)
+                                            .fetchGetPackageActivityByIdViewModelApi(
+                                                context,
+                                                {
+                                                  "packageId":
+                                                      packageList[index]
+                                                          .packageId
+                                                },
+                                                packageList[index].packageId,
+                                                widget.ursID,
+                                                controller.text);
+                                      }
+                                      // ()=> context.push("/package/packageDetails"),
+                                      );
+                                },
+                                // PackageContainer(
+                                //   packageImg: List.generate(packageList[index].packageImageUrl.length, (ind) =>),
+                                // ),
+                              )
+                            : Center(
+                                child: Container(
+                                    decoration: const BoxDecoration(),
+                                    child: const Text(
+                                      'No Data',
+                                      style: TextStyle(color: redColor),
+                                    )))
+                        : Container()
+                    // : const Center(
+                    //     child: CircularProgressIndicator(
+                    //       color: Colors.green,
+                    //     ),
+                    //   ),
+                    // const SpinKitFoldingCube(
+                    //     size: 80,
+                    //     duration: Duration(milliseconds: 1200),
+                    //     color: Colors.red,
+                    //   )
+                  ],
+                ),
+              ),
+            )
+          ],
+        ),
+        status == "Status.completed" && isLoadingData == false
+            ? Container()
+            : const SpinKitFadingCube(
+                size: 50,
+                duration: Duration(milliseconds: 1200),
+                color: Colors.red,
+              )
+      ],
     );
+    // );
   }
 }
 

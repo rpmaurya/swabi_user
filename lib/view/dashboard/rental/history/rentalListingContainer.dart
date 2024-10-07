@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/utils/assets.dart';
 import 'package:flutter_cab/utils/color.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -14,15 +15,17 @@ class RentalCarListingContainer extends StatelessWidget {
   final String bookingID;
   final String pickUplocation;
   final VoidCallback? onTapContainer;
+  final bool loader;
   const RentalCarListingContainer(
       {super.key,
-        this.onTapContainer,
+      this.onTapContainer,
       required this.carName,
       required this.date,
       required this.time,
       required this.bookingID,
       required this.pickUplocation,
       required this.rentalCharge,
+      required this.loader,
       required this.status});
 
   @override
@@ -33,11 +36,11 @@ class RentalCarListingContainer extends StatelessWidget {
         borderRadius: BorderRadius.circular(10),
         child: InkWell(
           borderRadius: BorderRadius.circular(10),
-          onTap:onTapContainer,
+          // onTap:onTapContainer,
           child: Container(
             // width: AppDimension.getWidth(context) * .9,
             decoration: BoxDecoration(
-              color: background,
+                color: background,
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(color: naturalGreyColor.withOpacity(0.3))),
             child: Column(
@@ -45,8 +48,9 @@ class RentalCarListingContainer extends StatelessWidget {
                 ///First Line of Design
                 Container(
                     decoration: BoxDecoration(
-                        border:
-                            Border(bottom: BorderSide(color: naturalGreyColor.withOpacity(0.3)))),
+                        border: Border(
+                            bottom: BorderSide(
+                                color: naturalGreyColor.withOpacity(0.3)))),
                     child: ListTile(
                       leading: SizedBox(
                         width: 80,
@@ -63,7 +67,7 @@ class RentalCarListingContainer extends StatelessWidget {
                         children: [
                           Text(
                             carName,
-                            style:titleTextStyle,
+                            style: titleTextStyle,
                           ),
                           Text(
                             "⭐ 4.8",
@@ -86,10 +90,7 @@ class RentalCarListingContainer extends StatelessWidget {
                                 const SizedBox(
                                   width: 5,
                                 ),
-                                Text(
-                                  date,
-                                  style: titleTextStyle
-                                ),
+                                Text(date, style: titleTextStyle),
                               ],
                             ),
                           ),
@@ -106,26 +107,20 @@ class RentalCarListingContainer extends StatelessWidget {
                                     const SizedBox(
                                       width: 5,
                                     ),
-                                    Text(
-                                      time,
-                                      style: titleTextStyle
-                                    ),
+                                    Text(time, style: titleTextStyle),
                                   ],
                                 ),
-                               Container(
-                                 child: Row(
-                                   children: [
-                                     Text(
-                                         "Booking Id : ",
-                                       style: titleTextStyle,
-                                     ),
-                                     Text(
-                                         bookingID,
-                                         style: titleTextStyle
-                                     ),
-                                   ],
-                                 ),
-                               )
+                                Container(
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                        "Booking Id : ",
+                                        style: titleTextStyle,
+                                      ),
+                                      Text(bookingID, style: titleTextStyle),
+                                    ],
+                                  ),
+                                )
                               ],
                             ),
                           ),
@@ -176,7 +171,6 @@ class RentalCarListingContainer extends StatelessWidget {
                       ],
                     ),
                     trailing: Container(
-
                       margin: const EdgeInsets.symmetric(horizontal: 10),
                       width: 100,
                       child: Row(
@@ -214,27 +208,43 @@ class RentalCarListingContainer extends StatelessWidget {
                 ),
 
                 ///Second Line Design
-                Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                        color: status == "CANCELLED"?redColor.withOpacity(.1):greenColor.withOpacity(.1),
-                        // color: status == "BOOKED"?greenColor.withOpacity(.1):status == "CANCELLED"?redColor.withOpacity(.1):status == "ON_RUNNING"?Colors.yellowAccent.withOpacity(.1):Colors.blue.withOpacity(.1),
-                        borderRadius: const BorderRadius.only(
-                            bottomLeft: Radius.circular(10),
-                            bottomRight: Radius.circular(10))),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          status,
-                          style: GoogleFonts.lato(
-                              color: status == "CANCELLED"?redColor :greenColor,
-                              // color: status == "BOOKED"?greenColor:status == "CANCELLED"?redColor:status == "ON_RUNNING"?Colors.yellowAccent:Colors.blue,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w700),
-                        ),
-                      ],
-                    )),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                              color: status == "CANCELLED"
+                                  ? redColor.withOpacity(.1)
+                                  : greenColor.withOpacity(.1),
+                              // color: status == "BOOKED"?greenColor.withOpacity(.1):status == "CANCELLED"?redColor.withOpacity(.1):status == "ON_RUNNING"?Colors.yellowAccent.withOpacity(.1):Colors.blue.withOpacity(.1),
+                              borderRadius: BorderRadius.circular(10)),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                status,
+                                style: GoogleFonts.lato(
+                                    color: status == "CANCELLED"
+                                        ? redColor
+                                        : greenColor,
+                                    // color: status == "BOOKED"?greenColor:status == "CANCELLED"?redColor:status == "ON_RUNNING"?Colors.yellowAccent:Colors.blue,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w700),
+                              ),
+                            ],
+                          )),
+                      CustomButtonSmall(
+                          loading: loader,
+                          height: 40,
+                          width: 80,
+                          btnHeading: 'View',
+                          onTap: onTapContainer)
+                    ],
+                  ),
+                ),
               ],
             ),
           ),

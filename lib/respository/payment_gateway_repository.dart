@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/app_url.dart';
 import 'package:flutter_cab/data/network/base_apiservices.dart';
 import 'package:flutter_cab/data/network/network_apiservice.dart';
-import 'package:flutter_cab/data/response/baseResponse.dart';
 import 'package:flutter_cab/model/paymentGetWay_model.dart';
 import 'package:flutter_cab/view_model/services/httpService.dart';
 
@@ -32,6 +31,7 @@ class PaymentCreateOrderIDRepository {
 
       print({'error..': error});
       http.handleErrorResponse(context: context, error: error);
+      rethrow;
     }
     return null;
   }

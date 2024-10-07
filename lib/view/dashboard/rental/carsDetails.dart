@@ -189,7 +189,7 @@ class TransContainer extends StatelessWidget {
                                     fontWeight: FontWeight.w600),
                               ),
                               Text(
-                                "Timing : $pickTime",
+                                "Pickup Time : $pickTime",
                                 style: GoogleFonts.lato(
                                     color: greyColor,
                                     fontSize: 14,
@@ -238,7 +238,7 @@ class TransContainer extends StatelessWidget {
                               style: titleTextStyle,
                             ),
                             TextSpan(
-                              text: kilometers,
+                              text: '${kilometers}/KM',
                               style: titleTextStyle,
                             ),
                           ])),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_cab/data/validatorclass.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/res/Custom%20Widgets/CustomTextFormfield.dart';
 import 'package:flutter_cab/utils/color.dart';
@@ -24,6 +25,9 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   final TextEditingController confirmpass = TextEditingController();
   bool obscurePassword = true;
   bool obscureConfirmPassword = true;
+  final FocusNode focusNode1 = FocusNode();
+  final FocusNode focusNode2 = FocusNode();
+
   @override
   Widget build(BuildContext context) {
     return Consumer<ResetPasswordViewModel>(
@@ -48,7 +52,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
               Padding(
                 padding: const EdgeInsets.all(20.0),
                 child: Form(
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    // autovalidateMode: AutovalidateMode.onUserInteraction,
                     key: _formKey,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -65,6 +69,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                           height: 5,
                         ),
                         Customtextformfield(
+                          focusNode: focusNode1,
                           fillColor: background,
                           obscureText: obscurePassword,
                           obscuringCharacter: '*',
@@ -84,9 +89,10 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                           ),
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Enter your Confirm password';
+                              return 'Enter your New password';
+                            } else {
+                              return Validatorclass.validatePassword(value);
                             }
-                            return null;
                           },
                         ),
                         const SizedBox(
@@ -103,6 +109,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                           height: 4,
                         ),
                         Customtextformfield(
+                          focusNode: focusNode2,
                           fillColor: background,
                           obscureText: obscureConfirmPassword,
                           obscuringCharacter: '*',
@@ -126,8 +133,9 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                               return 'Enter your Confirm password';
                             } else if (value != password.text) {
                               return "password not matched";
+                            } else {
+                              return Validatorclass.validatePassword(value);
                             }
-                            return null;
                           },
                         ),
                         const SizedBox(

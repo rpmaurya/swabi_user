@@ -23,23 +23,23 @@ class _RentalCancelledPageViewState extends State<RentalCancelledPageView> {
   @override
   Widget build(BuildContext context) {
     data =
-        context.watch<RentalViewDetailViewModel>().DataList1.data?.data ?? "";
+        context.watch<RentalViewDetailViewModel>().dataList1.data?.data ?? "";
     userData =
-        context.watch<RentalViewDetailViewModel>().DataList1.data?.data.user ??
+        context.watch<RentalViewDetailViewModel>().dataList1.data?.data.user ??
             "";
     driverDetails = context
             .watch<RentalViewDetailViewModel>()
-            .DataList1
+            .dataList1
             .data
             ?.data
             .driver ??
         "";
     guestDetails =
-        context.watch<RentalViewDetailViewModel>().DataList1.data?.data.guest ??
+        context.watch<RentalViewDetailViewModel>().dataList1.data?.data.guest ??
             "";
     vehicleDetails = context
             .watch<RentalViewDetailViewModel>()
-            .DataList1
+            .dataList1
             .data
             ?.data
             .vehicle ??

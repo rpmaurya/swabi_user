@@ -127,7 +127,7 @@ class _PackageDetailsState extends State<PackageDetails> {
                               value:
                                   "${packageActivity.noOfDays} Day / ${int.parse(packageActivity.noOfDays) - 1} Night"),
                           detailItem(
-                              lable: 'Location',
+                              lable: 'Country',
                               value:
                                   "${packageActivity.location} ${packageActivity.country} ${packageActivity.state}"),
                           const SizedBox(

@@ -1,6 +1,7 @@
 // import 'package:country_currency_pickers/utils/utils.dart';
 // import 'package:currency_picker/currency_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_cab/model/getIssueByBookingIdModel.dart';
 import 'package:flutter_cab/model/paymentDetailsModel.dart';
 import 'package:flutter_cab/model/rentalBooking_model.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
@@ -13,7 +14,9 @@ import 'package:flutter_cab/utils/color.dart';
 import 'package:flutter_cab/utils/dimensions.dart';
 import 'package:flutter_cab/utils/utils.dart';
 import 'package:flutter_cab/view/dashboard/rental/carBooking.dart';
+import 'package:flutter_cab/view_model/raiseIssue_view_model.dart';
 import 'package:flutter_cab/view_model/rental_view_model.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -23,9 +26,13 @@ import '../../../../utils/text_styles.dart';
 class RentalBookedPageView extends StatefulWidget {
   final String bookedId;
   final String useriD;
+  final String paymentId;
 
   const RentalBookedPageView(
-      {super.key, required this.bookedId, required this.useriD});
+      {super.key,
+      required this.bookedId,
+      required this.useriD,
+      required this.paymentId});
 
   @override
   State<RentalBookedPageView> createState() => _RentalBookedPageViewState();
@@ -35,6 +42,7 @@ class _RentalBookedPageViewState extends State<RentalBookedPageView> {
   TextEditingController controller = TextEditingController();
   RentalDetailsSingleData? fulldata;
   PaymentData? paymentDetails;
+  GetIssueByBookingIdModel? getIssueByBookingId;
   bool loading = false;
   String? currency;
   @override
@@ -42,27 +50,27 @@ class _RentalBookedPageViewState extends State<RentalBookedPageView> {
     // TODO: implement initState
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       getPaymentDetail();
+      Provider.of<RaiseissueViewModel>(context, listen: false)
+          .getIssueByBookingId(
+              context: context,
+              bookingId: widget.bookedId,
+              userId: widget.useriD,
+              bookingType: 'RENTAL_BOOKING');
     });
     // currency = getCurrencyByCountryCode('IN');
     // print('Currency for IN: ${currency} - ${currency}');
     super.initState();
   }
 
-  Future getPaymentDetail() async {
+  Future<void> getPaymentDetail() async {
     setState(() {
       loading = true;
     });
-    String paymentId =
-        Provider.of<RentalViewDetailViewModel>(context, listen: false)
-                .DataList
-                .data
-                ?.data
-                .paymentId ??
-            '';
-    print('paymentid:...$paymentId');
+
+    print('paymentid:...${widget.paymentId}');
 
     await Provider.of<RentalPaymentDetailsViewModel>(context, listen: false)
-        .rentalPaymentDetail(context: context, paymentId: paymentId)
+        .rentalPaymentDetail(context: context, paymentId: widget.paymentId)
         .then((onValue) {
       if (onValue?.status?.httpCode == '200') {
         setState(() {
@@ -86,7 +94,9 @@ class _RentalBookedPageViewState extends State<RentalBookedPageView> {
         .rentalBookingList
         .status
         .toString();
-    fulldata = context.watch<RentalViewDetailViewModel>().DataList.data?.data;
+    fulldata = context.watch<RentalViewDetailViewModel>().dataList.data?.data;
+    getIssueByBookingId =
+        context.watch<RaiseissueViewModel>().getIssueBybookingId.data;
     // userData =
     //     context.watch<RentalViewDetailViewModel>().DataList.data?.data.user ??
     //         "";
@@ -133,6 +143,7 @@ class _RentalBookedPageViewState extends State<RentalBookedPageView> {
                 RentalBookingContainer(
                   // bookingId: fulldata.bookerId,
                   // carName: vehicleMap['carName'] ?? 'N/A',
+                  getIssueByBookingId: getIssueByBookingId,
                   createdDate: DateFormat('dd-MM-yyyy').format(dateTime1),
                   rideStartTime: fulldata?.rideStartTime ?? '',
                   extraRideDistance: fulldata?.extraKilometers ?? '',
@@ -156,7 +167,7 @@ class _RentalBookedPageViewState extends State<RentalBookedPageView> {
                   vehicleNo: fulldata?.vehicle.vehicleNumber?.toString() ?? '',
                   color: fulldata?.vehicle.color?.toString() ?? '',
                   // seats: vehicleMap['seats'] ?? 'N/A',
-                  carType: fulldata?.carType ?? '',
+                  carType: fulldata?.carType ?? "",
                   brandName: fulldata?.vehicle.brandName?.toString() ?? '',
                   /////////////////Guest Detail////////////////////////
                   guestId: fulldata?.guest.guestId?.toString() ?? '',
@@ -216,11 +227,11 @@ class _RentalBookedPageViewState extends State<RentalBookedPageView> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    fulldata?.bookingStatus == "BOOKED"
+                    (getIssueByBookingId?.data ?? []).isEmpty
                         ? CustomButtonSmall(
                             height: 40,
                             width: 120,
-                            btnHeading: 'Raise Issue',
+                            btnHeading: 'Create Issue',
                             onTap: () {
                               showDialog(
                                 context: context,
@@ -259,9 +270,8 @@ class _RentalBookedPageViewState extends State<RentalBookedPageView> {
                                           onTap: () async {
                                             if (controller.text.isEmpty ||
                                                 controller.text == 'null') {
-                                              Utils.flushBarErrorMessage(
-                                                  "Please enter the reason",
-                                                  context);
+                                              Utils.toastMessage(
+                                                  "Please enter the reason");
                                             } else {
                                               loading = true;
                                               await Provider.of<
@@ -361,12 +371,13 @@ class RentalBookingContainer extends StatelessWidget {
   final String brandName;
   final String seats;
   final String color;
-
+  final GetIssueByBookingIdModel? getIssueByBookingId;
   // final VoidCallback confirmTap;
   final Widget btn;
 
   const RentalBookingContainer({
     super.key,
+    required this.getIssueByBookingId,
     // required this.carName,
     required this.createdDate,
     required this.rideStartTime,
@@ -489,9 +500,9 @@ class RentalBookingContainer extends StatelessWidget {
                       lable: 'Total Ride Time', value: '$totalRideTime Hour'),
                   const SizedBox(height: 5),
 
-                  vehicleType.isNotEmpty
-                      ? bookingItem(lable: 'Car Type', value: vehicleType)
-                      : SizedBox(),
+                  bookingItem(
+                      lable: 'Car Type',
+                      value: vehicleType.isEmpty ? carType : vehicleType),
                   const SizedBox(height: 5),
 
                   bookingItem(
@@ -499,6 +510,28 @@ class RentalBookingContainer extends StatelessWidget {
                   const SizedBox(height: 5),
 
                   bookingItem(lable: 'Pickup Location', value: pickUpLocation),
+                  (getIssueByBookingId?.data ?? []).isEmpty
+                      ? Container()
+                      : Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                'Created Issue',
+                                style: titleTextStyle,
+                              ),
+                            ),
+                            Text(':', style: titleTextStyle),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: CustomButtonSmall(
+                                  height: 40,
+                                  btnHeading: 'Show IssueDetails',
+                                  onTap: () {
+                                    context.push("/raiseIssueDetail");
+                                  }),
+                            )
+                          ],
+                        )
                   // Row(
                   //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   //   crossAxisAlignment: CrossAxisAlignment.start,

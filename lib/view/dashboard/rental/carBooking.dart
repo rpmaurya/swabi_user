@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/res/Custom%20Page%20Layout/commonPage_Layout.dart';
 import 'package:flutter_cab/res/customAppBar_widget.dart';
@@ -83,8 +84,8 @@ class _RentalCarBookingState extends State<RentalCarBooking> {
                                   load = true;
                                   if (controller[0].text.isEmpty ||
                                       controller[0].text == 'null') {
-                                    Utils.flushBarErrorMessage(
-                                        "Please enter the reason", context);
+                                    Utils.toastMessage(
+                                        "Please enter the reason");
                                   } else {
                                     Provider.of<RentalBookingCancelViewModel>(
                                             context,
@@ -455,6 +456,7 @@ class CancelContainerDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Dialog(
+      insetPadding: EdgeInsets.zero,
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(10))),
       child: Container(
@@ -463,7 +465,7 @@ class CancelContainerDialog extends StatelessWidget {
             borderRadius: BorderRadius.all(Radius.circular(10))),
         // height: AppDimension.getHeight(context)*.4,
         padding: const EdgeInsets.only(bottom: 10),
-        width: AppDimension.getWidth(context) * .7,
+        width: AppDimension.getWidth(context) * .9,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -532,20 +534,53 @@ class CancelContainerDialog extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 25),
-                  Container(
-                    height: AppDimension.getHeight(context) * .15,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: curvePageColor)),
-                    child: TextFormField(
-                      maxLines: 5,
-                      controller: controllerCancel,
-                      decoration: const InputDecoration(
-                          contentPadding:
-                              EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-                          border: UnderlineInputBorder(
-                              borderSide: BorderSide.none)),
-                    ),
+                  TextFormField(
+                    maxLines: 4,
+                    maxLength: 120,
+                    inputFormatters: [
+                      LengthLimitingTextInputFormatter(120),
+                    ],
+                    controller: controllerCancel,
+                    decoration: InputDecoration(
+                        hintText: 'Reason for Cancellation',
+                        contentPadding: const EdgeInsets.symmetric(
+                            vertical: 10, horizontal: 10),
+                        // border: InputBorder.none,
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(5.0),
+                          borderSide: const BorderSide(
+                            color: Color(0xFFCDCDCD),
+                            // width: 2.0,
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(5.0),
+                          borderSide: const BorderSide(
+                            color: Color(0xFFCDCDCD),
+                            // width: 2.0,
+                          ),
+                        ),
+                        disabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(5.0),
+                          borderSide: const BorderSide(
+                            color: Color(0xFFCDCDCD),
+                            // width: 2.0,
+                          ),
+                        ),
+                        focusedErrorBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(5.0),
+                          borderSide: const BorderSide(
+                            color: Color(0xFFCDCDCD),
+                            // width: 2.0,
+                          ),
+                        ),
+                        errorBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(5.0),
+                          borderSide: const BorderSide(
+                            color: redColor,
+                            // width: 2.0,
+                          ),
+                        )),
                   ),
                   const SizedBox(height: 10),
                   Row(

@@ -87,7 +87,7 @@ class _IssueviewdetailsState extends State<Issueviewdetails> {
                           ],
                         ),
                         itemtile(
-                            lable: 'User Id',
+                            lable: 'Customer Id',
                             vale: issueData?.user?.userId.toString() ?? '')
                       ],
                     ),

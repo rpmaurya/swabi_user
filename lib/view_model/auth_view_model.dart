@@ -45,49 +45,61 @@ class AuthViewModel with ChangeNotifier {
         userPreference.saveUserId(UserModel(userId: userID));
         print('userId: $userID');
         print('token: ${token1.toString()}');
-        Utils.flushBarSuccessMessage("Login Successfully", context);
+        Utils.toastSuccessMessage("Login Successfully");
         context.go('/');
       }).onError((error, stackTrace) {
         setLoading(false);
         FocusScope.of(context).unfocus();
-        Utils.flushBarErrorMessage(
-            "Email and Password is not present!", context);
+        Utils.toastMessage(
+          "Email and Password is not present!",
+        );
         if (kDebugMode) {
           print(error.toString());
         }
       });
     }
   }
-  // Future<void> loginApi(dynamic data, BuildContext context) async {
-  //   setLoading(true);
-  //   {
-  //     _myRepo.loginApi(data).then((value) async {
-  //       debugPrint(value);
-  //       setLoading(false);
-  //       final userPreference = Provider.of<UserViewModel>(
-  //           context, listen: false);
-  //       debugPrint("save token");
-  //       // userPreference.saveEmail(value['user']);
-  //       debugPrint(value['data']['userId'].toString());
-  //       String userID = value['data']['userId'].toString();
-  //       String token1 = value['data']['token'].toString();
-  //       userPreference.saveToken(UserModel(token: token1));
-  //       userPreference.saveUserId(UserModel(userId: userID));
-  //       debugPrint('userId: $userID');
-  //       debugPrint('token: ${token1.toString()}');
-  //       Utils.toastMessage("Login Successfully",greenColor);
-  //       context.go('/');
-  //     }).onError((error, stackTrace) {
-  //       setLoading(false);
-  //       if(error.toString() == "Null check operator used on a null value")
-  //        {
-  //          Utils.flushBarErrorMessage(error.toString(), context,Colors.red);
-  //          // Utils.flushBarErrorMessage("Please Enter Valid Email & Password", context,Colors.red);
-  //        }
-  //       if (kDebugMode) {
-  //         print(error.toString());
-  //       }
-  //     });
-  //   }
-  // }
+
+  Future<void> userLoginApi(
+      {required BuildContext context,
+      required String email,
+      required String password,
+      required bool rememberMe}) async {
+    Map<String, String> body = {
+      'email': email,
+      'password': password,
+      'userType': 'USER'
+    };
+    try {
+      setLoading(true);
+      _myRepo.userloginApi(context: context, body: body).then((value) {
+        if (value?.status?.httpCode == '200') {
+          final userPreference =
+              Provider.of<UserViewModel>(context, listen: false);
+          print("save token");
+          // userPreference.saveEmail(value['user']);
+          print('login');
+
+          userPreference.saveToken(UserModel(token: value?.data?.token));
+          userPreference
+              .saveUserId(UserModel(userId: value?.data?.userId.toString()));
+          rememberMe
+              ? userPreference.saveRememberMe(email, password, rememberMe)
+              : userPreference.clearRememberMe();
+          print('token: ${value?.data?.token}');
+          print('user: ${value?.data?.userId.toString()}');
+          Utils.toastSuccessMessage("Login Successfully");
+          context.go('/');
+          setLoading(false);
+        }
+      }).onError((error, stackTrace) {
+        FocusScope.of(context).unfocus();
+
+        setLoading(false);
+      });
+    } catch (e) {
+      setLoading(false);
+      debugPrint('error $e');
+    }
+  }
 }

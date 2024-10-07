@@ -24,7 +24,9 @@ class _AlloffersScreenState extends State<AlloffersScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
       Provider.of<OfferViewModel>(context, listen: false).getOfferList(
-          context: context, date: DateFormat('dd-MM-yyyy').format(dateTime));
+          context: context,
+          date: DateFormat('dd-MM-yyyy').format(dateTime),
+          bookingType: 'ALL');
     });
   }
 
@@ -51,7 +53,7 @@ class _AlloffersScreenState extends State<AlloffersScreen> {
       builder: (context, viewModel, child) {
         return Scaffold(
           appBar: const CustomAppBar(
-            heading: 'Offers',
+            heading: 'All Offers',
           ),
           body: PageLayout_Page(
             child: ListView.builder(

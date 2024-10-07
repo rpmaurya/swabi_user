@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/model/packageModels.dart';
+import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/res/Custom%20Page%20Layout/commonPage_Layout.dart';
 import 'package:flutter_cab/res/Custom%20Widgets/customTabBar.dart';
 import 'package:flutter_cab/res/Custom%20Widgets/multi_imageSlider_ContainerWidget.dart';
@@ -33,6 +34,7 @@ class _PackageHistoryManagementState extends State<PackageHistoryManagement>
   int initialIndex = 0;
   int currentPage = 0;
   bool isLoadingMore = false;
+  bool isVisibleIcon = false;
   bool lastPage = false; // Assuming true at the start
   final int pageSize = 10; // Set your page size
   final ScrollController _scrollController = ScrollController();
@@ -57,6 +59,9 @@ class _PackageHistoryManagementState extends State<PackageHistoryManagement>
         "bookingStatus": status,
         "pageNumber": currentPage,
         "pageSize": pageSize,
+        "search": '',
+        "sortBy": 'packageBookingId',
+        "sortDirection": isVisibleIcon ? 'asc' : 'desc'
       });
 
       // Update history with new data
@@ -123,8 +128,15 @@ class _PackageHistoryManagementState extends State<PackageHistoryManagement>
     super.dispose();
   }
 
+  int selectIndex = -1;
   @override
   Widget build(BuildContext context) {
+    var status = context
+        .watch<GetPackageHistoryDetailByIdViewModel>()
+        .getPackageHistoryDetailById
+        .status
+        .toString();
+    debugPrint('status $status');
     return Scaffold(
       appBar: const CustomAppBar(
         heading: 'My Package History',
@@ -132,6 +144,8 @@ class _PackageHistoryManagementState extends State<PackageHistoryManagement>
       body: Customtabbar(
           controller: _tabController,
           tabs: tabList,
+          sortVisiblty: true,
+          isVisible: isVisibleIcon,
           onTap: (p0) {
             setState(() {
               currentPage = 0; // Reset pagination when tab changes
@@ -139,6 +153,17 @@ class _PackageHistoryManagementState extends State<PackageHistoryManagement>
               lastPage = false;
             });
             getPackageHistoryList();
+          },
+          onTapSort: () {
+            setState(() {
+              isVisibleIcon = !isVisibleIcon;
+              currentPage = 0; // Reset pagination when tab changes
+              bookedHistory.clear(); // Clear the history
+              lastPage = false;
+            });
+
+            getPackageHistoryList();
+            print('njnkjnjknnm,');
           },
           viewchildren: List.generate(tabList.length, (index) {
             return Consumer<GetPackageHistoryViewModel>(
@@ -161,9 +186,10 @@ class _PackageHistoryManagementState extends State<PackageHistoryManagement>
                     return Center(
                         child: Container(
                             decoration: const BoxDecoration(),
-                            child: Image.asset(
-                              folder,
-                              height: 150,
+                            child: const Text(
+                              'No Data Found',
+                              style: TextStyle(
+                                  color: redColor, fontWeight: FontWeight.w600),
                             )));
                   }
 
@@ -202,7 +228,12 @@ class _PackageHistoryManagementState extends State<PackageHistoryManagement>
                               .packageActivities
                               .expand((e) => e.activity.activityImageUrl)
                               .toList(),
+                          loader: status == 'Status.loading' &&
+                              selectIndex == index,
                           onTap: () {
+                            setState(() {
+                              selectIndex = index;
+                            });
                             Provider.of<GetPackageHistoryDetailByIdViewModel>(
                                     context,
                                     listen: false)
@@ -239,7 +270,7 @@ class PackageHistoryContainer extends StatelessWidget {
   final String location;
   final List<String> imageList;
   final VoidCallback onTap;
-
+  final bool loader;
   const PackageHistoryContainer(
       {super.key,
       required this.status,
@@ -250,11 +281,12 @@ class PackageHistoryContainer extends StatelessWidget {
       required this.location,
       required this.imageList,
       required this.onTap,
+      required this.loader,
       required this.price});
 
   @override
   Widget build(BuildContext context) {
-    print('images  list................${imageList.length}');
+    print('images  list................$loader');
     return CommonContainer(
       borderRadius: BorderRadius.circular(5),
       elevation: 0,
@@ -263,7 +295,7 @@ class PackageHistoryContainer extends StatelessWidget {
       child: Material(
         color: background,
         child: InkWell(
-          onTap: onTap,
+          // onTap: onTap,
           child: Column(
             children: [
               SizedBox(
@@ -332,13 +364,25 @@ class PackageHistoryContainer extends StatelessWidget {
                   height: 50,
                   padding: const EdgeInsets.symmetric(horizontal: 5),
                   decoration: const BoxDecoration(
-                      // border: Border(bottom: BorderSide(color: naturalGreyColor))
-                      ),
+                      border:
+                          Border(bottom: BorderSide(color: naturalGreyColor))),
                   child: textTile(
                       lable1: 'Price',
                       value1: 'AED $price',
                       lable2: 'Location',
                       value2: location)),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: CustomButtonSmall(
+                      loading: loader,
+                      height: 40,
+                      width: 80,
+                      btnHeading: 'View',
+                      onTap: onTap),
+                ),
+              )
             ],
           ),
         ),
@@ -376,9 +420,11 @@ class PackageHistoryContainer extends StatelessWidget {
           style: titleTextStyle,
         ),
         const SizedBox(width: 5),
-        Text(
-          value,
-          style: titleTextStyle1,
+        Expanded(
+          child: Text(
+            value,
+            style: titleTextStyle1,
+          ),
         )
       ],
     );

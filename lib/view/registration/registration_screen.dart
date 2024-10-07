@@ -1,8 +1,10 @@
 // ignore_for_file: camel_case_types, depend_on_referenced_packages
 
 import 'package:flutter/material.dart';
+import 'package:flutter_cab/data/validatorclass.dart';
 import 'package:flutter_cab/res/Common%20Widgets/common_alertTextfeild.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
+import 'package:flutter_cab/res/Custom%20%20Button/customdropdown_button.dart';
 import 'package:flutter_cab/res/Custom%20Widgets/CustomTextFormfield.dart';
 import 'package:flutter_cab/res/customTextWidget.dart';
 import 'package:flutter_cab/res/custom_mobileNumber.dart';
@@ -58,7 +60,7 @@ class _registration_screenState extends State<registration_screen> {
         r'x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])';
     final regex = RegExp(pattern);
     if (value == null || value.isEmpty) {
-      return 'Enter valid email id';
+      return 'Enter your email';
     } else if (!regex.hasMatch(value)) {
       return 'Enter a valid email address';
     }
@@ -77,7 +79,6 @@ class _registration_screenState extends State<registration_screen> {
   @override
   void dispose() {
     // TODO: implement dispose
-    super.dispose();
     controller[0].dispose();
     controller[1].dispose();
     controller[2].dispose();
@@ -94,6 +95,7 @@ class _registration_screenState extends State<registration_screen> {
     phoneFocus.dispose();
     passwordFocus.dispose();
     confPassFocus.dispose();
+    super.dispose();
   }
 
   bool isLoading = false;
@@ -108,7 +110,7 @@ class _registration_screenState extends State<registration_screen> {
             child: SingleChildScrollView(
               child: Form(
                 key: _formKey,
-                autovalidateMode: AutovalidateMode.onUserInteraction,
+                // autovalidateMode: AutovalidateMode.onUserInteraction,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -199,131 +201,178 @@ class _registration_screenState extends State<registration_screen> {
                           text: ' *', style: TextStyle(color: redColor))
                     ])),
                     const SizedBox(height: 5),
-                    FormField<String>(validator: (value) {
-                      if (controller[3].text.isEmpty) {
-                        return '  Please select a location';
-                      }
-                      return null;
-                    }, builder: (FormFieldState<String> field) {
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 0),
-                            height: 50,
-                            child: GooglePlaceAutoCompleteTextField(
-                              focusNode: addressFocus,
-                              textEditingController: controller[3],
-                              boxDecoration: BoxDecoration(
-                                  color: background,
-                                  borderRadius: BorderRadius.circular(5),
-                                  border: Border.all(
-                                      color:
-                                          naturalGreyColor.withOpacity(0.3))),
-                              googleAPIKey:
-                                  "AIzaSyADRdiTbSYUR8oc6-ryM1F1NDNjkHDr0Yo",
-                              inputDecoration: InputDecoration(
-                                contentPadding: const EdgeInsets.symmetric(
-                                    horizontal: 10, vertical: 0),
-                                isDense: true,
-                                hintText: "Search your location",
-                                border: const OutlineInputBorder(
-                                    borderSide: BorderSide.none),
-                                hintStyle: textTitleHint,
-                                filled: true,
-                                fillColor: background,
-                                disabledBorder: const OutlineInputBorder(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(5)),
-                                    borderSide: BorderSide.none),
-                              ),
-                              textStyle: titleTextStyle,
-                              debounceTime: 400,
-                              // countries: ["ae", "fr"],
-                              isLatLngRequired: true,
-                              getPlaceDetailWithLatLng: (prediction) {
-                                print(
-                                    "Latitude: ${prediction.lat}, Longitude: ${prediction.lng}");
-                                // You can use prediction.lat and prediction.lng here as needed
-                                // Example: Save them to variables or perform further actions
-                              },
-
-                              itemClick: (prediction) {
-                                controller[3].text =
-                                    prediction.description ?? "";
-                                controller[3].selection =
-                                    TextSelection.fromPosition(TextPosition(
-                                        offset:
-                                            prediction.description?.length ??
-                                                0));
-                                field.didChange(prediction.description);
-                              },
-                              seperatedBuilder: const Divider(),
-
-                              // OPTIONAL// If you want to customize list view item builder
-                              itemBuilder: (context, index, prediction) {
-                                return Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 10, horizontal: 5),
-                                  child: Container(
-                                    // color: background,
-                                    child: Row(
-                                      children: [
-                                        const Icon(
-                                          Icons.location_on,
-                                          size: 15,
-                                        ),
-                                        const SizedBox(
-                                          width: 7,
-                                        ),
-                                        Expanded(
-                                            child: Text(
-                                          prediction.description ?? "",
-                                          style: titleTextStyle,
-                                        ))
-                                      ],
-                                    ),
+                    FormField<String>(
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        validator: (value) {
+                          if (controller[3].text.isEmpty) {
+                            return '  Please select a location';
+                          }
+                          return null;
+                        },
+                        builder: (FormFieldState<String> field) {
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 0),
+                                height: 50,
+                                child: GooglePlaceAutoCompleteTextField(
+                                  focusNode: addressFocus,
+                                  textEditingController: controller[3],
+                                  boxDecoration: BoxDecoration(
+                                      color: background,
+                                      borderRadius: BorderRadius.circular(5),
+                                      border: Border.all(
+                                          color: naturalGreyColor
+                                              .withOpacity(0.3))),
+                                  googleAPIKey:
+                                      "AIzaSyADRdiTbSYUR8oc6-ryM1F1NDNjkHDr0Yo",
+                                  inputDecoration: InputDecoration(
+                                    contentPadding: const EdgeInsets.symmetric(
+                                        horizontal: 10, vertical: 0),
+                                    isDense: true,
+                                    hintText: "Search your location",
+                                    border: const OutlineInputBorder(
+                                        borderSide: BorderSide.none),
+                                    hintStyle: textTitleHint,
+                                    filled: true,
+                                    fillColor: background,
+                                    disabledBorder: const OutlineInputBorder(
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(5)),
+                                        borderSide: BorderSide.none),
                                   ),
-                                );
-                              },
-                              isCrossBtnShown: false,
+                                  textStyle: titleTextStyle,
+                                  debounceTime: 400,
+                                  // countries: ["ae", "fr"],
+                                  isLatLngRequired: true,
+                                  getPlaceDetailWithLatLng: (prediction) {
+                                    print(
+                                        "Latitude: ${prediction.lat}, Longitude: ${prediction.lng}");
+                                    // You can use prediction.lat and prediction.lng here as needed
+                                    // Example: Save them to variables or perform further actions
+                                  },
 
-                              // default 600 ms ,
-                            ),
-                          ),
-                          if (field.hasError)
-                            Text(
-                              field.errorText!,
-                              style: TextStyle(color: redColor),
-                            ),
-                        ],
-                      );
-                    }),
+                                  itemClick: (prediction) {
+                                    controller[3].text =
+                                        prediction.description ?? "";
+                                    controller[3].selection =
+                                        TextSelection.fromPosition(TextPosition(
+                                            offset: prediction
+                                                    .description?.length ??
+                                                0));
+                                    field.didChange(prediction.description);
+                                  },
+                                  seperatedBuilder: const Divider(),
+
+                                  // OPTIONAL// If you want to customize list view item builder
+                                  itemBuilder: (context, index, prediction) {
+                                    return Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 10, horizontal: 5),
+                                      child: Container(
+                                        // color: background,
+                                        child: Row(
+                                          children: [
+                                            const Icon(
+                                              Icons.location_on,
+                                              size: 15,
+                                            ),
+                                            const SizedBox(
+                                              width: 7,
+                                            ),
+                                            Expanded(
+                                                child: Text(
+                                              prediction.description ?? "",
+                                              style: titleTextStyle,
+                                            ))
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  isCrossBtnShown: false,
+
+                                  // default 600 ms ,
+                                ),
+                              ),
+                              if (field.hasError)
+                                Text(
+                                  field.errorText!,
+                                  style: TextStyle(color: redColor),
+                                ),
+                            ],
+                          );
+                        }),
                     const SizedBox(height: 10),
-                    FormCommonSingleAlertSelector(
-                      title: "Gender",
-                      controller: controller[4],
-                      textStyle: titleTextStyle,
-                      showIcon: const Icon(
-                        Icons.event_seat,
-                        color: naturalGreyColor,
-                      ),
-                      iconReq: false,
-                      data: const ["Male", "Female"],
-                      // icons: gender,
-                      // icon: genderImg,
-                      elevation: 0,
-
-                      ///Hint Color
-                      initialValue: "Select Gender",
-                      alertBoxTitle: "Select Gender",
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 5, top: 5),
+                      child: Text.rich(TextSpan(children: [
+                        TextSpan(text: 'Gender', style: titleTextStyle),
+                        TextSpan(text: ' *', style: TextStyle(color: redColor))
+                      ])),
                     ),
+                    CustomDropdownButton(
+                      controller: controller[4],
+                      focusNode: genderFocus,
+                      itemsList: ['Male', 'Female'],
+                      onChanged: (value) {
+                        setState(() {
+                          // controller[4].text = value ?? '';
+                          print('cgghhh${controller[4].text}');
+                        });
+                      },
+                      hintText: 'Select Gender',
+                      validator: (p0) {
+                        if (p0 == null || p0.isEmpty) {
+                          return 'Please select gender';
+                        }
+                        return null;
+                      },
+                    ),
+                    // FormField<String>(validator: (value) {
+                    //   if (controller[4].text.isEmpty) {
+                    //     return '  Please select gender';
+                    //   }
+                    //   return null;
+                    // }, builder: (FormFieldState<String> field) {
+                    //   return Column(
+                    //     crossAxisAlignment: CrossAxisAlignment.start,
+                    //     children: [
+                    //       FormCommonSingleAlertSelector(
+                    //         title: "Gender",
+                    //         border: false,
+                    //         controller: controller[4],
+                    //         textStyle: titleTextStyle,
+                    //         showIcon: const Icon(
+                    //           Icons.event_seat,
+                    //           color: naturalGreyColor,
+                    //         ),
+                    //         iconReq: false,
+                    //         data: const ["Male", "Female"],
+                    //         // icons: gender,
+                    //         // icon: genderImg,
+                    //         elevation: 0,
+
+                    //         ///Hint Color
+                    //         initialValue: "Select Gender",
+                    //         alertBoxTitle: "Select Gender",
+                    //       ),
+                    //       if (field.hasError)
+                    //         Text(
+                    //           field.errorText!,
+                    //           style: TextStyle(color: redColor),
+                    //         ),
+                    //     ],
+                    //   );
+                    // }),
                     const SizedBox(height: 10),
                     const Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         CustomText(
-                            content: "Contact",
+                            content: "Contact No",
                             textColor: blackColor,
                             fontSize: 16,
                             fontWeight: FontWeight.w700),
@@ -459,8 +508,9 @@ class _registration_screenState extends State<registration_screen> {
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Enter your password';
+                        } else {
+                          return Validatorclass.validatePassword(value);
                         }
-                        return null;
                       },
                     ),
                     const SizedBox(height: 10),
@@ -487,9 +537,10 @@ class _registration_screenState extends State<registration_screen> {
                         if (value == null || value.isEmpty) {
                           return 'Enter your confirm password';
                         } else if (value != controller[6].text) {
-                          return 'password do not match';
+                          return 'Password do not match';
+                        } else {
+                          return Validatorclass.validatePassword(value);
                         }
-                        return null;
                       },
                     ),
 

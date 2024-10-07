@@ -139,8 +139,9 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                                   )
                                 : const Text(
                                     'Resend Otp',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.w600),
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        color: greenColor),
                                   ))
                       ],
                     )

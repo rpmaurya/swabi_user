@@ -103,8 +103,9 @@ class _RazorpayPaymentState extends State<RazorpayPayment> {
   }
 
   void _handlePaymentError(PaymentFailureResponse response) {
-    Utils.flushBarErrorMessage(
-        "ERROR: ${response.code} - ${response.message!}", context);
+    Utils.toastMessage(
+      "ERROR: ${response.code} - ${response.message!}",
+    );
     // Fluttertoast.showToast(
     //     msg: "ERROR: ${response.code} - ${response.message!}",
     //     toastLength: Toast.LENGTH_SHORT);

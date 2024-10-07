@@ -108,7 +108,7 @@ class LoginTextFeild extends StatefulWidget {
   final bool prefixIcon;
   final String img;
   final bool suffixIcon;
-  final TextEditingController? controller;
+  final TextEditingController controller;
   bool obscure;
   final bool readOnly;
   final bool number;
@@ -119,7 +119,7 @@ class LoginTextFeild extends StatefulWidget {
       this.heading = "",
       this.img = "",
       required this.headingReq,
-      this.controller,
+      required this.controller,
       this.suffixIcon = false,
       this.prefixIcon = false,
       this.hint = "",

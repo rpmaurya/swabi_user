@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/res/Common%20Widgets/common_alertTextfeild.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
+import 'package:flutter_cab/res/Custom%20%20Button/customdropdown_button.dart';
 import 'package:flutter_cab/res/Custom%20Page%20Layout/commonPage_Layout.dart';
+import 'package:flutter_cab/res/Custom%20Widgets/CustomTextFormfield.dart';
 import 'package:flutter_cab/res/Custom%20Widgets/customPhoneField.dart';
 import 'package:flutter_cab/res/customAppBar_widget.dart';
 import 'package:flutter_cab/res/custom_mobileNumber.dart';
@@ -75,6 +77,7 @@ class GuestRentalBookingForm extends StatefulWidget {
 }
 
 class _GuestRentalBookingFormState extends State<GuestRentalBookingForm> {
+  final _formKey = GlobalKey<FormState>();
   List<TextEditingController> controller =
       List.generate(3, (index) => TextEditingController());
   final focusNode1 = FocusNode();
@@ -113,46 +116,93 @@ class _GuestRentalBookingFormState extends State<GuestRentalBookingForm> {
         heading: "Guest Detail",
       ),
       body: PageLayout_Page(
-          child: Container(
+          child: Form(
+        key: _formKey,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ValidationTextField(
-                focusNode: focusNode1,
-                headingReq: true,
-                prefixIcon: true,
-                width: double.infinity,
-                validation: true,
-                img: user,
-                hint: "Enter your name",
-                heading: "Guest Name",
-                controller: controller[0]),
-            const SizedBox(height: 5),
-            FormCommonSingleAlertSelector(
-              title: "Gender",
-              controller: controller[2],
-              elevation: 0,
-              width: double.infinity,
-              textStyle: titleTextStyle,
-              showIcon: const Icon(
-                Icons.event_seat,
-                color: naturalGreyColor,
-              ),
-              iconReq: false,
-              data: const ["Male", "Female"],
-              // icons: gender,
-              icon: genderImg,
-              border: true,
-
-              ///Hint Color
-              initialValue: "Select Gender",
-              alertBoxTitle: "Select Gender",
+            Text.rich(TextSpan(children: [
+              TextSpan(text: 'Guest Name', style: titleTextStyle),
+              const TextSpan(
+                  text: ' *',
+                  style: TextStyle(
+                    color: redColor,
+                  ))
+            ])),
+            const SizedBox(
+              height: 5,
             ),
+            Customtextformfield(
+              focusNode: focusNode1,
+              controller: controller[0],
+              fillColor: background,
+              hintText: 'Enter your name',
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter your name';
+                }
+                return null;
+              },
+            ),
+            Text.rich(TextSpan(children: [
+              TextSpan(text: 'Gender', style: titleTextStyle),
+              const TextSpan(
+                  text: ' *',
+                  style: TextStyle(
+                    color: redColor,
+                  ))
+            ])),
+            const SizedBox(
+              height: 5,
+            ),
+            CustomDropdownButton(
+              focusNode: focusNode2,
+              itemsList: ['Male', 'Female'],
+              hintText: 'Select gender',
+              controller: controller[2],
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please select gender';
+                }
+                return null;
+              },
+            ),
+            // ValidationTextField(
+            //     focusNode: focusNode1,
+            //     headingReq: true,
+            //     prefixIcon: true,
+            //     width: double.infinity,
+            //     validation: true,
+            //     img: user,
+            //     hint: "Enter your name",
+            //     heading: "Guest Name",
+            //     controller: controller[0]),
+            // const SizedBox(height: 5),
+            // FormCommonSingleAlertSelector(
+            //   title: "Gender",
+            //   controller: controller[2],
+            //   elevation: 0,
+            //   width: double.infinity,
+            //   textStyle: titleTextStyle,
+            //   showIcon: const Icon(
+            //     Icons.event_seat,
+            //     color: naturalGreyColor,
+            //   ),
+            //   iconReq: false,
+            //   data: const ["Male", "Female"],
+            //   // icons: gender,
+            //   icon: genderImg,
+            //   border: false,
+
+            //   ///Hint Color
+            //   initialValue: "Select Gender",
+            //   alertBoxTitle: "Select Gender",
+            // ),
             const SizedBox(
               height: 5,
             ),
             Text.rich(TextSpan(children: [
-              TextSpan(text: 'Mobile', style: titleTextStyle),
+              TextSpan(text: 'Contact No', style: titleTextStyle),
               const TextSpan(
                   text: ' *',
                   style: TextStyle(
@@ -163,6 +213,7 @@ class _GuestRentalBookingFormState extends State<GuestRentalBookingForm> {
               height: 5,
             ),
             CustomMobilenumber(
+                focusNode: focusNode3,
                 textLength: 9,
                 controller: controller[1],
                 hintText: 'Enter phone number',
@@ -190,18 +241,24 @@ class _GuestRentalBookingFormState extends State<GuestRentalBookingForm> {
               btnHeading: "Book Now",
               loading: status == "Status.loading" && loader,
               onTap: () async {
-                if (controller[0].text.isEmpty) {
-                  Utils.flushBarErrorMessage("Kindly Enter Name", context);
-                } else if (controller[1].text.isEmpty) {
-                  Utils.flushBarErrorMessage(
-                      "Kindly Enter Mobile No.", context);
-                } else if (int.tryParse(controller[1].text) == 0) {
-                  Utils.flushBarErrorMessage(
-                      "Kindly Enter Valid Mobile No.", context);
-                } else if (controller[2].text.isEmpty) {
-                  Utils.flushBarErrorMessage("Kindly Select Gender", context);
-                } else {
-                  loader = true;
+                // if (controller[0].text.isEmpty) {
+                //   Utils.toastMessage("Kindly Enter Name");
+                // } else if (controller[1].text.isEmpty) {
+                //   Utils.toastMessage("Kindly Enter Mobile No.");
+                // } else if (int.tryParse(controller[1].text) == 0) {
+                //   Utils.toastMessage("Kindly Enter Valid Mobile No.");
+                // } else if (controller[2].text.isEmpty) {
+                //   Utils.toastMessage("Kindly Select Gender");
+                // } else
+
+                if (_formKey.currentState!.validate()) {
+                  setState(() {
+                    loader = true;
+                  });
+                  FocusScope.of(context).unfocus();
+                  focusNode1.unfocus();
+                  focusNode2.unfocus();
+                  focusNode3.unfocus();
                   double amt = double.parse(widget.price);
                   PaymentService paymentService = PaymentService(
                     context: context,
@@ -280,6 +337,9 @@ class _GuestRentalBookingFormState extends State<GuestRentalBookingForm> {
                       coutryCode: profileUser?.countryCode,
                       mobileNo: profileUser?.mobile,
                       email: profileUser?.email);
+                  setState(() {
+                    loader = false;
+                  });
                 }
               },
             )

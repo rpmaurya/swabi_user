@@ -4,6 +4,7 @@ import 'package:flutter_cab/model/rentalBooking_model.dart';
 import 'package:flutter_cab/res/Custom%20Widgets/customTabBar.dart';
 import 'package:flutter_cab/res/customAppBar_widget.dart';
 import 'package:flutter_cab/utils/assets.dart';
+import 'package:flutter_cab/utils/color.dart';
 
 import 'package:flutter_cab/view/dashboard/rental/history/rentalListingContainer.dart';
 import 'package:flutter_cab/view_model/rental_view_model.dart';
@@ -34,6 +35,7 @@ class _RentalHistoryManagmentState extends State<RentalHistoryManagment>
   int initialIndex = 0;
   int currentPage = 0;
   bool isLoadingMore = false;
+  bool isVisibleIcon = false;
   bool lastPage = false; // Assuming true at the start
   final int pageSize = 10; // Set your page size
   final ScrollController _scrollController = ScrollController();
@@ -84,6 +86,9 @@ class _RentalHistoryManagmentState extends State<RentalHistoryManagment>
         'pageNumber': currentPage,
         'pageSize': pageSize,
         'bookingStatus': status,
+        "search": '',
+        "sortBy": 'date',
+        "sortDirection": isVisibleIcon ? 'asc' : 'desc'
       });
 
       // Update history with new data
@@ -142,13 +147,18 @@ class _RentalHistoryManagmentState extends State<RentalHistoryManagment>
     });
   }
 
+  int intialloadingIndex = -1;
   @override
   Widget build(BuildContext context) {
+    var status =
+        context.watch<RentalViewDetailViewModel>().dataList.status.toString();
     return Scaffold(
       appBar: const CustomAppBar(
         heading: 'My Rental History',
       ),
       body: Customtabbar(
+          sortVisiblty: true,
+          isVisible: isVisibleIcon,
           controller: _tabController,
           tabs: tabList,
           onTap: (p0) {
@@ -159,6 +169,17 @@ class _RentalHistoryManagmentState extends State<RentalHistoryManagment>
             });
             getPackageHistoryList();
           },
+          onTapSort: () {
+            setState(() {
+              isVisibleIcon = !isVisibleIcon;
+              currentPage = 0; // Reset pagination when tab changes
+              bookingList.clear(); // Clear the history
+              lastPage = false;
+            });
+
+            getPackageHistoryList();
+            print('njnkjnjknnm,');
+          },
           viewchildren: List.generate(tabList.length, (index) {
             return Consumer<RentalBookingListViewModel>(
               builder: (context, viewModel, child) {
@@ -167,7 +188,12 @@ class _RentalHistoryManagmentState extends State<RentalHistoryManagment>
                 if (response.status.toString() == "Status.loading") {
                   return const Center(child: CircularProgressIndicator());
                 } else if (response.status.toString() == "Status.error") {
-                  return Center(child: Text('Error: ${response.message}'));
+                  return const Center(
+                      child: Text(
+                    'No Data Found',
+                    style:
+                        TextStyle(color: redColor, fontWeight: FontWeight.w600),
+                  ));
                 } else if (response.status.toString() == "Status.completed") {
                   final data = response.data?.data.content ?? [];
 
@@ -176,9 +202,10 @@ class _RentalHistoryManagmentState extends State<RentalHistoryManagment>
                     return Center(
                         child: Container(
                             decoration: const BoxDecoration(),
-                            child: Image.asset(
-                              folder,
-                              height: 150,
+                            child: const Text(
+                              'No Data Found',
+                              style: TextStyle(
+                                  color: redColor, fontWeight: FontWeight.w600),
                             )));
                   }
 
@@ -196,6 +223,9 @@ class _RentalHistoryManagmentState extends State<RentalHistoryManagment>
                         padding: const EdgeInsets.only(bottom: 10),
                         child: RentalCarListingContainer(
                           onTapContainer: () {
+                            setState(() {
+                              intialloadingIndex = index;
+                            });
                             if (bookingList[index].id != index.toString()) {
                               Provider.of<RentalViewDetailViewModel>(context,
                                       listen: false)
@@ -211,6 +241,8 @@ class _RentalHistoryManagmentState extends State<RentalHistoryManagment>
                                   color: Colors.green);
                             }
                           },
+                          loader: status == 'Status.loading' &&
+                              intialloadingIndex == index,
                           time: bookingList[index].pickupTime,
                           bookingID: bookingList[index].id,
                           pickUplocation: bookingList[index].pickupLocation,

@@ -21,12 +21,14 @@ class Utils {
     FocusScope.of(context).requestFocus(nextFocus);
   }
 
-  static void toastMessage(String message, {final bool isSuccess = false}) {
+  static void toastMessage(String message, {bool isSuccess = false}) {
     Fluttertoast.showToast(
-      msg: message,
-      backgroundColor: isSuccess ? btnColor : Colors.red,
-      textColor: Colors.white,
-    );
+        msg: message,
+        gravity: ToastGravity.BOTTOM_LEFT,
+        backgroundColor: isSuccess ? btnColor : Colors.red,
+        textColor: Colors.white,
+        toastLength: Toast.LENGTH_SHORT, // or LENGTH_LONG
+        webPosition: 'Left');
   }
 
   static void toastSuccessMessage(String message) {
@@ -130,9 +132,9 @@ class Utils {
   // }
   static void flushBarErrorMessage(String message, BuildContext context) {
     DelightToastBar(
-      position: DelightSnackbarPosition.top,
+      position: DelightSnackbarPosition.bottom,
       builder: (context) => ToastCard(
-        color: Colors.red,
+        color: btnColor,
         leading: const Icon(
           Icons.warning_amber,
           size: 28,
@@ -214,6 +216,6 @@ class Utils {
 
   static snackBar(String message, BuildContext context) {
     return ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(backgroundColor: Colors.red, content: Text(message)));
+        SnackBar(backgroundColor: btnColor, content: Text(message)));
   }
 }

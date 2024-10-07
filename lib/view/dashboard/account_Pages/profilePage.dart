@@ -176,7 +176,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       (userImg.toString().isNotEmpty ? userImg : profile),
                 ),
                 CommonTextFeild(
-                  heading: "My Id",
+                  heading: "Customer Id",
                   headingReq: true,
                   initiValueReq: false,
                   controller: TextEditingController(text: widget.user),
@@ -187,7 +187,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
                 const SizedBox(height: 10),
                 CommonTextFeild(
-                  heading: "Name",
+                  heading: "Full Name",
                   headingReq: true,
                   initiValueReq: false,
                   controller: TextEditingController(
@@ -236,7 +236,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
                 const SizedBox(height: 10),
                 CommonTextFeild(
-                  heading: "Mobile",
+                  heading: "Contact No",
                   headingReq: true,
                   prefixIcon: true,
                   initiValueReq: false,

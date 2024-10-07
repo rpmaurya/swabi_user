@@ -4,6 +4,7 @@ class AppUrl {
 
   ///registration URL
   static var login = "$baseUrl/login";
+  static var loginUrl = "/login";
   static var signUp = "$baseUrl/user/register_user";
   static var signupUrl = '/user/register_user';
   static var rental = "$baseUrl/rental";
@@ -25,6 +26,7 @@ class AppUrl {
   static var raiseIssueUrl = "/booking_issue/raise_issue";
   static var getIssueUrl = "/booking_issue/get_issue_raised_by";
   static var getIssueDetailsUrl = "/booking_issue/get_issue_detail";
+  static var getIssueBybbokingId = "/get_issue_by_booking_id";
   static var sendOtpsUrl = "/otp_send";
   static var verifyOtpUrl = "/otp_verify";
   static var resetPassordUrl = "/password_update";

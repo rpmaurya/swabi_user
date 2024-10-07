@@ -26,7 +26,10 @@ class PaymentCreateOrderIdViewModel with ChangeNotifier {
       setDataList(ApiResponse.completed(resp));
       return resp;
     } catch (e) {
+      setDataList(ApiResponse.error(e.toString()));
       print(e);
+    } finally {
+      setDataList(ApiResponse.error(''));
     }
     return null;
   }
@@ -98,12 +101,14 @@ class PaymentVerifyViewModel with ChangeNotifier {
     setDataList(ApiResponse.loading());
     _myRepo.paymentVerifyRepositoryApi(data).then((value) async {
       setDataList(ApiResponse.completed(value));
-      Utils.flushBarSuccessMessage("Payment paymentVerify Success", context);
+      Utils.toastSuccessMessage("Payment paymentVerify Success");
       // context.pop();
       context.pop();
     }).onError((error, stackTrace) {
       // debugPrint(error.toString());
-      Utils.flushBarErrorMessage(error.toString(), context);
+      Utils.toastMessage(
+        error.toString(),
+      );
       setDataList(ApiResponse.error(error.toString()));
     });
   }

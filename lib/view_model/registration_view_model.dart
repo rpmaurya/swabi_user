@@ -33,7 +33,7 @@ class PostSignUpViewModel with ChangeNotifier {
           setLoading(false);
           setDataList(ApiResponse.completed(onValue));
           // print("Signup Success");
-          Utils.flushBarSuccessMessage("SignUp Successfully", context);
+          Utils.toastSuccessMessage("SignUp Successfully");
           context.push("/login");
         }
       }).onError((error, stactrace) {

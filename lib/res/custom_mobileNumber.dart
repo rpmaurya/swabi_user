@@ -131,7 +131,8 @@ class _CustomMobilenumberState extends State<CustomMobilenumber> {
             errorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(5.0),
               borderSide: const BorderSide(
-                color: redColor,
+                // color: redColor,
+                color: Color(0xFFCDCDCD),
                 // width: 2.0,
               ),
             )

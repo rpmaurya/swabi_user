@@ -4,6 +4,7 @@ import 'package:flutter_cab/data/response/errorHandler.dart';
 import 'package:flutter_cab/model/GetIssueModel.dart';
 import 'package:flutter_cab/model/IssueDetailModel.dart';
 import 'package:flutter_cab/model/RaiseIssueModel.dart';
+import 'package:flutter_cab/model/getIssueByBookingIdModel.dart';
 import 'package:flutter_cab/model/user_model.dart';
 import 'package:flutter_cab/respository/raiseIssue_repository.dart';
 import 'package:flutter_cab/view_model/user_view_model.dart';
@@ -23,7 +24,16 @@ class RaiseissueViewModel with ChangeNotifier {
 
   setDataList(ApiResponse<IssueDetailsModel> response) {
     issueDetail = response;
-    // isloading1 = false;
+
+    notifyListeners();
+  }
+
+  ApiResponse<GetIssueByBookingIdModel> getIssueBybookingId =
+      ApiResponse.loading();
+
+  setDataList1(ApiResponse<GetIssueByBookingIdModel> response) {
+    getIssueBybookingId = response;
+
     notifyListeners();
   }
 
@@ -101,6 +111,31 @@ class RaiseissueViewModel with ChangeNotifier {
     } finally {
       isloading1 = false;
       notifyListeners();
+    }
+  }
+
+  Future<void> getIssueByBookingId(
+      {required BuildContext context,
+      required String bookingId,
+      required String userId,
+      required String bookingType}) async {
+    Map<String, dynamic> query = {
+      "bookingId": bookingId,
+      "userId": userId,
+      "bookingType": bookingType
+    };
+    try {
+      setDataList1(ApiResponse.loading());
+
+      await _myRepo
+          .getRaiseIssueByBookingIdApi(context: context, query: query)
+          .then((onValue) {
+        if (onValue?.status?.httpCode == '200') {
+          setDataList1(ApiResponse.completed(onValue));
+        }
+      });
+    } catch (e) {
+      setDataList1(ApiResponse.error(e.toString()));
     }
   }
 }

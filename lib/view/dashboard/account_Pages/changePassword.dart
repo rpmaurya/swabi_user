@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_cab/data/validatorclass.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/res/Custom%20Page%20Layout/commonPage_Layout.dart';
+import 'package:flutter_cab/res/Custom%20Widgets/CustomTextFormfield.dart';
 import 'package:flutter_cab/utils/assets.dart';
 import 'package:flutter_cab/utils/utils.dart';
 import 'package:flutter_cab/view_model/userProfile_view_model.dart';
@@ -41,34 +43,34 @@ class _ChangePasswordState extends State<ChangePassword> {
   void initState() {
     super.initState();
 
-    _focasNode1.addListener(() {
-      if (!_focasNode1.hasFocus) {
-        setState(() {
-          _oldPasswordError = _validatePassword(_oldPasswordController.text);
-        });
-      }
-    });
+    // _focasNode1.addListener(() {
+    //   if (!_focasNode1.hasFocus) {
+    //     setState(() {
+    //       _oldPasswordError = _validatePassword(_oldPasswordController.text);
+    //     });
+    //   }
+    // });
 
-    _focasNode2.addListener(() {
-      if (!_focasNode2.hasFocus) {
-        setState(() {
-          _newPasswordError = _validatePassword(_newPasswordController.text);
-        });
-      }
-    });
+    // _focasNode2.addListener(() {
+    //   if (!_focasNode2.hasFocus) {
+    //     setState(() {
+    //       _newPasswordError = _validatePassword(_newPasswordController.text);
+    //     });
+    //   }
+    // });
 
-    _focasNode3.addListener(() {
-      if (!_focasNode3.hasFocus) {
-        setState(() {
-          if (_confirmPasswordController.text != _newPasswordController.text) {
-            _confirmPasswordError = "Passwords do not match";
-          } else {
-            _confirmPasswordError =
-                _validatePassword(_confirmPasswordController.text);
-          }
-        });
-      }
-    });
+    // _focasNode3.addListener(() {
+    //   if (!_focasNode3.hasFocus) {
+    //     setState(() {
+    //       if (_confirmPasswordController.text != _newPasswordController.text) {
+    //         _confirmPasswordError = "Passwords do not match";
+    //       } else {
+    //         _confirmPasswordError =
+    //             _validatePassword(_confirmPasswordController.text);
+    //       }
+    //     });
+    //   }
+    // });
   }
 
   @override
@@ -104,9 +106,7 @@ class _ChangePasswordState extends State<ChangePassword> {
     if (value == null || value.isEmpty) {
       return 'Please enter a password';
     }
-    if (value.length < 6) {
-      return 'Password must be at least 6 characters long';
-    }
+
     return null;
   }
 
@@ -133,8 +133,9 @@ class _ChangePasswordState extends State<ChangePassword> {
             .changePasswordViewModelApi(context: context, query: query)
             .then((onValue) {
           if (onValue?.status.httpCode == '200') {
-            Utils.flushBarSuccessMessage(
-                'Password changed successfully', context);
+            Utils.toastSuccessMessage(
+              'Password changed successfully',
+            );
             context.pop();
           }
         });
@@ -164,89 +165,89 @@ class _ChangePasswordState extends State<ChangePassword> {
                 child: Center(child: Image.asset(appLogo1)),
                 // child: Center(child: Image.asset(appLogo1)),
               ),
-              customtextformfield(
-                  focusNode: _focasNode1,
-                  controller: _oldPasswordController,
-                  obscureText: _obscureOldPassword,
-                  hinttext: 'Old Password',
-                  errorText: _oldPasswordError,
-                  onIconPress: _toggleOldPasswordVisibility,
-                  validator: _validatePassword),
+              Customtextformfield(
+                fillColor: background,
+                obscureText: _obscureOldPassword,
+                // obscuringCharacter: '*',
+                controller: _oldPasswordController,
+                hintText: 'Enter old password',
+                suffixIcons: IconButton(
+                  icon: Icon(
+                    _obscureOldPassword
+                        ? Icons.visibility_off
+                        : Icons.visibility,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      _obscureOldPassword = !_obscureOldPassword;
+                    });
+                  },
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Enter your old password';
+                  } else {
+                    return Validatorclass.validatePassword(value);
+                  }
+                },
+              ),
               const SizedBox(height: 16.0),
-              customtextformfield(
-                  focusNode: _focasNode2,
-                  controller: _newPasswordController,
-                  obscureText: _obscureNewPassword,
-                  hinttext: 'New Password',
-                  errorText: _newPasswordError,
-                  onIconPress: _toggleNewPasswordVisibility,
-                  validator: _validatePassword),
-
+              Customtextformfield(
+                fillColor: background,
+                obscureText: _obscureNewPassword,
+                // obscuringCharacter: '*',
+                controller: _newPasswordController,
+                hintText: 'Enter new password',
+                suffixIcons: IconButton(
+                  icon: Icon(
+                    _obscureNewPassword
+                        ? Icons.visibility_off
+                        : Icons.visibility,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      _obscureNewPassword = !_obscureNewPassword;
+                    });
+                  },
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Enter your new password';
+                  } else {
+                    return Validatorclass.validatePassword(value);
+                  }
+                },
+              ),
               const SizedBox(height: 16.0),
-              customtextformfield(
-                  focusNode: _focasNode3,
-                  controller: _confirmPasswordController,
-                  obscureText: _obscureConfirmPassword,
-                  hinttext: 'Confirm New Password',
-                  errorText: _confirmPasswordError,
-                  onIconPress: _toggleConfirmPasswordVisibility,
-                  validator: _validateConfirmPassword),
+              Customtextformfield(
+                fillColor: background,
+                obscureText: _obscureConfirmPassword,
+                // obscuringCharacter: '*',
+                controller: _confirmPasswordController,
+                hintText: 'Enter confirm password',
+                suffixIcons: IconButton(
+                  icon: Icon(
+                    _obscureConfirmPassword
+                        ? Icons.visibility_off
+                        : Icons.visibility,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      _obscureConfirmPassword = !_obscureConfirmPassword;
+                    });
+                  },
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Enter your Confirm password';
+                  } else if (value != _newPasswordController.text) {
+                    return "password not matched";
+                  } else {
+                    return Validatorclass.validatePassword(value);
+                  }
+                },
+              ),
               const SizedBox(height: 20),
-
-              // LoginTextFeild(
-              //   headingReq: true,
-              //   controller: TextEditingController(),
-              //   hint: "Enter your old password",
-              //   suffixIcon: true,
-              //   obscure: true,
-              //   prefixIcon: true,
-              //   img: pass,
-              //   heading: "Old Password",
-              // ),
-              // const SizedBox(height: 10),
-              // LoginTextFeild(
-              //   headingReq: true,
-              //   controller: TextEditingController(),
-              //   hint: "Enter your new password",
-              //   suffixIcon: true,
-              //   obscure: true,
-              //   prefixIcon: true,
-              //   img: pass,
-              //   heading: "New Password",
-              // ),
-              // const SizedBox(height: 10),
-              // LoginTextFeild(
-              //   headingReq: true,
-              //   controller: TextEditingController(),
-              //   hint: "Enter your confirm password",
-              //   suffixIcon: true,
-              //   obscure: true,
-              //   prefixIcon: true,
-              //   img: pass,
-              //   heading: "Confirm New Password",
-              // ),
-              // const Spacer(),
-              // Row(
-              //   mainAxisAlignment: MainAxisAlignment.end,
-              //   children: [
-              //     Container(
-              //       child: TextButton(
-              //         onPressed: () {
-              //           // userViewModel.remove(context);
-              //           context.push('/forgotPassword');
-              //           // Navigator.push(
-              //           //     context,
-              //           //     MaterialPageRoute(
-              //           //         builder: (context) => ForgotPassword()));
-              //         },
-              //         child: Text('Forgot your password?',
-              //             style: GoogleFonts.lato(
-              //                 fontWeight: FontWeight.w700,
-              //                 color: Colors.green)),
-              //       ),
-              //     ),
-              //   ],
-              // ),
               CustomButtonBig(
                 btnHeading: "Change Password",
                 onTap: () => _updatePassword(),
@@ -256,76 +257,6 @@ class _ChangePasswordState extends State<ChangePassword> {
           ),
         ),
       )),
-    );
-  }
-
-  Widget customtextformfield(
-      {TextEditingController? controller,
-      required bool obscureText,
-      required String hinttext,
-      required void Function()? onIconPress,
-      String? Function(String?)? validator,
-      FocusNode? focusNode,
-      String? errorText}) {
-    return TextFormField(
-      focusNode: focusNode,
-      controller: controller,
-      obscureText: obscureText,
-      obscuringCharacter: '*',
-      decoration: InputDecoration(
-        // labelText: 'Old Password',
-        fillColor: Colors.white,
-        filled: true,
-        errorText: errorText,
-        contentPadding:
-            const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
-        // border: InputBorder.none,
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(5.0),
-          borderSide: const BorderSide(
-            color: Color(0xFFCDCDCD),
-            // width: 2.0,
-          ),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(5.0),
-          borderSide: const BorderSide(
-            color: Color(0xFFCDCDCD),
-            // width: 2.0,
-          ),
-        ),
-        disabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(5.0),
-          borderSide: const BorderSide(
-            color: Color(0xFFCDCDCD),
-            // width: 2.0,
-          ),
-        ),
-        focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(5.0),
-          borderSide: const BorderSide(
-            color: Color(0xFFCDCDCD),
-            // width: 2.0,
-          ),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(5.0),
-          borderSide: const BorderSide(
-            color: Color(0xFFCDCDCD),
-            // width: 2.0,
-          ),
-        ),
-
-        hintText: hinttext,
-        // prefixIcon: Icon(Icons.lock),
-        suffixIcon: IconButton(
-          icon: Icon(
-            obscureText ? Icons.visibility_off : Icons.visibility,
-          ),
-          onPressed: onIconPress,
-        ),
-      ),
-      validator: validator,
     );
   }
 }

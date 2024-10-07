@@ -139,8 +139,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                                 'Login',
                                 style: GoogleFonts.lato(
                                     fontWeight: FontWeight.w700,
-                                    color:
-                                        const Color.fromRGBO(69, 30, 243, 1)),
+                                    color: greenColor),
                               ))
                         ],
                       )

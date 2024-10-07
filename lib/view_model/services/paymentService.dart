@@ -9,6 +9,7 @@ class PaymentService {
   late Razorpay _razorpay;
   final BuildContext context;
   final Function onPaymentSuccess;
+  bool islodingpayment = false;
   PaymentService({required this.context, required this.onPaymentSuccess}) {
     _razorpay = Razorpay();
     _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
@@ -38,6 +39,7 @@ class PaymentService {
     var options = {
       'key': 'rzp_test_6RDAELPDeFpXXx',
       'amount': (amount).toInt() * 100,
+      'currency': 'AED',
       'name': 'SWABI',
       // 'order_id': widget.orderId,
       'order_id': paymentOrderId,
@@ -47,7 +49,8 @@ class PaymentService {
       'external': {
         'wallets': ['paytm']
       },
-      'image': 'assets/images/Asset 233000 1.png', // Replace with your logo URL
+      'image':
+          'https://shilsha-bckt.s3.ap-south-1.amazonaws.com/Asset_233000_11727343705079.png', // Replace with your logo URL
       // Customize the color theme of the payment interface
       'theme': {
         'color': '#7B1E34' // Replace with your desired color code
@@ -66,8 +69,7 @@ class PaymentService {
   }
 
   void _handlePaymentError(PaymentFailureResponse response) {
-    Utils.flushBarErrorMessage(
-        "ERROR: ${response.code} - ${response.message!}", context);
+    Utils.toastMessage("ERROR: ${response.code} - ${response.message!}");
   }
 
   void _handleExternalWallet(ExternalWalletResponse response) {

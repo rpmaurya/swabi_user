@@ -63,6 +63,7 @@ class _MenuListState extends State<MenuList> {
               // const SizedBox(height: 5),
               Custom_ListTile(
                 img: profile,
+                iconColor: btnColor,
                 heading: "Profile",
                 // onTap: () => context.push("/profilePage",extra: {"userId":widget.userId}),
                 onTap: () {
@@ -75,12 +76,14 @@ class _MenuListState extends State<MenuList> {
               ),
               Custom_ListTile(
                 img: distance,
+                iconColor: btnColor,
                 heading: "My Trip",
                 onTap: () => context.push("/rentalForm/rentalHistory",
                     extra: {"myIdNo": widget.userId}),
                 // context.push("/booking")
               ),
               Custom_ListTile(
+                iconColor: btnColor,
                 img: package,
                 heading: "My Package",
                 onTap: () => context.push("/package/packageHistoryManagement",
@@ -133,14 +136,16 @@ class _MenuListState extends State<MenuList> {
               //   onTap: () => context.push("/contact"),
               // ),
               Custom_ListTile(
+                iconColor: btnColor,
                 img: contact,
                 heading: "Help & Support",
                 onTap: () => context.push("/help&support"),
               ),
               Custom_ListTile(
-                img: faq,
-                heading: "FAQ",
-                onTap: () => context.push("/faqPage"),
+                img: offers,
+                iconColor: btnColor,
+                heading: "Offers",
+                onTap: () => context.push("/allOffer"),
               ),
               const Spacer(),
               CustomButtonLogout(

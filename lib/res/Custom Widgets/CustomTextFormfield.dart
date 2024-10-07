@@ -9,6 +9,7 @@ class Customtextformfield extends StatefulWidget {
   final String? Function(String?)? validator;
   final Function(String)? onChanged;
   final bool? obscureText;
+  final bool? readOnly;
   final int? maxLines;
   final int? minLines;
   final int? textLength;
@@ -28,6 +29,7 @@ class Customtextformfield extends StatefulWidget {
       required this.hintText,
       this.validator,
       this.obscureText,
+      this.readOnly,
       this.maxLines,
       this.minLines = 1,
       this.textLength,
@@ -54,7 +56,9 @@ class _CustomtextformfieldState extends State<Customtextformfield> {
       height: widget.hieght,
       width: widget.width,
       child: TextFormField(
+        autovalidateMode: AutovalidateMode.onUserInteraction,
         focusNode: widget.focusNode,
+        readOnly: widget.readOnly ?? false,
         obscureText: widget.obscureText ?? false,
         obscuringCharacter: widget.obscuringCharacter ?? '•',
         controller: widget.controller,
@@ -107,7 +111,8 @@ class _CustomtextformfieldState extends State<Customtextformfield> {
             errorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(5.0),
               borderSide: const BorderSide(
-                color: redColor,
+                color: Color(0xFFCDCDCD),
+                // color: redColor,
                 // width: 2.0,
               ),
             )

@@ -30,7 +30,7 @@ class UserProfileViewModel with ChangeNotifier {
       // context.push("/profilePage",extra: {"userId":uid});
     }).onError((error, stackTrace) {
       // debugPrint("data nhi chla");
-      Utils.flushBarErrorMessage(error.toString(), context);
+      Utils.toastMessage(error.toString());
       setDataList(ApiResponse.error(error.toString()));
     });
   }
@@ -50,8 +50,9 @@ class ProfileImageViewModel with ChangeNotifier {
     _myRepo.fetchProfileImageApi(data).then((value) async {
       setDataList(ApiResponse.completed(value));
       // context.pop();
-      Utils.flushBarSuccessMessage(
-          DataList.data ?? "Profile Uploaded Successfully", context);
+      Utils.toastSuccessMessage(
+        DataList.data ?? "Profile Uploaded Successfully",
+      );
       // print('Profile Upload Completed');
     }).onError((error, stackTrace) {
       setDataList(ApiResponse.error(error.toString()));
@@ -88,7 +89,9 @@ class UserProfileUpdateViewModel with ChangeNotifier {
       // }, uid).then((value) => print("k"));
 
       setDataList(ApiResponse.completed(value));
-      Utils.flushBarSuccessMessage("Profile Updated Success", context);
+      Utils.toastSuccessMessage(
+        "Profile Updated Success",
+      );
       // Utils.flushBarSuccessMessage("Profile Updated Success", context);
       // print("aaadtad");
     }).onError((error, stackTrace) {
@@ -139,7 +142,7 @@ class ResetPasswordViewModel with ChangeNotifier {
       notifyListeners();
       var resp = await _myRepo.sendOtpApi(context: context, query: query);
       if (resp?.status?.httpCode == '200') {
-        Utils.flushBarSuccessMessage(resp?.status?.message, context);
+        Utils.toastSuccessMessage(resp?.status?.message ?? '');
         isLoading = false;
         notifyListeners();
       }
@@ -166,7 +169,7 @@ class ResetPasswordViewModel with ChangeNotifier {
       notifyListeners();
       await _myRepo.verifyOtpApi(context: context, query: query).then((resp) {
         if (resp?.status?.httpCode == '200') {
-          Utils.flushBarSuccessMessage(resp?.status?.message, context);
+          Utils.toastSuccessMessage(resp?.status?.message ?? '');
           context.push('/resetPassword', extra: {"email": email});
           isLoading = false;
           notifyListeners();
@@ -192,7 +195,7 @@ class ResetPasswordViewModel with ChangeNotifier {
       notifyListeners();
       var resp = await _myRepo.resetPasswordApi(context: context, query: query);
       if (resp?.status?.httpCode == '200') {
-        Utils.flushBarSuccessMessage(resp?.status?.message, context);
+        Utils.toastSuccessMessage(resp?.status?.message ?? '');
         context.push('/login');
         isLoading2 = false;
         notifyListeners();

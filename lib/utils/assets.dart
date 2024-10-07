@@ -7,6 +7,8 @@ const String transaction = "assets/images/transaction.png";
 const String card = "assets/images/card.png";
 const String contact = "assets/images/contact.png";
 const String faq = "assets/images/faq.png";
+const String offers = "assets/images/offers.png";
+
 const String logout = "assets/images/logout.png";
 const String notification = "assets/images/noti.png";
 const String pass = "assets/images/password.png";
@@ -59,3 +61,6 @@ const String aed = "assets/images/aed.png";
 const String distance = "assets/images/distance.png";
 const String package = "assets/images/package.png";
 const String swabiNew = "assets/images/swabiNew.png";
+const String header = "assets/images/DubaiHeader.avif";
+const String ascendingIcon = "assets/images/ascending.png";
+const String descendingIcon = "assets/images/descending.png";

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_cab/res/Common%20Widgets/common_offer_container.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/customdropdown_button.dart';
 import 'package:flutter_cab/res/customTextWidget.dart';
 import 'package:flutter_cab/res/custom_dropDown.dart';
@@ -28,10 +29,14 @@ class RentalForm extends StatefulWidget {
 }
 
 class _RentalFormState extends State<RentalForm> with RouteAware {
+  final _formKey = GlobalKey<FormState>();
   final pickuplocationController = TextEditingController();
   final pickupdateController = TextEditingController();
   final seatController = TextEditingController();
   final rentalController = TextEditingController();
+  final hoursController = TextEditingController();
+  final minsController = TextEditingController();
+
   String selectHour = '';
   String selectMin = '';
 
@@ -80,7 +85,11 @@ class _RentalFormState extends State<RentalForm> with RouteAware {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       Provider.of<GetRentalRangeListViewModel>(context, listen: false)
           .fetchGetRentalRangeListViewModelApi(context, {});
+      rentalController.addListener(_onRentalControllerChanged);
+      pickupdateController.addListener(_onRentalControllerChanged);
+      seatController.addListener(_onRentalControllerChanged);
     });
+
     // controllers[0].addListener(() {
     //   onChange();
     // });
@@ -89,6 +98,22 @@ class _RentalFormState extends State<RentalForm> with RouteAware {
   @override
   void didPopNext() {
     // Reset the time when coming back to this page
+  }
+  @override
+  void dispose() {
+    rentalController.removeListener(_onRentalControllerChanged);
+    pickupdateController.removeListener(_onRentalControllerChanged);
+    seatController.removeListener(_onRentalControllerChanged);
+
+    rentalController.dispose();
+    pickupdateController.dispose();
+    seatController.dispose();
+    super.dispose();
+  }
+
+  void _onRentalControllerChanged() {
+    // Trigger validation manually on every change
+    setState(() {});
   }
 
   bool onTap = false;
@@ -107,268 +132,447 @@ class _RentalFormState extends State<RentalForm> with RouteAware {
             ?.data ??
         [];
     String status = context.watch<RentalViewModel>().DataList.status.toString();
-    return Scaffold(
-      backgroundColor: bgGreyColor,
-      resizeToAvoidBottomInset: false,
-      appBar: const CustomAppBar(
-        heading: "Rental Vehicle",
-      ),
-      body: PageLayout_Page(
-          child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: Text.rich(TextSpan(children: [
-                  TextSpan(text: 'Pickup Location', style: titleTextStyle),
-                  TextSpan(text: ' *', style: TextStyle(color: redColor))
-                ])),
-                // child: Text("Pickup Location", style: titleTextStyle),
-              ),
-              const SizedBox(height: 5),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                height: 50,
-                child: GooglePlaceAutoCompleteTextField(
-                  textEditingController: pickuplocationController,
-                  boxDecoration: BoxDecoration(
-                      color: background,
-                      borderRadius: BorderRadius.circular(5),
-                      border:
-                          Border.all(color: naturalGreyColor.withOpacity(0.3))),
-                  googleAPIKey: "AIzaSyADRdiTbSYUR8oc6-ryM1F1NDNjkHDr0Yo",
-                  inputDecoration: InputDecoration(
-                    isDense: true,
-                    helperStyle: titleTextStyle,
-                    prefixStyle: titleTextStyle,
-                    counterStyle: titleTextStyle,
-                    contentPadding:
-                        const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
-                    hintText: "Search your location",
-                    border:
-                        const OutlineInputBorder(borderSide: BorderSide.none),
-                    hintStyle: GoogleFonts.lato(
-                      color: greyColor1,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
-                    filled: true,
-                    labelStyle: titleTextStyle,
-                    fillColor: background,
-                    disabledBorder: const OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(5)),
-                        borderSide: BorderSide.none),
-                  ),
-                  textStyle: titleTextStyle,
-                  debounceTime: 400,
-                  isLatLngRequired: true,
-                  getPlaceDetailWithLatLng: (prediction) {
-                    print(
-                        "Latitude: ${prediction.lat}, Longitude: ${prediction.lng}");
-                    setState(() {
-                      lati = double.parse(prediction.lat ?? '0.0');
-                      logi = double.parse(prediction.lng ?? '0.0');
-                    });
-                    // logitude = prediction.lng.toString();
-                    // latitude = prediction.lat.toString();
-                    // You can use prediction.lat and prediction.lng here as needed
-                    // Example: Save them to variables or perform further actions
-                  },
-                  itemClick: (prediction) {
-                    pickuplocationController.text =
-                        prediction.description ?? "";
-                    pickuplocationController.selection =
-                        TextSelection.fromPosition(TextPosition(
-                            offset: prediction.description?.length ?? 0));
-                  },
-                  seperatedBuilder: const Divider(),
+    // return Scaffold(
+    //   backgroundColor: bgGreyColor,
+    //   resizeToAvoidBottomInset: false,
+    //   appBar: const CustomAppBar(
+    //     heading: "Rental Vehicle",
+    //   ),
+    //   body:
+    return SingleChildScrollView(
+      child: Form(
+        key: _formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(height: 10),
+            const CommonOfferContainer(
+              bookingType: 'RENTAL_BOOKING',
+            ),
+            SizedBox(height: 10),
 
-                  // OPTIONAL// If you want to customize list view item builder
-                  itemBuilder: (context, index, prediction) {
-                    return Container(
-                      padding: const EdgeInsets.only(bottom: 10, top: 10),
-                      // color: background,
-                      child: Row(
-                        children: [
-                          const Icon(Icons.location_on),
-                          const SizedBox(
-                            width: 7,
-                          ),
-                          Expanded(child: Text(prediction.description ?? ""))
-                        ],
-                      ),
-                    );
-                  },
-                  isCrossBtnShown: false,
-                  // default 600 ms ,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          FormDatePickerExpense(
-            title: "Pickup Date",
-            controller: pickupdateController,
-            hint: "PickUp Date",
-          ),
-          const SizedBox(height: 10),
-          Align(
-            alignment: Alignment.centerLeft,
-            child: Padding(
-              padding: const EdgeInsets.only(left: 10),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
               child: Text.rich(TextSpan(children: [
-                TextSpan(text: 'Pickup Time', style: titleTextStyle),
+                TextSpan(text: 'Pickup Location', style: titleTextStyle),
                 TextSpan(text: ' *', style: TextStyle(color: redColor))
               ])),
+              // child: Text("Pickup Location", style: titleTextStyle),
             ),
-          ),
-          const SizedBox(height: 5),
+            const SizedBox(height: 5),
+            FormField<String>(
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                validator: (value) {
+                  if (pickuplocationController.text.isEmpty) {
+                    return 'Please select location';
+                  }
+                  return null;
+                },
+                builder: (FormFieldState<String> field) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        height: 50,
+                        child: GooglePlaceAutoCompleteTextField(
+                          textEditingController: pickuplocationController,
+                          boxDecoration: BoxDecoration(
+                              color: background,
+                              borderRadius: BorderRadius.circular(5),
+                              border: Border.all(
+                                  color: naturalGreyColor.withOpacity(0.3))),
+                          googleAPIKey:
+                              "AIzaSyADRdiTbSYUR8oc6-ryM1F1NDNjkHDr0Yo",
+                          inputDecoration: InputDecoration(
+                            isDense: true,
+                            helperStyle: titleTextStyle,
+                            prefixStyle: titleTextStyle,
+                            counterStyle: titleTextStyle,
+                            contentPadding: const EdgeInsets.symmetric(
+                                vertical: 0, horizontal: 10),
+                            hintText: "Search your location",
+                            border: const OutlineInputBorder(
+                                borderSide: BorderSide.none),
+                            hintStyle: GoogleFonts.lato(
+                              color: greyColor1,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                            filled: true,
+                            labelStyle: titleTextStyle,
+                            fillColor: background,
+                            disabledBorder: const OutlineInputBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(5)),
+                                borderSide: BorderSide.none),
+                          ),
+                          textStyle: titleTextStyle,
+                          debounceTime: 400,
+                          isLatLngRequired: true,
+                          getPlaceDetailWithLatLng: (prediction) {
+                            print(
+                                "Latitude: ${prediction.lat}, Longitude: ${prediction.lng}");
+                            setState(() {
+                              lati = double.parse(prediction.lat ?? '0.0');
+                              logi = double.parse(prediction.lng ?? '0.0');
+                            });
+                            // logitude = prediction.lng.toString();
+                            // latitude = prediction.lat.toString();
+                            // You can use prediction.lat and prediction.lng here as needed
+                            // Example: Save them to variables or perform further actions
+                          },
+                          itemClick: (prediction) {
+                            pickuplocationController.text =
+                                prediction.description ?? "";
+                            pickuplocationController.selection =
+                                TextSelection.fromPosition(TextPosition(
+                                    offset:
+                                        prediction.description?.length ?? 0));
+                            field.didChange(prediction.description);
+                          },
+                          seperatedBuilder: const Divider(),
 
-          Row(
-            children: [
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 10, right: 10),
-                  child: CustomDropdownButton(
+                          // OPTIONAL// If you want to customize list view item builder
+                          itemBuilder: (context, index, prediction) {
+                            return Container(
+                              padding:
+                                  const EdgeInsets.only(bottom: 10, top: 10),
+                              // color: background,
+                              child: Row(
+                                children: [
+                                  const Icon(Icons.location_on),
+                                  const SizedBox(
+                                    width: 7,
+                                  ),
+                                  Expanded(
+                                      child: Text(prediction.description ?? ""))
+                                ],
+                              ),
+                            );
+                          },
+                          isCrossBtnShown: false,
+                          // default 600 ms ,
+                        ),
+                      ),
+                      if (field.hasError)
+                        pickuplocationController.text.isEmpty
+                            ? Padding(
+                                padding: const EdgeInsets.only(left: 20),
+                                child: Text(
+                                  field.errorText!,
+                                  style: TextStyle(color: redColor),
+                                ),
+                              )
+                            : Container(),
+                    ],
+                  );
+                }),
+            const SizedBox(height: 10),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: FormField<String>(
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  validator: (value) {
+                    if (pickupdateController.text.isEmpty) {
+                      return 'Please select pickupDate';
+                    }
+                    return null;
+                  },
+                  builder: (FormFieldState<String> field) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        FormDatePickerExpense(
+                          width: double.infinity,
+                          title: "Pickup Date",
+                          controller: pickupdateController,
+                          hint: "PickUp Date",
+                        ),
+                        if (field.hasError)
+                          pickupdateController.text.isEmpty
+                              ? Padding(
+                                  padding: const EdgeInsets.only(left: 10),
+                                  child: Text(
+                                    field.errorText!,
+                                    style: TextStyle(color: redColor),
+                                  ),
+                                )
+                              : Container(),
+                      ],
+                    );
+                  }),
+            ),
+            const SizedBox(height: 10),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Padding(
+                padding: const EdgeInsets.only(left: 10),
+                child: Text.rich(TextSpan(children: [
+                  TextSpan(text: 'Pickup Time', style: titleTextStyle),
+                  TextSpan(text: ' *', style: TextStyle(color: redColor))
+                ])),
+              ),
+            ),
+            const SizedBox(height: 5),
+
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 10, right: 10),
+                    child: CustomDropdownButton(
+                      // selecteValue: selectHour,
+
+                      controller: hoursController,
                       itemsList: hours,
                       onChanged: (p0) {
                         setState(() {
-                          selectHour = p0;
+                          selectHour = p0 ?? '';
                         });
                       },
-                      hintText: 'Select Hours'),
-                ),
-              ),
-              const Text(
-                ':',
-                style: TextStyle(fontWeight: FontWeight.w800),
-              ),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 10, right: 10),
-                  child: CustomDropdownButton(
-                    itemsList: mins,
-                    onChanged: (p0) {
-                      setState(() {
-                        selectMin = p0;
-                      });
-                    },
-                    hintText: 'Select Mins',
+                      hintText: 'Select Hours',
+                      validator: (p0) {
+                        if (p0 == null ||
+                            hoursController.text.isEmpty ||
+                            hoursController.text == "00") {
+                          return 'Please select hours';
+                        }
+                        return null;
+                      },
+                    ),
                   ),
                 ),
-              )
-            ],
-          ),
-          // TimePickerDropdown(
-          //   hrcontroller: controllers[2],
-          //   mincontroller: controllers[3],
-          // ),
-          const SizedBox(height: 10),
-          FormCommonSingleAlertSelector(
-            title: "Select Seats",
-            elevation: 0,
-            controller: seatController,
-            showIcon: const Icon(
-              Icons.event_seat,
-              color: naturalGreyColor,
+                const Text(
+                  ':',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontWeight: FontWeight.w800),
+                ),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 10, right: 10),
+                    child: CustomDropdownButton(
+                      // selecteValue: selectMin,
+
+                      controller: minsController,
+                      itemsList: mins,
+                      onChanged: (p0) {
+                        setState(() {
+                          selectMin = p0 ?? '';
+                        });
+                      },
+                      hintText: 'Select Mins',
+                      validator: (p0) {
+                        if (p0 == null || minsController.text.isEmpty) {
+                          return 'Please select mins';
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                )
+              ],
             ),
-            iconReq: true,
-            data: items,
-            border: true,
+            // TimePickerDropdown(
+            //   hrcontroller: controllers[2],
+            //   mincontroller: controllers[3],
+            // ),
+            const SizedBox(height: 10),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: FormField<String>(
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  validator: (value) {
+                    if (seatController.text.isEmpty) {
+                      return 'Please select seats';
+                    }
+                    return null;
+                  },
+                  builder: (FormFieldState<String> field) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        FormCommonSingleAlertSelector(
+                          width: double.infinity,
+                          title: "Select Seats",
+                          elevation: 0,
+                          controller: seatController,
+                          showIcon: const Icon(
+                            Icons.event_seat,
+                            color: naturalGreyColor,
+                          ),
+                          iconReq: true,
+                          data: items,
+                          border: false,
 
-            ///Hint Color
-            initialValue: "Select Seats",
-            alertBoxTitle: "Select Seats",
-          ),
-
-          // TextFeildTiming(
-          //     width: AppDimension.getWidth(context) * .9,
-          //     title: "Time",
-          //     hint: "PickUp Time",
-          //     controller: controllers[2]),
-          const SizedBox(height: 10),
-          FormCommonSingleAlertSelector(
-            title: "Select Rental Package",
-            elevation: 0,
-            controller: rentalController,
-            showIcon: const Icon(
-              Icons.add_road,
-              color: naturalGreyColor,
+                          ///Hint Color
+                          initialValue: "Select Seats",
+                          alertBoxTitle: "Select Seats",
+                        ),
+                        if (field.hasError)
+                          seatController.text.isEmpty
+                              ? Padding(
+                                  padding: const EdgeInsets.only(left: 10),
+                                  child: Text(
+                                    field.errorText!,
+                                    style: TextStyle(color: redColor),
+                                  ),
+                                )
+                              : Container(),
+                      ],
+                    );
+                  }),
             ),
-            iconReq: true,
-            data: List.generate(
-                rangeData.length,
-                (index) =>
-                    "${rangeData[index].hours} Hr ${rangeData[index].kilometer} Km"),
 
-            ///Hint Color
-            initialValue: "Select Rental package",
-            alertBoxTitle: "Select Rental package",
-            border: true,
-          ),
+            // TextFeildTiming(
+            //     width: AppDimension.getWidth(context) * .9,
+            //     title: "Time",
+            //     hint: "PickUp Time",
+            //     controller: controllers[2]),
+            const SizedBox(height: 10),
+            Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: FormField<String>(
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    validator: (value) {
+                      if (rentalController.text.isEmpty) {
+                        return 'Please select rental range';
+                      }
+                      return null;
+                    },
+                    builder: (FormFieldState<String> field) {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          FormCommonSingleAlertSelector(
+                            width: double.infinity,
+                            title: "Select Rental Package",
+                            elevation: 0,
+                            controller: rentalController,
+                            showIcon: const Icon(
+                              Icons.add_road,
+                              color: naturalGreyColor,
+                            ),
+                            iconReq: true,
+                            data: List.generate(
+                                rangeData.length,
+                                (index) =>
+                                    "${rangeData[index].hours} Hr ${rangeData[index].kilometer} Km"),
 
-          const Spacer(),
-          CustomButtonBig(
-            widht: AppDimension.getWidth(context) * .9,
-            btnHeading: "SEARCH",
-            // loading: _rentalViewModel.loading,
-            loading: status == "Status.loading" && onTap,
-            onTap: () {
-              /////API Calling
-              if (pickuplocationController.text.isEmpty) {
-                Utils.flushBarErrorMessage(
-                    "Please select your pickup point", context);
-              } else if (pickupdateController.text.isEmpty ||
-                  pickupdateController.text == "0") {
-                Utils.flushBarErrorMessage(
-                    "Please select pickup date", context);
-              } else if (selectHour.isEmpty || selectHour == "00") {
-                Utils.flushBarErrorMessage("Please select hour", context);
-              } else if (selectMin.isEmpty) {
-                Utils.flushBarErrorMessage("Please select min", context);
-              } else if (seatController.text.isEmpty) {
-                Utils.flushBarErrorMessage("Please select your seats", context);
-              } else if (rentalController.text.isEmpty) {
-                Utils.flushBarErrorMessage("Please select your range", context);
-              } else {
-                // String pickupTime = controllers[2].text;
-                // if (pickupTime.length < 5) {
-                //   pickupTime = '0$pickupTime';
-                // }
-                onTap = true;
-                // print(pickupTime);
-                Provider.of<RentalViewModel>(context, listen: false)
-                    .fetchRentalViewModelApi(
-                        context,
-                        {
-                          "date": pickupdateController.text,
-                          "pickupTime": '${selectHour}:${selectMin}',
-                          "seat": seatController.text,
-                          "hours": rentalController.text.split(' ')[0],
-                          "kilometers": rentalController.text.split(' ')[2],
-                          "pickUpLocation": pickuplocationController.text,
-                          "latitude": lati.toString(),
-                          "longitude": logi.toString(),
-                        },
-                        widget.userId,
-                        logi,
-                        lati);
-                print("${status}Status Hai Ye");
-                // if(status == "Status.completed"){
-                // context.push('/rentalForm/carsDetails',extra: {'id': widget.userId});
-                // }else{
-                //   Utils.flushBarErrorMessage("No vehicle available with the selected number of seats.", context, redColor);
-                // }
+                            ///Hint Color
+                            initialValue: "Select Rental package",
+                            alertBoxTitle: "Select Rental package",
+                            border: false,
+                          ),
+                          if (field.hasError)
+                            Padding(
+                              padding: const EdgeInsets.only(left: 10),
+                              child: Text(
+                                rentalController.text.isEmpty
+                                    ? field.errorText!
+                                    : '',
+                                style: TextStyle(color: redColor),
+                              ),
+                            ),
+                        ],
+                      );
+                    })),
 
-                sourceLocation = '';
-              }
-            },
-          )
-        ],
-      )),
+            // const Spacer(),
+            SizedBox(height: 10),
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: CustomButtonBig(
+                widht: double.infinity,
+                btnHeading: "SEARCH",
+                // loading: _rentalViewModel.loading,
+                loading: status == "Status.loading" && onTap,
+                onTap: () {
+                  if (_formKey.currentState!.validate()) {
+                    onTap = true;
+                    // print(pickupTime);
+                    Provider.of<RentalViewModel>(context, listen: false)
+                        .fetchRentalViewModelApi(
+                            context,
+                            {
+                              "date": pickupdateController.text,
+                              "pickupTime": '${selectHour}:${selectMin}',
+                              "seat": seatController.text,
+                              "hours": rentalController.text.split(' ')[0],
+                              "kilometers": rentalController.text.split(' ')[2],
+                              "pickUpLocation": pickuplocationController.text,
+                              "latitude": lati.toString(),
+                              "longitude": logi.toString(),
+                            },
+                            widget.userId,
+                            logi,
+                            lati);
+                    print("${status}Status Hai Ye");
+                    // if(status == "Status.completed"){
+                    // context.push('/rentalForm/carsDetails',extra: {'id': widget.userId});
+                    // }else{
+                    //   Utils.flushBarErrorMessage("No vehicle available with the selected number of seats.", context, redColor);
+                    // }
+                  }
+
+                  // /////API Calling
+                  // if (pickuplocationController.text.isEmpty) {
+                  //   Utils.flushBarErrorMessage(
+                  //       "Please select your pickup point", context);
+                  // } else if (pickupdateController.text.isEmpty ||
+                  //     pickupdateController.text == "0") {
+                  //   Utils.flushBarErrorMessage(
+                  //       "Please select pickup date", context);
+                  // } else if (selectHour.isEmpty || selectHour == "00") {
+                  //   Utils.flushBarErrorMessage("Please select hour", context);
+                  // } else if (selectMin.isEmpty) {
+                  //   Utils.flushBarErrorMessage("Please select min", context);
+                  // } else if (seatController.text.isEmpty) {
+                  //   Utils.flushBarErrorMessage(
+                  //       "Please select your seats", context);
+                  // } else if (rentalController.text.isEmpty) {
+                  //   Utils.flushBarErrorMessage(
+                  //       "Please select your range", context);
+                  // } else {
+                  //   // String pickupTime = controllers[2].text;
+                  //   // if (pickupTime.length < 5) {
+                  //   //   pickupTime = '0$pickupTime';
+                  //   // }
+                  //   onTap = true;
+                  //   // print(pickupTime);
+                  //   Provider.of<RentalViewModel>(context, listen: false)
+                  //       .fetchRentalViewModelApi(
+                  //           context,
+                  //           {
+                  //             "date": pickupdateController.text,
+                  //             "pickupTime": '${selectHour}:${selectMin}',
+                  //             "seat": seatController.text,
+                  //             "hours": rentalController.text.split(' ')[0],
+                  //             "kilometers": rentalController.text.split(' ')[2],
+                  //             "pickUpLocation": pickuplocationController.text,
+                  //             "latitude": lati.toString(),
+                  //             "longitude": logi.toString(),
+                  //           },
+                  //           widget.userId,
+                  //           logi,
+                  //           lati);
+                  //   print("${status}Status Hai Ye");
+                  //   // if(status == "Status.completed"){
+                  //   // context.push('/rentalForm/carsDetails',extra: {'id': widget.userId});
+                  //   // }else{
+                  //   //   Utils.flushBarErrorMessage("No vehicle available with the selected number of seats.", context, redColor);
+                  //   // }
+
+                  //   sourceLocation = '';
+                  // }
+                },
+              ),
+            )
+          ],
+        ),
+      ),
     );
+    // );
   }
 }

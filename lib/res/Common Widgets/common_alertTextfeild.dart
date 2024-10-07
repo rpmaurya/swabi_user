@@ -105,7 +105,7 @@ class _FormCommonSingleAlertSelectorState
                 shape: RoundedRectangleBorder(
                   side: BorderSide(
                       color: widget.border
-                          ? naturalGreyColor.withOpacity(0.3)
+                          ? redColor
                           : naturalGreyColor.withOpacity(0.3)),
                   borderRadius: BorderRadius.circular(5),
                 ),

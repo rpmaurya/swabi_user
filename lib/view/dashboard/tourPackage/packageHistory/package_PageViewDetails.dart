@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_cab/model/getIssueByBookingIdModel.dart';
 import 'package:flutter_cab/model/packageModels.dart';
 import 'package:flutter_cab/model/paymentDetailsModel.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
@@ -19,6 +20,7 @@ import 'package:flutter_cab/utils/text_styles.dart';
 import 'package:flutter_cab/utils/utils.dart';
 import 'package:flutter_cab/view/dashboard/rental/carBooking.dart';
 import 'package:flutter_cab/view/dashboard/tourPackage/packageDetails.dart';
+import 'package:flutter_cab/view_model/raiseIssue_view_model.dart';
 import 'package:flutter_cab/view_model/rental_view_model.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_api_headers/google_api_headers.dart';
@@ -49,7 +51,7 @@ class PackagePageViewDetails extends StatefulWidget {
 class _PackagePageViewDetailsState extends State<PackagePageViewDetails> {
   TextEditingController cancelController = TextEditingController();
   TextEditingController alertController = TextEditingController();
-
+  GetIssueByBookingIdModel? getIssueByBookingId;
   bool loading = false;
   int? day;
   PaymentDetailsModel? paymentDetails;
@@ -62,6 +64,12 @@ class _PackagePageViewDetailsState extends State<PackagePageViewDetails> {
           .fetchGetPackageItineraryViewModelApi(
               context, {"packageBookingId": widget.packageBookID});
       getPaymentDetail();
+      Provider.of<RaiseissueViewModel>(context, listen: false)
+          .getIssueByBookingId(
+              context: context,
+              bookingId: widget.packageBookID,
+              userId: widget.userId,
+              bookingType: 'PACKAGE_BOOKING');
     });
     // day = detailsData.bookingDate * pkgDetails.noOfDays;
   }
@@ -173,6 +181,8 @@ class _PackagePageViewDetailsState extends State<PackagePageViewDetails> {
             ?.data
             ?.packageBookingId ??
         '';
+    getIssueByBookingId =
+        context.watch<RaiseissueViewModel>().getIssueBybookingId.data;
     // debugPrint("${getPackageItineraryList.length} GetItineraryDetailsList");
     debugPrint("${widget.paymentId} paymentId......ramji");
     return Scaffold(
@@ -197,6 +207,7 @@ class _PackagePageViewDetailsState extends State<PackagePageViewDetails> {
         children: [
           detailsData != []
               ? PackageDetailsContainer(
+                  getIssueByBookingId: getIssueByBookingId,
                   id: widget.packageBookID,
                   pkgImage: packageImage,
                   packageName: pkgDetails.packageName,
@@ -217,8 +228,7 @@ class _PackagePageViewDetailsState extends State<PackagePageViewDetails> {
                   controllerWidget: alertController,
                   alertOnTap: () {
                     if (alertController.text.isEmpty) {
-                      Utils.flushBarErrorMessage(
-                          "Please enter your pickUp Location", context);
+                      Utils.toastMessage("Please enter your pickUp Location");
                     } else {
                       Provider.of<AddPickUpLocationPackageViewModel>(context,
                               listen: false)
@@ -371,8 +381,7 @@ class _PackagePageViewDetailsState extends State<PackagePageViewDetails> {
                                 loading = true;
                                 if (cancelController.text.isEmpty ||
                                     cancelController.text == 'null') {
-                                  Utils.flushBarErrorMessage(
-                                      "Please enter the reason", context);
+                                  Utils.toastMessage("Please enter the reason");
                                 } else {
                                   await Provider.of<PackageCancelViewModel>(
                                           context,
@@ -408,6 +417,7 @@ class _PackagePageViewDetailsState extends State<PackagePageViewDetails> {
 }
 
 class PackageDetailsContainer extends StatefulWidget {
+  final GetIssueByBookingIdModel? getIssueByBookingId;
   final String id;
   final String bookingStatus;
   final String packageName;
@@ -437,6 +447,7 @@ class PackageDetailsContainer extends StatefulWidget {
 
   const PackageDetailsContainer(
       {super.key,
+      required this.getIssueByBookingId,
       required this.id,
       required this.bookingStatus,
       this.onTap,
@@ -775,7 +786,8 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
                                           children: [
                                             Text.rich(TextSpan(children: [
                                               TextSpan(
-                                                  text: 'Location',
+                                                  text:
+                                                      'Plz Add Pickup Location',
                                                   style: titleTextStyle),
                                               const TextSpan(
                                                   text: ' *',
@@ -1072,6 +1084,28 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
                   ? bookingItem(
                       lable: 'Cancel Reason', value: widget.cancelReason)
                   : const SizedBox(),
+              (widget.getIssueByBookingId?.data ?? []).isEmpty
+                  ? Container()
+                  : Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            'Created Issue',
+                            style: titleTextStyle,
+                          ),
+                        ),
+                        Text(':', style: titleTextStyle),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: CustomButtonSmall(
+                              height: 40,
+                              btnHeading: 'Show IssueDetails',
+                              onTap: () {
+                                context.push("/raiseIssueDetail");
+                              }),
+                        )
+                      ],
+                    )
             ],
           ),
         ),
@@ -1393,7 +1427,7 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            widget.bookingStatus == "BOOKED"
+            (widget.getIssueByBookingId?.data ?? []).isEmpty
                 ? CustomButtonSmall(
                     width: 120,
                     height: 40,

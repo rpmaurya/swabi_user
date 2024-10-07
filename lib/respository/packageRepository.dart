@@ -82,7 +82,7 @@ class GetPackageHistoryRepository {
     try {
       dynamic response = await _apiServices.getGetApiResponse(
           "http://swabi.ap-south-1.elasticbeanstalk.com"
-          "/package_booking/get_package_booking_by_userId?userId=${data["userId"]}&bookingStatus=${data["bookingStatus"]}&pageNumber=${data["pageNumber"]}&pageSize=${data["pageSize"]}");
+          "/package_booking/get_package_booking_by_userId?userId=${data["userId"]}&bookingStatus=${data["bookingStatus"]}&pageNumber=${data["pageNumber"]}&pageSize=${data["pageSize"]}&search=${data["search"]}&sortBy=${data["sortBy"]}&sortDirection=${data["sortDirection"]}");
       print("Get Package History Repo Success$response");
       return response = GetPackageHistoryModel.fromJson(response);
     } catch (e) {
