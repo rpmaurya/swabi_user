@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/customdropdown_button.dart';
 import 'package:flutter_cab/res/Custom%20Page%20Layout/commonPage_Layout.dart';
@@ -203,6 +204,9 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                       focusNode: focusNode1,
                       controller: nameController,
                       hintText: 'Enter Name',
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(RegExp("[a-zA-Z]")),
+                      ],
                       // errorText:
                       //     validationMessage.isEmpty ? '' : validationMessage,
                       validator: (value) {
@@ -370,6 +374,9 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                     focusNode: focusNode1,
                     controller: nameController,
                     hintText: 'Enter Name',
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(RegExp("[a-zA-Z]")),
+                    ],
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please enter name';
@@ -486,7 +493,7 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
   double getPercentage() {
     double amt = (disCountPer / 100) * payAbleAmount;
     disAmount = amt > maxDisAmount ? maxDisAmount : amt;
-    return payAbleAmount - disAmount;
+    return payAbleAmount - disAmount.toInt();
   }
 
   @override
@@ -1264,7 +1271,7 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                     ),
                   ),
                   const TextSpan(
-                      text: '(Inclusive of taxs)',
+                      text: '(Inclusive of taxes)',
                       style: TextStyle(color: blackColor)),
                 ])),
                 InkWell(
@@ -1388,14 +1395,17 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                                         "alternateMobile":
                                             secondaryNoController.text,
                                         "offerCode": offerCode,
-                                        "discountAmount": discountAmount,
+                                        "discountAmount": disAmount.toInt(),
                                         "numberOfMembers":
                                             members.length.toString(),
                                         "memberList": members,
                                         "packagePrice": sumAmount,
                                         "taxAmount": taxAmount,
                                         "taxPercentage": taxPercentage,
-                                        "totalPayableAmount": payAbleAmount
+                                        "totalPayableAmount":
+                                            discountAmount == 0
+                                                ? payAbleAmount
+                                                : discountAmount
                                       },
                                       widget.userID);
                               // context.pop();
@@ -1434,129 +1444,90 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
       context: context,
       builder: (context) {
         return Dialog(
+          insetPadding: const EdgeInsets.all(20),
           backgroundColor: background,
           surfaceTintColor: background,
-          insetPadding: const EdgeInsets.all(20),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           child: Container(
+            height: 220,
             width: double.infinity,
-            height: 250,
+            padding: const EdgeInsets.all(20),
             child: Column(
               children: [
-                Padding(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Payable Amount Details',
-                        style: titleTextStyle,
-                      ),
-                      CustomButtonSmall(
-                          height: 35,
-                          width: 35,
-                          btnHeading: 'X',
-                          onTap: () {
-                            context.pop();
-                          }),
-                    ],
-                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Amount Details',
+                      style: titleTextStyle,
+                    ),
+                    CustomButtonSmall(
+                        height: 35,
+                        width: 35,
+                        btnHeading: 'X',
+                        onTap: () {
+                          context.pop();
+                        }),
+                  ],
                 ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        flex: 4,
-                        child: Text(
-                          'Package Amount',
-                          style: titleTextStyle,
-                        ),
-                      ),
-                      const Text(':'),
-                      const SizedBox(width: 10),
-                      Expanded(
-                          flex: 2,
-                          child: Text(
-                            sumAmount.toString(),
-                            style: titleTextStyle1,
-                          ))
-                    ],
-                  ),
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Package Amount',
+                      style: titleTextStyle,
+                    ),
+                    Text(
+                      'AED ${sumAmount.toInt()}',
+                      style: titleTextStyle1,
+                    )
+                  ],
                 ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                          flex: 4,
-                          child: Text(
-                            'Tax Amount (5 %)',
-                            style: titleTextStyle,
-                          )),
-                      const Text(':'),
-                      const SizedBox(width: 10),
-                      Expanded(
-                          flex: 2,
-                          child: Text(
-                            '+ $taxAmount',
-                            style: titleTextStyle1,
-                          ))
-                    ],
-                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Tax Amount (5 %)',
+                      style: titleTextStyle,
+                    ),
+                    Text(
+                      '+ AED ${taxAmount.toInt()}',
+                      style: titleTextStyle1,
+                    )
+                  ],
                 ),
-                discountAmount == 0
-                    ? Container()
-                    : Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(
-                              flex: 4,
-                              child: Text(
-                                'Save Amount',
-                                style: titleTextStyle,
-                              ),
-                            ),
-                            const Text(':'),
-                            const SizedBox(width: 10),
-                            Expanded(
-                                flex: 2,
-                                child: Text(
-                                  '- ${payAbleAmount - discountAmount}',
-                                  style: titleTextStyle1,
-                                ))
-                          ],
-                        ),
-                      ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Save Amount',
+                      style: titleTextStyle,
+                    ),
+                    Text(
+                      discountAmount == 0
+                          ? '- AED ${discountAmount.toInt()}'
+                          : '- AED ${disAmount.toInt()}',
+                      style: titleTextStyle1,
+                    )
+                  ],
+                ),
                 const Divider(),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        flex: 4,
-                        child: Text(
-                          'Payable Amount',
-                          style: titleTextStyle,
-                        ),
-                      ),
-                      const Text(':'),
-                      const SizedBox(width: 10),
-                      Expanded(
-                          flex: 2,
-                          child: Text(
-                            discountAmount == 0
-                                ? payAbleAmount.toString()
-                                : discountAmount.toString(),
-                            style: titleTextStyle1,
-                          ))
-                    ],
-                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Payable Amount',
+                      style: titleTextStyle,
+                    ),
+                    Text(
+                      discountAmount == 0
+                          ? 'AED ${payAbleAmount.toInt()}'
+                          : 'AED ${discountAmount.toInt()}',
+                      style: titleTextStyle1,
+                    )
+                  ],
                 ),
               ],
             ),

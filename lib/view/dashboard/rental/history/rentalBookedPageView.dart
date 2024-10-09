@@ -154,10 +154,12 @@ class _RentalBookedPageViewState extends State<RentalBookedPageView> {
                   kilometer: fulldata?.kilometers ?? '',
                   pickDate: fulldata?.date ?? '',
                   pickTime: fulldata?.pickupTime ?? '',
-                  rentalCharge: (fulldata?.discountAmount ?? '').isEmpty ||
-                          fulldata?.discountAmount == '0'
-                      ? fulldata?.rentalCharge ?? ''
-                      : fulldata?.discountAmount ?? '',
+                  rentalCharge: fulldata?.totalPayableAmount ?? '',
+
+                  // rentalCharge: (fulldata?.discountAmount ?? '').isEmpty ||
+                  //         fulldata?.discountAmount == '0'
+                  //     ? fulldata?.rentalCharge ?? ''
+                  //     : fulldata?.discountAmount ?? '',
                   status: fulldata?.bookingStatus ?? '',
                   fuel: fulldata?.vehicle.fuelType?.toString() ?? '',
                   pickUpLocation: fulldata?.pickupLocation != null
@@ -189,6 +191,9 @@ class _RentalBookedPageViewState extends State<RentalBookedPageView> {
                         paymentDate: DateFormat('dd-MM-yyyy').format(dateTime),
                         amount:
                             '${(double.tryParse(paymentDetails?.amount.toString() ?? '') ?? 0) / 100}',
+                        taxAmount: fulldata?.taxAmount ?? '',
+                        discountAmount: fulldata?.discountAmount ?? '',
+                        rentalAmount: fulldata?.rentalCharge ?? '',
                         paymentTime: formattedTime)
                     : Container(),
                 const SizedBox(height: 10),
@@ -372,6 +377,7 @@ class RentalBookingContainer extends StatelessWidget {
   final String seats;
   final String color;
   final GetIssueByBookingIdModel? getIssueByBookingId;
+
   // final VoidCallback confirmTap;
   final Widget btn;
 

@@ -109,11 +109,14 @@ class _AlloffersScreenState extends State<AlloffersScreen> {
                               ),
                               GestureDetector(
                                 onTap: () {
+                                  setState(() {
+                                    selectIndex = index;
+                                  });
                                   copyToClipboard(data?.offerCode ?? '');
                                 },
                                 child: Row(
                                   children: [
-                                    isCopied
+                                    isCopied && selectIndex == index
                                         ? const Text(
                                             'Copied',
                                             style:
@@ -121,7 +124,7 @@ class _AlloffersScreenState extends State<AlloffersScreen> {
                                           )
                                         : Text('CopyCodes'),
                                     const SizedBox(width: 5),
-                                    isCopied
+                                    isCopied && selectIndex == index
                                         ? const Icon(
                                             Icons.check,
                                             color: Colors.green,

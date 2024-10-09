@@ -226,6 +226,9 @@ class _PackagePageViewDetailsState extends State<PackagePageViewDetails> {
                   cancelledBy: detailsData.cancelledBy,
                   pickUpLocation: detailsData.pickupLocation,
                   controllerWidget: alertController,
+                  taxAmount: detailsData.taxAmount,
+                  discountAmount: detailsData.discountAmount,
+                  packageAmount: detailsData.packagePrice,
                   alertOnTap: () {
                     if (alertController.text.isEmpty) {
                       Utils.toastMessage("Please enter your pickUp Location");
@@ -243,10 +246,11 @@ class _PackagePageViewDetailsState extends State<PackagePageViewDetails> {
                     // });
                     alertController.clear();
                   },
-                  totalAmt: detailsData.discountAmount.toString() == '0' ||
-                          detailsData.discountAmount.toString().isEmpty
-                      ? detailsData.totalAmount
-                      : detailsData.discountAmount,
+                  // totalAmt: detailsData.discountAmount.toString() == '0' ||
+                  //         detailsData.discountAmount.toString().isEmpty
+                  //     ? detailsData.totalAmount
+                  //     : detailsData.discountAmount,
+                  totalAmt: detailsData.totalPayableAmount,
                   paymentDetails: paymentDetails,
                   memberList: List.generate(
                       memberListDetails.length,
@@ -444,6 +448,9 @@ class PackageDetailsContainer extends StatefulWidget {
   final List<AssignedDriverOnPackageBooking> driverDetails;
   final PaymentDetailsModel? paymentDetails;
   final VoidCallback? onTap;
+  final String packageAmount;
+  final String taxAmount;
+  final String discountAmount;
 
   const PackageDetailsContainer(
       {super.key,
@@ -473,6 +480,9 @@ class PackageDetailsContainer extends StatefulWidget {
       required this.vehicleDetails,
       required this.driverDetails,
       required this.paymentDetails,
+      required this.packageAmount,
+      required this.taxAmount,
+      required this.discountAmount,
       required this.days});
 
   @override
@@ -1135,7 +1145,18 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
                         lable: 'PaymentId',
                         value: widget.paymentDetails?.data?.id ?? ''),
                     textItem(
-                        lable: 'Amount',
+                        lable: 'Package Amount',
+                        value: 'AED ${widget.packageAmount}'),
+                    textItem(
+                        lable: 'Tax Amount (5%)',
+                        value: 'AED ${widget.taxAmount}'),
+                    widget.discountAmount == '0.0'
+                        ? SizedBox()
+                        : textItem(
+                            lable: 'Discount Amount',
+                            value: 'AED ${widget.discountAmount}'),
+                    textItem(
+                        lable: 'Total Amount',
                         value:
                             'AED ${double.parse(widget.paymentDetails?.data?.amount.toString() ?? '') / 100}'),
                     textItem(
@@ -1481,7 +1502,7 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
             width: 10,
           ),
           Expanded(
-            flex: 3,
+            flex: 2,
             child: Text(
               value,
               style: titleTextStyle1,

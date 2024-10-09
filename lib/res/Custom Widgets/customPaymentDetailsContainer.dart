@@ -7,12 +7,18 @@ class Custompaymentdetailscontainer extends StatelessWidget {
   final String paymentDate;
   final String amount;
   final String paymentTime;
+  final String taxAmount;
+  final String discountAmount;
+  final String rentalAmount;
   const Custompaymentdetailscontainer(
       {super.key,
       required this.paymentId,
       required this.paymentDate,
       required this.amount,
-      required this.paymentTime});
+      required this.paymentTime,
+      required this.taxAmount,
+      required this.discountAmount,
+      required this.rentalAmount});
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +51,13 @@ class Custompaymentdetailscontainer extends StatelessWidget {
               )),
             ),
             textItem(lable: 'Payment Id', value: paymentId),
-            textItem(lable: 'Amount', value: 'AED ${amount}'),
+            textItem(lable: 'Rental Amount', value: 'AED $rentalAmount'),
+            textItem(lable: 'Tax Amount (5%)', value: 'AED $taxAmount'),
+            discountAmount == '0.0'
+                ? SizedBox()
+                : textItem(
+                    lable: 'Discount Amount', value: 'AED $discountAmount'),
+            textItem(lable: 'Total Amount', value: 'AED ${amount}'),
             textItem(lable: 'PaymentDate', value: paymentDate),
             textItem(lable: 'PaymentTime', value: paymentTime),
             const SizedBox(

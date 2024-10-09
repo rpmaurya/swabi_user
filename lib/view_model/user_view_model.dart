@@ -94,4 +94,10 @@ class UserViewModel with ChangeNotifier {
     // sp.clear();
     Utils.toastSuccessMessage("Logout Successful");
   }
+
+  Future<dynamic> allClear(context) async {
+    final SharedPreferences sp = await SharedPreferences.getInstance();
+
+    sp.clear();
+  }
 }

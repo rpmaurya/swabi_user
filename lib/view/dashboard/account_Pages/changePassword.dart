@@ -170,7 +170,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                 obscureText: _obscureOldPassword,
                 // obscuringCharacter: '*',
                 controller: _oldPasswordController,
-                hintText: 'Enter old password',
+                hintText: 'Enter current password',
                 suffixIcons: IconButton(
                   icon: Icon(
                     _obscureOldPassword
@@ -185,7 +185,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Enter your old password';
+                    return 'Enter your current password';
                   } else {
                     return Validatorclass.validatePassword(value);
                   }

@@ -3,7 +3,9 @@ import 'package:flutter_cab/data/response/api_response.dart';
 import 'package:flutter_cab/model/registration_model.dart';
 import 'package:flutter_cab/respository/registration_repository.dart';
 import 'package:flutter_cab/utils/utils.dart';
+import 'package:flutter_cab/view_model/user_view_model.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 class PostSignUpViewModel with ChangeNotifier {
   final _myRepo = RegistrationRepository();
@@ -30,9 +32,13 @@ class PostSignUpViewModel with ChangeNotifier {
           .fetchRegistrationListApi(context: context, body: body)
           .then((onValue) {
         if (onValue?.status.httpCode == '200') {
+          final userPreference =
+              Provider.of<UserViewModel>(context, listen: false);
           setLoading(false);
           setDataList(ApiResponse.completed(onValue));
           // print("Signup Success");
+          userPreference.clearRememberMe();
+          userPreference.allClear(context);
           Utils.toastSuccessMessage("SignUp Successfully");
           context.push("/login");
         }

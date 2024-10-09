@@ -65,6 +65,7 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (context) => RaiseissueViewModel()),
         ChangeNotifierProvider(create: (context) => ResetPasswordViewModel()),
         ChangeNotifierProvider(create: (context) => OfferViewModel()),
+        ChangeNotifierProvider(create: (context) => GetTranactionViewModel()),
       ],
       child: const MyApp(),
     ));

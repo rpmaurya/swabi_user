@@ -1,6 +1,7 @@
 // ignore_for_file: camel_case_types, depend_on_referenced_packages
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_cab/data/validatorclass.dart';
 import 'package:flutter_cab/res/Common%20Widgets/common_alertTextfeild.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
@@ -13,6 +14,7 @@ import 'package:flutter_cab/utils/color.dart';
 import 'package:flutter_cab/utils/dimensions.dart';
 import 'package:flutter_cab/utils/text_styles.dart';
 import 'package:flutter_cab/view_model/registration_view_model.dart';
+import 'package:flutter_cab/view_model/user_view_model.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:google_fonts/google_fonts.dart';
@@ -131,6 +133,10 @@ class _registration_screenState extends State<registration_screen> {
                     Customtextformfield(
                       focusNode: firstNameFocus,
                       controller: controller[0],
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(RegExp("[a-zA-Z]")),
+                      ],
+                      keyboardType: TextInputType.name,
                       fillColor: background,
                       hintText: 'Enter Your first Name',
                       validator: (value) {
@@ -145,6 +151,10 @@ class _registration_screenState extends State<registration_screen> {
                     Customtextformfield(
                       focusNode: lastNameFocus,
                       controller: controller[1],
+                      keyboardType: TextInputType.name,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(RegExp("[a-zA-Z]")),
+                      ],
                       fillColor: background,
                       hintText: 'Enter Your last name',
                       validator: (value) {
@@ -389,102 +399,7 @@ class _registration_screenState extends State<registration_screen> {
                         textLength: 9,
                         hintText: 'Enter phone number',
                         countryCode: countryCode),
-                    SizedBox(height: 10),
-                    // SizedBox(
-                    //   width: AppDimension.getWidth(context) * .9,
-                    //   child: IntlPhoneField(
-                    //     focusNode: phoneFocus,
-                    //     key: _phoneFieldKey,
-                    //     flagsButtonPadding: EdgeInsets.only(left: 10),
-                    //     style: titleTextStyle,
-                    //     showCountryFlag: true,
-                    //     dropdownTextStyle: titleTextStyle,
-                    //     dropdownIconPosition: IconPosition.trailing,
-                    //     dropdownDecoration: const BoxDecoration(
-                    //         borderRadius: BorderRadius.only(
-                    //             topLeft: Radius.circular(5),
-                    //             bottomLeft: Radius.circular(5))),
-                    //     initialCountryCode: 'AE',
-                    //     controller: controller[5],
-                    //     pickerDialogStyle: PickerDialogStyle(
-                    //       // searchFieldCursorColor: blackColor,
-                    //       searchFieldInputDecoration: InputDecoration(
-                    //           contentPadding: const EdgeInsets.symmetric(
-                    //               vertical: 10, horizontal: 10),
-                    //           hintText: "Enter Country Code or Name",
-                    //           // fillColor: background,
-                    //           isDense: true,
-                    //           hintStyle: titleTextStyle1,
-                    //           focusedBorder: UnderlineInputBorder(
-                    //               borderSide: BorderSide(
-                    //                   color:
-                    //                       naturalGreyColor.withOpacity(0.3))),
-                    //           labelStyle: titleTextStyle,
-                    //           counterStyle: titleTextStyle,
-                    //           suffixStyle: titleTextStyle),
-                    //       countryCodeStyle: titleTextStyle,
-                    //       countryNameStyle: titleTextStyle,
-                    //       // backgroundColor: background,
-                    //     ),
-                    //     decoration: InputDecoration(
-                    //       hintText: 'Enter Your Number',
-                    //       filled: true,
-                    //       fillColor: background,
-                    //       helperStyle: titleTextStyle1,
-                    //       errorStyle: GoogleFonts.lato(color: redColor),
-                    //       hintStyle: textTitleHint,
-                    //       isDense: true,
-                    //       errorBorder: OutlineInputBorder(
-                    //         borderSide: BorderSide(
-                    //             color: naturalGreyColor.withOpacity(0.3)),
-                    //       ),
-                    //       focusedBorder: OutlineInputBorder(
-                    //         borderSide: BorderSide(
-                    //             color: naturalGreyColor.withOpacity(0.3)),
-                    //       ),
-                    //       border: OutlineInputBorder(
-                    //         borderSide: BorderSide(
-                    //             color: naturalGreyColor.withOpacity(0.3)),
-                    //         // borderSide: BorderSide.none,
-                    //       ),
-                    //       contentPadding: const EdgeInsets.only(bottom: 30),
-                    //       suffixStyle: titleTextStyle1,
-                    //       focusedErrorBorder: const OutlineInputBorder(
-                    //           borderSide: BorderSide(color: redColor)),
-                    //       enabledBorder: OutlineInputBorder(
-                    //           borderSide: BorderSide(
-                    //               color: naturalGreyColor.withOpacity(0.3))),
-                    //     ),
-                    //     validator: (value) async {
-                    //       print('phone number validation $value');
-                    //       if (value == null || value.number.isEmpty) {
-                    //         return 'Enter your Number';
-                    //       }
-                    //       return null;
-                    //     },
-                    //     onChanged: (phone) {
-                    //       countryCode = phone.countryCode;
-                    //       mobileNumber = phone.number;
-                    //       debugPrint("${phone.number}Phone Number");
-                    //       debugPrint("${phone.countryCode}Phone Code");
-                    //     },
-                    //   ),
-                    // ),
-
-                    // const SizedBox(height: 10),
-                    // LoginTextFeild(
-                    //   headingReq: true,
-                    //   heading: "Email",
-                    //   img: email,
-                    //   prefixIcon: false,
-                    //   hint: "Enter your email",
-                    //   controller: controller[5],
-                    //   validator: (p0) {
-                    //     Validation().isEmailField(p0 ?? '');
-                    //     return null;
-                    //   },
-                    // ),
-                    // const SizedBox(height: 10),
+                    const SizedBox(height: 10),
 
                     lableText('Password'),
                     Customtextformfield(
@@ -544,32 +459,6 @@ class _registration_screenState extends State<registration_screen> {
                       },
                     ),
 
-                    // LoginTextFeild(
-                    //   headingReq: true,
-                    //   heading: "Password",
-                    //   img: pass,
-                    //   suffixIcon: true,
-                    //   prefixIcon: false,
-                    //   obscure: true,
-                    //   hint: "Enter your password",
-                    //   controller: controller[6],
-                    //   validator: (p0) {
-                    //     return null;
-                    //   },
-                    // ),
-                    // LoginTextFeild(
-                    //   headingReq: true,
-                    //   heading: "Confirm Password",
-                    //   img: pass,
-                    //   suffixIcon: true,
-                    //   prefixIcon: false,
-                    //   obscure: true,
-                    //   hint: "Enter your password",
-                    //   controller: controller[7],
-                    //   validator: (p0) {
-                    //     return null;
-                    //   },
-                    // ),
                     const SizedBox(height: 40),
                     CustomButtonBig(
                       btnHeading: "SIGN UP",
@@ -596,6 +485,10 @@ class _registration_screenState extends State<registration_screen> {
                                   listen: false)
                               .fetchPostSingUp(context: context, body: body)
                               .then((value) {
+                            final userPreference = Provider.of<UserViewModel>(
+                                context,
+                                listen: false);
+                            userPreference.clearRememberMe();
                             setState(() {
                               load = false;
                             });
@@ -605,54 +498,6 @@ class _registration_screenState extends State<registration_screen> {
                             load = false;
                           });
                         }
-                        // if (controller[0].text.isEmpty) {
-                        //   Utils.flushBarErrorMessage(
-                        //       "Kindly enter your first name", context);
-                        //   // context.push("/")
-                        // } else if (controller[1].text.isEmpty) {
-                        //   Utils.flushBarErrorMessage(
-                        //       "Kindly enter your last name", context);
-                        // } else if (controller[2].text.isEmpty) {
-                        //   Utils.flushBarErrorMessage(
-                        //       "Kindly enter your contact no", context);
-                        // } else if (controller[3].text.isEmpty) {
-                        //   Utils.flushBarErrorMessage(
-                        //       "Kindly enter your address", context);
-                        // } else if (controller[4].text.isEmpty) {
-                        //   Utils.flushBarErrorMessage(
-                        //       "Kindly enter your gender", context);
-                        // } else if (controller[5].text.isEmpty) {
-                        //   Utils.flushBarErrorMessage(
-                        //       "Kindly enter your email", context);
-                        // } else if (controller[6].text.isEmpty) {
-                        //   Utils.flushBarErrorMessage(
-                        //       "Kindly enter your password", context);
-                        // } else if (controller[6].text.length <= 8) {
-                        //   Utils.flushBarErrorMessage(
-                        //       "Password should be more then 8 words", context);
-                        // } else if (controller[7].text.isEmpty) {
-                        //   Utils.flushBarErrorMessage(
-                        //       "Kindly enter your confirm password", context);
-                        // } else if (controller[7].text != controller[6].text) {
-                        //   Utils.flushBarErrorMessage(
-                        //       "Password is not match", context);
-                        // } else {
-                        //   load = true;
-                        //   Map<String, String> data = {
-                        //     "firstName": controller[0].text,
-                        //     "lastName": controller[1].text,
-                        //     "countryCode": countryCode.toString(),
-                        //     "mobile": controller[2].text,
-                        //     "address": controller[3].text,
-                        //     "gender": controller[4].text,
-                        //     "email": controller[5].text,
-                        //     "password": controller[6].text,
-                        //   };
-                        //   Provider.of<PostSignUpViewModel>(context,
-                        //           listen: false)
-                        //       .fetchPostSingUp(data, context);
-                        //   context.push("/login");
-                        // }
                       },
                     ),
                     const SizedBox(height: 10),

@@ -375,13 +375,16 @@ class ProfileContainer extends StatelessWidget {
                   decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       image: DecorationImage(
-                          image: FileImage(imgPath), fit: BoxFit.cover)),
+                          filterQuality: FilterQuality.high,
+                          image: FileImage(imgPath),
+                          fit: BoxFit.cover)),
                 )
               : imgPath.toString().contains("http")
                   ? Container(
                       decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           image: DecorationImage(
+                              filterQuality: FilterQuality.high,
                               image: NetworkImage(
                                   // AppUrl.userProfileUpdate +
                                   imgPath),
@@ -391,6 +394,7 @@ class ProfileContainer extends StatelessWidget {
                       decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           image: DecorationImage(
+                              filterQuality: FilterQuality.high,
                               image: AssetImage(
                                   // AppUrl.userProfileUpdate +
                                   imgPath),

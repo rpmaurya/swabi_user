@@ -5,7 +5,11 @@ import 'package:flutter_cab/res/login/login_customTextFeild.dart';
 import 'package:flutter_cab/utils/assets.dart';
 import 'package:flutter_cab/utils/color.dart';
 import 'package:flutter_cab/utils/dimensions.dart';
+import 'package:flutter_cab/utils/text_styles.dart';
+import 'package:flutter_cab/view_model/payment_gateway_view_model.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class MyTransaction extends StatefulWidget {
   final String userId;
@@ -17,226 +21,182 @@ class MyTransaction extends StatefulWidget {
 
 class _MyTransactionState extends State<MyTransaction> {
   @override
+  void initState() {
+    // TODO: implement initState
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      getTrasaction();
+    });
+    super.initState();
+  }
+
+  void getTrasaction() async {
+    Map<String, dynamic> query = {
+      "userId": widget.userId,
+      "pageNumber": '0',
+      "pageSize": '20',
+      "search": '',
+      "bookingType": 'ALL',
+      "transactionStatus": 'ALL'
+    };
+    try {
+      Provider.of<GetTranactionViewModel>(context, listen: false)
+          .getTranactionApi(context: context, query: query);
+    } catch (e) {
+      debugPrint('error$e');
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     debugPrint('userId....${widget.userId}');
     return Scaffold(
       backgroundColor: bgGreyColor,
       appBar: const CustomAppBar(heading: "My Transaction"),
       body: PageLayout_Page(
-          child: Column(
-        children: [
-          SizedBox(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                CustomTextFeild(
-                  headingReq: false,
-                  prefixIcon: true,
-                  img: search,
-                  controller: TextEditingController(),
-                ),
-                Material(
-                  elevation: 0,
-                  color: lightBrownColor,
-                  borderRadius: BorderRadius.circular(10),
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(10),
-                    child: SizedBox(
-                      height: 50,
-                      width: 50,
-                      child: Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: Image.asset(filter),
-                      ),
-                    ),
-                    onTap: () {},
-                  ),
-                )
-              ],
-            ),
-          ),
-          const SizedBox(height: 10),
-          Expanded(
-            child: ListView(
-              children: const [
-                TransContainer(),
-                TransContainer(),
-                TransContainer(),
-                TransContainer(),
-              ],
-            ),
-          )
-        ],
-      )),
-    );
-  }
-}
-
-class TransContainer extends StatelessWidget {
-  const TransContainer({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 5),
-      child: Material(
-        borderRadius: BorderRadius.circular(10),
-        color: background,
-        child: InkWell(
-          borderRadius: BorderRadius.circular(10),
-          child: Container(
-            // height: AppDimension.getHeight(context)*.23,
-            width: AppDimension.getWidth(context) * .9,
-            decoration: BoxDecoration(
-                color: background,
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: curvePageColor)),
-            child: Column(
-              children: [
-                ///First Line of Design
-                Container(
-                    decoration: const BoxDecoration(
-                        border:
-                            Border(bottom: BorderSide(color: curvePageColor))),
-                    child: ListTile(
-                      leading: SizedBox(
-                        width: 60,
-                        height: 60,
-                        child: ClipRRect(
-                            borderRadius: BorderRadius.circular(10),
-                            child: Image.asset(
-                              car,
-                              fit: BoxFit.cover,
-                            )),
-                      ),
-                      title: Text(
-                        "Mini Cooper SE",
-                        style: GoogleFonts.lato(
-                            color: greyColor,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600),
-                      ),
-                      subtitle: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "5 Seats",
-                            style: GoogleFonts.lato(
-                                color: greyColor,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600),
+          child: SingleChildScrollView(
+        child: Column(
+          children: [
+            // SizedBox(
+            //   child: Row(
+            //     mainAxisAlignment: MainAxisAlignment.spaceAround,
+            //     children: [
+            //       CustomTextFeild(
+            //         headingReq: false,
+            //         prefixIcon: true,
+            //         img: search,
+            //         controller: TextEditingController(),
+            //       ),
+            //       Material(
+            //         elevation: 0,
+            //         color: lightBrownColor,
+            //         borderRadius: BorderRadius.circular(10),
+            //         child: InkWell(
+            //           borderRadius: BorderRadius.circular(10),
+            //           child: SizedBox(
+            //             height: 50,
+            //             width: 50,
+            //             child: Padding(
+            //               padding: const EdgeInsets.all(10.0),
+            //               child: Image.asset(filter),
+            //             ),
+            //           ),
+            //           onTap: () {},
+            //         ),
+            //       )
+            //     ],
+            //   ),
+            // ),
+            // const SizedBox(height: 10),
+            Consumer<GetTranactionViewModel>(
+              builder: (context, value, child) {
+                return Container(
+                  padding: const EdgeInsets.all(5),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: background),
+                  child: ListView.separated(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemBuilder: (context, index) {
+                        var data =
+                            value.getTrasaction.data?.data?.content?[index];
+                        DateTime date = DateTime.fromMillisecondsSinceEpoch(
+                            data?.createdDate ?? 0);
+                        String formateDate =
+                            DateFormat('MMM d, yyyy h:mm a').format(date);
+                        return Container(
+                          decoration: const BoxDecoration(color: background),
+                          padding: const EdgeInsets.all(10),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    formateDate,
+                                    style: titleTextStyle,
+                                  ),
+                                  Text(
+                                    'AED ${data?.amountPaid.toString()}',
+                                    style: titleTextStyle,
+                                  )
+                                ],
+                              ),
+                              Text(
+                                data?.bookingType == 'PACKAGE_BOOKING'
+                                    ? 'Package booking'
+                                    : 'Rental booking',
+                                style: titleTextStyle1,
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Payment Id',
+                                        style: titleTextStyle,
+                                      ),
+                                      Text(
+                                        data?.paymentId ?? '',
+                                        style: titleTextStyle1,
+                                      )
+                                    ],
+                                  ),
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      Text(
+                                        'Status',
+                                        style: titleTextStyle,
+                                      ),
+                                      Text(
+                                        data?.transactionStatus == 'Captured'
+                                            ? 'Success'
+                                            : data?.transactionStatus ==
+                                                    'Created'
+                                                ? 'Pending'
+                                                : data?.transactionStatus
+                                                        .toString() ??
+                                                    '',
+                                        style: TextStyle(
+                                            color: data?.transactionStatus ==
+                                                    'Captured'
+                                                ? greenColor
+                                                : data?.transactionStatus ==
+                                                        'Created'
+                                                    ? Colors.yellow
+                                                    : data?.transactionStatus ==
+                                                            'Refunded'
+                                                        ? greenColor
+                                                        : redColor),
+                                      )
+                                    ],
+                                  )
+                                ],
+                              )
+                            ],
                           ),
-                          Text(
-                            "03-18-2022",
-                            style: GoogleFonts.lato(
-                                color: greyColor,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600),
-                          ),
-                        ],
-                      ),
-                    )),
-
-                ///Second Line Design
-                Container(
-                  decoration: const BoxDecoration(
-                      border:
-                          Border(bottom: BorderSide(color: curvePageColor))),
-                  child: ListTile(
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 10),
-                    leading: SizedBox(
-                      width: 40,
-                      height: 40,
-                      child: ClipRRect(
-                          borderRadius: BorderRadius.circular(50),
-                          child: Image.asset(
-                            image,
-                            fit: BoxFit.cover,
-                          )),
-                    ),
-                    title: Text(
-                      "Floyd Miles",
-                      style: GoogleFonts.lato(
-                          color: greyColor,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700),
-                    ),
-                    subtitle: Row(
-                      children: [
-                        Text(
-                          "⭐ 4.8",
-                          style: GoogleFonts.lato(
-                              color: greyColor,
-                              fontSize: 11,
-                              fontWeight: FontWeight.w700),
-                        ),
-                        const Spacer(),
-                        // Padding(
-                        //   padding: const EdgeInsets.only(bottom: 5.0,right: 5),
-                        //   child: InkWell(
-                        //       borderRadius: BorderRadius.circular(50),
-                        //       onTap: () {}, child: Image.asset(chat,height: 25,) ),
-                        // ),
-                        // Padding(
-                        //   padding:const EdgeInsets.only(bottom: 5.0),
-                        //   child: InkWell(onTap: () {}, child: const Icon(Icons.call) ),
-                        // ),
-                      ],
-                    ),
-                    trailing: SizedBox(
-                      width: 65,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          InkWell(
-                              borderRadius: BorderRadius.circular(50),
-                              onTap: () {},
-                              child: Image.asset(
-                                chat,
-                                height: 25,
-                              )),
-                          InkWell(
-                              borderRadius: BorderRadius.circular(50),
-                              onTap: () {},
-                              child: const Icon(Icons.call)),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-
-                ///Second Line Design
-                Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                        color: greenColor.withOpacity(.1),
-                        borderRadius: const BorderRadius.only(
-                            bottomLeft: Radius.circular(10),
-                            bottomRight: Radius.circular(10))),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          "Paid - ",
-                          style: GoogleFonts.lato(
-                              color: greenColor,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600),
-                        ),
-                        Text(
-                          '\$1122',
-                          style: GoogleFonts.lato(
-                              color: greenColor,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600),
-                        ),
-                      ],
-                    )),
-              ],
+                        );
+                      },
+                      separatorBuilder: (context, index) {
+                        return const Divider(
+                          height: 0,
+                        );
+                      },
+                      itemCount: (value.getTrasaction.data?.data?.content ?? [])
+                          .length),
+                );
+              },
             ),
-          ),
+          ],
         ),
-      ),
+      )),
     );
   }
 }

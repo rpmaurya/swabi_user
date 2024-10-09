@@ -54,7 +54,7 @@ class GuestRentalBookingForm extends StatefulWidget {
   final String longi;
   final String lati;
   final String offerCode;
-  final double discountAmount;
+  final int discountAmount;
   final double taxAmount;
   final double taxPercentage;
   final double payableAmount;
@@ -345,9 +345,7 @@ class _GuestRentalBookingFormState extends State<GuestRentalBookingForm> {
                   );
 
                   paymentService.openCheckout(
-                      amount: widget.discountAmount == 0
-                          ? widget.payableAmount
-                          : widget.discountAmount,
+                      amount: widget.payableAmount,
                       userId: widget.bookerId.toString(),
                       coutryCode: profileUser?.countryCode,
                       mobileNo: profileUser?.mobile,

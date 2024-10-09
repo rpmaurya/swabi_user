@@ -83,25 +83,24 @@ class _BookYourCabState extends State<BookYourCab> {
   }
 
   String? offerCode;
-  double discountAmount = 0;
+  double discountPercentage = 0;
+  double discountedAmount = 0;
   bool visibleCoupon = false;
   double disAmount = 0;
   double taxPercentage = 5;
   double payableAmount = 0;
   double taxAmount = 0;
+  double maxDisAmount = 0;
   double taxamount() {
     double amt = double.parse(widget.totalAmt);
     return (taxPercentage / 100) * amt;
     // return sumAmount + taxamt;
   }
 
-  double getPercentage(
-      {required double discountAmount,
-      required double totalAmount,
-      required double maxDisAmount}) {
-    double amt = (discountAmount / 100) * totalAmount;
+  double getPercentage() {
+    double amt = (discountPercentage / 100) * payableAmount;
     disAmount = amt > maxDisAmount ? maxDisAmount : amt;
-    return totalAmount - disAmount;
+    return payableAmount - disAmount.toInt();
   }
 
   int checkBox = 0;
@@ -128,6 +127,7 @@ class _BookYourCabState extends State<BookYourCab> {
     debugPrint('fhjhjbdhdhjdhjdhjdjh${widget.totalAmt.toString()}');
     debugPrint('taxamount.......$taxAmount');
     debugPrint('payAbleamount.......$payableAmount');
+    debugPrint('discountamount.......$disAmount');
 
     // paymentOrderId = context
     //     .watch<PaymentCreateOrderIdViewModel>()
@@ -171,7 +171,7 @@ class _BookYourCabState extends State<BookYourCab> {
                       loading: false,
                       totalPrice: rental.totalPrice,
                       couponController: couponController,
-                      discountedAmount: discountAmount,
+                      discountedAmount: discountedAmount,
                       couponVisible: visibleCoupon,
                       offerDisAmount: disAmount,
                       taxAmount: taxAmount,
@@ -179,7 +179,7 @@ class _BookYourCabState extends State<BookYourCab> {
                       onCouponRemoveTap: () {
                         setState(() {
                           visibleCoupon = false;
-                          discountAmount = 0;
+                          discountedAmount = 0;
                         });
                       },
                       onCouponTap: () {
@@ -198,28 +198,25 @@ class _BookYourCabState extends State<BookYourCab> {
                               Utils.toastSuccessMessage(
                                   onValue?.status?.message ?? '');
                               offerCode = onValue?.data?.offerCode;
+                              maxDisAmount =
+                                  onValue?.data?.maxDiscountAmount ?? 0;
+                              discountPercentage =
+                                  onValue?.data?.discountPercentage ?? 0;
                               setState(() {
                                 visibleCoupon = true;
-                                discountAmount = getPercentage(
-                                    discountAmount:
-                                        onValue?.data?.discountPercentage ?? 0,
-                                    maxDisAmount:
-                                        onValue?.data?.maxDiscountAmount ?? 0,
-                                    totalAmount: payableAmount);
+                                discountedAmount = getPercentage();
                                 print(
-                                    'discountpercentage.....,..,.,$discountAmount');
+                                    'discountpercentage.....,..,.,$discountedAmount');
                               });
                             } else {
                               setState(() {
-                                discountAmount = 0;
+                                discountedAmount = 0;
                               });
                             }
                           });
                         }
                       },
                       onTap: () {
-                        double amt = double.parse(rental.totalPrice);
-
                         ////
                         if (rentalValidation.toString().isNotEmpty &&
                             rentalValidation == "Success") {
@@ -230,15 +227,13 @@ class _BookYourCabState extends State<BookYourCab> {
                                       debugPrint(checkBox.toString());
                                     });
                                     if (checkBox == 1) {
-                                      print(
-                                          ',nmnmnmnmnm,m,m,m.................');
                                       PaymentService paymentService =
                                           PaymentService(
                                         context: context,
                                         onPaymentError: () {},
                                         onPaymentSuccess:
                                             (PaymentSuccessResponse response) {
-                                          print(
+                                          debugPrint(
                                               'paymentResponse#${response.orderId}');
 
                                           setState(() {
@@ -288,12 +283,14 @@ class _BookYourCabState extends State<BookYourCab> {
                                                       value?.data.transactionId,
                                                   "offerCode": offerCode,
                                                   "discountAmount":
-                                                      discountAmount,
+                                                      disAmount.toInt(),
                                                   "taxAmount": taxAmount,
                                                   "taxPercentage":
                                                       taxPercentage,
                                                   "totalPayableAmount":
-                                                      payableAmount,
+                                                      discountedAmount == 0
+                                                          ? payableAmount
+                                                          : discountedAmount,
                                                   "pickUpLocation": rental
                                                       .pickUpLocation
                                                       .trim()
@@ -332,9 +329,9 @@ class _BookYourCabState extends State<BookYourCab> {
                                       );
 
                                       paymentService.openCheckout(
-                                          amount: discountAmount == 0
-                                              ? amt
-                                              : discountAmount,
+                                          amount: discountedAmount == 0
+                                              ? payableAmount
+                                              : discountedAmount,
                                           userId: widget.userId.toString(),
                                           coutryCode: profileUser?.countryCode,
                                           mobileNo: profileUser?.mobile,
@@ -354,10 +351,13 @@ class _BookYourCabState extends State<BookYourCab> {
                                             "kilometer": rental.kilometers,
                                             "pickUpTime": rental.pickupTime,
                                             "offerCode": offerCode ?? '',
-                                            "discountAmount": discountAmount,
+                                            "discountAmount": disAmount.toInt(),
                                             "taxAmount": taxAmount,
                                             "taxPercentage": taxPercentage,
-                                            "payableAmount": payableAmount,
+                                            "payableAmount":
+                                                discountedAmount == 0
+                                                    ? payableAmount
+                                                    : discountedAmount,
                                             "longi": widget.logitude,
                                             "lati": widget.latitude
                                           });
@@ -472,13 +472,17 @@ class _BookYourCabState extends State<BookYourCab> {
                                                               "offerCode":
                                                                   offerCode,
                                                               "discountAmount":
-                                                                  discountAmount,
+                                                                  disAmount
+                                                                      .toInt(),
                                                               "taxAmount":
                                                                   taxAmount,
                                                               "taxPercentage":
                                                                   taxPercentage,
                                                               "totalPayableAmount":
-                                                                  payableAmount,
+                                                                  discountedAmount ==
+                                                                          0
+                                                                      ? payableAmount
+                                                                      : discountedAmount,
                                                               "pickUpLocation": rental
                                                                   .pickUpLocation
                                                                   .trim()
@@ -527,9 +531,9 @@ class _BookYourCabState extends State<BookYourCab> {
 
                                                   paymentService.openCheckout(
                                                       amount:
-                                                          discountAmount == 0
-                                                              ? amt
-                                                              : discountAmount,
+                                                          discountedAmount == 0
+                                                              ? payableAmount
+                                                              : discountedAmount,
                                                       userId: widget.userId
                                                           .toString(),
                                                       coutryCode: profileUser
@@ -564,12 +568,15 @@ class _BookYourCabState extends State<BookYourCab> {
                                                         "offerCode":
                                                             offerCode ?? '',
                                                         "discountAmount":
-                                                            discountAmount,
+                                                            disAmount.toInt(),
                                                         "taxAmount": taxAmount,
                                                         "taxPercentage":
                                                             taxPercentage,
                                                         "payableAmount":
-                                                            payableAmount,
+                                                            discountedAmount ==
+                                                                    0
+                                                                ? payableAmount
+                                                                : discountedAmount,
                                                       });
                                                 }
                                                 checkBox = 0;
@@ -818,6 +825,7 @@ class BookingContainer extends StatefulWidget {
 class _BookingContainerState extends State<BookingContainer> {
   @override
   Widget build(BuildContext context) {
+    debugPrint('payableAmount...............,,,, ${widget.payableAmount}');
     return SingleChildScrollView(
       child: Column(
         children: [
@@ -859,7 +867,7 @@ class _BookingContainerState extends State<BookingContainer> {
                                 fontWeight: FontWeight.w600),
                           ),
                           Text(
-                            "Pickup Time : ${widget.pickTime}",
+                            "Time : ${widget.pickTime}",
                             style: GoogleFonts.lato(
                                 color: greyColor,
                                 fontSize: 14,
@@ -1076,8 +1084,8 @@ class _BookingContainerState extends State<BookingContainer> {
                           ),
                           Text(
                             widget.discountedAmount == 0
-                                ? 'AED ${widget.payableAmount}'
-                                : "AED ${widget.discountedAmount}",
+                                ? 'AED ${widget.payableAmount.toInt()}'
+                                : "AED ${widget.discountedAmount.toInt()}",
                             style: appbarTextStyle,
                           ),
                         ],

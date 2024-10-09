@@ -5,6 +5,7 @@ import 'package:flutter_cab/res/customAppBar_widget.dart';
 import 'package:flutter_cab/res/custom_ListTile.dart';
 import 'package:flutter_cab/utils/assets.dart';
 import 'package:flutter_cab/utils/color.dart';
+import 'package:flutter_cab/utils/text_styles.dart';
 import 'package:flutter_cab/view_model/userProfile_view_model.dart';
 import 'package:flutter_cab/view_model/user_view_model.dart';
 import 'package:go_router/go_router.dart';
@@ -98,6 +99,7 @@ class _MenuListState extends State<MenuList> {
               // ),
               Custom_ListTile(
                 img: transaction,
+                iconColor: btnColor,
                 heading: "Transaction",
                 onTap: () => context
                     .push("/myTransaction", extra: {"userId": widget.userId}),
@@ -154,8 +156,9 @@ class _MenuListState extends State<MenuList> {
                   btnHeading: "Logout",
                   loading: userViewModel.loading,
                   onTap: () {
-                    userViewModel.remove(context);
-                    context.go("/login");
+                    _confirmLogout();
+                    // userViewModel.remove(context);
+                    // context.go("/login");
                   }),
               // Padding(
               //   padding: const EdgeInsets.symmetric(vertical: 10),
@@ -167,5 +170,76 @@ class _MenuListState extends State<MenuList> {
             ],
           ),
         ));
+  }
+
+  void _confirmLogout() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          backgroundColor: background,
+          surfaceTintColor: background,
+          child: Stack(
+            clipBehavior: Clip.none,
+            children: [
+              SizedBox(
+                height: 180,
+                child: Column(
+                  children: [
+                    Padding(
+                        padding: EdgeInsets.only(top: 50, bottom: 20, left: 20),
+                        child: Text(
+                          'Are you sure want to Logout ?',
+                          style: titleTextStyle,
+                        )),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        CustomButtonSmall(
+                          width: 70,
+                          btnHeading: "NO",
+                          onTap: () {
+                            context.pop();
+                          },
+                        ),
+                        CustomButtonSmall(
+                          width: 70,
+                          btnHeading: "YES",
+                          onTap: () {
+                            userViewModel.remove(context);
+                            context.go("/login");
+                          },
+                        )
+                      ],
+                    )
+                  ],
+                ),
+              ),
+              Positioned(
+                  top: -60,
+                  left: 0,
+                  right: 0,
+                  child: SizedBox(
+                    // decoration: BoxDecoration(
+                    //   border: Border.all(color: btnColor),
+                    //   borderRadius: BorderRadius.circular(10)
+                    // ),
+                    height: 100,
+                    width: 100,
+                    child: Card(
+                      surfaceTintColor: background,
+                      elevation: 5,
+                      shape: const CircleBorder(),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Image.asset(question),
+                      ),
+                    ),
+                  ))
+            ],
+          ),
+        );
+      },
+    );
   }
 }

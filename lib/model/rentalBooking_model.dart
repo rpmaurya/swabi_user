@@ -678,6 +678,9 @@ class Content {
   String cancellationReason;
   String userDetails;
   String discountAmount;
+  String taxAmount;
+  String taxPercentage;
+  String totalPayableAmount;
 
   Content(
       {required this.id,
@@ -705,7 +708,10 @@ class Content {
       required this.pickupLocation,
       required this.cancellationReason,
       required this.userDetails,
-      required this.discountAmount});
+      required this.discountAmount,
+      required this.taxAmount,
+      required this.taxPercentage,
+      required this.totalPayableAmount});
 
   factory Content.fromJson(Map<String, dynamic> json) => Content(
       id: json["id"].toString(),
@@ -733,7 +739,10 @@ class Content {
       pickupLocation: json["pickupLocation"].toString(),
       cancellationReason: json["cancellationReason"].toString(),
       userDetails: json["userDetails"].toString(),
-      discountAmount: json["discountAmount"]?.toString() ?? '');
+      discountAmount: json["discountAmount"]?.toString() ?? '',
+      taxAmount: json["taxAmount"]?.toString() ?? '',
+      taxPercentage: json["taxPercentage"]?.toString() ?? '',
+      totalPayableAmount: json["totalPayableAmount"]?.toString() ?? '');
 
   Map<String, dynamic> toJson() => {
         "id": id,
@@ -761,7 +770,10 @@ class Content {
         "pickupLocation": pickupLocation,
         "cancellationReason": cancellationReason,
         "userDetails": userDetails,
-        "discountAmount": discountAmount
+        "discountAmount": discountAmount,
+        "taxAmount": taxAmount,
+        "taxPercentage": taxPercentage,
+        "totalPayableAmount": totalPayableAmount
       };
 }
 
@@ -1142,40 +1154,45 @@ class RentalDetailsSingleData {
   String cancelledBy;
   String paymentId;
   String discountAmount;
+  String taxAmount;
+  String taxPercentage;
+  String totalPayableAmount;
 
-  RentalDetailsSingleData({
-    required this.id,
-    required this.rentalBookingId,
-    required this.date,
-    required this.pickupTime,
-    required this.locationLongitude,
-    required this.locationLatitude,
-    required this.bookingStatus,
-    required this.totalRentTime,
-    required this.kilometers,
-    required this.paidStatus,
-    required this.userId,
-    required this.rentalCharge,
-    required this.carType,
-    required this.extraMinutes,
-    required this.extraKilometers,
-    required this.createdDate,
-    required this.modifiedDate,
-    required this.rentalManagement,
-    required this.vehicle,
-    required this.driver,
-    required this.rideStartTime,
-    required this.rideEndTime,
-    required this.pickupLocation,
-    required this.cancellationReason,
-    required this.bookerId,
-    required this.bookingForId,
-    required this.user,
-    required this.guest,
-    required this.cancelledBy,
-    required this.paymentId,
-    required this.discountAmount,
-  });
+  RentalDetailsSingleData(
+      {required this.id,
+      required this.rentalBookingId,
+      required this.date,
+      required this.pickupTime,
+      required this.locationLongitude,
+      required this.locationLatitude,
+      required this.bookingStatus,
+      required this.totalRentTime,
+      required this.kilometers,
+      required this.paidStatus,
+      required this.userId,
+      required this.rentalCharge,
+      required this.carType,
+      required this.extraMinutes,
+      required this.extraKilometers,
+      required this.createdDate,
+      required this.modifiedDate,
+      required this.rentalManagement,
+      required this.vehicle,
+      required this.driver,
+      required this.rideStartTime,
+      required this.rideEndTime,
+      required this.pickupLocation,
+      required this.cancellationReason,
+      required this.bookerId,
+      required this.bookingForId,
+      required this.user,
+      required this.guest,
+      required this.cancelledBy,
+      required this.paymentId,
+      required this.discountAmount,
+      required this.taxAmount,
+      required this.taxPercentage,
+      required this.totalPayableAmount});
 
   factory RentalDetailsSingleData.fromJson(Map<String, dynamic> json) =>
       RentalDetailsSingleData(
@@ -1209,7 +1226,10 @@ class RentalDetailsSingleData {
           guest: Guest.fromJson(json["guest"] ?? {}),
           cancelledBy: json["cancelledBy"].toString(),
           paymentId: json["paymentId"].toString(),
-          discountAmount: json["discountAmount"]?.toString() ?? '');
+          discountAmount: json["discountAmount"]?.toString() ?? '',
+          taxAmount: json["taxAmount"]?.toString() ?? '',
+          taxPercentage: json["taxPercentage"]?.toString() ?? '',
+          totalPayableAmount: json["totalPayableAmount"]?.toString() ?? '');
 
   Map<String, dynamic> toJson() => {
         "id": id,
@@ -1242,7 +1262,10 @@ class RentalDetailsSingleData {
         "guest": guest,
         "cancelledBy": cancelledBy,
         "paymentId": paymentId,
-        "discountAmount": discountAmount
+        "discountAmount": discountAmount,
+        "taxAmount": taxAmount,
+        "taxPercentage": taxPercentage,
+        "totalPayableAmount": totalPayableAmount
       };
 }
 

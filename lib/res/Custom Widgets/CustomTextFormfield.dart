@@ -23,6 +23,7 @@ class Customtextformfield extends StatefulWidget {
   final String? errorText;
   final double? width;
   final double? hieght;
+  final List<TextInputFormatter>? inputFormatters;
   const Customtextformfield(
       {super.key,
       required this.controller,
@@ -43,7 +44,8 @@ class Customtextformfield extends StatefulWidget {
       this.focusNode,
       this.errorText,
       this.width,
-      this.hieght});
+      this.hieght,
+      this.inputFormatters = const []});
 
   @override
   State<Customtextformfield> createState() => _CustomtextformfieldState();
@@ -65,6 +67,7 @@ class _CustomtextformfieldState extends State<Customtextformfield> {
         textAlignVertical: widget.textAlignVertical,
         inputFormatters: [
           LengthLimitingTextInputFormatter(widget.textLength),
+          ...?widget.inputFormatters
         ],
         maxLines: widget.maxLines ?? 1,
         minLines: widget.minLines,
