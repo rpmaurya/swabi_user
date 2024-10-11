@@ -389,7 +389,7 @@ class ProfileContainer extends StatelessWidget {
                                   // AppUrl.userProfileUpdate +
                                   imgPath),
                               // image: AssetImage(imgPath),
-                              fit: BoxFit.fill)))
+                              fit: BoxFit.cover)))
                   : Container(
                       decoration: BoxDecoration(
                           shape: BoxShape.circle,

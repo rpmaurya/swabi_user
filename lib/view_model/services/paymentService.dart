@@ -27,43 +27,54 @@ class PaymentService {
       required String userId,
       required String coutryCode,
       required String mobileNo,
-      required String email}) async {
-    print(
-      'object$amount-----$userId',
-    );
-    final response =
-        await Provider.of<PaymentCreateOrderIdViewModel>(context, listen: false)
-            .paymentCreateOrderIdViewModelApi(
-                context: context,
-                amount: amount.toInt(),
-                userId: userId.toString());
-
-    // Extract the Razorpay order ID from the response
-    var paymentOrderId = response?.data.razorpayOrderId;
-    print('paymentId:....$paymentOrderId');
-    var options = {
-      'key': 'rzp_test_6RDAELPDeFpXXx',
-      'amount': (amount).toInt() * 100,
-      'currency': 'AED',
-      'name': 'SWABI',
-      // 'order_id': widget.orderId,
-      'order_id': paymentOrderId,
-
-      'description': 'Payment for Product/Service',
-      'prefill': {'contact': "${coutryCode} ${mobileNo}", 'email': email},
-      'external': {
-        'wallets': ['paytm']
-      },
-      'image':
-          'https://shilsha-bckt.s3.ap-south-1.amazonaws.com/Asset_233000_11727343705079.png', // Replace with your logo URL
-      // Customize the color theme of the payment interface
-      'theme': {
-        'color': '#7B1E34' // Replace with your desired color code
-      }
-    };
-
+      required String email,
+      required double taxAmount,
+      required double taxPercentage,
+      required double discountAmount,
+      required double payableAmount}) async {
     try {
-      _razorpay.open(options);
+      print(
+        'object$amount-----$userId',
+      );
+      // var paymentOrderId;
+      await Provider.of<PaymentCreateOrderIdViewModel>(context, listen: false)
+          .paymentCreateOrderIdViewModelApi(
+              context: context,
+              amount: amount.toInt(),
+              userId: userId.toString(),
+              taxAmount: taxAmount,
+              taxPercentage: taxPercentage,
+              discountAmount: discountAmount,
+              totalPayableAmount: payableAmount)
+          .then((onValue) {
+        if (onValue?.status.httpCode == '200') {
+          // paymentOrderId = onValue?.data.razorpayOrderId;
+          // print('paymentId:....$paymentOrderId');
+          var options = {
+            'key': 'rzp_test_6RDAELPDeFpXXx',
+            'amount': (payableAmount).toInt() * 100,
+            'currency': 'AED',
+            'name': 'SWABI',
+            // 'order_id': widget.orderId,
+            'order_id': onValue?.data.razorpayOrderId,
+
+            'description': 'Payment for Product/Service',
+            'prefill': {'contact': "$coutryCode $mobileNo", 'email': email},
+            'external': {
+              'wallets': ['paytm']
+            },
+            'image':
+                'https://shilsha-bckt.s3.ap-south-1.amazonaws.com/Asset_233000_11727343705079.png', // Replace with your logo URL
+            // Customize the color theme of the payment interface
+            'theme': {
+              'color': '#7B1E34' // Replace with your desired color code
+            }
+          };
+          _razorpay.open(options);
+        }
+      });
+
+      // Extract the Razorpay order ID from the response
     } catch (e) {
       debugPrint('Error: $e');
     }

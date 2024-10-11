@@ -50,16 +50,20 @@ class _RentalBookedPageViewState extends State<RentalBookedPageView> {
     // TODO: implement initState
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       getPaymentDetail();
-      Provider.of<RaiseissueViewModel>(context, listen: false)
-          .getIssueByBookingId(
-              context: context,
-              bookingId: widget.bookedId,
-              userId: widget.useriD,
-              bookingType: 'RENTAL_BOOKING');
+      getissueDetail();
     });
     // currency = getCurrencyByCountryCode('IN');
     // print('Currency for IN: ${currency} - ${currency}');
     super.initState();
+  }
+
+  void getissueDetail() {
+    Provider.of<RaiseissueViewModel>(context, listen: false)
+        .getIssueByBookingId(
+            context: context,
+            bookingId: widget.bookedId,
+            userId: widget.useriD,
+            bookingType: 'RENTAL_BOOKING');
   }
 
   Future<void> getPaymentDetail() async {
@@ -89,31 +93,11 @@ class _RentalBookedPageViewState extends State<RentalBookedPageView> {
         .DataList
         .status
         .toString();
-    String status = context
-        .watch<RentalBookingListViewModel>()
-        .rentalBookingList
-        .status
-        .toString();
+
     fulldata = context.watch<RentalViewDetailViewModel>().dataList.data?.data;
     getIssueByBookingId =
         context.watch<RaiseissueViewModel>().getIssueBybookingId.data;
-    // userData =
-    //     context.watch<RentalViewDetailViewModel>().DataList.data?.data.user ??
-    //         "";
-    // guestDetails =
-    //     context.watch<RentalViewDetailViewModel>().DataList.data?.data.guest ??
-    //         "";
-    // vehicleDetails = context
-    //         .watch<RentalViewDetailViewModel>()
-    //         .DataList
-    //         .data
-    //         ?.data
-    //         .vehicle ??
-    //     "";
-    // driverDetails =
-    //     context.watch<RentalViewDetailViewModel>().DataList.data?.data.driver ??
-    //
-    //      "";
+
     DateTime dateTime1 = DateTime.fromMillisecondsSinceEpoch(
       (int.tryParse(fulldata?.createdDate ?? '')) ?? 0 * 1000,
     );
@@ -121,12 +105,12 @@ class _RentalBookedPageViewState extends State<RentalBookedPageView> {
     DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(
         (paymentDetails?.createdAt ?? 0) * 1000,
         isUtc: true);
-    Duration offset = Duration(hours: 5, minutes: 30);
+    Duration offset = const Duration(hours: 5, minutes: 30);
     DateTime adjustedTime = dateTime.add(offset);
 
     String formattedTime =
         '${DateFormat('HH:mm').format(adjustedTime)} GMT (+05:30)';
-    print('paymentdewatil.......${paymentDetails?.amount}');
+    debugPrint('paymentdewatil.......${paymentDetails?.amount}');
 
     debugPrint('hjkhkkjkjjkjk$formattedTime');
 
@@ -174,7 +158,7 @@ class _RentalBookedPageViewState extends State<RentalBookedPageView> {
                   /////////////////Guest Detail////////////////////////
                   guestId: fulldata?.guest.guestId?.toString() ?? '',
                   firstName: fulldata?.guest.guestName?.toString() ?? '',
-                  lastName: fulldata!.guest.guestName!.isEmpty ||
+                  lastName: fulldata?.guest.guestName == '' ||
                           fulldata?.guest.guestName != null
                       ? ""
                       : "",
@@ -348,7 +332,7 @@ class _RentalBookedPageViewState extends State<RentalBookedPageView> {
   }
 }
 
-class RentalBookingContainer extends StatelessWidget {
+class RentalBookingContainer extends StatefulWidget {
   // final String carName;
   final String createdDate;
   final String rideStartTime;
@@ -416,7 +400,15 @@ class RentalBookingContainer extends StatelessWidget {
   });
 
   @override
+  State<RentalBookingContainer> createState() => _RentalBookingContainerState();
+}
+
+class _RentalBookingContainerState extends State<RentalBookingContainer> {
+  GetIssueByBookingIdModel? getIssueByBookingId;
+  @override
   Widget build(BuildContext context) {
+    getIssueByBookingId =
+        context.watch<RaiseissueViewModel>().getIssueBybookingId.data;
     return Material(
       elevation: 0,
       borderRadius: BorderRadius.circular(10),
@@ -465,56 +457,50 @@ class RentalBookingContainer extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  bookingItem(lable: 'Booking ID', value: id),
+                  bookingItem(lable: 'Booking ID', value: widget.id),
                   const SizedBox(height: 5),
-                  bookingItem(lable: 'Booking Status', value: status),
+                  bookingItem(lable: 'Booking Status', value: widget.status),
                   const SizedBox(height: 5),
-
-                  bookingItem(lable: 'Created Date', value: createdDate),
+                  bookingItem(lable: 'Created Date', value: widget.createdDate),
                   const SizedBox(height: 5),
-
-                  bookingItem(lable: 'Ride Date', value: pickDate),
+                  bookingItem(lable: 'Ride Date', value: widget.pickDate),
                   const SizedBox(height: 5),
-
-                  bookingItem(lable: 'PickUpTime', value: pickTime),
+                  bookingItem(lable: 'PickUpTime', value: widget.pickTime),
                   const SizedBox(height: 5),
-
                   bookingItem(
                       lable: 'Ride Start Time',
-                      value: rideStartTime.isNotEmpty
-                          ? rideStartTime
+                      value: widget.rideStartTime.isNotEmpty
+                          ? widget.rideStartTime
                           : 'Ride not started'),
                   const SizedBox(height: 5),
-
-                  bookingItem(lable: 'Ride Distance', value: '$kilometer KM'),
+                  bookingItem(
+                      lable: 'Ride Distance', value: '${widget.kilometer} KM'),
                   const SizedBox(height: 5),
-
                   bookingItem(
                       lable: 'Extra Ride Distance',
-                      value: extraRideDistance.isNotEmpty
-                          ? extraRideDistance
+                      value: widget.extraRideDistance.isNotEmpty
+                          ? widget.extraRideDistance
                           : 'N/A'),
                   const SizedBox(height: 5),
-
                   bookingItem(
                       lable: 'Extra Ride Time',
                       value:
-                          '0 Hour : ${extraRideTime.isNotEmpty ? extraRideTime : '0'} Min'),
+                          '0 Hour : ${widget.extraRideTime.isNotEmpty ? widget.extraRideTime : '0'} Min'),
                   const SizedBox(height: 5),
-
                   bookingItem(
-                      lable: 'Total Ride Time', value: '$totalRideTime Hour'),
+                      lable: 'Total Ride Time',
+                      value: '${widget.totalRideTime} Hour'),
                   const SizedBox(height: 5),
-
                   bookingItem(
                       lable: 'Car Type',
-                      value: vehicleType.isEmpty ? carType : vehicleType),
+                      value: widget.vehicleType.isEmpty
+                          ? widget.carType
+                          : widget.vehicleType),
                   const SizedBox(height: 5),
-
                   bookingItem(
-                      lable: 'Booking Price', value: 'AED $rentalCharge'),
+                      lable: 'Booking Price',
+                      value: 'AED ${widget.rentalCharge}'),
                   const SizedBox(height: 5),
-
                   (getIssueByBookingId?.data ?? []).isEmpty
                       ? Container()
                       : Row(
@@ -529,7 +515,7 @@ class RentalBookingContainer extends StatelessWidget {
                             const SizedBox(width: 10),
                             Expanded(
                               child: CustomButtonSmall(
-                                  height: 35,
+                                  height: 30,
                                   btnHeading: 'Show IssueDetails',
                                   onTap: () {
                                     context.push("/raiseIssueDetail");
@@ -537,128 +523,13 @@ class RentalBookingContainer extends StatelessWidget {
                             )
                           ],
                         ),
-                  bookingItem(lable: 'Pickup Location', value: pickUpLocation),
-
-                  // Row(
-                  //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  //   crossAxisAlignment: CrossAxisAlignment.start,
-                  //   children: [
-                  //     Column(
-                  //       crossAxisAlignment: CrossAxisAlignment.start,
-                  //       mainAxisAlignment: MainAxisAlignment.start,
-                  //       children: [
-                  //         Row(
-                  //           mainAxisAlignment: MainAxisAlignment.start,
-                  //           crossAxisAlignment: CrossAxisAlignment.start,
-                  //           children: [
-                  //             Text("BookingId : ", style: titleTextStyle),
-                  //             SizedBox(
-                  //               // width: 100,
-                  //               child: Text(id, style: titleTextStyle1),
-                  //             )
-                  //           ],
-                  //         ),
-                  //         const SizedBox(height: 5),
-                  //         Row(
-                  //           mainAxisAlignment: MainAxisAlignment.start,
-                  //           crossAxisAlignment: CrossAxisAlignment.start,
-                  //           children: [
-                  //             Text("Kilometer : ", style: titleTextStyle),
-                  //             SizedBox(
-                  //               // width: 100,
-                  //               child: Text(kilometer, style: titleTextStyle1),
-                  //             )
-                  //           ],
-                  //         ),
-                  //         const SizedBox(height: 5),
-                  //         Row(
-                  //           mainAxisAlignment: MainAxisAlignment.start,
-                  //           crossAxisAlignment: CrossAxisAlignment.start,
-                  //           children: [
-                  //             Text("Date : ", style: titleTextStyle),
-                  //             SizedBox(
-                  //               // width: 100,
-                  //               child: Text(pickDate, style: titleTextStyle1),
-                  //             )
-                  //           ],
-                  //         ),
-                  //       ],
-                  //     ),
-                  //     Column(
-                  //       crossAxisAlignment: CrossAxisAlignment.start,
-                  //       children: [
-                  //         Row(
-                  //           mainAxisAlignment: MainAxisAlignment.start,
-                  //           crossAxisAlignment: CrossAxisAlignment.start,
-                  //           children: [
-                  //             Text("Status : ", style: titleTextStyle),
-                  //             SizedBox(
-                  //               // width: 100,
-                  //               child: Text(status, style: titleTextStyle1),
-                  //             )
-                  //           ],
-                  //         ),
-                  //         const SizedBox(height: 5),
-                  //         Row(
-                  //           mainAxisAlignment: MainAxisAlignment.start,
-                  //           crossAxisAlignment: CrossAxisAlignment.start,
-                  //           children: [
-                  //             Text("Price : ", style: titleTextStyle),
-                  //             SizedBox(
-                  //               // width: 100,
-                  //               child: Text('AED ${rentalCharge}',
-                  //                   style: titleTextStyle1),
-                  //             )
-                  //           ],
-                  //         ),
-                  //         const SizedBox(height: 5),
-                  //         Row(
-                  //           mainAxisAlignment: MainAxisAlignment.start,
-                  //           crossAxisAlignment: CrossAxisAlignment.start,
-                  //           children: [
-                  //             Text("Pick-Up Time : ", style: titleTextStyle),
-                  //             SizedBox(
-                  //               // width: 100,
-                  //               child: Text(pickTime, style: titleTextStyle1),
-                  //             )
-                  //           ],
-                  //         ),
-                  //         const SizedBox(height: 5),
-                  //       ],
-                  //     )
-                  //   ],
-                  // ),
-                  // vehicleType.isNotEmpty
-                  //     ? Row(
-                  //         mainAxisAlignment: MainAxisAlignment.start,
-                  //         crossAxisAlignment: CrossAxisAlignment.start,
-                  //         children: [
-                  //           Text("Vehicle Type : ", style: titleTextStyle),
-                  //           SizedBox(
-                  //             // width: 100,
-                  //             child: Text(vehicleType, style: titleTextStyle1),
-                  //           )
-                  //         ],
-                  //       )
-                  //     : SizedBox(),
-                  // const SizedBox(height: 5),
-                  // Row(
-                  //     mainAxisAlignment: MainAxisAlignment.start,
-                  //     crossAxisAlignment: CrossAxisAlignment.start,
-                  //     children: [
-                  //       Text("PickUp Location : ", style: titleTextStyle),
-                  //       SizedBox(
-                  //         width: 210,
-                  //         child: Text(pickUpLocation,
-                  //             style: titleTextStyle1,
-                  //             textAlign: TextAlign.start),
-                  //       ),
-                  //     ]),
+                  bookingItem(
+                      lable: 'Pickup Location', value: widget.pickUpLocation),
                 ],
               ),
             ),
 
-            guestId.isNotEmpty
+            widget.guestId.isNotEmpty
                 ? Container(
                     decoration: const BoxDecoration(
                         border: Border(top: BorderSide(color: greyColor))),
@@ -681,7 +552,8 @@ class RentalBookingContainer extends StatelessWidget {
                               Text("Guest Id : ", style: titleTextStyle),
                               SizedBox(
                                 // width: 100,
-                                child: Text(guestId, style: titleTextStyle1),
+                                child: Text(widget.guestId,
+                                    style: titleTextStyle1),
                               )
                             ],
                           ),
@@ -693,7 +565,8 @@ class RentalBookingContainer extends StatelessWidget {
                               Text("Guest Name : ", style: titleTextStyle),
                               SizedBox(
                                 // width: 100,
-                                child: Text('$firstName $lastName',
+                                child: Text(
+                                    '${widget.firstName} ${widget.lastName}',
                                     style: titleTextStyle1),
                               )
                             ],
@@ -706,7 +579,8 @@ class RentalBookingContainer extends StatelessWidget {
                               Text("Contact : ", style: titleTextStyle),
                               SizedBox(
                                 // width: 100,
-                                child: Text(contact, style: titleTextStyle1),
+                                child: Text(widget.contact,
+                                    style: titleTextStyle1),
                               )
                             ],
                           ),
@@ -718,7 +592,8 @@ class RentalBookingContainer extends StatelessWidget {
                               Text("Gender : ", style: titleTextStyle),
                               SizedBox(
                                 // width: 100,
-                                child: Text(gender, style: titleTextStyle1),
+                                child:
+                                    Text(widget.gender, style: titleTextStyle1),
                               )
                             ],
                           ),
@@ -733,7 +608,7 @@ class RentalBookingContainer extends StatelessWidget {
 
             ///Cancel Button Widget
             SizedBox(
-              child: btn,
+              child: widget.btn,
             ),
             const SizedBox(height: 10)
           ],

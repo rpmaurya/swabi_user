@@ -15,10 +15,10 @@ import 'package:flutter_cab/view/dashboard/account_Pages/term_condition.dart';
 import 'package:flutter_cab/view/dashboard/account_Pages/transaction.dart';
 import 'package:flutter_cab/view/dashboard/account_Pages/verifyPassword.dart';
 import 'package:flutter_cab/view/dashboard/home_screen.dart';
-import 'package:flutter_cab/view/dashboard/menuList.dart';
+import 'package:flutter_cab/view/dashboard/account_screen.dart';
 import 'package:flutter_cab/view/dashboard/offers_pages/allOffers_screen.dart';
 import 'package:flutter_cab/view/dashboard/offers_pages/offerDetails_screen.dart';
-import 'package:flutter_cab/view/dashboard/raiseIssue_pages/issueViewDetails.dart';
+import 'package:flutter_cab/view/dashboard/raiseIssue_pages/issue_view_details_screen.dart';
 import 'package:flutter_cab/view/dashboard/rental/bookYourCab.dart';
 import 'package:flutter_cab/view/dashboard/rental/carBooking.dart';
 import 'package:flutter_cab/view/dashboard/rental/carsDetails.dart';
@@ -34,7 +34,6 @@ import 'package:flutter_cab/view/dashboard/tourPackage/packageBookingMember.dart
 import 'package:flutter_cab/view/dashboard/tourPackage/packageDetails.dart';
 import 'package:flutter_cab/view/dashboard/tourPackage/packageHistory/packageHistoryManagment.dart';
 import 'package:flutter_cab/view/dashboard/tourPackage/tourPackageForm.dart';
-import 'package:flutter_cab/view/one_way_trip.dart';
 import 'package:flutter_cab/view/dashboard/account_Pages/editProfile.dart';
 import 'package:flutter_cab/view/registration/forgot_screen.dart';
 import 'package:flutter_cab/view/registration/login_screen.dart';
@@ -136,12 +135,12 @@ final GoRouter myRouter = GoRouter(
         return const home_screen();
       },
     ),
-    GoRoute(
-      path: '/oneWayTrip',
-      builder: (BuildContext context, GoRouterState state) {
-        return const one_way_trip();
-      },
-    ),
+    // GoRoute(
+    //   path: '/oneWayTrip',
+    //   builder: (BuildContext context, GoRouterState state) {
+    //     return const one_way_trip();
+    //   },
+    // ),
     GoRoute(
       path: '/notification',
       builder: (BuildContext context, GoRouterState state) {
@@ -154,7 +153,7 @@ final GoRouter myRouter = GoRouter(
         var data = state.extra as Map<String, dynamic>;
         return CustomTransitionPage(
           key: state.pageKey,
-          child: MenuList(userId: data['id']),
+          child: AccountScreen(userId: data['id']),
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
             const begin = Offset(-1.0, 0.0);
             const end = Offset.zero;

@@ -69,7 +69,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                         child: TextFormField(
                           controller: email,
                           decoration: InputDecoration(
-                              hintText: 'Enter your email',
+                              hintText: 'Email@gmail.com',
                               contentPadding: const EdgeInsets.symmetric(
                                   vertical: 10.0, horizontal: 10.0),
                               filled: true,
@@ -123,7 +123,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                               });
                             }
                           }),
-                      SizedBox(height: 10),
+                      const SizedBox(height: 10),
                       Login_SignUpBtn(
                         onTap: () => context.push("/login"),
                         btnHeading: 'Login',

@@ -37,7 +37,8 @@ class Custom_ListTile extends StatelessWidget {
               borderRadius: BorderRadius.circular(10),
               onTap: onTap,
               child: Container(
-                height: 50,
+                // height:50
+                height: MediaQuery.of(context).size.height * 0.065,
                 padding: const EdgeInsets.symmetric(
                   horizontal: 15,
                 ),

@@ -1095,7 +1095,7 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
                         const SizedBox(width: 10),
                         Expanded(
                           child: CustomButtonSmall(
-                              height: 40,
+                              height: 35,
                               btnHeading: 'Show IssueDetails',
                               onTap: () {
                                 context.push("/raiseIssueDetail");

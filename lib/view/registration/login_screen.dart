@@ -6,6 +6,7 @@ import 'package:flutter_cab/res/customTextWidget.dart';
 import 'package:flutter_cab/res/login/login_customTextFeild.dart';
 import 'package:flutter_cab/utils/assets.dart';
 import 'package:flutter_cab/utils/color.dart';
+import 'package:flutter_cab/utils/dimensions.dart';
 import 'package:flutter_cab/utils/text_styles.dart';
 import 'package:flutter_cab/utils/utils.dart';
 import 'package:flutter_cab/view_model/auth_view_model.dart';
@@ -108,7 +109,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       // child: Center(child: Image.asset(appLogo1)),
                     ),
                     const CustomTextWidget(
-                        content: "WELCOME!\nPlease sign in to your account",
+                        content: "Sign In\nPlease sign in to your account",
                         fontSize: 20,
                         fontWeight: FontWeight.w600,
                         maxline: 2,
@@ -166,38 +167,11 @@ class _LoginScreenState extends State<LoginScreen> {
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Enter your password';
-                        } else {
-                          return Validatorclass.validatePassword(value);
                         }
+                        return null;
                       },
                     ),
 
-                    // LoginTextFeild(
-                    //   focusNode: focusNode1,
-                    //   headingReq: true,
-                    //   controller: userNameControlller,
-                    //   img: email,
-                    //   hint: "Enter your email",
-                    //   heading: "Enter your Email",
-                    //   validator: (value) {
-                    //     if (value == null || value.isEmpty) {
-                    //       return 'Enter your email';
-                    //     } else {
-                    //       return Validatorclass.validatePassword(value);
-                    //     }
-                    //   },
-                    // ),
-                    // const SizedBox(height: 8),
-                    // LoginTextFeild(
-                    //   focusNode: focusNode2,
-                    //   headingReq: true,
-                    //   controller: passwordControlller,
-                    //   obscure: true,
-                    //   suffixIcon: true,
-                    //   img: email,
-                    //   hint: "Enter your password",
-                    //   heading: "Enter your Password",
-                    // ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -215,24 +189,20 @@ class _LoginScreenState extends State<LoginScreen> {
                           },
                         ),
                         Expanded(
-                            child: Text('Remember Me',
+                            child: Text('RememberMe',
                                 style: GoogleFonts.lato(
-                                    fontWeight: FontWeight.w700,
+                                    // fontSize:
+                                    //     AppDimension.getWidth(context) * 0.04,
+                                    fontWeight: FontWeight.w600,
                                     color: Colors.black))),
-                        Container(
-                          child: TextButton(
-                            onPressed: () {
-                              context.push('/forgotPassword');
-                              // Navigator.push(
-                              //     context,
-                              //     MaterialPageRoute(
-                              //         builder: (context) => ForgotPassword()));
-                            },
-                            child: Text('Forgot your password?',
-                                style: GoogleFonts.lato(
-                                    fontWeight: FontWeight.w700,
-                                    color: Colors.green)),
-                          ),
+                        TextButton(
+                          onPressed: () {
+                            context.push('/forgotPassword');
+                          },
+                          child: Text('Forgot your password?',
+                              style: GoogleFonts.lato(
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.green)),
                         ),
                       ],
                     ),

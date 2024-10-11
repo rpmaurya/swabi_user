@@ -97,18 +97,18 @@ class _CommonOfferContainerState extends State<CommonOfferContainer> {
                           const CustomText(
                               content: "View All",
                               textColor: greenColor,
-                              fontSize: 20),
+                              fontSize: 18),
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 5),
                             child: Container(
-                              height: 20,
-                              width: 20,
+                              height: 18,
+                              width: 18,
                               decoration: const BoxDecoration(
                                   color: greenColor, shape: BoxShape.circle),
                               child: const Icon(
                                 Icons.arrow_forward_ios,
                                 color: background,
-                                size: 15,
+                                size: 14,
                               ),
                             ),
                           )

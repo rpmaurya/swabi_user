@@ -461,7 +461,7 @@ class _registration_screenState extends State<registration_screen> {
 
                     const SizedBox(height: 40),
                     CustomButtonBig(
-                      btnHeading: "SIGN UP",
+                      btnHeading: "Sign Up",
                       loading: isLoading,
                       onTap: () {
                         setState(() {

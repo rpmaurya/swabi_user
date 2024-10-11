@@ -157,8 +157,9 @@ class CustomButtonSmall extends StatelessWidget {
                               color: disable
                                   ? background.withOpacity(.9)
                                   : background,
-                              fontSize: 16,
+                              fontSize: AppDimension.getWidth(context) * 0.04,
                               fontWeight: FontWeight.w700),
+                          textAlign: TextAlign.center,
                           maxLines: 1)),
             ),
           ),

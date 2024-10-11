@@ -117,24 +117,24 @@ class _RazorpayPaymentState extends State<RazorpayPayment> {
         toastLength: Toast.LENGTH_SHORT);
   }
 
-  Future<void> initiatePayment() async {
-    try {
-      // Fetching the payment order ID from the API
-      final response = await Provider.of<PaymentCreateOrderIdViewModel>(context,
-              listen: false)
-          .paymentCreateOrderIdViewModelApi(
-              context: context,
-              amount: widget.amount.toInt(),
-              userId: widget.userId.toString());
+  // Future<void> initiatePayment() async {
+  //   try {
+  //     // Fetching the payment order ID from the API
+  //     // final response = await Provider.of<PaymentCreateOrderIdViewModel>(context,
+  //     //         listen: false)
+  //     //     .paymentCreateOrderIdViewModelApi(
+  //     //         context: context,
+  //     //         amount: widget.amount.toInt(),
+  //     //         userId: widget.userId.toString());
 
-      // Extract the Razorpay order ID from the response
-      var paymentOrderId = response?.data.razorpayOrderId;
+  //     // Extract the Razorpay order ID from the response
+  //     // var paymentOrderId = response?.data.razorpayOrderId;
 
-      openCheckout(paymentOrderId ?? '');
-    } catch (error) {
-      print("Error initiating payment: $error");
-    }
-  }
+  //     openCheckout(paymentOrderId ?? '');
+  //   } catch (error) {
+  //     print("Error initiating payment: $error");
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -155,7 +155,7 @@ class _RazorpayPaymentState extends State<RazorpayPayment> {
               ElevatedButton(
                 style: ElevatedButton.styleFrom(backgroundColor: btnColor),
                 onPressed: () {
-                  initiatePayment();
+                  // initiatePayment();
                 },
                 child: const Text(
                   'Pay Now',

@@ -129,7 +129,12 @@ class _AddNewVehicleScreenState extends State<AddNewVehicleScreen> {
                     showSelectedItems: true,
                     disabledItemFn: (String s) => s.startsWith('I'),
                   ),
-                  items: const ["Brazil", "Italia (Disabled)", "Tunisia", 'Canada'],
+                  items: const [
+                    "Brazil",
+                    "Italia (Disabled)",
+                    "Tunisia",
+                    'Canada'
+                  ],
                   dropdownDecoratorProps: const DropDownDecoratorProps(
                     dropdownSearchDecoration: InputDecoration(
                       contentPadding:
@@ -158,7 +163,12 @@ class _AddNewVehicleScreenState extends State<AddNewVehicleScreen> {
                     showSelectedItems: true,
                     disabledItemFn: (String s) => s.startsWith('I'),
                   ),
-                  items: const ["Brazil", "Italia (Disabled)", "Tunisia", 'Canada'],
+                  items: const [
+                    "Brazil",
+                    "Italia (Disabled)",
+                    "Tunisia",
+                    'Canada'
+                  ],
                   dropdownDecoratorProps: const DropDownDecoratorProps(
                     dropdownSearchDecoration: InputDecoration(
                       contentPadding:
@@ -187,7 +197,12 @@ class _AddNewVehicleScreenState extends State<AddNewVehicleScreen> {
                     showSelectedItems: true,
                     disabledItemFn: (String s) => s.startsWith('I'),
                   ),
-                  items: const ["Brazil", "Italia (Disabled)", "Tunisia", 'Canada'],
+                  items: const [
+                    "Brazil",
+                    "Italia (Disabled)",
+                    "Tunisia",
+                    'Canada'
+                  ],
                   dropdownDecoratorProps: const DropDownDecoratorProps(
                     dropdownSearchDecoration: InputDecoration(
                       contentPadding:
@@ -214,7 +229,12 @@ class _AddNewVehicleScreenState extends State<AddNewVehicleScreen> {
                     showSelectedItems: true,
                     disabledItemFn: (String s) => s.startsWith('I'),
                   ),
-                  items: const ["Brazil", "Italia (Disabled)", "Tunisia", 'Canada'],
+                  items: const [
+                    "Brazil",
+                    "Italia (Disabled)",
+                    "Tunisia",
+                    'Canada'
+                  ],
                   dropdownDecoratorProps: const DropDownDecoratorProps(
                     dropdownSearchDecoration: InputDecoration(
                       contentPadding:
@@ -241,7 +261,12 @@ class _AddNewVehicleScreenState extends State<AddNewVehicleScreen> {
                     showSelectedItems: true,
                     disabledItemFn: (String s) => s.startsWith('I'),
                   ),
-                  items: const ["Brazil", "Italia (Disabled)", "Tunisia", 'Canada'],
+                  items: const [
+                    "Brazil",
+                    "Italia (Disabled)",
+                    "Tunisia",
+                    'Canada'
+                  ],
                   dropdownDecoratorProps: const DropDownDecoratorProps(
                     dropdownSearchDecoration: InputDecoration(
                       contentPadding:
@@ -268,7 +293,12 @@ class _AddNewVehicleScreenState extends State<AddNewVehicleScreen> {
                     showSelectedItems: true,
                     disabledItemFn: (String s) => s.startsWith('I'),
                   ),
-                  items: const ["Brazil", "Italia (Disabled)", "Tunisia", 'Canada'],
+                  items: const [
+                    "Brazil",
+                    "Italia (Disabled)",
+                    "Tunisia",
+                    'Canada'
+                  ],
                   dropdownDecoratorProps: const DropDownDecoratorProps(
                     dropdownSearchDecoration: InputDecoration(
                       contentPadding:
@@ -503,11 +533,13 @@ class _AddNewVehicleScreenState extends State<AddNewVehicleScreen> {
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Add Vehicle secusess')));
+                            const SnackBar(
+                                content: Text('Add Vehicle secusess')));
                         Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => const AddVehicleScreen()));
+                                builder: (context) =>
+                                    const AddVehicleScreen()));
                       }
                     },
                     child: const Text(

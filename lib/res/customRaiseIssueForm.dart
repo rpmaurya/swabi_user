@@ -138,19 +138,17 @@ class _RaiseIssueDialogState extends State<RaiseIssueDialog> {
                 if (_selectedIssue == 'My reason is not listed') {
                   print('Description: ${_descriptionController.text}');
                 }
-                Map<String, dynamic> body = {
-                  "bookingId": widget.bookingId,
-                  "bookingType": widget.bookingType,
-                  "raisedById": userId,
-                  "raisedByRole": "USER",
-                  "issueType": "Service Issue",
-                  "issueDescription":
-                      _selectedIssue == 'My reason is not listed'
-                          ? _descriptionController.text
-                          : _selectedIssue
-                };
+
                 Provider.of<RaiseissueViewModel>(context, listen: false)
-                    .requestRaiseIssue(context: context, body: body);
+                    .requestRaiseIssue(
+                        context: context,
+                        bookingId: widget.bookingId,
+                        bookingType: widget.bookingType,
+                        raisedById: userId.toString(),
+                        issueDescription:
+                            _selectedIssue == 'My reason is not listed'
+                                ? _descriptionController.text
+                                : _selectedIssue ?? '');
                 Utils.toastSuccessMessage(
                   'Raise Request Successfully',
                 );

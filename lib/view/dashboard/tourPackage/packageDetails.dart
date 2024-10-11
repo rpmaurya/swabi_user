@@ -361,7 +361,7 @@ class _ActivityContainerState extends State<ActivityContainer> {
               maxline: 3,
               fontSize: 16,
               fontWeight: FontWeight.w700,
-              textColor: blackColor,
+              textColor: greenColor,
             ),
             const SizedBox(height: 5),
             // CustomTextWidget(

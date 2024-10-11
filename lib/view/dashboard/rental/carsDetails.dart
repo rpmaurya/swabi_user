@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/model/rentalBooking_model.dart';
+import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/res/Custom%20Page%20Layout/commonPage_Layout.dart';
 import 'package:flutter_cab/res/customAppBar_widget.dart';
 import 'package:flutter_cab/utils/assets.dart';
@@ -40,7 +41,7 @@ class _CarsDetailsAvailableState extends State<CarsDetailsAvailable> {
   List<Body> rentalData = [];
 
   String message = "";
-
+  int selectIndex = -1;
   @override
   Widget build(BuildContext context) {
     print("${widget.latitude}Latii");
@@ -69,7 +70,12 @@ class _CarsDetailsAvailableState extends State<CarsDetailsAvailable> {
                     seats: rentalData[index].seats,
                     kilometers: rentalData[index].kilometers,
                     pickUpLocation: rentalData[index].pickUpLocation,
+                    loading: load && selectIndex == index,
                     onTap: () {
+                      setState(() {
+                        load = true;
+                        selectIndex = index;
+                      });
                       double amount =
                           double.parse(rentalData[index].totalPrice);
                       // int intAmoutns
@@ -86,6 +92,9 @@ class _CarsDetailsAvailableState extends State<CarsDetailsAvailable> {
                         "totalAmt": rentalData[index].totalPrice,
                         "longitude": rentalData[index].longitude,
                         "latitude": rentalData[index].latitude
+                      });
+                      setState(() {
+                        load = false;
                       });
                     });
               })),
@@ -129,25 +138,26 @@ class TransContainer extends StatelessWidget {
         elevation: 0,
         color: background,
         borderRadius: BorderRadius.circular(10),
-        child: InkWell(
-          borderRadius: BorderRadius.circular(10),
-          onTap: onTap,
-          child: Container(
-            // height: AppDimension.getHeight(context)*.25,
-            width: AppDimension.getWidth(context) * .9,
-            decoration: BoxDecoration(
-                color: background,
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: naturalGreyColor.withOpacity(.3))),
-            child: Column(
-              children: [
-                ///First Line of Design
-                Container(
-                    decoration: const BoxDecoration(
-                        border:
-                            Border(bottom: BorderSide(color: curvePageColor))),
-                    child: ListTile(
-                      leading: SizedBox(
+        child: Container(
+          // height: AppDimension.getHeight(context)*.25,
+          width: AppDimension.getWidth(context) * .9,
+          decoration: BoxDecoration(
+              color: background,
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: naturalGreyColor.withOpacity(.3))),
+          child: Column(
+            children: [
+              ///First Line of Design
+              Container(
+                  padding: EdgeInsets.all(10),
+                  decoration: const BoxDecoration(
+                      border:
+                          Border(bottom: BorderSide(color: curvePageColor))),
+                  child: Row(
+                    // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
                         width: 80,
                         height: 60,
                         child: ClipRRect(
@@ -157,133 +167,145 @@ class TransContainer extends StatelessWidget {
                               fit: BoxFit.cover,
                             )),
                       ),
-                      title: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            carName,
-                            style: GoogleFonts.lato(
-                                color: greyColor,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600),
-                          ),
-                          Text(
-                            "⭐ 4.8",
-                            style: GoogleFonts.lato(
-                                color: greyColor,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600),
-                          ),
-                        ],
-                      ),
-                      subtitle: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                "Hour : $hour",
-                                style: GoogleFonts.lato(
-                                    color: greyColor,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600),
-                              ),
-                              Text(
-                                "Pickup Time : $pickTime",
-                                style: GoogleFonts.lato(
-                                    color: greyColor,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600),
-                              ),
-                            ],
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                "Seats : $seats",
-                                style: GoogleFonts.lato(
-                                    color: greyColor,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w700),
-                              ),
-                              Text(
-                                "Date : $pickDate",
-                                style: GoogleFonts.lato(
-                                    color: greyColor,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    )),
-
-                ///Second Line Design
-                Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          RichText(
-                              text: TextSpan(children: [
-                            TextSpan(
-                              text: "Kilometers : ",
-                              style: titleTextStyle,
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  carName,
+                                  style: GoogleFonts.lato(
+                                      color: greyColor,
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.w700),
+                                ),
+                                Text(
+                                  "⭐ 4.8",
+                                  style: GoogleFonts.lato(
+                                      color: greyColor,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600),
+                                ),
+                              ],
                             ),
-                            TextSpan(
-                              text: '${kilometers}/KM',
-                              style: titleTextStyle,
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "Hour : $hour",
+                                  style: GoogleFonts.lato(
+                                      color: greyColor,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600),
+                                ),
+                                Text(
+                                  "Time : $pickTime",
+                                  style: GoogleFonts.lato(
+                                      color: greyColor,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600),
+                                ),
+                              ],
                             ),
-                          ])),
-                          const SizedBox(height: 10),
-                          SizedBox(
-                            width: AppDimension.getWidth(context) * .55,
-                            child: Text(
-                              "Location : $pickUpLocation",
-                              style: titleTextStyle,
-                              maxLines: 3,
-                              overflow: TextOverflow.ellipsis,
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "Seats : $seats",
+                                  style: GoogleFonts.lato(
+                                      color: greyColor,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w700),
+                                ),
+                                Text(
+                                  "Date : $pickDate",
+                                  style: GoogleFonts.lato(
+                                      color: greyColor,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600),
+                                ),
+                              ],
                             ),
-                          ),
-                          // const SizedBox(height: 5),
-                          // Text(
-                          //   pickUpLocation,
-                          //   style: titleTextStyle,
-                          // ),
-                        ],
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Text(
-                            "AED $totalPrice",
-                            style: appbarTextStyle,
-                          ),
-                          Text(
-                            "Inclusive of GST",
-                            style: titleTextStyle,
-                          ),
-                          // CustomButtonSmall(
-                          //   width: AppDimension.getWidth(context) * .28,
-                          //   loading: loading,
-                          //   btnHeading: "VIEW",
-                          //   onTap: onTap,
-                          // ),
-                        ],
+                          ],
+                        ),
                       )
                     ],
-                  ),
+                  )),
+
+              ///Second Line Design
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        RichText(
+                            text: TextSpan(children: [
+                          TextSpan(
+                            text: "Kilometers : ",
+                            style: titleTextStyle,
+                          ),
+                          TextSpan(
+                            text: '${kilometers}/KM',
+                            style: titleTextStyle,
+                          ),
+                        ])),
+                        const SizedBox(height: 10),
+                        SizedBox(
+                          width: AppDimension.getWidth(context) * .55,
+                          child: Text(
+                            "Location : $pickUpLocation",
+                            style: titleTextStyle,
+                            maxLines: 3,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        // const SizedBox(height: 5),
+                        // Text(
+                        //   pickUpLocation,
+                        //   style: titleTextStyle,
+                        // ),
+                      ],
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Text(
+                          "AED $totalPrice",
+                          style: appbarTextStyle,
+                        ),
+                        CustomButtonSmall(
+                          width: AppDimension.getWidth(context) * .28,
+                          height: 40,
+                          loading: loading,
+                          btnHeading: "VIEW",
+                          onTap: onTap,
+                        ),
+                      ],
+                    )
+                  ],
                 ),
-              ],
-            ),
+              ),
+              // Padding(
+              //   padding: const EdgeInsets.all(8.0),
+              //   child: Align(
+              //     alignment: Alignment.centerRight,
+              //     child: CustomButtonSmall(
+              //         loading: loading,
+              //         height: 40,
+              //         width: 80,
+              //         btnHeading: 'View',
+              //         onTap: onTap),
+              //   ),
+              // )
+            ],
           ),
         ),
       ),

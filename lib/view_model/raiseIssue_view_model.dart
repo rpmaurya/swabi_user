@@ -24,7 +24,6 @@ class RaiseissueViewModel with ChangeNotifier {
 
   setDataList(ApiResponse<IssueDetailsModel> response) {
     issueDetail = response;
-
     notifyListeners();
   }
 
@@ -33,18 +32,37 @@ class RaiseissueViewModel with ChangeNotifier {
 
   setDataList1(ApiResponse<GetIssueByBookingIdModel> response) {
     getIssueBybookingId = response;
-
     notifyListeners();
   }
 
   Future<void> requestRaiseIssue(
       {required BuildContext context,
-      required Map<String, dynamic> body}) async {
+      required String bookingId,
+      required String bookingType,
+      required String raisedById,
+      required String issueDescription}) async {
+    Map<String, dynamic> body = {
+      "bookingId": bookingId,
+      "bookingType": bookingType,
+      "raisedById": raisedById,
+      "raisedByRole": "USER",
+      "issueType": "Service Issue",
+      "issueDescription": issueDescription
+    };
     try {
-      RaiseIssueModel? issueModel =
-          await _myRepo.requestRaiseIssueApi(context: context, body: body);
-      _raiseIssueModel = issueModel;
-      notifyListeners();
+      await _myRepo
+          .requestRaiseIssueApi(context: context, body: body)
+          .then((onValue) {
+        if (onValue?.status?.httpCode == '200') {
+          getIssueByBookingId(
+              context: context,
+              bookingId: bookingId,
+              userId: raisedById,
+              bookingType: bookingType);
+          _raiseIssueModel = onValue;
+          notifyListeners();
+        }
+      });
     } catch (e) {
       ErrorHandler.handleError(e);
     }
@@ -122,6 +140,7 @@ class RaiseissueViewModel with ChangeNotifier {
     Map<String, dynamic> query = {
       "bookingId": bookingId,
       "userId": userId,
+      "userType": "USER",
       "bookingType": bookingType
     };
     try {

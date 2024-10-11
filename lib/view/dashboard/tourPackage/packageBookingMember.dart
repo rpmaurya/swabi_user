@@ -18,6 +18,7 @@ import 'package:flutter_cab/view_model/package_view_model.dart';
 import 'package:flutter_cab/view_model/payment_gateway_view_model.dart';
 import 'package:flutter_cab/view_model/services/paymentService.dart';
 import 'package:flutter_cab/view_model/userProfile_view_model.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 
@@ -517,10 +518,12 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
   @override
   Widget build(BuildContext context) {
     String status = context
-        .watch<GetPackageBookingByIdViewModel>()
-        .getPackageBookingById
+        .watch<PaymentCreateOrderIdViewModel>()
+        .paymentOrderID
         .status
         .toString();
+    bool bookingStatus =
+        context.watch<GetPackageBookingByIdViewModel>().isLoading;
     profileUser = context.watch<UserProfileViewModel>().DataList.data?.data;
     // primaryCountryCode =
     //     context.watch<UserProfileViewModel>().DataList.data?.data.countryCode ??
@@ -541,703 +544,753 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
       ),
       body: PageLayout_Page(
           padding: EdgeInsets.zero,
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                const SizedBox(height: 5),
+          child: Stack(
+            children: [
+              SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 5),
 
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: Column(
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: Column(
                         children: [
-                          SizedBox(
-                            height: 20,
-                            child: Marquee(
-                              showFadingOnlyWhenScrolling: false,
-                              text:
-                                  '*Children under 2 years old can be booked for free. and Certain activities are not recommended for senior citizens due to potential health risks.*',
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.bold, color: redColor),
-                              scrollAxis: Axis.horizontal,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              blankSpace: AppDimension.getWidth(context),
-                              velocity: 100.0,
-                              pauseAfterRound: const Duration(seconds: 1),
-                              startPadding: 0,
-                              accelerationDuration: const Duration(seconds: 1),
-                              accelerationCurve: Curves.linear,
-                              decelerationDuration:
-                                  const Duration(milliseconds: 500),
-                              decelerationCurve: Curves.easeOut,
-                            ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              SizedBox(
+                                height: 20,
+                                child: Marquee(
+                                  showFadingOnlyWhenScrolling: false,
+                                  text:
+                                      '*Children under 2 years old can be booked for free. and Certain activities are not recommended for senior citizens due to potential health risks.*',
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: redColor),
+                                  scrollAxis: Axis.horizontal,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  blankSpace: AppDimension.getWidth(context),
+                                  velocity: 100.0,
+                                  pauseAfterRound: const Duration(seconds: 1),
+                                  startPadding: 0,
+                                  accelerationDuration:
+                                      const Duration(seconds: 1),
+                                  accelerationCurve: Curves.linear,
+                                  decelerationDuration:
+                                      const Duration(milliseconds: 500),
+                                  decelerationCurve: Curves.easeOut,
+                                ),
+                              ),
+                              Container(
+                                margin: const EdgeInsets.only(bottom: 5),
+                                child: Text(
+                                  "Travel Date",
+                                  overflow: TextOverflow.ellipsis,
+                                  style: titleTextStyle,
+                                ),
+                              ),
+                              CommonContainer(
+                                width: AppDimension.getWidth(context) * .94,
+                                // width: AppDimension.getWidth(context) / 1.4,
+                                height: 45,
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 5),
+                                borderReq: true,
+                                elevation: 0,
+                                color: bgGreyColor.withOpacity(0.4),
+                                borderColor: naturalGreyColor.withOpacity(.3),
+                                borderRadius: BorderRadius.circular(5),
+                                child: Row(
+                                  children: [
+                                    const Icon(
+                                      Icons.calendar_month_outlined,
+                                      color: naturalGreyColor,
+                                    ),
+                                    const SizedBox(width: 10),
+                                    CustomTextWidget(
+                                        content: controller[0].text,
+                                        fontSize: 16,
+                                        textColor: Colors.black,
+                                        fontWeight: FontWeight.w600)
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(height: 5),
+                              Text(
+                                'Primary Contact',
+                                style: titleTextStyle,
+                              ),
+                              const SizedBox(height: 5),
+
+                              CustomMobilenumber(
+                                  textLength: 9,
+                                  focusNode: focusNode4,
+                                  fillColor: background,
+                                  controller: primaryNoController,
+                                  hintText: 'Enter number',
+                                  countryCode: primaryCountryCode),
+                              // Customphonefield(
+                              //   poneKey: _phoneKey,
+                              //   focusNode: focusNode4,
+                              //   initalCountryCode: initialCountryCode,
+                              //   controller: primaryNoController,
+                              //   onChanged: (phoneNumber) {
+                              //     primaryCountryCode = phoneNumber.countryCode
+                              //         .replaceFirst("+", '')
+                              //         .trim();
+                              //     debugPrint('phone number$primaryCountryCode');
+                              //     // primaryNoController.text = phoneNumber.number;
+                              //   },
+                              //   onCountryChanged: (country) {
+                              //     primaryCountryCode = country.dialCode;
+                              //   },
+                              //   validator: (p0) {
+                              //     return null;
+                              //   },
+                              // ),
+                              const SizedBox(height: 5),
+                              Text('Secondary Contact',
+                                  textAlign: TextAlign.start,
+                                  style: titleTextStyle),
+                              const SizedBox(height: 5),
+
+                              CustomMobilenumber(
+                                  textLength: 9,
+                                  focusNode: focusNode5,
+                                  fillColor: background,
+                                  controller: secondaryNoController,
+                                  hintText: 'Enter number',
+                                  countryCode: secondaryCountryCode),
+                              // Customphonefield(
+                              //   focusNode: focusNode5,
+                              //   initalCountryCode: 'AE',
+                              //   controller: secondaryNoController,
+                              //   onChanged: (phoneNumber) {
+                              //     secondaryCountryCode = phoneNumber.countryCode
+                              //         .replaceFirst("+", '')
+                              //         .trim();
+                              //     // secondaryNoController.text = phoneNumber.number;
+
+                              //     debugPrint(
+                              //         "${secondaryCountryCode} secondarycode....");
+                              //     debugPrint(
+                              //         "${secondaryNoController.text} secondaryNumber....");
+                              //   },
+                              //   onCountryChanged: (country) {
+                              //     secondaryCountryCode = country.fullCountryCode;
+                              //     debugPrint(
+                              //         "${secondaryCountryCode} secondarycode....");
+                              //   },
+                              //   validator: (p0) async {
+                              //     // String pattern = r'^\+?[0-9]{10,15}$';
+                              //     // RegExp regex = RegExp(pattern);
+
+                              //     // if (!regex.hasMatch(p0!.completeNumber)) {
+                              //     //   return 'Please enter a valid phone number';
+                              //     // }
+                              //     return null;
+                              //   },
+                              // ),
+                            ],
                           ),
+                          const SizedBox(height: 10),
                           Container(
-                            margin: const EdgeInsets.only(bottom: 5),
-                            child: Text(
-                              "Travel Date",
-                              overflow: TextOverflow.ellipsis,
-                              style: titleTextStyle,
-                            ),
-                          ),
-                          CommonContainer(
-                            width: AppDimension.getWidth(context) * .94,
-                            // width: AppDimension.getWidth(context) / 1.4,
-                            height: 45,
-                            padding: const EdgeInsets.symmetric(horizontal: 5),
-                            borderReq: true,
-                            elevation: 0,
-                            color: bgGreyColor.withOpacity(0.4),
-                            borderColor: naturalGreyColor.withOpacity(.3),
-                            borderRadius: BorderRadius.circular(5),
-                            child: Row(
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                                color: background,
+                                borderRadius:
+                                    const BorderRadius.all(Radius.circular(10)),
+                                border: Border.all(
+                                    color: naturalGreyColor.withOpacity(.3))),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Icon(
-                                  Icons.calendar_month_outlined,
-                                  color: naturalGreyColor,
-                                ),
-                                const SizedBox(width: 10),
-                                CustomTextWidget(
-                                    content: controller[0].text,
-                                    fontSize: 16,
-                                    textColor: Colors.black,
-                                    fontWeight: FontWeight.w600)
-                              ],
-                            ),
-                          ),
-                          const SizedBox(height: 5),
-                          Text(
-                            'Primary Contact',
-                            style: titleTextStyle,
-                          ),
-                          const SizedBox(height: 5),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Customtextformfield(
+                                        focusNode: couponFocus,
+                                        controller: couponController,
+                                        hintText: 'Coupon code',
+                                        readOnly: offerVisible ? true : false,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    offerVisible
+                                        ? CustomButtonSmall(
+                                            height: 45,
+                                            width: 80,
+                                            btnHeading: 'Remove',
+                                            onTap: () {
+                                              FocusScope.of(context).unfocus();
 
-                          CustomMobilenumber(
-                              textLength: 9,
-                              focusNode: focusNode4,
-                              fillColor: background,
-                              controller: primaryNoController,
-                              hintText: 'Enter number',
-                              countryCode: primaryCountryCode),
-                          // Customphonefield(
-                          //   poneKey: _phoneKey,
-                          //   focusNode: focusNode4,
-                          //   initalCountryCode: initialCountryCode,
-                          //   controller: primaryNoController,
-                          //   onChanged: (phoneNumber) {
-                          //     primaryCountryCode = phoneNumber.countryCode
-                          //         .replaceFirst("+", '')
-                          //         .trim();
-                          //     debugPrint('phone number$primaryCountryCode');
-                          //     // primaryNoController.text = phoneNumber.number;
-                          //   },
-                          //   onCountryChanged: (country) {
-                          //     primaryCountryCode = country.dialCode;
-                          //   },
-                          //   validator: (p0) {
-                          //     return null;
-                          //   },
-                          // ),
-                          const SizedBox(height: 5),
-                          Text('Secondary Contact',
-                              textAlign: TextAlign.start,
-                              style: titleTextStyle),
-                          const SizedBox(height: 5),
-
-                          CustomMobilenumber(
-                              textLength: 9,
-                              focusNode: focusNode5,
-                              fillColor: background,
-                              controller: secondaryNoController,
-                              hintText: 'Enter number',
-                              countryCode: secondaryCountryCode),
-                          // Customphonefield(
-                          //   focusNode: focusNode5,
-                          //   initalCountryCode: 'AE',
-                          //   controller: secondaryNoController,
-                          //   onChanged: (phoneNumber) {
-                          //     secondaryCountryCode = phoneNumber.countryCode
-                          //         .replaceFirst("+", '')
-                          //         .trim();
-                          //     // secondaryNoController.text = phoneNumber.number;
-
-                          //     debugPrint(
-                          //         "${secondaryCountryCode} secondarycode....");
-                          //     debugPrint(
-                          //         "${secondaryNoController.text} secondaryNumber....");
-                          //   },
-                          //   onCountryChanged: (country) {
-                          //     secondaryCountryCode = country.fullCountryCode;
-                          //     debugPrint(
-                          //         "${secondaryCountryCode} secondarycode....");
-                          //   },
-                          //   validator: (p0) async {
-                          //     // String pattern = r'^\+?[0-9]{10,15}$';
-                          //     // RegExp regex = RegExp(pattern);
-
-                          //     // if (!regex.hasMatch(p0!.completeNumber)) {
-                          //     //   return 'Please enter a valid phone number';
-                          //     // }
-                          //     return null;
-                          //   },
-                          // ),
-                        ],
-                      ),
-                      const SizedBox(height: 10),
-                      Container(
-                        padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                            color: background,
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(10)),
-                            border: Border.all(
-                                color: naturalGreyColor.withOpacity(.3))),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: Customtextformfield(
-                                    focusNode: couponFocus,
-                                    controller: couponController,
-                                    hintText: 'Coupon code',
-                                    readOnly: offerVisible ? true : false,
-                                  ),
-                                ),
-                                const SizedBox(width: 10),
-                                offerVisible
-                                    ? CustomButtonSmall(
-                                        height: 45,
-                                        width: 80,
-                                        btnHeading: 'Remove',
-                                        onTap: () {
-                                          FocusScope.of(context).unfocus();
-
-                                          // Optionally, unfocus specific fields
-                                          couponFocus.unfocus();
-                                          setState(() {
-                                            offerVisible = false;
-                                            discountAmount = 0;
-                                          });
-                                        },
-                                      )
-                                    : CustomButtonSmall(
-                                        height: 45,
-                                        width: 80,
-                                        btnHeading: 'Apply',
-                                        onTap: () {
-                                          // double? amoun =
-                                          //     double.parse(amount.toString());
-                                          // taxAmount = taxamount();
-                                          if (members.isEmpty) {
-                                            // Utils.flushBarErrorMessage(
-                                            //     "Please add Members First", context);
-                                            Utils.toastMessage(
-                                                'Please add Members First');
-                                          } else if (couponController
-                                              .text.isEmpty) {
-                                            // Utils.flushBarErrorMessage(
-                                            //     'Please Enter Offer Coupon', context);
-                                            Utils.toastMessage(
-                                                'Please Enter Offer Coupon');
-                                          } else {
-                                            Provider.of<OfferViewModel>(context,
-                                                    listen: false)
-                                                .validateOffer(
-                                                    context: context,
-                                                    offerCode:
-                                                        couponController.text,
-                                                    bookingType:
-                                                        'PACKAGE_BOOKING',
-                                                    bookigAmount:
-                                                        payAbleAmount.toInt())
-                                                .then((onValue) {
-                                              if (onValue?.status?.httpCode ==
-                                                  '200') {
-                                                Utils.toastSuccessMessage(
-                                                    onValue?.status?.message ??
-                                                        '');
-                                                offerCode =
-                                                    onValue?.data?.offerCode;
-                                                disCountPer = onValue?.data
-                                                        ?.discountPercentage ??
-                                                    0;
-                                                maxDisAmount = onValue?.data
-                                                        ?.maxDiscountAmount ??
-                                                    0;
-                                                setState(() {
-                                                  offerVisible = true;
-                                                  discountAmount =
-                                                      getPercentage();
-                                                  debugPrint(
-                                                      'discountpercentage.....,..,.,$discountAmount');
-                                                });
+                                              // Optionally, unfocus specific fields
+                                              couponFocus.unfocus();
+                                              setState(() {
+                                                offerVisible = false;
+                                                discountAmount = 0;
+                                              });
+                                            },
+                                          )
+                                        : CustomButtonSmall(
+                                            height: 45,
+                                            width: 80,
+                                            btnHeading: 'Apply',
+                                            onTap: () {
+                                              // double? amoun =
+                                              //     double.parse(amount.toString());
+                                              // taxAmount = taxamount();
+                                              if (members.isEmpty) {
+                                                // Utils.flushBarErrorMessage(
+                                                //     "Please add Members First", context);
+                                                Utils.toastMessage(
+                                                    'Please add Members First');
+                                              } else if (couponController
+                                                  .text.isEmpty) {
+                                                // Utils.flushBarErrorMessage(
+                                                //     'Please Enter Offer Coupon', context);
+                                                Utils.toastMessage(
+                                                    'Please Enter Offer Coupon');
                                               } else {
-                                                setState(() {
-                                                  discountAmount = 0;
+                                                Provider
+                                                        .of<
+                                                                OfferViewModel>(
+                                                            context,
+                                                            listen: false)
+                                                    .validateOffer(
+                                                        context: context,
+                                                        offerCode:
+                                                            couponController
+                                                                .text,
+                                                        bookingType:
+                                                            'PACKAGE_BOOKING',
+                                                        bookigAmount:
+                                                            payAbleAmount
+                                                                .toInt())
+                                                    .then((onValue) {
+                                                  if (onValue
+                                                          ?.status?.httpCode ==
+                                                      '200') {
+                                                    Utils.toastSuccessMessage(
+                                                        onValue?.status
+                                                                ?.message ??
+                                                            '');
+                                                    offerCode = onValue
+                                                        ?.data?.offerCode;
+                                                    disCountPer = onValue?.data
+                                                            ?.discountPercentage ??
+                                                        0;
+                                                    maxDisAmount = onValue?.data
+                                                            ?.maxDiscountAmount ??
+                                                        0;
+                                                    setState(() {
+                                                      offerVisible = true;
+                                                      discountAmount =
+                                                          getPercentage();
+                                                      debugPrint(
+                                                          'discountpercentage.....,..,.,$discountAmount');
+                                                    });
+                                                  } else {
+                                                    setState(() {
+                                                      discountAmount = 0;
+                                                    });
+                                                  }
                                                 });
                                               }
-                                            });
-                                          }
-                                        },
+                                            },
+                                          )
+                                  ],
+                                ),
+                                offerVisible
+                                    ? Text(
+                                        'Congrats!  You have availed discount of AED ${disAmount.toInt()}.',
+                                        style: TextStyle(color: greenColor),
                                       )
+                                    : Container(),
                               ],
                             ),
-                            offerVisible
-                                ? Text(
-                                    'Congrats!  You have availed discount of AED ${disAmount.toInt()}.',
-                                    style: TextStyle(color: greenColor),
-                                  )
-                                : Container(),
+                          ),
+                          const SizedBox(height: 10),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Expanded(
+                                child: CustomButtonSmall(
+                                  titleReq: false,
+                                  elevation: 0,
+                                  elevationReq: true,
+                                  buttonColor: btnColor,
+                                  borderRadius: BorderRadius.circular(5),
+                                  // width: AppDimension.getWidth(context) / 4.5,
+                                  btnHeading: "Add Adult",
+                                  disable: isAddAdultDisabled,
+                                  height: 40,
+                                  onTap: () {
+                                    FocusScope.of(context).unfocus();
+
+                                    // Optionally, unfocus specific fields
+                                    focusNode4.unfocus();
+                                    focusNode5.unfocus();
+                                    couponFocus.unfocus();
+                                    _addMember(
+                                        title: 'Add Adult Member',
+                                        ageUnit: 'Year',
+                                        type: 'Adult');
+
+                                    // _addAdultMember();
+                                    // setState(() {
+                                    //   type = 'Adult';
+                                    //   updateButtonStates();
+                                    // });
+                                  },
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: CustomButtonSmall(
+                                  titleReq: false,
+                                  elevation: 0,
+                                  elevationReq: true,
+                                  buttonColor: btnColor,
+                                  borderRadius: BorderRadius.circular(5),
+                                  // width: AppDimension.getWidth(context) / 4.5,
+                                  btnHeading: "Add Child",
+                                  height: 40,
+                                  disable: isAddChildDisabled,
+                                  onTap: () {
+                                    FocusScope.of(context).unfocus();
+
+                                    // Optionally, unfocus specific fields
+                                    focusNode4.unfocus();
+                                    focusNode5.unfocus();
+                                    couponFocus.unfocus();
+                                    _addMember(
+                                        title: 'Add Child Member',
+                                        ageUnit: 'Year',
+                                        type: 'Child');
+
+                                    // _addChildMember();
+                                    // setState(() {
+                                    //   type = 'Child';
+                                    //   updateButtonStates();
+                                    // });
+                                  },
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: CustomButtonSmall(
+                                  titleReq: false,
+                                  elevation: 0,
+                                  elevationReq: true,
+                                  buttonColor: btnColor,
+                                  borderRadius: BorderRadius.circular(5),
+                                  // width: AppDimension.getWidth(context) / 4,
+                                  btnHeading: "Add Infant",
+                                  height: 40,
+                                  disable: isAddInfentDisabled,
+                                  onTap: () {
+                                    FocusScope.of(context).unfocus();
+
+                                    // Optionally, unfocus specific fields
+                                    focusNode4.unfocus();
+                                    focusNode5.unfocus();
+                                    couponFocus.unfocus();
+                                    _addMember(
+                                        title: 'Add Infant Member',
+                                        ageUnit: 'Month',
+                                        type: 'Infant');
+
+                                    // _addInfantdMember();
+                                    // setState(() {
+                                    //   type = 'Infant';
+                                    //   updateButtonStates();
+                                    // });
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    const SizedBox(height: 10),
+                    Column(
+                      children: [
+                        Table(
+                          columnWidths: const {
+                            0: FixedColumnWidth(100),
+                            1: FixedColumnWidth(75),
+                            2: FixedColumnWidth(75),
+                            3: FixedColumnWidth(70),
+                            4: FixedColumnWidth(80)
+                          },
+                          // defaultColumnWidth: FixedColumnWidth(100),
+                          children: [
+                            TableRow(
+                                decoration: const BoxDecoration(
+                                  color: btnColor,
+                                ),
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 15, bottom: 10, top: 10),
+                                    child: Text(
+                                      'Name',
+                                      style: tableheaderStyle,
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        top: 10, bottom: 10),
+                                    child: Text(
+                                      'Age',
+                                      style: tableheaderStyle,
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        top: 10, bottom: 10),
+                                    child: Text(
+                                      'Gender',
+                                      style: tableheaderStyle,
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        top: 10, bottom: 10),
+                                    child: Text(
+                                      'Type',
+                                      style: tableheaderStyle,
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        top: 10, bottom: 10),
+                                    child: Text(
+                                      'Action',
+                                      style: tableheaderStyle,
+                                    ),
+                                  ),
+                                ])
+                          ],
+                        ),
+                        members.isEmpty
+                            ? const Center(
+                                child: Padding(
+                                padding: EdgeInsets.only(top: 50),
+                                child: Text('No Members Added'),
+                              ))
+                            : Table(
+                                columnWidths: const {
+                                  0: FixedColumnWidth(100),
+                                  1: FixedColumnWidth(75),
+                                  2: FixedColumnWidth(75),
+                                  3: FixedColumnWidth(70),
+                                  4: FixedColumnWidth(80)
+                                },
+                                // defaultColumnWidth: FixedColumnWidth(100),
+                                children: members.map((member) {
+                                  int index = members.indexOf(member);
+                                  print('objectindex$index');
+                                  return TableRow(
+                                      // decoration:
+                                      //     BoxDecoration(color: background),
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              left: 15, bottom: 10, top: 10),
+                                          child: Text(
+                                            member['name'],
+                                            style: titleTextStyle1,
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              top: 10, bottom: 10),
+                                          child: Text(
+                                            '${member['age']} ${member['ageUnit']}',
+                                            style: titleTextStyle1,
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              top: 10, bottom: 10),
+                                          child: Text(
+                                            member['gender'],
+                                            style: titleTextStyle1,
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              top: 10, bottom: 10),
+                                          child: Text(
+                                            member['ageUnit'] == 'Month'
+                                                ? 'Infant'
+                                                : int.parse(member['age']) < 18
+                                                    ? 'Child'
+                                                    : int.parse(member['age']) <
+                                                            60
+                                                        ? 'Adult'
+                                                        : 'Senior*',
+                                            style: TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w400,
+                                                color:
+                                                    int.parse(member['age']) >=
+                                                            60
+                                                        ? redColor
+                                                        : blackColor),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              top: 10, bottom: 10),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              InkWell(
+                                                child: const Icon(Icons.edit,
+                                                    color: greenColor),
+                                                onTap: () {
+                                                  int age = int.parse(
+                                                      member['age'].toString());
+                                                  String ageunit =
+                                                      member['ageUnit']
+                                                          .toString();
+                                                  if (ageunit == 'Month') {
+                                                    // _editInfantdMember(index);
+                                                    _editMember(
+                                                        title:
+                                                            'Edit Infant Member',
+                                                        index: index,
+                                                        ageUnit: 'Month',
+                                                        type: 'Infant');
+                                                  } else {
+                                                    if (age >= 18) {
+                                                      // _editAdultMember(index);
+                                                      _editMember(
+                                                          title:
+                                                              'Edit Adult Member',
+                                                          index: index,
+                                                          ageUnit: 'Year',
+                                                          type: 'Adult');
+                                                    } else {
+                                                      // _editChildMember(index);
+                                                      _editMember(
+                                                          title:
+                                                              'Edit Child Member',
+                                                          index: index,
+                                                          ageUnit: 'Year',
+                                                          type: 'Child');
+                                                      // addedChildCount++;
+                                                    }
+                                                  }
+                                                  setState(() {
+                                                    tableIcon = false;
+                                                    // updateButtonStates();
+                                                  });
+                                                },
+                                              ),
+                                              const SizedBox(width: 10),
+                                              InkWell(
+                                                child: const Icon(Icons.delete,
+                                                    color: redColor),
+                                                onTap: () {
+                                                  setState(() {
+                                                    members.removeAt(index);
+                                                    // addAmount(members);
+                                                    member['ageUnit']
+                                                                .toString() ==
+                                                            'Month'
+                                                        ? null
+                                                        : _subAmount();
+                                                    tableIcon = false;
+                                                  });
+                                                },
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ]);
+                                }).toList(),
+                              ),
+                      ],
+                    ),
+
+                    ///Package Total Booking Container
+                    // Container(
+                    //   padding:
+                    //       const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                    //   color: Colors.black,
+                    //   child: Row(
+                    //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    //     children: [
+                    //       RichText(
+                    //           text: TextSpan(children: [
+                    //         TextSpan(
+                    //             text: "Price : ",
+                    //             style: GoogleFonts.lato(
+                    //               color: background,
+                    //               fontSize: 16,
+                    //               fontWeight: FontWeight.w600,
+                    //             )),
+                    //         //Total Amt
+                    //         TextSpan(
+                    //           text: "$amount",
+                    //           style: GoogleFonts.lato(
+                    //             decoration: discountAmount == 0
+                    //                 ? null
+                    //                 : TextDecoration.lineThrough,
+                    //             color: background,
+                    //             fontSize: 20,
+                    //             fontWeight: FontWeight.w600,
+                    //           ),
+                    //         ),
+                    //         TextSpan(text: ' '),
+                    //         TextSpan(
+                    //           text: discountAmount == 0 ? '' : "$discountAmount",
+                    //           style: GoogleFonts.lato(
+                    //             color: background,
+                    //             fontSize: 20,
+                    //             fontWeight: FontWeight.w600,
+                    //           ),
+                    //         ),
+                    //       ])),
+                    //       CustomButtonSmall(
+                    //           width: 120,
+                    //           borderRadius: BorderRadius.circular(5),
+                    //           btnHeading: "BOOK NOW",
+                    //           elevation: 5,
+                    //           loading: status == "Status.loading" && loader,
+                    //           elevationReq: true,
+                    //           buttonColor: btnColor,
+                    //           disable: _shouldDisableButton(),
+                    //           // disable: amount == 0.0 ?  true : false,
+                    //           onTap: () {
+                    //             debugPrint('ghjkjhjkj$primaryCountryCode');
+                    //             if (members.isEmpty) {
+                    //               Utils.flushBarErrorMessage(
+                    //                   "Please add Members First", context);
+                    //             } else if (controller[0].text.isEmpty) {
+                    //               Utils.flushBarErrorMessage(
+                    //                   "Please select date", context);
+                    //             } else {
+                    //               loader = true;
+                    //               // ignore: unused_element
+                    //               // void initiatePayment(BuildContext context) {
+                    //               PaymentService paymentService = PaymentService(
+                    //                 context: context,
+                    //                 onPaymentSuccess:
+                    //                     (PaymentSuccessResponse response) {
+                    //                   print('paymentResponse#${response.orderId}');
+                    //                   Provider.of<PaymentVerifyViewModel>(context,
+                    //                           listen: false)
+                    //                       .paymentVerifyViewModelApi(
+                    //                           context: context,
+                    //                           userId: widget.userID.toString(),
+                    //                           paymentId: response.paymentId,
+                    //                           razorpayOrderId: response.orderId,
+                    //                           razorpaySignature: response.signature)
+                    //                       .then(
+                    //                     (value) {
+                    //                       if (value?.status.httpCode == '200') {
+                    //                         print(
+                    //                             'payment verification is successfull${value?.data.transactionId}');
+                    //                         debugPrint(response.orderId);
+                    //                         debugPrint(
+                    //                           response.paymentId,
+                    //                         );
+                    //                         debugPrint(response.signature);
+                    //                         Provider.of<GetPackageBookingByIdViewModel>(
+                    //                                 listen: false, context)
+                    //                             .fetchGetPackageBookingByIdViewModelApi(
+                    //                                 context,
+                    //                                 {
+                    //                                   "userId":
+                    //                                       widget.userID.toString(),
+                    //                                   "packageId": widget.packageID
+                    //                                       .toString(),
+                    //                                   "bookingDate":
+                    //                                       controller[0].text,
+                    //                                   "transactionId":
+                    //                                       value?.data.transactionId,
+                    //                                   "countryCode":
+                    //                                       primaryCountryCode
+                    //                                           .replaceAll("+", '')
+                    //                                           .trim(),
+                    //                                   "mobile":
+                    //                                       primaryNoController.text,
+                    //                                   "alternateMobileCountryCode":
+                    //                                       secondaryCountryCode,
+                    //                                   "alternateMobile":
+                    //                                       secondaryNoController
+                    //                                           .text,
+                    //                                   "offerCode": offerCode,
+                    //                                   "discountAmount":
+                    //                                       discountAmount,
+                    //                                   "numberOfMembers":
+                    //                                       members.length.toString(),
+                    //                                   "memberList": members,
+                    //                                 },
+                    //                                 widget.userID);
+                    //                         // context.pop();
+                    //                       }
+                    //                     },
+                    //                   );
+                    //                   // Call verify payment function after successful payment
+                    //                   // _verifyPayment(context, response);
+                    //                 },
+                    //               );
+
+                    //               paymentService.openCheckout(
+                    //                   amount: discountAmount,
+                    //                   userId: widget.userID.toString(),
+                    //                   coutryCode: profileUser?.countryCode,
+                    //                   mobileNo: profileUser?.mobile,
+                    //                   email: profileUser?.email);
+
+                    //               // }
+
+                    //               // Utils.flushBarSuccessMessage("Booking Success", context);
+                    //             }
+                    //           }),
+                    //     ],
+                    //   ),
+                    // )
+                    const SizedBox(height: 80)
+                  ],
+                ),
+              ),
+              bookingStatus
+                  ? Center(
+                      child: Container(
+                        height: 200,
+                        width: 200,
+                        decoration: BoxDecoration(
+                            color: background,
+                            borderRadius: BorderRadius.circular(10)),
+                        child: const Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SpinKitCircle(
+                              size: 60,
+                              color: btnColor,
+                            ),
+                            SizedBox(height: 10),
+                            Text(
+                              'Please wait.....',
+                              style: TextStyle(color: greenColor),
+                            )
                           ],
                         ),
                       ),
-                      const SizedBox(height: 10),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          CustomButtonSmall(
-                            titleReq: false,
-                            elevation: 0,
-                            elevationReq: true,
-                            buttonColor: btnColor,
-                            borderRadius: BorderRadius.circular(5),
-                            // width: AppDimension.getWidth(context) / 4.5,
-                            btnHeading: "Add Adult",
-                            disable: isAddAdultDisabled,
-                            height: 40,
-                            onTap: () {
-                              FocusScope.of(context).unfocus();
-
-                              // Optionally, unfocus specific fields
-                              focusNode4.unfocus();
-                              focusNode5.unfocus();
-                              couponFocus.unfocus();
-                              _addMember(
-                                  title: 'Add Adult Member',
-                                  ageUnit: 'Year',
-                                  type: 'Adult');
-
-                              // _addAdultMember();
-                              // setState(() {
-                              //   type = 'Adult';
-                              //   updateButtonStates();
-                              // });
-                            },
-                          ),
-                          const SizedBox(width: 20),
-                          CustomButtonSmall(
-                            titleReq: false,
-                            elevation: 0,
-                            elevationReq: true,
-                            buttonColor: btnColor,
-                            borderRadius: BorderRadius.circular(5),
-                            // width: AppDimension.getWidth(context) / 4.5,
-                            btnHeading: "Add Child",
-                            height: 40,
-                            disable: isAddChildDisabled,
-                            onTap: () {
-                              FocusScope.of(context).unfocus();
-
-                              // Optionally, unfocus specific fields
-                              focusNode4.unfocus();
-                              focusNode5.unfocus();
-                              couponFocus.unfocus();
-                              _addMember(
-                                  title: 'Add Child Member',
-                                  ageUnit: 'Year',
-                                  type: 'Child');
-
-                              // _addChildMember();
-                              // setState(() {
-                              //   type = 'Child';
-                              //   updateButtonStates();
-                              // });
-                            },
-                          ),
-                          const SizedBox(width: 20),
-                          CustomButtonSmall(
-                            titleReq: false,
-                            elevation: 0,
-                            elevationReq: true,
-                            buttonColor: btnColor,
-                            borderRadius: BorderRadius.circular(5),
-                            // width: AppDimension.getWidth(context) / 4,
-                            btnHeading: "Add Infant",
-                            height: 40,
-                            disable: isAddInfentDisabled,
-                            onTap: () {
-                              FocusScope.of(context).unfocus();
-
-                              // Optionally, unfocus specific fields
-                              focusNode4.unfocus();
-                              focusNode5.unfocus();
-                              couponFocus.unfocus();
-                              _addMember(
-                                  title: 'Add Infant Member',
-                                  ageUnit: 'Month',
-                                  type: 'Infant');
-
-                              // _addInfantdMember();
-                              // setState(() {
-                              //   type = 'Infant';
-                              //   updateButtonStates();
-                              // });
-                            },
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-
-                const SizedBox(height: 10),
-                Column(
-                  children: [
-                    Table(
-                      columnWidths: const {
-                        0: FixedColumnWidth(100),
-                        1: FixedColumnWidth(75),
-                        2: FixedColumnWidth(75),
-                        3: FixedColumnWidth(70),
-                        4: FixedColumnWidth(80)
-                      },
-                      // defaultColumnWidth: FixedColumnWidth(100),
-                      children: [
-                        TableRow(
-                            decoration: const BoxDecoration(
-                              color: btnColor,
-                            ),
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 15, bottom: 10, top: 10),
-                                child: Text(
-                                  'Name',
-                                  style: tableheaderStyle,
-                                ),
-                              ),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.only(top: 10, bottom: 10),
-                                child: Text(
-                                  'Age',
-                                  style: tableheaderStyle,
-                                ),
-                              ),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.only(top: 10, bottom: 10),
-                                child: Text(
-                                  'Gender',
-                                  style: tableheaderStyle,
-                                ),
-                              ),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.only(top: 10, bottom: 10),
-                                child: Text(
-                                  'Type',
-                                  style: tableheaderStyle,
-                                ),
-                              ),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.only(top: 10, bottom: 10),
-                                child: Text(
-                                  'Action',
-                                  style: tableheaderStyle,
-                                ),
-                              ),
-                            ])
-                      ],
-                    ),
-                    members.isEmpty
-                        ? const Center(
-                            child: Padding(
-                            padding: EdgeInsets.only(top: 50),
-                            child: Text('No Members Added'),
-                          ))
-                        : Table(
-                            columnWidths: const {
-                              0: FixedColumnWidth(100),
-                              1: FixedColumnWidth(75),
-                              2: FixedColumnWidth(75),
-                              3: FixedColumnWidth(70),
-                              4: FixedColumnWidth(80)
-                            },
-                            // defaultColumnWidth: FixedColumnWidth(100),
-                            children: members.map((member) {
-                              int index = members.indexOf(member);
-                              print('objectindex$index');
-                              return TableRow(
-                                  // decoration:
-                                  //     BoxDecoration(color: background),
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                          left: 15, bottom: 10, top: 10),
-                                      child: Text(
-                                        member['name'],
-                                        style: titleTextStyle1,
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                          top: 10, bottom: 10),
-                                      child: Text(
-                                        '${member['age']} ${member['ageUnit']}',
-                                        style: titleTextStyle1,
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                          top: 10, bottom: 10),
-                                      child: Text(
-                                        member['gender'],
-                                        style: titleTextStyle1,
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                          top: 10, bottom: 10),
-                                      child: Text(
-                                        member['ageUnit'] == 'Month'
-                                            ? 'Infant'
-                                            : int.parse(member['age']) < 18
-                                                ? 'Child'
-                                                : int.parse(member['age']) < 60
-                                                    ? 'Adult'
-                                                    : 'Senior*',
-                                        style: TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w400,
-                                            color:
-                                                int.parse(member['age']) >= 60
-                                                    ? redColor
-                                                    : blackColor),
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                          top: 10, bottom: 10),
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          InkWell(
-                                            child: const Icon(Icons.edit,
-                                                color: greenColor),
-                                            onTap: () {
-                                              int age = int.parse(
-                                                  member['age'].toString());
-                                              String ageunit =
-                                                  member['ageUnit'].toString();
-                                              if (ageunit == 'Month') {
-                                                // _editInfantdMember(index);
-                                                _editMember(
-                                                    title: 'Edit Infant Member',
-                                                    index: index,
-                                                    ageUnit: 'Month',
-                                                    type: 'Infant');
-                                              } else {
-                                                if (age >= 18) {
-                                                  // _editAdultMember(index);
-                                                  _editMember(
-                                                      title:
-                                                          'Edit Adult Member',
-                                                      index: index,
-                                                      ageUnit: 'Year',
-                                                      type: 'Adult');
-                                                } else {
-                                                  // _editChildMember(index);
-                                                  _editMember(
-                                                      title:
-                                                          'Edit Child Member',
-                                                      index: index,
-                                                      ageUnit: 'Year',
-                                                      type: 'Child');
-                                                  // addedChildCount++;
-                                                }
-                                              }
-                                              setState(() {
-                                                tableIcon = false;
-                                                // updateButtonStates();
-                                              });
-                                            },
-                                          ),
-                                          const SizedBox(width: 10),
-                                          InkWell(
-                                            child: const Icon(Icons.delete,
-                                                color: redColor),
-                                            onTap: () {
-                                              setState(() {
-                                                members.removeAt(index);
-                                                // addAmount(members);
-                                                member['ageUnit'].toString() ==
-                                                        'Month'
-                                                    ? null
-                                                    : _subAmount();
-                                                tableIcon = false;
-                                              });
-                                            },
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ]);
-                            }).toList(),
-                          ),
-                  ],
-                ),
-
-                ///Package Total Booking Container
-                // Container(
-                //   padding:
-                //       const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                //   color: Colors.black,
-                //   child: Row(
-                //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                //     children: [
-                //       RichText(
-                //           text: TextSpan(children: [
-                //         TextSpan(
-                //             text: "Price : ",
-                //             style: GoogleFonts.lato(
-                //               color: background,
-                //               fontSize: 16,
-                //               fontWeight: FontWeight.w600,
-                //             )),
-                //         //Total Amt
-                //         TextSpan(
-                //           text: "$amount",
-                //           style: GoogleFonts.lato(
-                //             decoration: discountAmount == 0
-                //                 ? null
-                //                 : TextDecoration.lineThrough,
-                //             color: background,
-                //             fontSize: 20,
-                //             fontWeight: FontWeight.w600,
-                //           ),
-                //         ),
-                //         TextSpan(text: ' '),
-                //         TextSpan(
-                //           text: discountAmount == 0 ? '' : "$discountAmount",
-                //           style: GoogleFonts.lato(
-                //             color: background,
-                //             fontSize: 20,
-                //             fontWeight: FontWeight.w600,
-                //           ),
-                //         ),
-                //       ])),
-                //       CustomButtonSmall(
-                //           width: 120,
-                //           borderRadius: BorderRadius.circular(5),
-                //           btnHeading: "BOOK NOW",
-                //           elevation: 5,
-                //           loading: status == "Status.loading" && loader,
-                //           elevationReq: true,
-                //           buttonColor: btnColor,
-                //           disable: _shouldDisableButton(),
-                //           // disable: amount == 0.0 ?  true : false,
-                //           onTap: () {
-                //             debugPrint('ghjkjhjkj$primaryCountryCode');
-                //             if (members.isEmpty) {
-                //               Utils.flushBarErrorMessage(
-                //                   "Please add Members First", context);
-                //             } else if (controller[0].text.isEmpty) {
-                //               Utils.flushBarErrorMessage(
-                //                   "Please select date", context);
-                //             } else {
-                //               loader = true;
-                //               // ignore: unused_element
-                //               // void initiatePayment(BuildContext context) {
-                //               PaymentService paymentService = PaymentService(
-                //                 context: context,
-                //                 onPaymentSuccess:
-                //                     (PaymentSuccessResponse response) {
-                //                   print('paymentResponse#${response.orderId}');
-                //                   Provider.of<PaymentVerifyViewModel>(context,
-                //                           listen: false)
-                //                       .paymentVerifyViewModelApi(
-                //                           context: context,
-                //                           userId: widget.userID.toString(),
-                //                           paymentId: response.paymentId,
-                //                           razorpayOrderId: response.orderId,
-                //                           razorpaySignature: response.signature)
-                //                       .then(
-                //                     (value) {
-                //                       if (value?.status.httpCode == '200') {
-                //                         print(
-                //                             'payment verification is successfull${value?.data.transactionId}');
-                //                         debugPrint(response.orderId);
-                //                         debugPrint(
-                //                           response.paymentId,
-                //                         );
-                //                         debugPrint(response.signature);
-                //                         Provider.of<GetPackageBookingByIdViewModel>(
-                //                                 listen: false, context)
-                //                             .fetchGetPackageBookingByIdViewModelApi(
-                //                                 context,
-                //                                 {
-                //                                   "userId":
-                //                                       widget.userID.toString(),
-                //                                   "packageId": widget.packageID
-                //                                       .toString(),
-                //                                   "bookingDate":
-                //                                       controller[0].text,
-                //                                   "transactionId":
-                //                                       value?.data.transactionId,
-                //                                   "countryCode":
-                //                                       primaryCountryCode
-                //                                           .replaceAll("+", '')
-                //                                           .trim(),
-                //                                   "mobile":
-                //                                       primaryNoController.text,
-                //                                   "alternateMobileCountryCode":
-                //                                       secondaryCountryCode,
-                //                                   "alternateMobile":
-                //                                       secondaryNoController
-                //                                           .text,
-                //                                   "offerCode": offerCode,
-                //                                   "discountAmount":
-                //                                       discountAmount,
-                //                                   "numberOfMembers":
-                //                                       members.length.toString(),
-                //                                   "memberList": members,
-                //                                 },
-                //                                 widget.userID);
-                //                         // context.pop();
-                //                       }
-                //                     },
-                //                   );
-                //                   // Call verify payment function after successful payment
-                //                   // _verifyPayment(context, response);
-                //                 },
-                //               );
-
-                //               paymentService.openCheckout(
-                //                   amount: discountAmount,
-                //                   userId: widget.userID.toString(),
-                //                   coutryCode: profileUser?.countryCode,
-                //                   mobileNo: profileUser?.mobile,
-                //                   email: profileUser?.email);
-
-                //               // }
-
-                //               // Utils.flushBarSuccessMessage("Booking Success", context);
-                //             }
-                //           }),
-                //     ],
-                //   ),
-                // )
-                const SizedBox(height: 80)
-              ],
-            ),
+                    )
+                  : SizedBox()
+            ],
           )),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: Container(
@@ -1353,10 +1406,12 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                       onPaymentError: (PaymentFailureResponse response) {
                         setState(() {
                           loader = false;
+                          debugPrint(
+                              'onpaymentfail status  ,,,,,,,,,,${response.message}${response.code}');
                         });
                       },
                       onPaymentSuccess: (PaymentSuccessResponse response) {
-                        print('paymentResponse#${response.orderId}');
+                        debugPrint('paymentResponse#${response.orderId}');
                         Provider.of<PaymentVerifyViewModel>(context,
                                 listen: false)
                             .paymentVerifyViewModelApi(
@@ -1418,7 +1473,11 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                     );
 
                     paymentService.openCheckout(
-                        amount: discountAmount == 0
+                        amount: sumAmount,
+                        taxAmount: taxAmount,
+                        taxPercentage: taxPercentage,
+                        discountAmount: disAmount,
+                        payableAmount: discountAmount == 0
                             ? payAbleAmount
                             : discountAmount,
                         userId: widget.userID.toString(),

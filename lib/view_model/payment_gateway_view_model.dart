@@ -18,12 +18,23 @@ class PaymentCreateOrderIdViewModel with ChangeNotifier {
   Future<PaymentCreateOderIdModel?> paymentCreateOrderIdViewModelApi(
       {required BuildContext context,
       required int amount,
-      required String userId}) async {
-    Map<String, dynamic> query = {"amount": amount, "userId": userId};
+      required String userId,
+      required double taxAmount,
+      required double taxPercentage,
+      required double discountAmount,
+      required double totalPayableAmount}) async {
+    Map<String, dynamic> body = {
+      "price": amount,
+      "taxAmount": taxAmount,
+      "userId": userId,
+      "taxPercentage": taxPercentage,
+      "discountAmount": discountAmount.toInt(),
+      "totalPayableAmount": totalPayableAmount
+    };
     try {
       setDataList(ApiResponse.loading());
       var resp =
-          await _myRepo.paymentCreateOrderIdApi(context: context, query: query);
+          await _myRepo.paymentCreateOrderIdApi(context: context, body: body);
       setDataList(ApiResponse.completed(resp));
       return resp;
     } catch (e) {

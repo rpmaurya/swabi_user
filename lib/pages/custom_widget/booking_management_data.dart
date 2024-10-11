@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_cab/view/vendor-side/view_booking_screen.dart';
+// import 'package:flutter_cab/view/vendor-side/view_booking_screen.dart';
 
 class BookinMyData extends DataTableSource {
   // Generate some made-up data
@@ -61,10 +61,10 @@ class BookinMyData extends DataTableSource {
                     child: ListTile(
                       onTap: () {
                         Navigator.pop(context);
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const ViewBookingscreen()));
+                        // Navigator.push(
+                        //     context,
+                        //     MaterialPageRoute(
+                        //         builder: (context) => const ViewBookingscreen()));
                       },
                       leading: const Icon(Icons.remove_red_eye_rounded),
                       title: const Text('View'),

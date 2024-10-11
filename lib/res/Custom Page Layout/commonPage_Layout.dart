@@ -225,32 +225,34 @@ class PageLayout_Page extends StatelessWidget {
   final String addtionalIcon;
   final bool addtionalIconReq;
   final bool refreshReq;
+  final PreferredSizeWidget? appBar;
   final Future<void> Function()? onRefresh;
 
-  const PageLayout_Page({
-    super.key,
-    this.appHeading = '',
-    this.btnHeading = "Save",
-    this.addtionalIconReq = false,
-    this.addtionalIcon = "",
-    this.bgImage = "",
-    this.iconOnTap,
-    this.bgColor,
-    this.icon,
-    this.saveBtn = false,
-    this.padding = const EdgeInsets.fromLTRB(10, 10, 10, 10),
-    required this.child,
-    this.backBtn,
-    this.onTap,
-    this.refreshReq = false,
-    this.onRefresh,
-  });
+  const PageLayout_Page(
+      {super.key,
+      this.appHeading = '',
+      this.btnHeading = "Save",
+      this.addtionalIconReq = false,
+      this.addtionalIcon = "",
+      this.bgImage = "",
+      this.iconOnTap,
+      this.bgColor,
+      this.icon,
+      this.saveBtn = false,
+      this.padding = const EdgeInsets.fromLTRB(10, 10, 10, 10),
+      required this.child,
+      this.backBtn,
+      this.onTap,
+      this.refreshReq = false,
+      this.onRefresh,
+      this.appBar});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: bgColor ?? Colors.white,
       resizeToAvoidBottomInset: false,
+      appBar: appBar,
       body: LayoutBuilder(
         builder: (context, constraints) => Container(
           width: double.infinity,

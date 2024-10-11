@@ -345,7 +345,11 @@ class _GuestRentalBookingFormState extends State<GuestRentalBookingForm> {
                   );
 
                   paymentService.openCheckout(
-                      amount: widget.payableAmount,
+                      amount: double.parse(widget.price),
+                      taxAmount: widget.taxAmount,
+                      taxPercentage: widget.taxPercentage,
+                      discountAmount: widget.discountAmount.toDouble(),
+                      payableAmount: widget.payableAmount,
                       userId: widget.bookerId.toString(),
                       coutryCode: profileUser?.countryCode,
                       mobileNo: profileUser?.mobile,

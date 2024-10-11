@@ -192,7 +192,7 @@ class _home_screenState extends State<home_screen>
               color: bgGreyColor,
               child: Column(
                 children: [
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   Container(
                     margin: const EdgeInsets.symmetric(horizontal: 10),
                     decoration: BoxDecoration(
@@ -212,7 +212,8 @@ class _home_screenState extends State<home_screen>
                         labelColor: btnColor,
                         indicatorColor: Colors.transparent,
                         dividerColor: Colors.transparent,
-                        indicatorPadding: EdgeInsets.symmetric(horizontal: 10),
+                        indicatorPadding:
+                            const EdgeInsets.symmetric(horizontal: 10),
                         indicatorSize: TabBarIndicatorSize.tab,
                         tabs: [
                           Padding(
@@ -233,6 +234,7 @@ class _home_screenState extends State<home_screen>
                                   style: GoogleFonts.lato(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w600),
+                                  textAlign: TextAlign.center,
                                   // style: titleTextStyle,
                                 ),
                               ],

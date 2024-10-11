@@ -63,7 +63,7 @@ class GetPackageBookingByIdViewModel with ChangeNotifier {
   final _myRepo = GetPackageBookedByIdRepository();
   ApiResponse<BookPackageByMemberModel> getPackageBookingById =
       ApiResponse.loading();
-
+  bool isLoading = false;
   setDataList(ApiResponse<BookPackageByMemberModel> response) {
     getPackageBookingById = response;
     notifyListeners();
@@ -72,9 +72,13 @@ class GetPackageBookingByIdViewModel with ChangeNotifier {
   Future<void> fetchGetPackageBookingByIdViewModelApi(
       BuildContext context, data, String urId) async {
     setDataList(ApiResponse.loading());
+    isLoading = true;
+    notifyListeners();
     _myRepo.getPackageBookedByIdRepositoryApi(data).then((value) async {
       // setDataList(ApiResponse.completed(value));
       Utils.toastSuccessMessage("Your Package Booked");
+      isLoading = false;
+      notifyListeners();
       Provider.of<GetPackageHistoryViewModel>(context, listen: false)
           .fetchGetPackageHistoryBookedViewModelApi(context, {
         "userId": urId,
@@ -87,8 +91,11 @@ class GetPackageBookingByIdViewModel with ChangeNotifier {
       debugPrint('Get Package Booking By Id ViewModel Success');
     }).onError((error, stackTrace) {
       debugPrint(error.toString());
+
       debugPrint('Get Package Booking By Id ViewModel Failed');
       setDataList(ApiResponse.error(error.toString()));
+      isLoading = false;
+      notifyListeners();
     });
   }
 }

@@ -5,10 +5,8 @@ import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/res/Custom%20Widgets/CustomTextFormfield.dart';
 import 'package:flutter_cab/utils/color.dart';
 import 'package:flutter_cab/utils/text_styles.dart';
-import 'package:flutter_cab/view/registration/login_screen.dart';
 import 'package:flutter_cab/view_model/userProfile_view_model.dart';
-// ignore: depend_on_referenced_packages
-import 'package:google_fonts/google_fonts.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 class ResetPasswordScreen extends StatefulWidget {
@@ -132,7 +130,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                             if (value == null || value.isEmpty) {
                               return 'Enter your Confirm password';
                             } else if (value != password.text) {
-                              return "password not matched";
+                              return "Password do not match";
                             } else {
                               return Validatorclass.validatePassword(value);
                             }
@@ -152,27 +150,12 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                                     password: password.text);
                               }
                             }),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Text('Remember your password?'),
-                            TextButton(
-                                onPressed: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              const LoginScreen()));
-                                },
-                                child: Text(
-                                  'Login',
-                                  style: GoogleFonts.lato(
-                                      fontWeight: FontWeight.w700,
-                                      color:
-                                          const Color.fromRGBO(69, 30, 243, 1)),
-                                ))
-                          ],
-                        )
+                        const SizedBox(height: 10),
+                        Login_SignUpBtn(
+                          onTap: () => context.push("/login"),
+                          btnHeading: 'Login',
+                          sideHeading: 'Remember your password?',
+                        ),
                       ],
                     )),
               ),

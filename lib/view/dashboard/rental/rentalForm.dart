@@ -318,6 +318,7 @@ class _RentalFormState extends State<RentalForm> with RouteAware {
 
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Expanded(
                   child: Padding(
@@ -334,9 +335,7 @@ class _RentalFormState extends State<RentalForm> with RouteAware {
                       },
                       hintText: 'Select Hours',
                       validator: (p0) {
-                        if (p0 == null ||
-                            hoursController.text.isEmpty ||
-                            hoursController.text == "00") {
+                        if (p0 == null || hoursController.text.isEmpty) {
                           return 'Please select hours';
                         }
                         return null;
@@ -347,7 +346,7 @@ class _RentalFormState extends State<RentalForm> with RouteAware {
                 const Text(
                   ':',
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontWeight: FontWeight.w800),
+                  style: TextStyle(fontWeight: FontWeight.w800, fontSize: 18),
                 ),
                 Expanded(
                   child: Padding(

@@ -12,14 +12,15 @@ class PaymentCreateOrderIDRepository {
   final BaseApiServices _apiServices = NetworkApiService();
   Future<PaymentCreateOderIdModel?> paymentCreateOrderIdApi(
       {required BuildContext context,
-      required Map<String, dynamic> query}) async {
+      required Map<String, dynamic> body}) async {
     var http = HttpService(
         isAuthorizeRequest: false,
         baseURL: AppUrl.baseUrl,
         endURL: AppUrl.createPaymentOrder,
         methodType: HttpMethodType.POST,
         bodyType: HttpBodyType.JSON,
-        queryParameters: query);
+        // queryParameters: query,
+        body: body);
     try {
       Response<dynamic>? response = await http.request<dynamic>();
       print({"CreatePaymentOrderresponse": response?.data});

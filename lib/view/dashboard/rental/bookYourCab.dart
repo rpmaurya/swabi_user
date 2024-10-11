@@ -15,6 +15,7 @@ import 'package:flutter_cab/view_model/payment_gateway_view_model.dart';
 import 'package:flutter_cab/view_model/rental_view_model.dart';
 import 'package:flutter_cab/view_model/services/paymentService.dart';
 import 'package:flutter_cab/view_model/userProfile_view_model.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -329,7 +330,12 @@ class _BookYourCabState extends State<BookYourCab> {
                                       );
 
                                       paymentService.openCheckout(
-                                          amount: discountedAmount == 0
+                                          amount:
+                                              double.parse(rental.totalPrice),
+                                          taxAmount: taxAmount,
+                                          taxPercentage: taxPercentage,
+                                          discountAmount: disAmount,
+                                          payableAmount: discountedAmount == 0
                                               ? payableAmount
                                               : discountedAmount,
                                           userId: widget.userId.toString(),
@@ -530,7 +536,13 @@ class _BookYourCabState extends State<BookYourCab> {
                                                   );
 
                                                   paymentService.openCheckout(
-                                                      amount:
+                                                      amount: double.parse(
+                                                          rental.totalPrice),
+                                                      taxAmount: taxAmount,
+                                                      taxPercentage:
+                                                          taxPercentage,
+                                                      discountAmount: disAmount,
+                                                      payableAmount:
                                                           discountedAmount == 0
                                                               ? payableAmount
                                                               : discountedAmount,
@@ -755,16 +767,20 @@ class _BookYourCabState extends State<BookYourCab> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
+                      SpinKitCircle(
+                        size: 60,
+                        color: btnColor,
+                      ),
                       Text(
                         'Please wait..',
                         style: TextStyle(color: Colors.green),
                       ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      CircularProgressIndicator(
-                        color: Colors.green,
-                      ),
+                      // SizedBox(
+                      //   height: 10,
+                      // ),
+                      // CircularProgressIndicator(
+                      //   color: Colors.green,
+                      // ),
                     ],
                   ),
                 ),
@@ -838,74 +854,72 @@ class _BookingContainerState extends State<BookingContainer> {
               children: [
                 ///First Line of Design
                 Container(
+                    padding: EdgeInsets.all(10),
                     decoration: const BoxDecoration(
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(10),
-                          topRight: Radius.circular(10),
-                        ),
                         border:
                             Border(bottom: BorderSide(color: curvePageColor))),
-                    child: ListTile(
-                      leading: SizedBox(
-                        width: 80,
-                        height: 60,
-                        child: ClipRRect(
-                            borderRadius: BorderRadius.circular(10),
-                            child: Image.asset(
-                              rentalCar1,
-                              fit: BoxFit.cover,
-                            )),
-                      ),
-                      title: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            widget.carName,
-                            style: GoogleFonts.lato(
-                                color: greyColor,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600),
-                          ),
-                          Text(
-                            "Time : ${widget.pickTime}",
-                            style: GoogleFonts.lato(
-                                color: greyColor,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600),
-                          ),
-                        ],
-                      ),
-                      subtitle: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    child: Row(
+                      // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          width: 80,
+                          height: 60,
+                          child: ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: Image.asset(
+                                rentalCar1,
+                                fit: BoxFit.cover,
+                              )),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Column(
                             children: [
-                              Text(
-                                "Hour : ${widget.hour}",
-                                style: GoogleFonts.lato(
-                                    color: greyColor,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    widget.carName,
+                                    style: GoogleFonts.lato(
+                                        color: greyColor,
+                                        fontSize: 17,
+                                        fontWeight: FontWeight.w700),
+                                  ),
+                                  Text(
+                                    "Time : ${widget.pickTime}",
+                                    style: GoogleFonts.lato(
+                                        color: greyColor,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600),
+                                  ),
+                                ],
                               ),
-                              Text(
-                                "Date : ${widget.pickDate}",
-                                style: GoogleFonts.lato(
-                                    color: greyColor,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "Hour : ${widget.hour}",
+                                    style: GoogleFonts.lato(
+                                        color: greyColor,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600),
+                                  ),
+                                  Text(
+                                    "Date : ${widget.pickDate}",
+                                    style: GoogleFonts.lato(
+                                        color: greyColor,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
-                          // Text(
-                          //   "Seats : $seats",
-                          //   style: GoogleFonts.lato(
-                          //       color: greyColor,
-                          //       fontSize: 14,
-                          //       fontWeight: FontWeight.w600),
-                          // ),
-                        ],
-                      ),
+                        )
+                      ],
                     )),
 
                 ///Second Line Design

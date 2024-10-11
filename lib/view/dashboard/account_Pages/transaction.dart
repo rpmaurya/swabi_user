@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_cab/model/getTrasactionByIdModel.dart';
 import 'package:flutter_cab/res/Custom%20Page%20Layout/commonPage_Layout.dart';
 import 'package:flutter_cab/res/customAppBar_widget.dart';
 import 'package:flutter_cab/res/login/login_customTextFeild.dart';
@@ -20,30 +21,76 @@ class MyTransaction extends StatefulWidget {
 }
 
 class _MyTransactionState extends State<MyTransaction> {
+  final ScrollController _scrollController = ScrollController();
+  int currentPage = 0;
+  int pageSize = 10;
+  bool isLastPage = false;
+  bool isLoadingMore = false;
+  List<Content> allTranaction = [];
   @override
   void initState() {
     // TODO: implement initState
+    super.initState();
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       getTrasaction();
     });
-    super.initState();
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels ==
+          _scrollController.position.maxScrollExtent) {
+        // User has reached the end of the list
+        if (!isLoadingMore && !isLastPage) {
+          print('testing......');
+          getTrasaction();
+        }
+      }
+    });
   }
 
-  void getTrasaction() async {
+  Future<void> getTrasaction() async {
+    if (isLoadingMore || isLastPage) return;
+    setState(() {
+      isLoadingMore = true;
+    });
     Map<String, dynamic> query = {
       "userId": widget.userId,
-      "pageNumber": '0',
-      "pageSize": '20',
+      "pageNumber": currentPage,
+      "pageSize": pageSize,
       "search": '',
       "bookingType": 'ALL',
       "transactionStatus": 'ALL'
     };
     try {
-      Provider.of<GetTranactionViewModel>(context, listen: false)
-          .getTranactionApi(context: context, query: query);
+      var resp =
+          await Provider.of<GetTranactionViewModel>(context, listen: false)
+              .getTranactionApi(context: context, query: query);
+      var data = resp?.data?.content ?? [];
+      if (data.isNotEmpty) {
+        setState(() {
+          allTranaction.addAll(data);
+          currentPage++;
+          isLastPage = data.length < pageSize;
+          debugPrint('currentpage$currentPage');
+        });
+      } else {
+        setState(() {
+          isLastPage = true;
+        });
+      }
     } catch (e) {
       debugPrint('error$e');
+    } finally {
+      setState(() {
+        isLoadingMore = false;
+      });
     }
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    _scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -53,149 +100,160 @@ class _MyTransactionState extends State<MyTransaction> {
       backgroundColor: bgGreyColor,
       appBar: const CustomAppBar(heading: "My Transaction"),
       body: PageLayout_Page(
-          child: SingleChildScrollView(
-        child: Column(
-          children: [
-            // SizedBox(
-            //   child: Row(
-            //     mainAxisAlignment: MainAxisAlignment.spaceAround,
-            //     children: [
-            //       CustomTextFeild(
-            //         headingReq: false,
-            //         prefixIcon: true,
-            //         img: search,
-            //         controller: TextEditingController(),
-            //       ),
-            //       Material(
-            //         elevation: 0,
-            //         color: lightBrownColor,
-            //         borderRadius: BorderRadius.circular(10),
-            //         child: InkWell(
-            //           borderRadius: BorderRadius.circular(10),
-            //           child: SizedBox(
-            //             height: 50,
-            //             width: 50,
-            //             child: Padding(
-            //               padding: const EdgeInsets.all(10.0),
-            //               child: Image.asset(filter),
-            //             ),
-            //           ),
-            //           onTap: () {},
-            //         ),
-            //       )
-            //     ],
-            //   ),
-            // ),
-            // const SizedBox(height: 10),
-            Consumer<GetTranactionViewModel>(
+          child: Column(
+        children: [
+          // const SizedBox(height: 10),
+          Expanded(
+            child: Consumer<GetTranactionViewModel>(
               builder: (context, value, child) {
-                return Container(
-                  padding: const EdgeInsets.all(5),
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: background),
-                  child: ListView.separated(
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      itemBuilder: (context, index) {
-                        var data =
-                            value.getTrasaction.data?.data?.content?[index];
-                        DateTime date = DateTime.fromMillisecondsSinceEpoch(
-                            data?.createdDate ?? 0);
-                        String formateDate =
-                            DateFormat('MMM d, yyyy h:mm a').format(date);
-                        return Container(
-                          decoration: const BoxDecoration(color: background),
-                          padding: const EdgeInsets.all(10),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    formateDate,
-                                    style: titleTextStyle,
-                                  ),
-                                  Text(
-                                    'AED ${data?.amountPaid.toString()}',
-                                    style: titleTextStyle,
-                                  )
-                                ],
-                              ),
-                              Text(
-                                data?.bookingType == 'PACKAGE_BOOKING'
-                                    ? 'Package booking'
-                                    : 'Rental booking',
-                                style: titleTextStyle1,
-                              ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'Payment Id',
-                                        style: titleTextStyle,
-                                      ),
-                                      Text(
-                                        data?.paymentId ?? '',
-                                        style: titleTextStyle1,
-                                      )
-                                    ],
-                                  ),
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: [
-                                      Text(
-                                        'Status',
-                                        style: titleTextStyle,
-                                      ),
-                                      Text(
-                                        data?.transactionStatus == 'Captured'
-                                            ? 'Success'
-                                            : data?.transactionStatus ==
-                                                    'Created'
-                                                ? 'Pending'
-                                                : data?.transactionStatus
-                                                        .toString() ??
-                                                    '',
-                                        style: TextStyle(
-                                            color: data?.transactionStatus ==
-                                                    'Captured'
-                                                ? greenColor
-                                                : data?.transactionStatus ==
-                                                        'Created'
-                                                    ? Colors.yellow
-                                                    : data?.transactionStatus ==
-                                                            'Refunded'
-                                                        ? greenColor
-                                                        : redColor),
-                                      )
-                                    ],
-                                  )
-                                ],
-                              )
-                            ],
-                          ),
-                        );
-                      },
-                      separatorBuilder: (context, index) {
-                        return const Divider(
-                          height: 0,
-                        );
-                      },
-                      itemCount: (value.getTrasaction.data?.data?.content ?? [])
-                          .length),
-                );
+                return value.getTrasaction.status.toString() == 'Status.loading'
+                    ? const Center(
+                        child: CircularProgressIndicator(
+                        color: greenColor,
+                      ))
+                    : allTranaction.isNotEmpty
+                        ? Container(
+                            padding: const EdgeInsets.all(5),
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: background),
+                            child: ListView.separated(
+                                controller: _scrollController,
+                                itemBuilder: (context, index) {
+                                  var data = allTranaction[index];
+                                  DateTime date =
+                                      DateTime.fromMillisecondsSinceEpoch(
+                                          data.createdDate ?? 0 * 1000,
+                                          isUtc: false);
+                                  String formateDate =
+                                      DateFormat('MMM d, yyyy h:mm a')
+                                          .format(date);
+                                  if (index == allTranaction.length) {
+                                    return isLoadingMore
+                                        ? const Center(
+                                            child: CircularProgressIndicator(
+                                            color: greenColor,
+                                          ))
+                                        : const SizedBox
+                                            .shrink(); // Hide if not loading
+                                  }
+                                  return Container(
+                                    decoration:
+                                        const BoxDecoration(color: background),
+                                    padding: const EdgeInsets.all(10),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              formateDate,
+                                              style: titleTextStyle,
+                                            ),
+                                            Text(
+                                              'AED ${data.amountPaid.toString()}',
+                                              style: titleTextStyle,
+                                            )
+                                          ],
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              'Booking Id',
+                                              style: titleTextStyle1,
+                                            ),
+                                            Text(
+                                              data.bookingId == null
+                                                  ? 'N/A'
+                                                  : data.bookingId.toString() ??
+                                                      '',
+                                              style: titleTextStyle1,
+                                            ),
+                                          ],
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  'Payment Id',
+                                                  style: titleTextStyle,
+                                                ),
+                                                Text(
+                                                  data.paymentId ?? '',
+                                                  style: titleTextStyle1,
+                                                )
+                                              ],
+                                            ),
+                                            Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.end,
+                                              children: [
+                                                Text(
+                                                  'Status',
+                                                  style: titleTextStyle,
+                                                ),
+                                                Text(
+                                                  data.transactionStatus ==
+                                                          'Captured'
+                                                      ? 'Success'
+                                                      : data.transactionStatus ==
+                                                              'Created'
+                                                          ? 'Pending'
+                                                          : data.transactionStatus ==
+                                                                  'failed'
+                                                              ? 'Failed'
+                                                              : data.transactionStatus
+                                                                      .toString() ??
+                                                                  '',
+                                                  style: TextStyle(
+                                                      color: data.transactionStatus ==
+                                                              'Captured'
+                                                          ? greenColor
+                                                          : data.transactionStatus ==
+                                                                  'Created'
+                                                              ? Colors.yellow
+                                                              : data.transactionStatus ==
+                                                                      'Refunded'
+                                                                  ? greenColor
+                                                                  : redColor),
+                                                )
+                                              ],
+                                            )
+                                          ],
+                                        )
+                                      ],
+                                    ),
+                                  );
+                                },
+                                separatorBuilder: (context, index) {
+                                  return const Divider(
+                                    height: 0,
+                                  );
+                                },
+                                itemCount: allTranaction.length +
+                                    (isLoadingMore ? 1 : 0)),
+                          )
+                        : const Center(
+                            child: Text(
+                              'No data',
+                              style: TextStyle(
+                                  color: redColor, fontWeight: FontWeight.bold),
+                            ),
+                          );
               },
             ),
-          ],
-        ),
+          ),
+        ],
       )),
     );
   }

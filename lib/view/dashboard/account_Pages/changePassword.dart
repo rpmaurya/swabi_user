@@ -186,9 +186,8 @@ class _ChangePasswordState extends State<ChangePassword> {
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Enter your current password';
-                  } else {
-                    return Validatorclass.validatePassword(value);
                   }
+                  return null;
                 },
               ),
               const SizedBox(height: 16.0),
@@ -241,7 +240,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                   if (value == null || value.isEmpty) {
                     return 'Enter your Confirm password';
                   } else if (value != _newPasswordController.text) {
-                    return "password not matched";
+                    return "password do not match";
                   } else {
                     return Validatorclass.validatePassword(value);
                   }
