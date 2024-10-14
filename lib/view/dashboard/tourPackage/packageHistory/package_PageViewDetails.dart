@@ -1494,6 +1494,9 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
               style: titleTextStyle,
             ),
           ),
+          const SizedBox(
+            width: 10,
+          ),
           Text(
             ':',
             style: titleTextStyle,
@@ -1502,7 +1505,7 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
             width: 10,
           ),
           Expanded(
-            flex: 2,
+            flex: 3,
             child: Text(
               value,
               style: titleTextStyle1,

@@ -21,26 +21,31 @@ class HelpAndSupport extends StatelessWidget {
           children: [
             Custom_ListTile(
               img: tnc,
+              iconColor: btnColor,
               heading: "Riased Issue",
               onTap: () => context.push("/raiseIssueDetail"),
             ),
             Custom_ListTile(
               img: tnc,
+              iconColor: btnColor,
               heading: "Other Issue",
               onTap: () {},
             ),
             Custom_ListTile(
               img: contact,
+              iconColor: btnColor,
               heading: "Contact",
               onTap: () => context.push("/contact"),
             ),
             Custom_ListTile(
               img: contact,
+              iconColor: btnColor,
               heading: "Privacy & Policy",
               onTap: () {},
             ),
             Custom_ListTile(
               img: tnc,
+              iconColor: btnColor,
               heading: "Terms & Condition",
               onTap: () => context.push("/termCondition"),
             ),
