@@ -171,7 +171,10 @@ class _PackageHistoryManagementState extends State<PackageHistoryManagement>
                 final response = viewModel.getBookedHistory;
 
                 if (response.status.toString() == "Status.loading") {
-                  return const Center(child: CircularProgressIndicator());
+                  return const Center(
+                      child: CircularProgressIndicator(
+                    color: greenColor,
+                  ));
                 } else if (response.status.toString() == "Status.error") {
                   return const Center(
                       child: Text(
@@ -199,7 +202,10 @@ class _PackageHistoryManagementState extends State<PackageHistoryManagement>
                     itemBuilder: (context, index) {
                       if (index == bookedHistory.length) {
                         return isLoadingMore
-                            ? const Center(child: CircularProgressIndicator())
+                            ? const Center(
+                                child: CircularProgressIndicator(
+                                color: greenColor,
+                              ))
                             : const SizedBox.shrink(); // Hide if not loading
                       }
 

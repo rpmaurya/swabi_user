@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cab/utils/color.dart';
 import 'package:flutter_cab/utils/dimensions.dart';
 import 'package:flutter_cab/utils/text_styles.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class CustomButtonBig extends StatelessWidget {
@@ -152,6 +153,10 @@ class CustomButtonSmall extends StatelessWidget {
               child: Center(
                   child: loading
                       ? const CircularProgressIndicator(color: background)
+                      // ? const SpinKitWave(
+                      //     size: 18,
+                      //     color: background,
+                      //   )
                       : Text(btnHeading,
                           style: GoogleFonts.lato(
                               color: disable

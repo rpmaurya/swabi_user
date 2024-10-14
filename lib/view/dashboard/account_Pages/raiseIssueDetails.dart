@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cab/model/GetIssueModel.dart';
 import 'package:flutter_cab/res/Custom%20Widgets/customTabBar.dart';
 import 'package:flutter_cab/res/customAppBar_widget.dart';
+import 'package:flutter_cab/utils/color.dart';
 import 'package:flutter_cab/utils/text_styles.dart';
 import 'package:flutter_cab/view/dashboard/raiseIssue_pages/issue_container.dart';
 import 'package:flutter_cab/view_model/raiseIssue_view_model.dart';
@@ -137,7 +138,10 @@ class _RaiseissuedetailsState extends State<Raiseissuedetails>
             return Consumer<RaiseissueViewModel>(
               builder: (context, value, child) {
                 return value.isloading
-                    ? const Center(child: CircularProgressIndicator())
+                    ? const Center(
+                        child: CircularProgressIndicator(
+                        color: greenColor,
+                      ))
                     : allRaiseList.isNotEmpty
                         ? ListView.builder(
                             controller: _scrollController,
@@ -148,7 +152,9 @@ class _RaiseissuedetailsState extends State<Raiseissuedetails>
                               if (index == allRaiseList.length) {
                                 return isLoadingMore
                                     ? const Center(
-                                        child: CircularProgressIndicator())
+                                        child: CircularProgressIndicator(
+                                        color: greenColor,
+                                      ))
                                     : const SizedBox
                                         .shrink(); // Hide if not loading
                               }

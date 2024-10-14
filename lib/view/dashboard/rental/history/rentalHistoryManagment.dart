@@ -186,7 +186,10 @@ class _RentalHistoryManagmentState extends State<RentalHistoryManagment>
                 final response = viewModel.rentalBookingList;
 
                 if (response.status.toString() == "Status.loading") {
-                  return const Center(child: CircularProgressIndicator());
+                  return const Center(
+                      child: CircularProgressIndicator(
+                    color: greenColor,
+                  ));
                 } else if (response.status.toString() == "Status.error") {
                   return const Center(
                       child: Text(
@@ -215,7 +218,10 @@ class _RentalHistoryManagmentState extends State<RentalHistoryManagment>
                     itemBuilder: (context, index) {
                       if (index == bookingList.length) {
                         return isLoadingMore
-                            ? const Center(child: CircularProgressIndicator())
+                            ? const Center(
+                                child: CircularProgressIndicator(
+                                color: greenColor,
+                              ))
                             : const SizedBox.shrink(); // Hide if not loading
                       }
 
