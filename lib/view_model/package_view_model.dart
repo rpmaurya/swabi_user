@@ -4,6 +4,7 @@ import 'package:flutter_cab/model/changeMobileModel.dart';
 import 'package:flutter_cab/model/packageModels.dart';
 import 'package:flutter_cab/respository/packageRepository.dart';
 import 'package:flutter_cab/utils/utils.dart';
+import 'package:flutter_cab/view_model/payment_gateway_view_model.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
@@ -109,6 +110,18 @@ class GetPackageHistoryViewModel with ChangeNotifier {
     notifyListeners();
   }
 
+  void updateDayStatus({required String newStatus, required String bookingId}) {
+    if (getBookedHistory.data != null) {
+      var booking = getBookedHistory.data?.data.content
+          .firstWhere((e) => e.packageBookingId == bookingId);
+
+      if (booking != null) {
+        booking.bookingStatus = newStatus;
+        notifyListeners(); // Notify listeners after the change
+      }
+    }
+  }
+
 // Asynchronous function to fetch data from the repository
   Future<GetPackageHistoryModel?> fetchGetPackageHistoryBookedViewModelApi(
       BuildContext context, Map<String, dynamic> data) async {
@@ -201,35 +214,61 @@ class PackageCancelViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> fetchPackageCancelViewModelApi(
-      BuildContext context, data, String urId) async {
-    setDataList(ApiResponse.loading());
-    _myRepo.packageCancelRepositoryApi(data).then((value) async {
-      setDataList(ApiResponse.completed(value));
-      Provider.of<GetPackageHistoryViewModel>(context, listen: false)
-          .fetchGetPackageHistoryBookedViewModelApi(context, {
-        "userId": urId,
-        "bookingStatus": "ALL",
-        "pageNumber": "0",
-        "pageSize": "100",
-      }).then((value) =>
-              Provider.of<GetPackageHistoryViewModel>(context, listen: false)
-                  .fetchGetPackageHistoryBookedViewModelApi(context, {
-                "userId": urId,
-                "bookingStatus": "CANCELLED",
-                "pageNumber": "0",
-                "pageSize": "100",
-              }));
+  Future<PackageCancelModel?> fetchPackageCancelViewModelApi(
+      BuildContext context,
+      data,
+      String urId,
+      String bookingId,
+      String paymentId) async {
+    try {
+      setDataList(ApiResponse.loading());
+      await _myRepo
+          .packageCancelRepositoryApi(context: context, query: data)
+          .then((onValue) {
+        if (onValue?.status.httpCode == '200') {
+          Provider.of<GetPackageItineraryViewModel>(context, listen: false)
+              .fetchGetPackageItineraryViewModelApi(
+                  context, {"packageBookingId": bookingId});
 
-      context.pop();
-      context.pop();
-      Utils.toastSuccessMessage(packageCancel.data?.data.body ?? '');
-      debugPrint('Get Package Cancel Api Success');
-    }).onError((error, stackTrace) {
-      debugPrint(error.toString());
+          Provider.of<GetPaymentRefundViewModel>(context, listen: false)
+              .getPaymentRefundApi(context: context, paymentId: paymentId);
+          Provider.of<GetPackageHistoryDetailByIdViewModel>(context,
+                  listen: false)
+              .fetchPackageHistoryDetailByIdViewModelApi(
+                  context, {"packageBookingId": bookingId}, bookingId);
+          Provider.of<GetPackageHistoryViewModel>(context, listen: false)
+              .updateDayStatus(newStatus: "CANCELLED", bookingId: bookingId);
+          setDataList(ApiResponse.completed(onValue));
+          context.pop();
+          Utils.toastSuccessMessage(packageCancel.data?.data.body ?? '');
+        }
+      });
+    } catch (e) {
+      debugPrint(e.toString());
       debugPrint('Get Package Cancel Api Failed');
-      setDataList(ApiResponse.error(error.toString()));
-    });
+      setDataList(ApiResponse.error(e.toString()));
+    }
+    return null;
+    // setDataList(ApiResponse.loading());
+    // await _myRepo
+    //     .packageCancelRepositoryApi(context: context, query: data)
+    //     .then((value) async {
+    //   Provider.of<GetPackageItineraryViewModel>(context, listen: false)
+    //       .fetchGetPackageItineraryViewModelApi(
+    //           context, {"packageBookingId": bookingId});
+
+    //   Provider.of<GetPaymentRefundViewModel>(context, listen: false)
+    //       .getPaymentRefundApi(context: context, paymentId: paymentId);
+    //   setDataList(ApiResponse.completed(value));
+    //   context.pop();
+    //   Utils.toastSuccessMessage(packageCancel.data?.data.body ?? '');
+    //   debugPrint('Get Package Cancel Api Success');
+    // }).onError((error, stackTrace) {
+    //   // context.pop();
+    //   debugPrint(error.toString());
+    //   debugPrint('Get Package Cancel Api Failed');
+    //   setDataList(ApiResponse.error(error.toString()));
+    // });
   }
 }
 

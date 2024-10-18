@@ -85,9 +85,18 @@ class _RaiseIssueDialogState extends State<RaiseIssueDialog> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: _issueOptions.map((issue) {
                 return RadioListTile<String>(
+                  dense: true,
                   contentPadding: EdgeInsets.zero,
                   activeColor: btnColor,
-                  title: Text(issue),
+                  visualDensity: VisualDensity(horizontal: -4, vertical: -4),
+                  title: Transform.translate(
+                    offset: Offset(-10,
+                        0), // Adjust this value to move the title closer to the radio button
+                    child: Text(
+                      issue,
+                      style: titleTextStyle1,
+                    ),
+                  ),
                   value: issue,
                   groupValue: _selectedIssue,
                   onChanged: (value) {

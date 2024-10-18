@@ -160,6 +160,7 @@ class _LoginTextFeildState extends State<LoginTextFeild> {
                 borderRadius: BorderRadius.circular(5),
                 color: widget.readOnly ? curvePageColor : background),
             child: TextFormField(
+              autovalidateMode: AutovalidateMode.onUserInteraction,
               focusNode: widget.focusNode,
               obscuringCharacter: '*',
               readOnly: widget.readOnly,

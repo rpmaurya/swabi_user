@@ -247,19 +247,22 @@ class _ProfilePageState extends State<ProfilePage> {
                   img: phone,
                 ),
                 const SizedBox(height: 10),
-                Custom_ListTile(
-                  headingTitleReq: true,
-                  headingTitle: "Change Password",
-                  onTap: () => context
-                      .push("/changePassword", extra: {"userId": dataUser}),
-                  heading: "**********",
-                  img: pass,
-                ),
-                // Padding(
-                //   padding: const EdgeInsets.all(8.0),
-                //   child: CustomButtonSmall(
-                //       btnHeading: 'CHANGE PASSWORD', onTap: () {}),
-                // )
+                // Custom_ListTile(
+                //   headingTitleReq: true,
+                //   headingTitle: "Change Password",
+                //   onTap: () => context
+                //       .push("/changePassword", extra: {"userId": dataUser}),
+                //   heading: "**********",
+                //   img: pass,
+                // ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: CustomButtonSmall(
+                    btnHeading: 'CHANGE PASSWORD',
+                    onTap: () => context
+                        .push("/changePassword", extra: {"userId": dataUser}),
+                  ),
+                )
               ],
             ),
           )),

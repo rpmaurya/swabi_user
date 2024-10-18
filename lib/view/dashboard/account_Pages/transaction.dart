@@ -165,7 +165,7 @@ class _MyTransactionState extends State<MyTransaction> {
                                           children: [
                                             Text(
                                               'Booking Id',
-                                              style: titleTextStyle1,
+                                              style: titleTextStyle,
                                             ),
                                             Text(
                                               data.bookingId == null
@@ -180,57 +180,52 @@ class _MyTransactionState extends State<MyTransaction> {
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceBetween,
                                           children: [
-                                            Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  'Payment Id',
-                                                  style: titleTextStyle,
-                                                ),
-                                                Text(
-                                                  data.paymentId ?? '',
-                                                  style: titleTextStyle1,
-                                                )
-                                              ],
+                                            Text(
+                                              'Payment Id',
+                                              style: titleTextStyle,
                                             ),
-                                            Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.end,
-                                              children: [
-                                                Text(
-                                                  'Status',
-                                                  style: titleTextStyle,
-                                                ),
-                                                Text(
-                                                  data.transactionStatus ==
-                                                          'Captured'
-                                                      ? 'Success'
-                                                      : data.transactionStatus ==
-                                                              'Created'
-                                                          ? 'Pending'
-                                                          : data.transactionStatus ==
-                                                                  'failed'
-                                                              ? 'Failed'
-                                                              : data.transactionStatus
-                                                                      .toString() ??
-                                                                  '',
-                                                  style: TextStyle(
-                                                      color: data.transactionStatus ==
-                                                              'Captured'
-                                                          ? greenColor
-                                                          : data.transactionStatus ==
-                                                                  'Created'
-                                                              ? Colors.yellow
-                                                              : data.transactionStatus ==
-                                                                      'Refunded'
-                                                                  ? greenColor
-                                                                  : redColor),
-                                                )
-                                              ],
+                                            Text(
+                                              data.paymentId ?? '',
+                                              style: titleTextStyle1,
                                             )
                                           ],
-                                        )
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              'Status',
+                                              style: titleTextStyle,
+                                            ),
+                                            Text(
+                                              data.transactionStatus ==
+                                                      'Captured'
+                                                  ? 'Success'
+                                                  : data.transactionStatus ==
+                                                          'Created'
+                                                      ? 'Pending'
+                                                      : data.transactionStatus ==
+                                                              'failed'
+                                                          ? 'Failed'
+                                                          : data.transactionStatus
+                                                                  .toString() ??
+                                                              '',
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.w600,
+                                                  color: data.transactionStatus ==
+                                                          'Captured'
+                                                      ? greenColor
+                                                      : data.transactionStatus ==
+                                                              'Created'
+                                                          ? Colors.yellow
+                                                          : data.transactionStatus ==
+                                                                  'Refunded'
+                                                              ? greenColor
+                                                              : redColor),
+                                            )
+                                          ],
+                                        ),
                                       ],
                                     ),
                                   );

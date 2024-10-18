@@ -72,75 +72,78 @@ class _CustomMobilenumberState extends State<CustomMobilenumber> {
         keyboardType: widget.keyboardType ?? TextInputType.phone,
         enabled: widget.enabled,
         decoration: InputDecoration(
-            errorText: errorText,
-            suffixIcon: widget.suffixIcons,
-            prefixIconConstraints: BoxConstraints(maxHeight: 25, maxWidth: 85),
-            prefixIcon: Padding(
-              padding: const EdgeInsets.only(left: 8),
-              child: Row(
-                children: [
-                  Image.asset(
-                    'assets/images/flag-AE.png',
-                    width: 25,
-                    height: 25,
-                    fit: BoxFit.fill,
-                  ),
-                  SizedBox(width: 5),
-                  Text(
-                    '+${widget.countryCode ?? '971'}',
-                    style: titleTextStyle,
-                  ),
-                ],
-              ),
+          errorText: errorText,
+          suffixIcon: widget.suffixIcons,
+          prefixIconConstraints: BoxConstraints(maxHeight: 25, maxWidth: 85),
+          prefixIcon: Padding(
+            padding: const EdgeInsets.only(left: 8),
+            child: Row(
+              children: [
+                Image.asset(
+                  'assets/images/flag-AE.png',
+                  width: 25,
+                  height: 25,
+                  fit: BoxFit.fill,
+                ),
+                SizedBox(width: 5),
+                Text(
+                  '+${widget.countryCode ?? '971'}',
+                  style: titleTextStyle,
+                ),
+              ],
             ),
-            fillColor: widget.fillColor,
-            filled: widget.fillColor != null,
-            hintText: widget.hintText,
-            hintStyle: textTitleHint,
-            contentPadding:
-                const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-            // border: InputBorder.none,
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(5.0),
-              borderSide: const BorderSide(
-                color: Color(0xFFCDCDCD),
-                // width: 2.0,
-              ),
+          ),
+          fillColor: widget.fillColor,
+          filled: widget.fillColor != null,
+          hintText: widget.hintText,
+          hintStyle: textTitleHint,
+          contentPadding:
+              const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+          // border: InputBorder.none,
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(5.0),
+            borderSide: const BorderSide(
+              color: Color(0xFFCDCDCD),
+              // width: 2.0,
             ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(5.0),
-              borderSide: const BorderSide(
-                color: Color(0xFFCDCDCD),
-                // width: 2.0,
-              ),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(5.0),
+            borderSide: const BorderSide(
+              color: Color(0xFFCDCDCD),
+              // width: 2.0,
             ),
-            disabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(5.0),
-              borderSide: const BorderSide(
-                color: Color(0xFFCDCDCD),
-                // width: 2.0,
-              ),
+          ),
+          disabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(5.0),
+            borderSide: const BorderSide(
+              color: Color(0xFFCDCDCD),
+              // width: 2.0,
             ),
-            focusedErrorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(5.0),
-              borderSide: const BorderSide(
-                color: Color(0xFFCDCDCD),
-                // width: 2.0,
-              ),
+          ),
+          focusedErrorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(5.0),
+            borderSide: const BorderSide(
+              color: Color(0xFFCDCDCD),
+              // width: 2.0,
             ),
-            errorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(5.0),
-              borderSide: const BorderSide(
-                // color: redColor,
-                color: Color(0xFFCDCDCD),
-                // width: 2.0,
-              ),
-            )
-
-            // border: OutlineInputBorder(
-            //     borderRadius: BorderRadius.circular(12),
-            //     borderSide: BorderSide(color: Color(0xFFCDCDCD))),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(5.0),
+            borderSide: const BorderSide(
+              // color: redColor,
+              color: Color(0xFFCDCDCD),
+              // width: 2.0,
             ),
+          ),
+          errorStyle: const TextStyle(
+            color: redColor, // Change error text color
+            fontSize: 13, // Adjust error text size if needed
+          ),
+          // border: OutlineInputBorder(
+          //     borderRadius: BorderRadius.circular(12),
+          //     borderSide: BorderSide(color: Color(0xFFCDCDCD))),
+        ),
         validator: (value) {
           if (value == null || value.isEmpty) {
             return 'Enter phone number';

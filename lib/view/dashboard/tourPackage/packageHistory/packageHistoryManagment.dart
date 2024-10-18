@@ -306,7 +306,7 @@ class PackageHistoryContainer extends StatelessWidget {
           child: Column(
             children: [
               SizedBox(
-                height: 150,
+                height: 180,
                 width: double.infinity,
                 child: MultiImageSlider(
                   images: List.generate(
@@ -385,8 +385,8 @@ class PackageHistoryContainer extends StatelessWidget {
                   child: CustomButtonSmall(
                       loading: loader,
                       height: 40,
-                      width: 80,
-                      btnHeading: 'View',
+                      width: 120,
+                      btnHeading: 'View Details',
                       onTap: onTap),
                 ),
               )

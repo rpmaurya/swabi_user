@@ -119,18 +119,30 @@ class GetPackageHistoryDetailByIdRepository {
 class PackageCancelRepository {
   final BaseApiServices _apiServices = NetworkApiService();
 
-  Future<dynamic> packageCancelRepositoryApi(data) async {
+  Future<PackageCancelModel?> packageCancelRepositoryApi(
+      {required BuildContext context,
+      required Map<String, dynamic> query}) async {
+    var http = HttpService(
+        baseURL: AppUrl.baseUrl,
+        endURL: AppUrl.packageCancellUrl,
+        queryParameters: query,
+        methodType: HttpMethodType.PATCH,
+        bodyType: HttpBodyType.JSON,
+        isAuthorizeRequest: false);
     try {
+      Response<dynamic>? response = await http.request<dynamic>();
       // dynamic response = await _apiServices.getGetApiResponse(AppUrl.getPackageList);
-      dynamic response = await _apiServices.patchApiResponseWithData(
-          "http://swabi.ap-south-1.elasticbeanstalk.com"
-          "/package_booking/cancel_package_booking?packageBookingId=${data["packageBookingId"]}&cancellationReason=${data["cancellationReason"]}&cancelledBy=${data["cancelledBy"]}",
-          data);
-      print("Package Cancel Repo Success");
-      return response = PackageCancelModel.fromJson(response);
+      // dynamic response = await _apiServices.patchApiResponseWithData(
+      //     "http://swabi.ap-south-1.elasticbeanstalk.com"
+      //     "/package_booking/cancel_package_booking?packageBookingId=${data["packageBookingId"]}&cancellationReason=${data["cancellationReason"]}&cancelledBy=${data["cancelledBy"]}",
+      //     data);
+      debugPrint("Package Cancel Repo Success");
+      var resp = PackageCancelModel.fromJson(response?.data);
+      return resp;
     } catch (e) {
-      print("Package Cancel Repo Field");
-      print(e);
+      debugPrint("Package Cancel Repo Field");
+      http.handleErrorResponse(context: context, error: e);
+      debugPrint(e.toString());
       rethrow;
     }
   }

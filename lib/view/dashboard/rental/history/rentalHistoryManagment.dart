@@ -7,6 +7,7 @@ import 'package:flutter_cab/utils/assets.dart';
 import 'package:flutter_cab/utils/color.dart';
 
 import 'package:flutter_cab/view/dashboard/rental/history/rentalListingContainer.dart';
+import 'package:flutter_cab/view_model/payment_gateway_view_model.dart';
 import 'package:flutter_cab/view_model/rental_view_model.dart';
 
 import 'package:provider/provider.dart';
@@ -110,11 +111,11 @@ class _RentalHistoryManagmentState extends State<RentalHistoryManagment>
     } catch (e) {
       print('Error fetching data: $e');
       // Handle error, e.g., show a toast or error message
+    } finally {
+      setState(() {
+        isLoadingMore = false;
+      });
     }
-
-    setState(() {
-      isLoadingMore = false;
-    });
   }
 
   @override
@@ -148,6 +149,7 @@ class _RentalHistoryManagmentState extends State<RentalHistoryManagment>
   }
 
   int intialloadingIndex = -1;
+  bool sortVisiblty = true;
   @override
   Widget build(BuildContext context) {
     var status =
@@ -157,7 +159,7 @@ class _RentalHistoryManagmentState extends State<RentalHistoryManagment>
         heading: 'My Rental History',
       ),
       body: Customtabbar(
-          sortVisiblty: true,
+          sortVisiblty: sortVisiblty,
           isVisible: isVisibleIcon,
           controller: _tabController,
           tabs: tabList,
@@ -202,6 +204,7 @@ class _RentalHistoryManagmentState extends State<RentalHistoryManagment>
 
                   if (data.isEmpty && currentPage == 0) {
                     // return const Center(child: Text('No Data Available'));
+
                     return Center(
                         child: Container(
                             decoration: const BoxDecoration(),
@@ -228,7 +231,7 @@ class _RentalHistoryManagmentState extends State<RentalHistoryManagment>
                       return Padding(
                         padding: const EdgeInsets.only(bottom: 10),
                         child: RentalCarListingContainer(
-                          onTapContainer: () {
+                          onTapContainer: () async {
                             setState(() {
                               intialloadingIndex = index;
                             });
@@ -242,6 +245,17 @@ class _RentalHistoryManagmentState extends State<RentalHistoryManagment>
                                       },
                                       bookingList[index].id.toString(),
                                       widget.myId);
+
+                              bookingList[index].bookingStatus == 'CANCELLED'
+                                  ? await Provider.of<
+                                              GetPaymentRefundViewModel>(
+                                          context,
+                                          listen: false)
+                                      .getPaymentRefundApi(
+                                          context: context,
+                                          paymentId:
+                                              bookingList[index].paymentId)
+                                  : null;
                             } else {
                               const CircularProgressIndicator(
                                   color: Colors.green);

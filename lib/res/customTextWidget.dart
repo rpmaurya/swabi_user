@@ -35,16 +35,19 @@ class CustomTextWidget extends StatelessWidget {
       }
       return buffer.toString();
     }
+
     return Row(
       children: [
-        sideLogo ?  Padding(
-          padding: const EdgeInsets.only(right: 5),
-          child: Container(
-            width: 5,
-            height: fontSize,
-            color: btnColor,
-          ),
-        ): const SizedBox(),
+        sideLogo
+            ? Padding(
+                padding: const EdgeInsets.only(right: 5),
+                child: Container(
+                  width: 5,
+                  height: fontSize,
+                  color: btnColor,
+                ),
+              )
+            : const SizedBox(),
         Text(
           addNewlineEvery20Chars(content),
           style: GoogleFonts.lato(
@@ -60,6 +63,7 @@ class CustomTextWidget extends StatelessWidget {
     );
   }
 }
+
 class CustomText extends StatelessWidget {
   final String content;
   final double? fontSize;
@@ -67,22 +71,36 @@ class CustomText extends StatelessWidget {
   final Color? textColor;
   final TextAlign? align;
   final int? maxline;
+  final int? textLenght;
+  final bool needTextLenght;
   final bool textEllipsis;
-  const CustomText({
-    super.key,
-    required this.content,
-    this.fontSize,
-    this.fontWeight,
-    this.align,
-    this.textColor,
-    this.textEllipsis = true,
-    this.maxline,
-  });
+  const CustomText(
+      {super.key,
+      required this.content,
+      this.fontSize,
+      this.fontWeight,
+      this.align,
+      this.textColor,
+      this.textEllipsis = true,
+      this.maxline,
+      this.needTextLenght = false,
+      this.textLenght});
 
   @override
   Widget build(BuildContext context) {
+    String addNewlineEvery20Chars(String input) {
+      final buffer = StringBuffer();
+      for (int i = 0; i < input.length; i++) {
+        if (i > 0 && i % (textLenght ?? 60) == 0) {
+          buffer.write('\n');
+        }
+        buffer.write(input[i]);
+      }
+      return buffer.toString();
+    }
+
     return Text(
-      content,
+      needTextLenght ? addNewlineEvery20Chars(content) : content,
       style: GoogleFonts.lato(
         fontWeight: fontWeight ?? FontWeight.w500,
         color: textColor ?? blackColor,
@@ -159,7 +177,8 @@ class _ExpandableTextState extends State<ExpandableText> {
       children: [
         CustomTextWidget(
           align: TextAlign.start,
-          content: widget.words.take(isExpanded ? widget.totalWords : 30).join(' '),
+          content:
+              widget.words.take(isExpanded ? widget.totalWords : 30).join(' '),
           fontSize: 12,
           maxline: 100,
           textEllipsis: true,

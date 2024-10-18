@@ -282,10 +282,10 @@ class TransContainer extends StatelessWidget {
                           style: appbarTextStyle,
                         ),
                         CustomButtonSmall(
-                          width: AppDimension.getWidth(context) * .28,
+                          width: 120,
                           height: 40,
                           loading: loading,
-                          btnHeading: "VIEW",
+                          btnHeading: "View Details",
                           onTap: onTap,
                         ),
                       ],

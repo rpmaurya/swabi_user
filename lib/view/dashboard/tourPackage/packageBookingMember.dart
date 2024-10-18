@@ -292,14 +292,14 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
               ),
               actions: [
                 CustomButtonSmall(
-                  width: 80,
+                  width: 100,
                   btnHeading: "CANCEL",
                   onTap: () {
                     Navigator.of(context).pop();
                   },
                 ),
                 CustomButtonSmall(
-                  width: 80,
+                  width: 100,
                   onTap: () {
                     if (_formKey.currentState!.validate()) {
                       print('succes');
@@ -438,26 +438,26 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                       });
                     },
                     hintText: 'Select Gender',
-                    validator: (p0) {
-                      if (p0 == null || p0.isEmpty) {
-                        return 'Please select gender';
-                      }
-                      return null;
-                    },
+                    // validator: (p0) {
+                    //   if (p0 == null || p0.isEmpty) {
+                    //     return 'Please select gender';
+                    //   }
+                    //   return null;
+                    // },
                   )
                 ],
               ),
             ),
             actions: [
               CustomButtonSmall(
-                width: 80,
+                width: 100,
                 btnHeading: "CANCEL",
                 onTap: () {
                   Navigator.of(context).pop();
                 },
               ),
               CustomButtonSmall(
-                width: 80,
+                width: 100,
                 onTap: () {
                   if (_formKey.currentState!.validate()) {
                     print('succes');
@@ -918,207 +918,214 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                     ),
 
                     const SizedBox(height: 10),
-                    Column(
-                      children: [
-                        Table(
-                          columnWidths: const {
-                            0: FixedColumnWidth(100),
-                            1: FixedColumnWidth(75),
-                            2: FixedColumnWidth(75),
-                            3: FixedColumnWidth(70),
-                            4: FixedColumnWidth(80)
-                          },
-                          // defaultColumnWidth: FixedColumnWidth(100),
-                          children: [
-                            TableRow(
-                                decoration: const BoxDecoration(
-                                  color: btnColor,
-                                ),
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 15, bottom: 10, top: 10),
-                                    child: Text(
-                                      'Name',
-                                      style: tableheaderStyle,
-                                    ),
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Column(
+                        children: [
+                          Table(
+                            columnWidths: const {
+                              0: FixedColumnWidth(120),
+                              1: FixedColumnWidth(75),
+                              2: FixedColumnWidth(75),
+                              3: FixedColumnWidth(70),
+                              4: FixedColumnWidth(80)
+                            },
+                            // defaultColumnWidth: FixedColumnWidth(100),
+                            children: [
+                              TableRow(
+                                  decoration: const BoxDecoration(
+                                    color: btnColor,
                                   ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        top: 10, bottom: 10),
-                                    child: Text(
-                                      'Age',
-                                      style: tableheaderStyle,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 15, bottom: 10, top: 10),
+                                      child: Text(
+                                        'Name',
+                                        style: tableheaderStyle,
+                                      ),
                                     ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        top: 10, bottom: 10),
-                                    child: Text(
-                                      'Gender',
-                                      style: tableheaderStyle,
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          top: 10, bottom: 10),
+                                      child: Text(
+                                        'Age',
+                                        style: tableheaderStyle,
+                                      ),
                                     ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        top: 10, bottom: 10),
-                                    child: Text(
-                                      'Type',
-                                      style: tableheaderStyle,
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          top: 10, bottom: 10),
+                                      child: Text(
+                                        'Gender',
+                                        style: tableheaderStyle,
+                                      ),
                                     ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        top: 10, bottom: 10),
-                                    child: Text(
-                                      'Action',
-                                      style: tableheaderStyle,
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          top: 10, bottom: 10),
+                                      child: Text(
+                                        'Type',
+                                        style: tableheaderStyle,
+                                      ),
                                     ),
-                                  ),
-                                ])
-                          ],
-                        ),
-                        members.isEmpty
-                            ? const Center(
-                                child: Padding(
-                                padding: EdgeInsets.only(top: 50),
-                                child: Text('No Members Added'),
-                              ))
-                            : Table(
-                                columnWidths: const {
-                                  0: FixedColumnWidth(100),
-                                  1: FixedColumnWidth(75),
-                                  2: FixedColumnWidth(75),
-                                  3: FixedColumnWidth(70),
-                                  4: FixedColumnWidth(80)
-                                },
-                                // defaultColumnWidth: FixedColumnWidth(100),
-                                children: members.map((member) {
-                                  int index = members.indexOf(member);
-                                  print('objectindex$index');
-                                  return TableRow(
-                                      // decoration:
-                                      //     BoxDecoration(color: background),
-                                      children: [
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                              left: 15, bottom: 10, top: 10),
-                                          child: Text(
-                                            member['name'],
-                                            style: titleTextStyle1,
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          top: 10, bottom: 10),
+                                      child: Text(
+                                        'Action',
+                                        style: tableheaderStyle,
+                                      ),
+                                    ),
+                                  ])
+                            ],
+                          ),
+                          members.isEmpty
+                              ? const Center(
+                                  child: Padding(
+                                  padding: EdgeInsets.only(top: 50),
+                                  child: Text('No Members Added'),
+                                ))
+                              : Table(
+                                  columnWidths: const {
+                                    0: FixedColumnWidth(120),
+                                    1: FixedColumnWidth(75),
+                                    2: FixedColumnWidth(75),
+                                    3: FixedColumnWidth(70),
+                                    4: FixedColumnWidth(80)
+                                  },
+                                  // defaultColumnWidth: FixedColumnWidth(100),
+                                  children: members.map((member) {
+                                    int index = members.indexOf(member);
+                                    print('objectindex$index');
+                                    return TableRow(
+                                        // decoration:
+                                        //     BoxDecoration(color: background),
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                                left: 15, bottom: 10, top: 10),
+                                            child: Text(
+                                              member['name'],
+                                              style: titleTextStyle1,
+                                            ),
                                           ),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                              top: 10, bottom: 10),
-                                          child: Text(
-                                            '${member['age']} ${member['ageUnit']}',
-                                            style: titleTextStyle1,
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                                top: 10, bottom: 10),
+                                            child: Text(
+                                              '${member['age']} ${member['ageUnit']}',
+                                              style: titleTextStyle1,
+                                            ),
                                           ),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                              top: 10, bottom: 10),
-                                          child: Text(
-                                            member['gender'],
-                                            style: titleTextStyle1,
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                                top: 10, bottom: 10),
+                                            child: Text(
+                                              member['gender'],
+                                              style: titleTextStyle1,
+                                            ),
                                           ),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                              top: 10, bottom: 10),
-                                          child: Text(
-                                            member['ageUnit'] == 'Month'
-                                                ? 'Infant'
-                                                : int.parse(member['age']) < 18
-                                                    ? 'Child'
-                                                    : int.parse(member['age']) <
-                                                            60
-                                                        ? 'Adult'
-                                                        : 'Senior*',
-                                            style: TextStyle(
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.w400,
-                                                color:
-                                                    int.parse(member['age']) >=
-                                                            60
-                                                        ? redColor
-                                                        : blackColor),
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                                top: 10, bottom: 10),
+                                            child: Text(
+                                              member['ageUnit'] == 'Month'
+                                                  ? 'Infant'
+                                                  : int.parse(member['age']) <
+                                                          18
+                                                      ? 'Child'
+                                                      : int.parse(member[
+                                                                  'age']) <
+                                                              60
+                                                          ? 'Adult'
+                                                          : 'Senior*',
+                                              style: TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w400,
+                                                  color: int.parse(
+                                                              member['age']) >=
+                                                          60
+                                                      ? redColor
+                                                      : blackColor),
+                                            ),
                                           ),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                              top: 10, bottom: 10),
-                                          child: Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              InkWell(
-                                                child: const Icon(Icons.edit,
-                                                    color: greenColor),
-                                                onTap: () {
-                                                  int age = int.parse(
-                                                      member['age'].toString());
-                                                  String ageunit =
-                                                      member['ageUnit']
-                                                          .toString();
-                                                  if (ageunit == 'Month') {
-                                                    // _editInfantdMember(index);
-                                                    _editMember(
-                                                        title:
-                                                            'Edit Infant Member',
-                                                        index: index,
-                                                        ageUnit: 'Month',
-                                                        type: 'Infant');
-                                                  } else {
-                                                    if (age >= 18) {
-                                                      // _editAdultMember(index);
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                                top: 10, bottom: 10),
+                                            child: Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                InkWell(
+                                                  child: const Icon(Icons.edit,
+                                                      color: greenColor),
+                                                  onTap: () {
+                                                    int age = int.parse(
+                                                        member['age']
+                                                            .toString());
+                                                    String ageunit =
+                                                        member['ageUnit']
+                                                            .toString();
+                                                    if (ageunit == 'Month') {
+                                                      // _editInfantdMember(index);
                                                       _editMember(
                                                           title:
-                                                              'Edit Adult Member',
+                                                              'Edit Infant Member',
                                                           index: index,
-                                                          ageUnit: 'Year',
-                                                          type: 'Adult');
+                                                          ageUnit: 'Month',
+                                                          type: 'Infant');
                                                     } else {
-                                                      // _editChildMember(index);
-                                                      _editMember(
-                                                          title:
-                                                              'Edit Child Member',
-                                                          index: index,
-                                                          ageUnit: 'Year',
-                                                          type: 'Child');
-                                                      // addedChildCount++;
+                                                      if (age >= 18) {
+                                                        // _editAdultMember(index);
+                                                        _editMember(
+                                                            title:
+                                                                'Edit Adult Member',
+                                                            index: index,
+                                                            ageUnit: 'Year',
+                                                            type: 'Adult');
+                                                      } else {
+                                                        // _editChildMember(index);
+                                                        _editMember(
+                                                            title:
+                                                                'Edit Child Member',
+                                                            index: index,
+                                                            ageUnit: 'Year',
+                                                            type: 'Child');
+                                                        // addedChildCount++;
+                                                      }
                                                     }
-                                                  }
-                                                  setState(() {
-                                                    tableIcon = false;
-                                                    // updateButtonStates();
-                                                  });
-                                                },
-                                              ),
-                                              const SizedBox(width: 10),
-                                              InkWell(
-                                                child: const Icon(Icons.delete,
-                                                    color: redColor),
-                                                onTap: () {
-                                                  setState(() {
-                                                    members.removeAt(index);
-                                                    // addAmount(members);
-                                                    member['ageUnit']
-                                                                .toString() ==
-                                                            'Month'
-                                                        ? null
-                                                        : _subAmount();
-                                                    tableIcon = false;
-                                                  });
-                                                },
-                                              ),
-                                            ],
+                                                    setState(() {
+                                                      tableIcon = false;
+                                                      // updateButtonStates();
+                                                    });
+                                                  },
+                                                ),
+                                                const SizedBox(width: 10),
+                                                InkWell(
+                                                  child: const Icon(
+                                                      Icons.delete,
+                                                      color: redColor),
+                                                  onTap: () {
+                                                    setState(() {
+                                                      members.removeAt(index);
+                                                      // addAmount(members);
+                                                      member['ageUnit']
+                                                                  .toString() ==
+                                                              'Month'
+                                                          ? null
+                                                          : _subAmount();
+                                                      tableIcon = false;
+                                                    });
+                                                  },
+                                                ),
+                                              ],
+                                            ),
                                           ),
-                                        ),
-                                      ]);
-                                }).toList(),
-                              ),
-                      ],
+                                        ]);
+                                  }).toList(),
+                                ),
+                        ],
+                      ),
                     ),
 
                     ///Package Total Booking Container

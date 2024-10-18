@@ -58,8 +58,8 @@ class Custompaymentdetailscontainer extends StatelessWidget {
                 : textItem(
                     lable: 'Discount Amount', value: 'AED $discountAmount'),
             textItem(lable: 'Total Amount', value: 'AED ${amount}'),
-            textItem(lable: 'PaymentDate', value: paymentDate),
-            textItem(lable: 'PaymentTime', value: paymentTime),
+            textItem(lable: 'Payment Date', value: paymentDate),
+            textItem(lable: 'Payment Time', value: paymentTime),
             const SizedBox(
               height: 10,
             )

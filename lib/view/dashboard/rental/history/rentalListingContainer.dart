@@ -52,6 +52,8 @@ class RentalCarListingContainer extends StatelessWidget {
                             bottom: BorderSide(
                                 color: naturalGreyColor.withOpacity(0.3)))),
                     child: ListTile(
+                      // contentPadding: const EdgeInsets.symmetric(horizontal: 10),
+                      horizontalTitleGap: 10,
                       leading: SizedBox(
                         width: 80,
                         height: 60,
@@ -110,16 +112,14 @@ class RentalCarListingContainer extends StatelessWidget {
                                     Text(time, style: titleTextStyle),
                                   ],
                                 ),
-                                Container(
-                                  child: Row(
-                                    children: [
-                                      Text(
-                                        "Booking Id : ",
-                                        style: titleTextStyle,
-                                      ),
-                                      Text(bookingID, style: titleTextStyle),
-                                    ],
-                                  ),
+                                Row(
+                                  children: [
+                                    Text(
+                                      "Booking Id : ",
+                                      style: titleTextStyle,
+                                    ),
+                                    Text(bookingID, style: titleTextStyle),
+                                  ],
                                 )
                               ],
                             ),
@@ -134,7 +134,8 @@ class RentalCarListingContainer extends StatelessWidget {
                       border:
                           Border(bottom: BorderSide(color: curvePageColor))),
                   child: ListTile(
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 10),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 5),
+                    horizontalTitleGap: 0,
                     leading: SizedBox(
                       width: 40,
                       height: 40,
@@ -239,8 +240,8 @@ class RentalCarListingContainer extends StatelessWidget {
                       CustomButtonSmall(
                           loading: loader,
                           height: 40,
-                          width: 80,
-                          btnHeading: 'View',
+                          width: 120,
+                          btnHeading: 'View Details',
                           onTap: onTapContainer)
                     ],
                   ),

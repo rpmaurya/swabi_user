@@ -69,11 +69,11 @@ class _AlloffersScreenState extends State<AlloffersScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          data?.offerName ?? '',
-                          style: titleTextStyle,
-                        ),
-                        const SizedBox(height: 10),
+                        // Text(
+                        //   data?.offerName ?? '',
+                        //   style: titleTextStyle,
+                        // ),
+                        // const SizedBox(height: 10),
                         ClipRRect(
                           borderRadius: BorderRadius.circular(5),
                           child: Image.network(
@@ -84,15 +84,15 @@ class _AlloffersScreenState extends State<AlloffersScreen> {
                             fit: BoxFit.fill,
                           ),
                         ),
+                        const SizedBox(height: 10),
+
                         Text(
-                          'Graw now: ${data?.discountPercentage}% OFF on ${data?.bookingType} ${data?.offerName}',
+                          '${data?.offerName}',
                           style: textTitleHeading,
                         ),
                         Text(
-                          data?.description ?? '',
+                          'Save up to AED ${data?.maxDiscountAmount?.toInt()}',
                           style: titleTextStyle1,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
                         ),
                         const SizedBox(height: 10),
                         Container(
@@ -122,14 +122,14 @@ class _AlloffersScreenState extends State<AlloffersScreen> {
                                             style:
                                                 TextStyle(color: Colors.green),
                                           )
-                                        : Text('CopyCodes'),
+                                        : const Text('CopyCodes'),
                                     const SizedBox(width: 5),
                                     isCopied && selectIndex == index
                                         ? const Icon(
                                             Icons.check,
                                             color: Colors.green,
                                           )
-                                        : Icon(Icons.copy)
+                                        : const Icon(Icons.copy)
                                   ],
                                 ),
                               )

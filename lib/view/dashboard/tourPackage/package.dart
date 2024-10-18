@@ -195,11 +195,10 @@ class _PackagesState extends State<Packages> {
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    const SizedBox(height: 10),
                     const CommonOfferContainer(
                       bookingType: 'PACKAGE_BOOKING',
                     ),
-                    const SizedBox(height: 10),
+
                     status == "Status.completed"
                         ? packageList.isNotEmpty
                             ? ListView.builder(
@@ -641,10 +640,10 @@ class _PackageContainerState extends State<PackageContainer> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             CustomButtonSmall(
-                              width: AppDimension.getWidth(context) * .25,
+                              width: 120,
                               height: 40,
                               loading: widget.loader,
-                              btnHeading: "View",
+                              btnHeading: "View Details",
                               onTap: widget.ontap,
                             ),
                             RichText(

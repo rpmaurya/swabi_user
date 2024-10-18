@@ -4,6 +4,7 @@ import 'package:flutter_cab/data/response/api_response.dart';
 import 'package:flutter_cab/model/paymentDetailsModel.dart';
 import 'package:flutter_cab/model/rentalBooking_model.dart';
 import 'package:flutter_cab/respository/rental_repository.dart';
+import 'package:flutter_cab/view_model/payment_gateway_view_model.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../utils/utils.dart';
@@ -141,43 +142,83 @@ class RentalBookingViewModel with ChangeNotifier {
 // Rental Booking View Model
 class RentalBookingCancelViewModel with ChangeNotifier {
   final _myRepo = RentalBookingCancelRepository();
-  ApiResponse<RentalCarBookingCancelModel> DataList = ApiResponse.loading();
+  ApiResponse<RentalCarBookingCancelModel> cancelldataList =
+      ApiResponse.loading();
 
   setDataList(ApiResponse<RentalCarBookingCancelModel> response) {
-    DataList = response;
+    cancelldataList = response;
     notifyListeners();
   }
 
-  Future<void> fetchRentalBookingCancelViewModelApi(
-      BuildContext context, data, String userId) async {
-    setDataList(ApiResponse.loading());
-    _myRepo.rentalBookingCancelRepositoryApi(data).then((value) async {
-      setDataList(ApiResponse.completed(value));
-      // debugPrint('RentalBooking Cancel Api Success');
-      Provider.of<RentalBookingListViewModel>(context, listen: false)
-          .fetchRentalBookingListBookedViewModelApi(context, {
-        'userId': userId,
-        'pageNumber': '0',
-        'pageSize': '100',
-        'bookingStatus': 'BOOKED',
-      });
-      Provider.of<RentalBookingListViewModel>(context, listen: false)
-          .fetchRentalBookingListBookedViewModelApi(context, {
-        'userId': userId,
-        'pageNumber': '0',
-        'pageSize': '100',
-        'bookingStatus': 'CANCELLED',
-      });
+  Future<RentalCarBookingCancelModel?> fetchRentalBookingCancelViewModelApi(
+      BuildContext context,
+      data,
+      String userId,
+      String bookingId,
+      String paymentId) async {
+    try {
+      setDataList(ApiResponse.loading());
+      // // debugPrint('bncnvccnbcbncbc,,......,,,,,,,,,,');
+      // setDataList(ApiResponse.error(''));
+      // // context.pop();
+      // return null;
+      await _myRepo
+          .rentalBookingCancelRepositoryApi(context: context, query: data)
+          .then((onValue) {
+        if (onValue.status.httpCode == '200') {
+          Provider.of<RentalViewDetailViewModel>(context, listen: false)
+              .fetchRentalBookedViewDetialViewModelApi1(context, {
+            "id": bookingId,
+          });
 
-      context.pop();
-      context.pop();
-      // context.pop();
-      Utils.toastSuccessMessage(DataList.data?.data.body ?? '');
-    }).onError((error, stackTrace) {
-      // debugPrint(error.toString());
-      setDataList(ApiResponse.error(error.toString()));
-      // Utils.flushBarErrorMessage(error.toString(), context,redColor);
-    });
+          Provider.of<GetPaymentRefundViewModel>(context, listen: false)
+              .getPaymentRefundApi(context: context, paymentId: paymentId);
+
+          Provider.of<RentalBookingListViewModel>(context, listen: false)
+              .updateDayStatus(newStatus: "CANCELLED", bookingId: bookingId);
+
+          setDataList(ApiResponse.completed(onValue));
+          context.pop();
+          Utils.toastSuccessMessage(cancelldataList.data?.data.body ?? '');
+        }
+      });
+    } catch (e) {
+      setDataList(ApiResponse.error(e.toString()));
+    }
+    return null;
+    // setDataList(ApiResponse.loading());
+    // await _myRepo.rentalBookingCancelRepositoryApi(data).then((value) {
+    //   setDataList(ApiResponse.completed(value));
+    //   context.pop();
+    //   Provider.of<RentalViewDetailViewModel>(context, listen: false)
+    //       .fetchRentalBookedViewDetialViewModelApi1(context, bookingId);
+    //   Provider.of<GetPaymentRefundViewModel>(context, listen: false)
+    //       .getPaymentRefundApi(context: context, paymentId: paymentId);
+
+    //   // debugPrint('RentalBooking Cancel Api Success');
+    //   // Provider.of<RentalBookingListViewModel>(context, listen: false)
+    //   //     .fetchRentalBookingListBookedViewModelApi(context, {
+    //   //   'userId': userId,
+    //   //   'pageNumber': '0',
+    //   //   'pageSize': '100',
+    //   //   'bookingStatus': 'BOOKED',
+    //   // });
+    //   // Provider.of<RentalBookingListViewModel>(context, listen: false)
+    //   //     .fetchRentalBookingListBookedViewModelApi(context, {
+    //   //   'userId': userId,
+    //   //   'pageNumber': '0',
+    //   //   'pageSize': '100',
+    //   //   'bookingStatus': 'CANCELLED',
+    //   // });
+
+    //   // context.pop();
+    //   // context.pop();
+    //   Utils.toastSuccessMessage(cancelldataList.data?.data.body ?? '');
+    // }).onError((error, stackTrace) {
+    //   // debugPrint(error.toString());
+    //   setDataList(ApiResponse.error(error.toString()));
+    //   // Utils.flushBarErrorMessage(error.toString(), context,redColor);
+    // });
   }
 }
 
@@ -198,6 +239,21 @@ class RentalBookingListViewModel with ChangeNotifier {
   setDataList(ApiResponse<RentalCarBookingListModel> response) {
     rentalBookingList = response;
     notifyListeners();
+  }
+
+  void updateDayStatus({required String newStatus, required String bookingId}) {
+    if (rentalBookingList.data != null) {
+      var booking = rentalBookingList.data?.data.content
+          .firstWhere((e) => e.id == bookingId);
+      debugPrint('bookingStatus>>>>>>>>>2222 ${booking?.bookingStatus}');
+      if (booking != null) {
+        booking.bookingStatus = newStatus;
+        debugPrint('bookingStatus>>>>>>>>> ${booking.bookingStatus}');
+        notifyListeners(); // Notify listeners after the change
+      }
+    } else {
+      print('object.....>>>...');
+    }
   }
 
   // setDataList1(ApiResponse<RentalCarBookingListModel> response) {
@@ -325,7 +381,34 @@ class RentalViewDetailViewModel with ChangeNotifier {
         "bookedId": bookid,
         "useriD": uid,
         "paymentId": value.data.paymentId
+      }).then((onValue) {
+        debugPrint('then.apicalling,.,.,.,.,.,.,../,,.,.,/..,./.,///,/,/,//');
+        Provider.of<RentalBookingListViewModel>(context, listen: false)
+            .fetchRentalBookingListBookedViewModelApi(context, {
+          'userId': uid,
+          'pageNumber': '0',
+          'pageSize': '100',
+          'bookingStatus': 'ALL',
+          "search": '',
+          "sortBy": 'date',
+          "sortDirection": 'desc'
+        });
       });
+      // Utils.toastMessage("Rental Car View Detail Booking");
+    }).onError((error, stackTrace) {
+      debugPrint(error.toString());
+      // Utils.flushBarErrorMessage(error.toString(), context);
+      setDataList(ApiResponse.error(error.toString()));
+    });
+  }
+
+  Future<void> fetchRentalBookedViewDetialViewModelApi1(
+      BuildContext context, data) async {
+    setDataList(ApiResponse.loading());
+    debugPrint('bookingId,,,,$data');
+    _myRepo.rentalViewDetailsRepositoryApi(data).then((value) async {
+      setDataList(ApiResponse.completed(value));
+
       // Utils.toastMessage("Rental Car View Detail Booking");
     }).onError((error, stackTrace) {
       debugPrint(error.toString());

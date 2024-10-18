@@ -107,16 +107,29 @@ class RentalBookingRepository {
 class RentalBookingCancelRepository {
   final BaseApiServices _apiServices = NetworkApiService();
 
-  Future<dynamic> rentalBookingCancelRepositoryApi(data) async {
+  Future<RentalCarBookingCancelModel> rentalBookingCancelRepositoryApi(
+      {required BuildContext context,
+      required Map<String, dynamic> query}) async {
+    var http = HttpService(
+        baseURL: AppUrl.baseUrl,
+        endURL: AppUrl.rentalCancellUrl,
+        bodyType: HttpBodyType.JSON,
+        methodType: HttpMethodType.PUT,
+        isAuthorizeRequest: false,
+        queryParameters: query);
     try {
-      dynamic response = await _apiServices.getPutApiResponse(
-          'http://swabi.ap-south-1.elasticbeanstalk.com/'
-          'rental/cancel_rental_booking?id=${data["id"]}&reason=${data["reason"]}&cancelledBy=${data["cancelledBy"]}');
-      // print("rentalBooking cancel Repo api success");
-      return response = RentalCarBookingCancelModel.fromJson(response);
+      Response<dynamic>? response = await http.request<dynamic>();
+      // dynamic response = await _apiServices.getPutApiResponse(
+      //     'http://swabi.ap-south-1.elasticbeanstalk.com/'
+      //     'rental/cancel_rental_booking?id=${data["id"]}&reason=${data["reason"]}&cancelledBy=${data["cancelledBy"]}');
+      print("rentalBooking cancel Repo api success ${response?.data}");
+      var resp = RentalCarBookingCancelModel.fromJson(response?.data);
+      return resp;
     } catch (e) {
       // print("rentalBooking cancel Repo api not successful error");
-      // print(e);
+      // ignore: use_build_context_synchronously
+      http.handleErrorResponse(context: context, error: e);
+      print(e);
       rethrow;
     }
   }
@@ -126,14 +139,15 @@ class RentalBookingCancelRepository {
 class RentalBookingListRepository {
   final BaseApiServices _apiServices = NetworkApiService();
 
-  Future<dynamic> rentalBookingListRepositoryApi(data) async {
+  Future<RentalCarBookingListModel> rentalBookingListRepositoryApi(data) async {
     try {
       dynamic response = await _apiServices.getGetApiResponse(
           'http://swabi.ap-south-1.elasticbeanstalk.com/'
           'rental/get_rental_booking_by_userId?userId=${data["userId"]}&pageNumber=${data["pageNumber"]}&pageSize=${data["pageSize"]}&bookingStatus=${data["bookingStatus"]}&search=${data["search"]}&sortBy=${data["sortBy"]}&sortDirection=${data["sortDirection"]}');
 
-      // print("rentalBooking Repo api success");
-      return response = RentalCarBookingListModel.fromJson(response);
+      debugPrint("rentalBooking Repo api success $response");
+      var resp = RentalCarBookingListModel.fromJson(response);
+      return resp;
     } catch (e) {
       // print("rentalBooking Repo api not successful error");
       print(e);

@@ -709,7 +709,7 @@ class _BookYourCabState extends State<BookYourCab> {
                                   ),
                                   RadioButtonWithText(
                                     value: 2,
-                                    text: "Someone Other",
+                                    text: "Someone Else",
                                     groupValue: checkBox,
                                     onChanged: (value) {
                                       setState(() {
@@ -888,7 +888,7 @@ class _BookingContainerState extends State<BookingContainer> {
                                         fontWeight: FontWeight.w700),
                                   ),
                                   Text(
-                                    "Time : ${widget.pickTime}",
+                                    "Seats : ${widget.seats}",
                                     style: GoogleFonts.lato(
                                         color: greyColor,
                                         fontSize: 14,
@@ -927,84 +927,41 @@ class _BookingContainerState extends State<BookingContainer> {
                   decoration: const BoxDecoration(
                       border:
                           Border(bottom: BorderSide(color: curvePageColor))),
-                  child: ListTile(
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 10),
-                    title: Row(
-                      children: [
-                        SizedBox(
-                          width: 40,
-                          height: 40,
-                          child: ClipRRect(
-                              borderRadius: BorderRadius.circular(50),
-                              child: const Padding(
-                                  padding: EdgeInsets.all(10.0),
-                                  child: Icon(Icons.edit_road)
-                                  // Image.asset(
-                                  //   fuel,
-                                  // ),
-                                  )),
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              "Kilometer",
-                              style: GoogleFonts.lato(
-                                  color: greyColor,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w700),
-                            ),
-                            Text(
-                              '${widget.kilometers}/KM',
-                              style: GoogleFonts.lato(
-                                  color: greyColor,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w700),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    trailing: SizedBox(
-                      width: 100,
-                      child: Row(
-                        children: [
-                          SizedBox(
-                            width: 40,
-                            height: 40,
-                            child: ClipRRect(
-                                borderRadius: BorderRadius.circular(50),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(10.0),
-                                  child: Image.asset(
-                                    seat,
-                                  ),
-                                )),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: ListTile(
+                          dense: true,
+                          horizontalTitleGap: 10,
+                          // contentPadding:
+                          //     const EdgeInsets.symmetric(horizontal: 10),
+                          leading: Icon(Icons.edit_road),
+                          title: Text(
+                            "Kilometer",
+                            style: titleText,
                           ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                "Seats",
-                                style: GoogleFonts.lato(
-                                    color: greyColor,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w700),
-                              ),
-                              Text(
-                                widget.seats,
-                                style: GoogleFonts.lato(
-                                    color: greyColor,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w700),
-                              ),
-                            ],
-                          ),
-                        ],
+                          subtitle:
+                              Text('${widget.kilometers}/KM', style: titleText),
+                        ),
                       ),
-                    ),
+                      Expanded(
+                        child: ListTile(
+                          dense: true,
+                          horizontalTitleGap: 10,
+                          contentPadding: const EdgeInsets.only(left: 45),
+                          leading: const Icon(Icons.lock_clock),
+                          title: Text(
+                            'Pickup Time',
+                            style: titleText,
+                          ),
+                          subtitle: Text(
+                            widget.pickTime,
+                            style: titleText,
+                          ),
+                        ),
+                      )
+                    ],
                   ),
                 ),
 
@@ -1020,19 +977,23 @@ class _BookingContainerState extends State<BookingContainer> {
                       children: [
                         Text(
                           "Location : ",
-                          style: titleTextStyle,
+                          style: titleText,
                         ),
                         const SizedBox(height: 5),
-                        SizedBox(
-                          width: AppDimension.getWidth(context) * .65,
-                          child: CustomText(
-                            content: widget.pickUpLocation,
-                            align: TextAlign.start,
-                            fontWeight: FontWeight.w400,
-                            maxline: 10,
-                            fontSize: 16,
-                          ),
+                        Text(
+                          widget.pickUpLocation,
+                          style: titleText,
                         )
+                        // SizedBox(
+                        //   width: AppDimension.getWidth(context) * .65,
+                        //   child: CustomText(
+                        //     content: widget.pickUpLocation,
+                        //     align: TextAlign.start,
+                        //     fontWeight: FontWeight.w400,
+                        //     maxline: 10,
+                        //     fontSize: 16,
+                        //   ),
+                        // )
                         // Text(
                         //   pickUpLocation,
                         //   style: titleTextStyle,
@@ -1052,11 +1013,11 @@ class _BookingContainerState extends State<BookingContainer> {
                         children: [
                           Text(
                             'Rental Amount',
-                            style: titleTextStyle,
+                            style: titleText,
                           ),
                           Text(
                             "AED ${widget.totalPrice}",
-                            style: titleTextStyle1,
+                            style: titleText,
                           ),
                         ],
                       ),
@@ -1065,11 +1026,11 @@ class _BookingContainerState extends State<BookingContainer> {
                         children: [
                           Text(
                             'Tax Amount  (5 %)',
-                            style: titleTextStyle,
+                            style: titleText,
                           ),
                           Text(
                             "+ AED ${widget.taxAmount}",
-                            style: titleTextStyle1,
+                            style: titleText,
                           ),
                         ],
                       ),
@@ -1080,11 +1041,11 @@ class _BookingContainerState extends State<BookingContainer> {
                               children: [
                                 Text(
                                   'Save Amount',
-                                  style: titleTextStyle,
+                                  style: titleText,
                                 ),
                                 Text(
                                   "- AED ${widget.offerDisAmount.toInt()}",
-                                  style: titleTextStyle1,
+                                  style: titleText,
                                 ),
                               ],
                             ),
@@ -1093,21 +1054,21 @@ class _BookingContainerState extends State<BookingContainer> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            'PayableAmount ',
-                            style: appbarTextStyle,
+                            'Payable Amount ',
+                            style: pageHeadingTextStyle,
                           ),
                           Text(
                             widget.discountedAmount == 0
                                 ? 'AED ${widget.payableAmount.toInt()}'
                                 : "AED ${widget.discountedAmount.toInt()}",
-                            style: appbarTextStyle,
+                            style: pageHeadingTextStyle,
                           ),
                         ],
                       ),
                       Align(
                         alignment: Alignment.centerRight,
                         child: Text(
-                          "Inclusive of Taxes",
+                          "(Inclusive of Taxes)",
                           style: titleTextStyle1,
                         ),
                       ),
@@ -1176,17 +1137,9 @@ class _BookingContainerState extends State<BookingContainer> {
               child: const Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  CustomTextWidget(
-                      content: "Driver & Cab details?",
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                      textColor: textColor),
-                  SizedBox(
-                    height: 5,
-                  ),
                   CustomText(
                       content:
-                          "Cab and driver details? will be shared up to 30 min prior to departure.",
+                          "Cab and driver details. will be shared up to 30 min prior to departure.",
                       fontSize: 16,
                       maxline: 2,
                       align: TextAlign.start,

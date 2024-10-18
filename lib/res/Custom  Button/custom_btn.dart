@@ -124,6 +124,7 @@ class CustomButtonSmall extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint('loading status......$loading');
     return Column(
       children: [
         titleReq

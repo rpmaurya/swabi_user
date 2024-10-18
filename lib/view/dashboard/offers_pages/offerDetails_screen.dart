@@ -46,10 +46,20 @@ class _OfferdetailsScreenState extends State<OfferdetailsScreen> {
         String termConditions =
             """${viewModel.offerDetailByIdModel?.data?.termsAndConditions}""";
         final document = html_parser.parse(termConditions);
-        final List<String> termsList = document
-            .getElementsByTagName('li')
-            .map((li) => li.text.trim())
-            .toList();
+        final List<String> termsList = [
+          ...document.getElementsByTagName('p').map((p) => p.text.trim()),
+          ...document.getElementsByTagName('li').map((li) => li.text.trim()),
+        ];
+        // final List<String> termsList = document
+        //     .getElementsByTagName('li')
+        //     .map((li) => li.text.trim())
+        //     .toList();
+        // if (termsList.isEmpty) {
+        //   termsList.addAll(document
+        //       .getElementsByTagName('p')
+        //       .map((p) => p.text.trim())
+        //       .toList());
+        // }
         return Scaffold(
           appBar: const CustomAppBar(
             heading: 'Offer Details',
@@ -78,8 +88,13 @@ class _OfferdetailsScreenState extends State<OfferdetailsScreen> {
                       ),
                       const SizedBox(height: 10),
                       Text(
-                        'Graw now: ${viewModel.offerDetailByIdModel?.data?.discountPercentage}% OFF on ${viewModel.offerDetailByIdModel?.data?.bookingType} ${viewModel.offerDetailByIdModel?.data?.offerName}',
+                        ' ${viewModel.offerDetailByIdModel?.data?.offerName}',
                         style: textTitleHeading,
+                      ),
+
+                      Text(
+                        'Save up to AED ${viewModel.offerDetailByIdModel?.data?.maxDiscountAmount?.toInt()}',
+                        style: titleTextStyle1,
                       ),
                       Text(
                         viewModel.offerDetailByIdModel?.data?.description ?? '',

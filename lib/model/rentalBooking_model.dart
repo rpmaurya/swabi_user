@@ -677,6 +677,7 @@ class Content {
   String pickupLocation;
   String cancellationReason;
   String userDetails;
+  String paymentId;
   String discountAmount;
   String taxAmount;
   String taxPercentage;
@@ -708,6 +709,7 @@ class Content {
       required this.pickupLocation,
       required this.cancellationReason,
       required this.userDetails,
+      required this.paymentId,
       required this.discountAmount,
       required this.taxAmount,
       required this.taxPercentage,
@@ -739,6 +741,7 @@ class Content {
       pickupLocation: json["pickupLocation"].toString(),
       cancellationReason: json["cancellationReason"].toString(),
       userDetails: json["userDetails"].toString(),
+      paymentId: json["paymentId"]?.toString() ?? '',
       discountAmount: json["discountAmount"]?.toString() ?? '',
       taxAmount: json["taxAmount"]?.toString() ?? '',
       taxPercentage: json["taxPercentage"]?.toString() ?? '',
@@ -770,6 +773,7 @@ class Content {
         "pickupLocation": pickupLocation,
         "cancellationReason": cancellationReason,
         "userDetails": userDetails,
+        "paymentId": paymentId,
         "discountAmount": discountAmount,
         "taxAmount": taxAmount,
         "taxPercentage": taxPercentage,

@@ -327,11 +327,11 @@ class _ActivityContainerState extends State<ActivityContainer> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 5),
+      padding: const EdgeInsets.only(bottom: 10),
       child: CommonContainer(
         borderReq: true,
         elevation: 0,
-        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
         borderColor: naturalGreyColor.withOpacity(.3),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -359,7 +359,7 @@ class _ActivityContainerState extends State<ActivityContainer> {
               align: TextAlign.start,
               content: widget.activityName,
               maxline: 3,
-              fontSize: 16,
+              fontSize: 17,
               fontWeight: FontWeight.w700,
               textColor: greenColor,
             ),

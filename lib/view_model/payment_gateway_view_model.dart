@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/response/api_response.dart';
 import 'package:flutter_cab/model/getTrasactionByIdModel.dart';
 import 'package:flutter_cab/model/paymentGetWay_model.dart';
+import 'package:flutter_cab/model/payment_refund_model.dart';
 import 'package:flutter_cab/respository/payment_gateway_repository.dart';
 import 'package:flutter_cab/utils/utils.dart';
 import 'package:go_router/go_router.dart';
@@ -146,6 +147,33 @@ class GetTranactionViewModel with ChangeNotifier {
       // Utils.flushBarSuccessMessage("Payment paymentVerify Success", context);
       return resp;
     } catch (e) {
+      print(e);
+    }
+    return null;
+  }
+}
+
+class GetPaymentRefundViewModel with ChangeNotifier {
+  final _myRepo = PaymentRefundRespository();
+  ApiResponse<PaymentRefundModel> getPaymentRefund = ApiResponse.loading();
+  setDataList(ApiResponse<PaymentRefundModel> response) {
+    getPaymentRefund = response;
+    notifyListeners();
+  }
+
+  Future<PaymentRefundModel?> getPaymentRefundApi(
+      {required BuildContext context, required String paymentId}) async {
+    Map<String, dynamic> query = {"paymentId": paymentId};
+    try {
+      print('refundQuery..$query');
+      setDataList(ApiResponse.loading());
+      var resp =
+          await _myRepo.getRefundPaymentApi(context: context, query: query);
+      setDataList(ApiResponse.completed(resp));
+      // Utils.flushBarSuccessMessage("Payment paymentVerify Success", context);
+      return resp;
+    } catch (e) {
+      setDataList(ApiResponse.error(e.toString()));
       print(e);
     }
     return null;

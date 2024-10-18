@@ -3,17 +3,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/model/getIssueByBookingIdModel.dart';
 import 'package:flutter_cab/model/paymentDetailsModel.dart';
+import 'package:flutter_cab/model/payment_refund_model.dart';
 import 'package:flutter_cab/model/rentalBooking_model.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/res/Custom%20Page%20Layout/commonPage_Layout.dart';
 import 'package:flutter_cab/res/Custom%20Widgets/customPaymentDetailsContainer.dart';
 import 'package:flutter_cab/res/Custom%20Widgets/multi_imageSlider_ContainerWidget.dart';
+import 'package:flutter_cab/res/Custom%20Widgets/refund_payment_container.dart';
 import 'package:flutter_cab/res/customAppBar_widget.dart';
 import 'package:flutter_cab/res/customRaiseIssueForm.dart';
+import 'package:flutter_cab/utils/assets.dart';
 import 'package:flutter_cab/utils/color.dart';
 import 'package:flutter_cab/utils/dimensions.dart';
 import 'package:flutter_cab/utils/utils.dart';
 import 'package:flutter_cab/view/dashboard/rental/carBooking.dart';
+import 'package:flutter_cab/view_model/payment_gateway_view_model.dart';
 import 'package:flutter_cab/view_model/raiseIssue_view_model.dart';
 import 'package:flutter_cab/view_model/rental_view_model.dart';
 import 'package:go_router/go_router.dart';
@@ -39,10 +43,11 @@ class RentalBookedPageView extends StatefulWidget {
 }
 
 class _RentalBookedPageViewState extends State<RentalBookedPageView> {
-  TextEditingController controller = TextEditingController();
+  final TextEditingController controller = TextEditingController();
   RentalDetailsSingleData? fulldata;
   PaymentData? paymentDetails;
   GetIssueByBookingIdModel? getIssueByBookingId;
+  PaymentRefundModel? paymentRefund;
   bool loading = false;
   String? currency;
   @override
@@ -51,6 +56,7 @@ class _RentalBookedPageViewState extends State<RentalBookedPageView> {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       getPaymentDetail();
       getissueDetail();
+      // getPaymentRefund();
     });
     // currency = getCurrencyByCountryCode('IN');
     // print('Currency for IN: ${currency} - ${currency}');
@@ -85,15 +91,22 @@ class _RentalBookedPageViewState extends State<RentalBookedPageView> {
     });
   }
 
+  Future<void> getPaymentRefund() async {
+    await Provider.of<GetPaymentRefundViewModel>(context, listen: false)
+        .getPaymentRefundApi(context: context, paymentId: widget.paymentId);
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    controller.dispose();
+    super.dispose();
+  }
+
+  bool cancelloader = false;
   // List<String> vehicleImage = [];
   @override
   Widget build(BuildContext context) {
-    String cancelledStatus = context
-        .watch<RentalBookingCancelViewModel>()
-        .DataList
-        .status
-        .toString();
-
     fulldata = context.watch<RentalViewDetailViewModel>().dataList.data?.data;
     getIssueByBookingId =
         context.watch<RaiseissueViewModel>().getIssueBybookingId.data;
@@ -110,9 +123,9 @@ class _RentalBookedPageViewState extends State<RentalBookedPageView> {
 
     String formattedTime =
         '${DateFormat('HH:mm').format(adjustedTime)} GMT (+05:30)';
+    paymentRefund =
+        context.watch<GetPaymentRefundViewModel>().getPaymentRefund.data;
     debugPrint('paymentdewatil.......${paymentDetails?.amount}');
-
-    debugPrint('hjkhkkjkjjkjk$formattedTime');
 
     return Scaffold(
       backgroundColor: bgGreyColor,
@@ -127,6 +140,10 @@ class _RentalBookedPageViewState extends State<RentalBookedPageView> {
                 RentalBookingContainer(
                   // bookingId: fulldata.bookerId,
                   // carName: vehicleMap['carName'] ?? 'N/A',
+                  bookingPrice: fulldata?.rentalCharge ?? '',
+                  cancelBy: fulldata?.cancelledBy ?? '',
+                  cancelresion: fulldata?.cancellationReason ?? '',
+                  totalPayableAmount: fulldata?.totalPayableAmount ?? '',
                   getIssueByBookingId: getIssueByBookingId,
                   createdDate: DateFormat('dd-MM-yyyy').format(dateTime1),
                   rideStartTime: fulldata?.rideStartTime ?? '',
@@ -138,7 +155,6 @@ class _RentalBookedPageViewState extends State<RentalBookedPageView> {
                   kilometer: fulldata?.kilometers ?? '',
                   pickDate: fulldata?.date ?? '',
                   pickTime: fulldata?.pickupTime ?? '',
-                  rentalCharge: fulldata?.totalPayableAmount ?? '',
 
                   // rentalCharge: (fulldata?.discountAmount ?? '').isEmpty ||
                   //         fulldata?.discountAmount == '0'
@@ -163,8 +179,7 @@ class _RentalBookedPageViewState extends State<RentalBookedPageView> {
                       ? ""
                       : "",
                   contact:
-                      '+ ${fulldata?.guest.countryCode?.toString() ?? '971'} ${fulldata?.guest.guestMobile?.toString()}' ??
-                          '',
+                      '+${fulldata?.guest.countryCode?.toString() ?? '971'} ${fulldata?.guest.guestMobile?.toString()}',
                   gender: fulldata?.guest.gender?.toString() ?? '',
                   btn: Container(),
                 ),
@@ -180,6 +195,16 @@ class _RentalBookedPageViewState extends State<RentalBookedPageView> {
                         rentalAmount: fulldata?.rentalCharge ?? '',
                         paymentTime: formattedTime)
                     : Container(),
+                fulldata?.bookingStatus != 'CANCELLED'
+                    ? Container()
+                    : RefundPaymentContainer(
+                        // refundId: paymentRefund?.data?.refundId ?? '',
+                        refundAmount:
+                            paymentRefund?.data?.refundedAmount.toString() ??
+                                '',
+                        refundStatus: paymentRefund?.data?.refundStatus ?? '',
+                        // refundDate: paymentRefund?.data?.createdAt ?? 0
+                      ),
                 const SizedBox(height: 10),
                 fulldata?.vehicle != null &&
                         fulldata?.vehicle.carName != null &&
@@ -245,58 +270,65 @@ class _RentalBookedPageViewState extends State<RentalBookedPageView> {
                                 showDialog(
                                     context: context,
                                     builder: (context) {
-                                      controller.clear();
-                                      return SingleChildScrollView(
-                                        padding: EdgeInsets.only(
-                                            top: AppDimension.getHeight(
-                                                    context) *
-                                                .2),
-                                        child: CancelContainerDialog(
-                                          loading: cancelledStatus ==
-                                                  "Status.loading" &&
-                                              loading,
-                                          controllerCancel: controller,
-                                          onTap: () async {
-                                            if (controller.text.isEmpty ||
-                                                controller.text == 'null') {
-                                              Utils.toastMessage(
-                                                  "Please enter the reason");
-                                            } else {
-                                              loading = true;
-                                              await Provider.of<
-                                                          RentalBookingCancelViewModel>(
-                                                      context,
-                                                      listen: false)
-                                                  .fetchRentalBookingCancelViewModelApi(
-                                                      context,
-                                                      {
-                                                        "id": widget.bookedId,
-                                                        "reason":
-                                                            controller.text,
-                                                        "cancelledBy": "USER"
-                                                      },
-                                                      widget.useriD)
-                                                  .then((value) {
-                                                if (context.mounted) {
-                                                  Provider.of<RentalBookingListViewModel>(
+                                      // controller.clear();
+                                      return StatefulBuilder(
+                                        builder: (BuildContext context,
+                                            StateSetter setState) {
+                                          String cancelledStatus = context
+                                              .watch<
+                                                  RentalBookingCancelViewModel>()
+                                              .cancelldataList
+                                              .status
+                                              .toString();
+
+                                          debugPrint(
+                                              'loading status......>>>>>>>$cancelledStatus');
+                                          return SingleChildScrollView(
+                                            padding: EdgeInsets.only(
+                                                top: AppDimension.getHeight(
+                                                        context) *
+                                                    .2),
+                                            child: CancelContainerDialog(
+                                                loading: cancelledStatus ==
+                                                    "Status.loading",
+                                                controllerCancel: controller,
+                                                onTap: () async {
+                                                  print(
+                                                      'bnnvncvxcvxzvznbxvcbnvn');
+                                                  // setState(() {
+                                                  //   cancelledStatus =
+                                                  //       "Status.loading";
+                                                  // });
+                                                  await Provider.of<
+                                                              RentalBookingCancelViewModel>(
                                                           context,
                                                           listen: false)
-                                                      .fetchRentalBookingListBookedViewModelApi(
-                                                          context, {
-                                                    'userId': widget.useriD,
-                                                    'pageNumber': '0',
-                                                    'pageSize': '20',
-                                                    'bookingStatus':
-                                                        'CANCELLED',
-                                                  });
-                                                  controller.clear();
-                                                  // context.pop();
-                                                }
-                                              });
-                                              // controller.dispose();
-                                            }
-                                          },
-                                        ),
+                                                      .fetchRentalBookingCancelViewModelApi(
+                                                          context,
+                                                          {
+                                                            "id":
+                                                                widget.bookedId,
+                                                            "reason":
+                                                                controller.text,
+                                                            "cancelledBy":
+                                                                "USER"
+                                                          },
+                                                          widget.useriD,
+                                                          fulldata?.id
+                                                                  .toString() ??
+                                                              '',
+                                                          fulldata?.paymentId
+                                                                  .toString() ??
+                                                              '');
+
+                                                  // setState(() {
+                                                  //   cancelledStatus =
+                                                  //       "Status.completed";
+                                                  // });
+                                                  // controller.dispose();
+                                                }),
+                                          );
+                                        },
                                       );
                                     });
                                 // context.pop();
@@ -352,7 +384,10 @@ class RentalBookingContainer extends StatefulWidget {
   final String gender;
   final String kilometer;
   final String status;
-  final String rentalCharge;
+  final String totalPayableAmount;
+  final String bookingPrice;
+  final String cancelBy;
+  final String cancelresion;
   // final String bookingId;
   final String pickUpLocation;
   final String paid;
@@ -380,7 +415,10 @@ class RentalBookingContainer extends StatefulWidget {
     required this.id,
     required this.kilometer,
     required this.status,
-    required this.rentalCharge,
+    required this.totalPayableAmount,
+    required this.bookingPrice,
+    required this.cancelBy,
+    required this.cancelresion,
     // required this.bookingId,
     required this.pickUpLocation,
     required this.paid,
@@ -499,7 +537,22 @@ class _RentalBookingContainerState extends State<RentalBookingContainer> {
                   const SizedBox(height: 5),
                   bookingItem(
                       lable: 'Booking Price',
-                      value: 'AED ${widget.rentalCharge}'),
+                      value: 'AED ${widget.bookingPrice}'),
+                  widget.status != 'CANCELLED'
+                      ? const SizedBox()
+                      : const SizedBox(height: 5),
+                  widget.status != 'CANCELLED'
+                      ? const SizedBox()
+                      : bookingItem(
+                          lable: 'Cancelled By', value: widget.cancelBy),
+                  widget.status != 'CANCELLED'
+                      ? const SizedBox()
+                      : const SizedBox(height: 5),
+                  widget.status != 'CANCELLED'
+                      ? const SizedBox()
+                      : bookingItem(
+                          lable: 'Cancellation Reason',
+                          value: widget.cancelresion),
                   const SizedBox(height: 5),
                   (getIssueByBookingId?.data ?? []).isEmpty
                       ? Container()
@@ -513,10 +566,11 @@ class _RentalBookingContainerState extends State<RentalBookingContainer> {
                             ),
                             Text(':', style: titleTextStyle),
                             const SizedBox(width: 10),
-                            Expanded(
+                            Flexible(
                               child: CustomButtonSmall(
+                                  width: 120,
                                   height: 30,
-                                  btnHeading: 'Show IssueDetails',
+                                  btnHeading: 'View Issue',
                                   onTap: () {
                                     context.push("/raiseIssueDetail");
                                   }),
@@ -692,7 +746,9 @@ class VechicleDetailsContainer extends StatelessWidget {
             ),
             SizedBox(
               height: 200,
-              child: MultiImageSlider(images: vehicleImage),
+              child: vehicleImage.isEmpty
+                  ? Image.asset(tour1)
+                  : MultiImageSlider(images: vehicleImage),
             ),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),

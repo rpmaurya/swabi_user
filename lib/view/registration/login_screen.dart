@@ -189,7 +189,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           },
                         ),
                         Expanded(
-                            child: Text('RememberMe',
+                            child: Text('Remember Me',
                                 style: GoogleFonts.lato(
                                     // fontSize:
                                     //     AppDimension.getWidth(context) * 0.04,

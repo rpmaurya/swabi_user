@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/res/Custom%20Page%20Layout/commonPage_Layout.dart';
+import 'package:flutter_cab/res/Custom%20Widgets/CustomTextFormfield.dart';
 import 'package:flutter_cab/res/customAppBar_widget.dart';
 import 'package:flutter_cab/res/customTextWidget.dart';
 import 'package:flutter_cab/utils/assets.dart';
@@ -37,7 +38,7 @@ class _RentalCarBookingState extends State<RentalCarBooking> {
   Widget build(BuildContext context) {
     var status = context
         .watch<RentalBookingCancelViewModel>()
-        .DataList
+        .cancelldataList
         .status
         .toString();
 
@@ -87,18 +88,18 @@ class _RentalCarBookingState extends State<RentalCarBooking> {
                                     Utils.toastMessage(
                                         "Please enter the reason");
                                   } else {
-                                    Provider.of<RentalBookingCancelViewModel>(
-                                            context,
-                                            listen: false)
-                                        .fetchRentalBookingCancelViewModelApi(
-                                            context,
-                                            {
-                                              "id": data1.id,
-                                              "reason": controller[0].text
-                                            },
-                                            data1.carType);
-                                    context.pop();
-                                    context.pop();
+                                    // Provider.of<RentalBookingCancelViewModel>(
+                                    //         context,
+                                    //         listen: false)
+                                    //     .fetchRentalBookingCancelViewModelApi(
+                                    //         context,
+                                    //         {
+                                    //           "id": data1.id,
+                                    //           "reason": controller[0].text
+                                    //         },
+                                    //         data1.carType);
+                                    // context.pop();
+                                    // context.pop();
                                   }
                                 },
                               ));
@@ -443,8 +444,9 @@ class BookingContainer extends StatelessWidget {
   }
 }
 
-class CancelContainerDialog extends StatelessWidget {
+class CancelContainerDialog extends StatefulWidget {
   final TextEditingController controllerCancel;
+
   final VoidCallback onTap;
   final bool loading;
   const CancelContainerDialog(
@@ -454,7 +456,15 @@ class CancelContainerDialog extends StatelessWidget {
       super.key});
 
   @override
+  State<CancelContainerDialog> createState() => _CancelContainerDialogState();
+}
+
+class _CancelContainerDialogState extends State<CancelContainerDialog> {
+  final _formKey = GlobalKey<FormState>();
+  @override
   Widget build(BuildContext context) {
+    // return StatefulBuilder(
+    //   builder: (BuildContext context, StateSetter setState) {
     return Dialog(
       insetPadding: EdgeInsets.zero,
       shape: const RoundedRectangleBorder(
@@ -466,140 +476,116 @@ class CancelContainerDialog extends StatelessWidget {
         // height: AppDimension.getHeight(context)*.4,
         padding: const EdgeInsets.only(bottom: 10),
         width: AppDimension.getWidth(context) * .9,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-                height: 50,
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                decoration: const BoxDecoration(
-                    color: btnColor,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(10),
-                      topRight: Radius.circular(10),
-                    )),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const SizedBox(
-                      height: 30,
-                      width: 30,
-                    ),
-                    const CustomTextWidget(
-                      content: "Cancel Booking",
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      textColor: background,
-                    ),
-                    Material(
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                  height: 50,
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  decoration: const BoxDecoration(
                       color: btnColor,
-                      child: InkWell(
-                        onTap: () {
-                          context.pop();
-                        },
-                        child: Container(
-                            padding: const EdgeInsets.all(2),
-                            height: 30,
-                            width: 30,
-                            child: const Icon(
-                              Icons.close,
-                              color: background,
-                            )),
-                      ),
-                    ),
-                  ],
-                )
-                // const Center(
-                //   child:
-                // ),
-                ),
-            const SizedBox(height: 10),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Row(
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(10),
+                        topRight: Radius.circular(10),
+                      )),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      CustomTextWidget(
-                        content: "Reason for cancel booking",
+                      const SizedBox(
+                        height: 30,
+                        width: 30,
+                      ),
+                      const CustomTextWidget(
+                        content: "Cancel Booking",
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        textColor: greyColor,
+                        textColor: background,
                       ),
-                      Text(
-                        ' *',
-                        style: TextStyle(color: redColor),
-                      )
-                    ],
-                  ),
-                  const SizedBox(height: 25),
-                  TextFormField(
-                    maxLines: 4,
-                    maxLength: 120,
-                    inputFormatters: [
-                      LengthLimitingTextInputFormatter(120),
-                    ],
-                    controller: controllerCancel,
-                    decoration: InputDecoration(
-                        hintText: 'Reason for Cancellation',
-                        contentPadding: const EdgeInsets.symmetric(
-                            vertical: 10, horizontal: 10),
-                        // border: InputBorder.none,
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5.0),
-                          borderSide: const BorderSide(
-                            color: Color(0xFFCDCDCD),
-                            // width: 2.0,
-                          ),
+                      Material(
+                        color: btnColor,
+                        child: InkWell(
+                          onTap: () {
+                            context.pop();
+                          },
+                          child: Container(
+                              padding: const EdgeInsets.all(2),
+                              height: 30,
+                              width: 30,
+                              child: const Icon(
+                                Icons.close,
+                                color: background,
+                              )),
                         ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5.0),
-                          borderSide: const BorderSide(
-                            color: Color(0xFFCDCDCD),
-                            // width: 2.0,
-                          ),
-                        ),
-                        disabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5.0),
-                          borderSide: const BorderSide(
-                            color: Color(0xFFCDCDCD),
-                            // width: 2.0,
-                          ),
-                        ),
-                        focusedErrorBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5.0),
-                          borderSide: const BorderSide(
-                            color: Color(0xFFCDCDCD),
-                            // width: 2.0,
-                          ),
-                        ),
-                        errorBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5.0),
-                          borderSide: const BorderSide(
-                            color: redColor,
-                            // width: 2.0,
-                          ),
-                        )),
-                  ),
-                  const SizedBox(height: 10),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      CustomButtonBig(
-                          loading: loading,
-                          height: 40,
-                          widht: AppDimension.getWidth(context) * .25,
-                          btnHeading: "Submit",
-                          onTap: onTap),
+                      ),
                     ],
                   )
-                ],
-              ),
-            )
-          ],
+                  // const Center(
+                  //   child:
+                  // ),
+                  ),
+              const SizedBox(height: 10),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Row(
+                      children: [
+                        CustomTextWidget(
+                          content: "Reason for cancel booking",
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          textColor: greyColor,
+                        ),
+                        Text(
+                          ' *',
+                          style: TextStyle(color: redColor),
+                        )
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    Customtextformfield(
+                      minLines: 4,
+                      maxLines: 4,
+                      textLength: 120,
+                      controller: widget.controllerCancel,
+                      hintText: 'Reason for cancellation',
+                      validator: (p0) {
+                        if (p0 == null || p0.isEmpty) {
+                          return 'Please enter your reason';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 10),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        CustomButtonSmall(
+                            loading: widget.loading,
+                            height: 40,
+                            width: 120,
+                            // widht: AppDimension.getWidth(context) * .25,
+                            btnHeading: "Submit",
+                            onTap: () {
+                              if (_formKey.currentState!.validate()) {
+                                print('bncbjcxbcmnnc');
+                                widget.onTap();
+                              }
+                            }),
+                      ],
+                    )
+                  ],
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );
+    // },
+    // );
   }
 }

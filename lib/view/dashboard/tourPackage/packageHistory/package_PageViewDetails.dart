@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_cab/model/getIssueByBookingIdModel.dart';
 import 'package:flutter_cab/model/packageModels.dart';
 import 'package:flutter_cab/model/paymentDetailsModel.dart';
+import 'package:flutter_cab/model/payment_refund_model.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/res/Custom%20Page%20Layout/commonPage_Layout.dart';
 import 'package:flutter_cab/res/Custom%20Widgets/customPhoneField.dart';
@@ -20,6 +21,7 @@ import 'package:flutter_cab/utils/text_styles.dart';
 import 'package:flutter_cab/utils/utils.dart';
 import 'package:flutter_cab/view/dashboard/rental/carBooking.dart';
 import 'package:flutter_cab/view/dashboard/tourPackage/packageDetails.dart';
+import 'package:flutter_cab/view_model/payment_gateway_view_model.dart';
 import 'package:flutter_cab/view_model/raiseIssue_view_model.dart';
 import 'package:flutter_cab/view_model/rental_view_model.dart';
 import 'package:go_router/go_router.dart';
@@ -96,6 +98,12 @@ class _PackagePageViewDetailsState extends State<PackagePageViewDetails> {
   ////GetPackageItinerary
   var getPackageItinerary;
   List<ItineraryDetail> getPackageItineraryList = [];
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    cancelController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -104,6 +112,7 @@ class _PackagePageViewDetailsState extends State<PackagePageViewDetails> {
         .getPackageHistoryDetailById
         .status
         .toString();
+
     if (httpStatus == "Status.completed") {
       detailsData = context
               .watch<GetPackageHistoryDetailByIdViewModel>()
@@ -185,6 +194,7 @@ class _PackagePageViewDetailsState extends State<PackagePageViewDetails> {
         context.watch<RaiseissueViewModel>().getIssueBybookingId.data;
     // debugPrint("${getPackageItineraryList.length} GetItineraryDetailsList");
     debugPrint("${widget.paymentId} paymentId......ramji");
+
     return Scaffold(
       backgroundColor: bgGreyColor,
       appBar: const CustomAppBar(
@@ -229,6 +239,7 @@ class _PackagePageViewDetailsState extends State<PackagePageViewDetails> {
                   taxAmount: detailsData.taxAmount,
                   discountAmount: detailsData.discountAmount,
                   packageAmount: detailsData.packagePrice,
+                  iteneryList: getPackageItineraryList,
                   alertOnTap: () {
                     if (alertController.text.isEmpty) {
                       Utils.toastMessage("Please enter your pickUp Location");
@@ -373,42 +384,46 @@ class _PackagePageViewDetailsState extends State<PackagePageViewDetails> {
                     showDialog(
                         context: context,
                         builder: (context) {
-                          cancelController.clear();
-                          return SingleChildScrollView(
-                            physics: const NeverScrollableScrollPhysics(),
-                            padding: EdgeInsets.only(
-                                top: AppDimension.getHeight(context) * .2),
-                            child: CancelContainerDialog(
-                              loading: loading,
-                              controllerCancel: cancelController,
-                              onTap: () async {
-                                loading = true;
-                                if (cancelController.text.isEmpty ||
-                                    cancelController.text == 'null') {
-                                  Utils.toastMessage("Please enter the reason");
-                                } else {
-                                  await Provider.of<PackageCancelViewModel>(
-                                          context,
-                                          listen: false)
-                                      .fetchPackageCancelViewModelApi(
-                                          context,
-                                          {
-                                            "packageBookingId":
-                                                widget.packageBookID,
-                                            "cancellationReason":
-                                                cancelController.text,
-                                            "cancelledBy": "USER"
-                                          },
-                                          widget.userId)
-                                      .then((value) {
-                                    if (context.mounted) {
-                                      cancelController.clear();
-                                    }
-                                  });
-                                  // controller.dispose();
-                                }
-                              },
-                            ),
+                          // cancelController.clear();
+                          return StatefulBuilder(
+                            builder:
+                                (BuildContext context, StateSetter setState) {
+                              String cancelStatus = context
+                                  .watch<PackageCancelViewModel>()
+                                  .packageCancel
+                                  .status
+                                  .toString();
+                              return SingleChildScrollView(
+                                physics: const NeverScrollableScrollPhysics(),
+                                padding: EdgeInsets.only(
+                                    top: AppDimension.getHeight(context) * .2),
+                                child: CancelContainerDialog(
+                                  loading: cancelStatus == "Status.loading",
+                                  controllerCancel: cancelController,
+                                  onTap: () async {
+                                    // loading = true;
+
+                                    await Provider.of<PackageCancelViewModel>(
+                                            context,
+                                            listen: false)
+                                        .fetchPackageCancelViewModelApi(
+                                            context,
+                                            {
+                                              "packageBookingId":
+                                                  widget.packageBookID,
+                                              "cancellationReason":
+                                                  cancelController.text,
+                                              "cancelledBy": "USER"
+                                            },
+                                            widget.userId,
+                                            widget.packageBookID,
+                                            widget.paymentId);
+
+                                    // controller.dispose();
+                                  },
+                                ),
+                              );
+                            },
                           );
                         });
                   },
@@ -446,6 +461,7 @@ class PackageDetailsContainer extends StatefulWidget {
   final List<PackageHIstoryDetailsMemberList> memberList;
   final List<AssignedVehicleOnPackageBooking> vehicleDetails;
   final List<AssignedDriverOnPackageBooking> driverDetails;
+  final List<ItineraryDetail> iteneryList;
   final PaymentDetailsModel? paymentDetails;
   final VoidCallback? onTap;
   final String packageAmount;
@@ -480,6 +496,7 @@ class PackageDetailsContainer extends StatefulWidget {
       required this.vehicleDetails,
       required this.driverDetails,
       required this.paymentDetails,
+      required this.iteneryList,
       required this.packageAmount,
       required this.taxAmount,
       required this.discountAmount,
@@ -499,6 +516,7 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
   TextEditingController primaryController = TextEditingController();
   TextEditingController secondaryController = TextEditingController();
   String initialCountryCode = 'AE';
+  PaymentRefundModel? paymentRefund;
   @override
   void initState() {
     super.initState();
@@ -582,8 +600,8 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
                   backgroundColor: background,
                   surfaceTintColor: background,
                   actionsAlignment: MainAxisAlignment.center,
-                  actionsPadding: EdgeInsets.only(top: 10),
-                  titlePadding: EdgeInsets.only(bottom: 20),
+                  actionsPadding: const EdgeInsets.only(top: 10),
+                  titlePadding: const EdgeInsets.only(bottom: 20),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10)),
                   title: Row(
@@ -737,6 +755,8 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
 
     String formattedTime =
         '${DateFormat('HH:mm').format(adjustedTime)} GMT (+05:30)';
+    paymentRefund =
+        context.watch<GetPaymentRefundViewModel>().getPaymentRefund.data;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1040,14 +1060,17 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
                       ),
                       Container(
                         height: 25,
-                        width: 90,
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        // width: 90,
                         decoration: BoxDecoration(
-                            color: Colors.green,
-                            borderRadius: BorderRadius.circular(10)),
+                            color: widget.bookingStatus == 'CANCELLED'
+                                ? redColor
+                                : greenColor,
+                            borderRadius: BorderRadius.circular(5)),
                         child: Center(
                             child: Text(
                           widget.bookingStatus,
-                          style: TextStyle(color: background),
+                          style: const TextStyle(color: background),
                         )),
                       )
                     ],
@@ -1059,7 +1082,7 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
               ),
               bookingItem(
                   lable: 'Package Name',
-                  value: '${widget.packageName.capitalizeFirstOfEach}'),
+                  value: widget.packageName.capitalizeFirstOfEach),
               bookingItem(
                   lable: 'Numbers Of Member', value: widget.totalMembers),
               bookingItem(lable: 'Booking Start Date', value: widget.startTime),
@@ -1068,14 +1091,14 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
                   ? bookingItem(
                       lable: 'Primary Contact',
                       value:
-                          '+ ${widget.primaryCountryCode} ${widget.primaryMobileNo}')
-                  : SizedBox(),
+                          '+${widget.primaryCountryCode} ${widget.primaryMobileNo}')
+                  : const SizedBox(),
               widget.secondaryMobileNo.isNotEmpty
                   ? bookingItem(
                       lable: 'Secondary Contact',
                       value:
-                          '+ ${widget.secondaryCountryCode ?? ''} ${widget.secondaryMobileNo ?? ''}')
-                  : SizedBox(),
+                          '+${widget.secondaryCountryCode} ${widget.secondaryMobileNo}')
+                  : const SizedBox(),
               bookingItem(
                   lable: 'Duration',
                   value:
@@ -1093,10 +1116,11 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
                         ),
                         Text(':', style: titleTextStyle),
                         const SizedBox(width: 10),
-                        Expanded(
+                        Flexible(
                           child: CustomButtonSmall(
+                              width: 120,
                               height: 35,
-                              btnHeading: 'Show IssueDetails',
+                              btnHeading: 'View Issue',
                               onTap: () {
                                 context.push("/raiseIssueDetail");
                               }),
@@ -1114,7 +1138,7 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
                   : const SizedBox(),
               widget.bookingStatus == "CANCELLED"
                   ? bookingItem(
-                      lable: 'Cancel Reason', value: widget.cancelReason)
+                      lable: 'Cancellation Reason', value: widget.cancelReason)
                   : const SizedBox(),
             ],
           ),
@@ -1168,6 +1192,48 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
                 ),
               )
             : Container(),
+        paymentRefund?.data != null && widget.bookingStatus == "CANCELLED"
+            ? const Padding(
+                padding: EdgeInsets.symmetric(vertical: 10),
+                child: CustomTextWidget(
+                  content: "Refund Details",
+                  fontSize: 20,
+                  sideLogo: true,
+                  fontWeight: FontWeight.w600,
+                ),
+              )
+            : Container(),
+        widget.bookingStatus == "CANCELLED"
+            ? CommonContainer(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                width: double.infinity,
+                elevation: 0,
+                borderRadius: BorderRadius.circular(5),
+                borderReq: true,
+                borderColor: naturalGreyColor.withOpacity(0.3),
+                child: Column(
+                  children: [
+                    textItem(
+                        lable: 'Refund Amount',
+                        value: 'AED ${paymentRefund?.data?.refundedAmount}'),
+                    textItem(
+                        lable: 'Refund Status',
+                        value: paymentRefund?.data?.refundStatus == 'created'
+                            ? "Pending"
+                            : paymentRefund?.data?.refundStatus == 'processed'
+                                ? "Success"
+                                : '${paymentRefund?.data?.refundStatus}'),
+                    // textItem(
+                    //     lable: 'Refund Date',
+                    //     value: DateFormat('dd-MM-yyyy').format(
+                    //         DateTime.fromMillisecondsSinceEpoch(
+                    //             (paymentRefund?.data?.createdAt ?? 0) * 1000,
+                    //             isUtc: true))),
+                  ],
+                ),
+              )
+            : Container(),
         const Padding(
           padding: EdgeInsets.symmetric(vertical: 10),
           child: CustomTextWidget(
@@ -1186,78 +1252,83 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
           borderRadius: BorderRadius.circular(5),
           borderReq: true,
           borderColor: naturalGreyColor.withOpacity(0.3),
-          child: DataTable(
-              columnSpacing: 18,
-              headingRowHeight: 40,
-              dividerThickness: 0,
-              dataTextStyle: titleTextStyle1,
-              columns: const [
-                DataColumn(
-                    label: CustomTextWidget(
-                  content: "Id",
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
-                )),
-                DataColumn(
-                    label: SizedBox(
-                        // width: 60,
-                        child: CustomTextWidget(
-                            content: "Name",
-                            fontSize: 18,
-                            fontWeight: FontWeight.w700))),
-                DataColumn(
-                    label: CustomTextWidget(
-                        content: "Age",
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700)),
-                DataColumn(
-                    label: CustomTextWidget(
-                        content: "Type",
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700)),
-                DataColumn(
-                    label: CustomTextWidget(
-                        content: "Gender",
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700)),
-              ],
-              rows: widget.memberList
-                  .map((PackageHIstoryDetailsMemberList members) => DataRow(
-                        cells: [
-                          DataCell(CustomText(
-                            content: members.memberId.toString(),
-                            textEllipsis: true,
-                          )),
-                          DataCell(SizedBox(
-                              width: 60,
-                              child: CustomText(
-                                  maxline: 2,
-                                  align: TextAlign.start,
-                                  textEllipsis: true,
-                                  content: members.name.toString()))),
-                          DataCell(CustomText(
-                              content: '${members.age}${members.ageUnit}')),
-                          DataCell(CustomText(
-                            textColor: (() {
-                              int age = int.parse(members.age.toString());
-                              return age >= 60
-                                  ? redColor
-                                  : null; // Set color to red for Senior, otherwise use default
-                            })(),
-                            content: (() {
-                              int age = int.parse(members.age.toString());
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: DataTable(
+                columnSpacing: 18,
+                headingRowHeight: 40,
+                dividerThickness: 0,
+                dataTextStyle: titleTextStyle1,
+                columns: const [
+                  DataColumn(
+                      label: CustomTextWidget(
+                    content: "Id",
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                  )),
+                  DataColumn(
+                      label: SizedBox(
+                          // width: 60,
+                          child: CustomTextWidget(
+                              content: "Name",
+                              fontSize: 18,
+                              fontWeight: FontWeight.w700))),
+                  DataColumn(
+                      label: CustomTextWidget(
+                          content: "Age",
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700)),
+                  DataColumn(
+                      label: CustomTextWidget(
+                          content: "Type",
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700)),
+                  DataColumn(
+                      label: CustomTextWidget(
+                          content: "Gender",
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700)),
+                ],
+                rows: widget.memberList
+                    .map((PackageHIstoryDetailsMemberList members) => DataRow(
+                          cells: [
+                            DataCell(CustomText(
+                              content: members.memberId.toString(),
+                              textEllipsis: true,
+                            )),
+                            DataCell(SizedBox(
+                                // width: 60,
+                                child: CustomText(
+                                    // maxline: 2,
+                                    textLenght: 20,
+                                    needTextLenght: true,
+                                    align: TextAlign.start,
+                                    textEllipsis: true,
+                                    content: members.name.toString()))),
+                            DataCell(CustomText(
+                                content: '${members.age}${members.ageUnit}')),
+                            DataCell(CustomText(
+                              textColor: (() {
+                                int age = int.parse(members.age.toString());
+                                return age >= 60
+                                    ? redColor
+                                    : null; // Set color to red for Senior, otherwise use default
+                              })(),
+                              content: (() {
+                                int age = int.parse(members.age.toString());
 
-                              if (members.ageUnit == 'Month') return 'Infant';
-                              if (age < 18) return 'Child';
-                              if (age < 60) return 'Adult';
-                              return 'Senior*';
-                              // return age.toString();  // Display the age as-is for other cases
-                            })(),
-                          )),
-                          DataCell(CustomText(content: members.gender)),
-                        ],
-                      ))
-                  .toList()),
+                                if (members.ageUnit == 'Month') return 'Infant';
+                                if (age < 18) return 'Child';
+                                if (age < 60) return 'Adult';
+                                return 'Senior*';
+                                // return age.toString();  // Display the age as-is for other cases
+                              })(),
+                            )),
+                            DataCell(CustomText(content: members.gender)),
+                          ],
+                        ))
+                    .toList()),
+          ),
         ),
         Padding(
           padding: EdgeInsets.symmetric(vertical: 10),
@@ -1273,26 +1344,29 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
               //   '*The itinerary will be shared 24 hours before the package start *',
               //   textAlign: TextAlign.start,
               // ),
-              SizedBox(
-                height: 20,
-                child: Marquee(
-                  showFadingOnlyWhenScrolling: false,
-                  text:
-                      '*The itinerary will be shared 24 hours before the package start *',
-                  style: const TextStyle(
-                      fontWeight: FontWeight.bold, color: redColor),
-                  scrollAxis: Axis.horizontal,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  blankSpace: AppDimension.getWidth(context),
-                  velocity: 100.0,
-                  pauseAfterRound: Duration(seconds: 1),
-                  startPadding: 0,
-                  accelerationDuration: Duration(seconds: 1),
-                  accelerationCurve: Curves.linear,
-                  decelerationDuration: Duration(milliseconds: 500),
-                  decelerationCurve: Curves.easeOut,
-                ),
-              ),
+              widget.bookingStatus == "CANCELLED" ||
+                      widget.iteneryList.isNotEmpty
+                  ? const SizedBox()
+                  : SizedBox(
+                      height: 20,
+                      child: Marquee(
+                        showFadingOnlyWhenScrolling: false,
+                        text:
+                            '*The itinerary will be shared 24 hours before the package start *',
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold, color: redColor),
+                        scrollAxis: Axis.horizontal,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        blankSpace: AppDimension.getWidth(context),
+                        velocity: 100.0,
+                        pauseAfterRound: const Duration(seconds: 1),
+                        startPadding: 0,
+                        accelerationDuration: const Duration(seconds: 1),
+                        accelerationCurve: Curves.linear,
+                        decelerationDuration: const Duration(milliseconds: 500),
+                        decelerationCurve: Curves.easeOut,
+                      ),
+                    ),
             ],
           ),
         ),
@@ -1323,59 +1397,63 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
                 borderRadius: BorderRadius.circular(5),
                 borderReq: true,
                 borderColor: naturalGreyColor.withOpacity(0.3),
-                child: DataTable(
-                    horizontalMargin: 5,
-                    columnSpacing: 20,
-                    headingRowHeight: 40,
-                    dividerThickness: 0,
-                    dataTextStyle: titleTextStyle1,
-                    columns: const [
-                      DataColumn(
-                          label: CustomTextWidget(
-                        content: "Date",
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
-                      )),
-                      DataColumn(
-                          label: SizedBox(
-                              // width: 60,
-                              child: CustomTextWidget(
-                                  content: "Name",
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w700))),
-                      DataColumn(
-                          label: CustomTextWidget(
-                              content: "Gender",
-                              fontSize: 18,
-                              fontWeight: FontWeight.w700)),
-                      DataColumn(
-                          label: CustomTextWidget(
-                              content: "Contact",
-                              fontSize: 18,
-                              fontWeight: FontWeight.w700)),
-                    ],
-                    rows: widget.driverDetails
-                        .map((AssignedDriverOnPackageBooking driver) => DataRow(
-                              cells: [
-                                DataCell(CustomText(
-                                  content: driver.date.toString(),
-                                  textEllipsis: true,
-                                )),
-                                DataCell(SizedBox(
-                                    width: 60,
-                                    child: CustomText(
-                                        maxline: 2,
-                                        align: TextAlign.start,
-                                        textEllipsis: true,
-                                        content:
-                                            "${driver.driver.firstName.toString()} ${driver.driver.lastName.toString()}"))),
-                                DataCell(CustomText(
-                                    content: driver.driver.gender.toString())),
-                                DataCell(CustomText(
-                                    content: driver.driver.mobile.toString())),
-                              ],
-                            ))
-                        .toList()),
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: DataTable(
+                      horizontalMargin: 10,
+                      columnSpacing: 20,
+                      headingRowHeight: 40,
+                      dividerThickness: 0,
+                      dataTextStyle: titleTextStyle1,
+                      columns: const [
+                        DataColumn(
+                            label: CustomTextWidget(
+                          content: "Date",
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
+                        )),
+                        DataColumn(
+                            label: SizedBox(
+                                // width: 60,
+                                child: CustomTextWidget(
+                                    content: "Name",
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w700))),
+                        DataColumn(
+                            label: CustomTextWidget(
+                                content: "Gender",
+                                fontSize: 18,
+                                fontWeight: FontWeight.w700)),
+                        DataColumn(
+                            label: CustomTextWidget(
+                                content: "Contact",
+                                fontSize: 18,
+                                fontWeight: FontWeight.w700)),
+                      ],
+                      rows: widget.driverDetails
+                          .map((AssignedDriverOnPackageBooking driver) =>
+                              DataRow(
+                                cells: [
+                                  DataCell(CustomText(
+                                    content: driver.date.toString(),
+                                    textEllipsis: true,
+                                  )),
+                                  DataCell(CustomText(
+                                      // maxline: 2,
+                                      align: TextAlign.start,
+                                      textEllipsis: true,
+                                      content:
+                                          "${driver.driver.firstName.toString()} ${driver.driver.lastName.toString()}")),
+                                  DataCell(CustomText(
+                                      content:
+                                          driver.driver.gender.toString())),
+                                  DataCell(CustomText(
+                                      content:
+                                          driver.driver.mobile.toString())),
+                                ],
+                              ))
+                          .toList()),
+                ),
               )
             : const SizedBox(),
         widget.vehicleDetails.isNotEmpty
@@ -1400,48 +1478,53 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
                 borderRadius: BorderRadius.circular(5),
                 borderReq: true,
                 borderColor: naturalGreyColor.withOpacity(0.3),
-                child: DataTable(
-                    columnSpacing: 30,
-                    headingRowHeight: 40,
-                    dividerThickness: 0,
-                    dataTextStyle: titleTextStyle1,
-                    columns: const [
-                      DataColumn(
-                          label: CustomTextWidget(
-                        content: "Date",
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
-                      )),
-                      DataColumn(
-                          label: SizedBox(
-                              // width: 60,
-                              child: CustomTextWidget(
-                                  content: "Name",
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w700))),
-                      DataColumn(
-                          label: CustomTextWidget(
-                              content: "Number",
-                              fontSize: 18,
-                              fontWeight: FontWeight.w700)),
-                    ],
-                    rows: widget.vehicleDetails
-                        .map((AssignedVehicleOnPackageBooking vehicle) =>
-                            DataRow(
-                              cells: [
-                                DataCell(CustomText(
-                                  content: vehicle.date.toString(),
-                                  textEllipsis: true,
-                                )),
-                                DataCell(CustomText(
-                                    content:
-                                        vehicle.vehicle.carName.toString())),
-                                DataCell(CustomText(
-                                    content: vehicle.vehicle.vehicleNumber
-                                        .toString())),
-                              ],
-                            ))
-                        .toList()),
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: DataTable(
+                      columnSpacing: 30,
+                      headingRowHeight: 40,
+                      dividerThickness: 0,
+                      dataTextStyle: titleTextStyle1,
+                      columns: const [
+                        DataColumn(
+                            label: CustomTextWidget(
+                          content: "Date",
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
+                        )),
+                        DataColumn(
+                            label: SizedBox(
+                                width: 100,
+                                child: CustomTextWidget(
+                                    content: "Name",
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w700))),
+                        DataColumn(
+                            label: CustomTextWidget(
+                                content: "Number",
+                                fontSize: 18,
+                                fontWeight: FontWeight.w700)),
+                      ],
+                      rows: widget.vehicleDetails
+                          .map((AssignedVehicleOnPackageBooking vehicle) =>
+                              DataRow(
+                                cells: [
+                                  DataCell(CustomText(
+                                    content: vehicle.date.toString(),
+                                    textEllipsis: true,
+                                  )),
+                                  DataCell(CustomText(
+                                      align: TextAlign.start,
+                                      maxline: 2,
+                                      content:
+                                          vehicle.vehicle.carName.toString())),
+                                  DataCell(CustomText(
+                                      content: vehicle.vehicle.vehicleNumber
+                                          .toString())),
+                                ],
+                              ))
+                          .toList()),
+                ),
               )
             : const SizedBox(),
         const SizedBox(height: 10),
@@ -1465,7 +1548,7 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
                       );
                     })
                 : SizedBox(),
-            widget.bookingStatus == "BOOKED"
+            widget.bookingStatus != "CANCELLED"
                 ? Padding(
                     padding: const EdgeInsets.symmetric(vertical: 5),
                     child: CustomButtonSmall(
@@ -1487,12 +1570,9 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
       padding: const EdgeInsets.all(5.0),
       child: Row(
         children: [
-          Expanded(
-            flex: 2,
-            child: Text(
-              lable,
-              style: titleTextStyle,
-            ),
+          Text(
+            lable,
+            style: titleTextStyle,
           ),
           const SizedBox(
             width: 10,
@@ -1505,7 +1585,7 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
             width: 10,
           ),
           Expanded(
-            flex: 3,
+            // flex: 3,
             child: Text(
               value,
               style: titleTextStyle1,
@@ -1622,14 +1702,11 @@ class _ItineraryActivityContainerState
                               padding: const EdgeInsets.all(5),
                               elevation: 0,
                               borderRadius: BorderRadius.circular(10),
-                              color:
-                                  widget.itineraryDataList[index].dayStatus ==
-                                          "COMPLETED"
-                                      ? greenColor
-                                      : redColor,
+                              color: itineraryData.dayStatus == "COMPLETED"
+                                  ? greenColor
+                                  : redColor,
                               child: CustomText(
-                                content:
-                                    widget.itineraryDataList[index].dayStatus,
+                                content: itineraryData.dayStatus,
                                 fontSize: 16,
                                 textColor: background,
                                 fontWeight: FontWeight.w600,

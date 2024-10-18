@@ -275,7 +275,7 @@ class _RentalFormState extends State<RentalForm> with RouteAware {
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                   validator: (value) {
                     if (pickupdateController.text.isEmpty) {
-                      return 'Please select pickupDate';
+                      return 'Please select pickup date';
                     }
                     return null;
                   },
@@ -346,7 +346,8 @@ class _RentalFormState extends State<RentalForm> with RouteAware {
                 const Text(
                   ':',
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontWeight: FontWeight.w800, fontSize: 18),
+                  style: TextStyle(
+                      fontWeight: FontWeight.w700, fontSize: 24, height: 2),
                 ),
                 Expanded(
                   child: Padding(
@@ -436,7 +437,7 @@ class _RentalFormState extends State<RentalForm> with RouteAware {
                     autovalidateMode: AutovalidateMode.onUserInteraction,
                     validator: (value) {
                       if (rentalController.text.isEmpty) {
-                        return 'Please select rental range';
+                        return 'Please select rental package';
                       }
                       return null;
                     },

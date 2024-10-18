@@ -79,16 +79,16 @@ class _home_screenState extends State<home_screen>
   }
 
   bool loading = false;
-  List<String> images = [
-    packageImg,
-    tour,
-    tour2,
-    viewImg,
-    packageImg,
-    tour,
-    tour2,
-    viewImg
-  ];
+  // List<String> images = [
+  //   packageImg,
+  //   tour,
+  //   tour2,
+  //   viewImg,
+  //   packageImg,
+  //   tour,
+  //   tour2,
+  //   viewImg
+  // ];
   ProfileData? userdata;
   OfferListModel? offerListData;
   bool isLoadingData = false;
@@ -171,10 +171,11 @@ class _home_screenState extends State<home_screen>
                 InkWell(
                     onTap: () {
                       setState(() {
-                        _initialIndex = 0;
+                        _tabcontroller?.index = 0;
                       });
+
                       context.go('/');
-                      print("Custom Appbar");
+                      debugPrint("Custom Appbar");
                     },
                     child: Padding(
                       padding: const EdgeInsets.symmetric(

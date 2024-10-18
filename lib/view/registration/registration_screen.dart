@@ -240,7 +240,7 @@ class _registration_screenState extends State<registration_screen> {
                                       "AIzaSyADRdiTbSYUR8oc6-ryM1F1NDNjkHDr0Yo",
                                   inputDecoration: InputDecoration(
                                     contentPadding: const EdgeInsets.symmetric(
-                                        horizontal: 10, vertical: 0),
+                                        horizontal: 10, vertical: 10),
                                     isDense: true,
                                     hintText: "Search your location",
                                     border: const OutlineInputBorder(
@@ -317,10 +317,11 @@ class _registration_screenState extends State<registration_screen> {
                         }),
                     const SizedBox(height: 10),
                     Padding(
-                      padding: const EdgeInsets.only(bottom: 5, top: 5),
+                      padding: const EdgeInsets.only(bottom: 5),
                       child: Text.rich(TextSpan(children: [
                         TextSpan(text: 'Gender', style: titleTextStyle),
-                        TextSpan(text: ' *', style: TextStyle(color: redColor))
+                        const TextSpan(
+                            text: ' *', style: TextStyle(color: redColor))
                       ])),
                     ),
                     CustomDropdownButton(
@@ -459,7 +460,7 @@ class _registration_screenState extends State<registration_screen> {
                       },
                     ),
 
-                    const SizedBox(height: 40),
+                    const SizedBox(height: 30),
                     CustomButtonBig(
                       btnHeading: "Sign Up",
                       loading: isLoading,
