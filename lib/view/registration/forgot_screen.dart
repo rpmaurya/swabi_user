@@ -35,9 +35,10 @@ class _ForgotPasswordState extends State<ForgotPassword> {
         r'x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])';
     final regex = RegExp(pattern);
     if (value == null || value.isEmpty) {
-      return 'Enter your email';
+      // return 'Enter your email';
+      return 'Please enter a valid email address';
     } else if (!regex.hasMatch(value)) {
-      return 'Enter a valid email address';
+      return 'Please enter a valid email address';
     }
     return null;
   }
@@ -155,8 +156,8 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                       const SizedBox(height: 10),
                       Login_SignUpBtn(
                         onTap: () => context.push("/login"),
-                        btnHeading: 'Login',
-                        sideHeading: 'Remember your password?',
+                        btnHeading: 'Sign In',
+                        sideHeading: 'Back to ',
                       ),
                       // Row(
                       //   mainAxisAlignment: MainAxisAlignment.center,

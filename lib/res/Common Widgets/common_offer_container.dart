@@ -95,28 +95,11 @@ class _CommonOfferContainerState extends State<CommonOfferContainer> {
                         },
                         elevation: 0,
                         borderRadius: BorderRadius.circular(0),
-                        child: Row(
-                          children: [
-                            const CustomText(
-                                content: "View All",
-                                textColor: greenColor,
-                                fontSize: 18),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 5),
-                              child: Container(
-                                height: 18,
-                                width: 18,
-                                decoration: const BoxDecoration(
-                                    color: greenColor, shape: BoxShape.circle),
-                                child: const Icon(
-                                  Icons.arrow_forward_ios,
-                                  color: background,
-                                  size: 14,
-                                ),
-                              ),
-                            )
-                          ],
+                        child: const CustomText(
+                          content: "View all",
+                          textColor: greenColor,
+                          fontSize: 17,
+                          fontWeight: FontWeight.w600,
                         ),
                       )
                     ],

@@ -34,7 +34,12 @@ class _PackagesState extends State<Packages> {
   late final ValueNotifier<DateTime> _selectedDateNotifier;
   DateTime tomorrow = DateTime.now().add(const Duration(days: 1));
   final DateFormat _dateFormat = DateFormat('dd-MM-yyyy');
-
+  final ScrollController _scrollController = ScrollController();
+  int currentPage = 0;
+  int pageSize = 10;
+  bool isLastPage = false;
+  bool isLoadingMore = false;
+  List<Content> getPackageList = [];
   @override
   void initState() {
     super.initState();
@@ -42,30 +47,69 @@ class _PackagesState extends State<Packages> {
     _selectedDateNotifier =
         ValueNotifier(DateTime.now().add(const Duration(days: 1)));
     controller = TextEditingController(text: _dateFormat.format(tomorrow));
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      _fetchPackageList();
-      // Provider.of<GetPackageListViewModel>(context, listen: false)
-      //     .fetchGetPackageListViewModelApi(context, {
-      //   "pageNumber ": "0",
-      //   "pageSize": "40",
-      //   "date": "",
-      //   "search": "",
-      //   "packageStatus":"TRUE",
-      //   // "price": ""
-      // });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      fetchPackageList();
+    });
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels ==
+          _scrollController.position.maxScrollExtent) {
+        // User has reached the end of the list
+        if (!isLoadingMore && !isLastPage) {
+          print('testing......');
+          fetchPackageList();
+        }
+      }
     });
     // controller.text = _selectedDate.day.toString();
   }
 
-  void _fetchPackageList() async {
-    Provider.of<GetPackageListViewModel>(context, listen: false)
-        .fetchGetPackageListViewModelApi(context, {
-      "pageNumber": "0",
-      "pageSize": "40",
-      "date": controller.text,
-      "search": "",
-      "packageStatus": "TRUE",
+  // void _fetchPackageList() async {
+  //   Provider.of<GetPackageListViewModel>(context, listen: false)
+  //       .fetchGetPackageListViewModelApi(context, {
+  //     "pageNumber": "0",
+  //     "pageSize": "40",
+  //     "date": controller.text,
+  //     "search": "",
+  //     "packageStatus": "TRUE",
+  //   });
+  // }
+
+  Future<void> fetchPackageList() async {
+    if (isLoadingMore || isLastPage) return;
+    setState(() {
+      isLoadingMore = true;
     });
+
+    try {
+      var resp =
+          await Provider.of<GetPackageListViewModel>(context, listen: false)
+              .fetchGetPackageListViewModelApi(context, {
+        "pageNumber": currentPage,
+        "pageSize": pageSize,
+        "date": controller.text,
+        "search": "",
+        "packageStatus": "TRUE",
+      });
+      var data = resp?.data.content ?? [];
+      if (data.isNotEmpty) {
+        setState(() {
+          getPackageList.addAll(data);
+          currentPage++;
+          isLastPage = data.length < pageSize;
+          debugPrint('currentpage$currentPage');
+        });
+      } else {
+        setState(() {
+          isLastPage = true;
+        });
+      }
+    } catch (e) {
+      debugPrint('error$e');
+    } finally {
+      setState(() {
+        isLoadingMore = false;
+      });
+    }
   }
 
   Future<void> _selectDate(BuildContext context) async {
@@ -95,11 +139,17 @@ class _PackagesState extends State<Packages> {
       setState(() {
         controller.text = _dateFormat.format(picked);
       });
-      _fetchPackageList();
+      // _fetchPackageList();
     }
   }
 
-  List<Content> packageList = [];
+  // List<Content> packageList = [];
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   bool loader = false;
   int selectedIndex = -1;
@@ -117,13 +167,13 @@ class _PackagesState extends State<Packages> {
         .getPackageActivityById
         .status
         .toString();
-    packageList = context
-            .watch<GetPackageListViewModel>()
-            .getPackageList
-            .data
-            ?.data
-            .content ??
-        [];
+    // packageList = context
+    //         .watch<GetPackageListViewModel>()
+    //         .getPackageList
+    //         .data
+    //         ?.data
+    //         .content ??
+    //     [];
     isLoadingData = context.watch<OfferViewModel>().isLoading1;
 
     // activityData = context
@@ -132,7 +182,7 @@ class _PackagesState extends State<Packages> {
     //     .data
     //     ?.data.content.
     // imgList = context.watch<GetPackageListViewModel>().getPackageList.data?.data.content ?? [];
-    print(packageList.length);
+    // print(packageList.length);
     // return Scaffold(
     //   backgroundColor: bgGreyColor,
     //   appBar: const CustomAppBar(
@@ -183,9 +233,20 @@ class _PackagesState extends State<Packages> {
                                     topRight: Radius.circular(5),
                                     bottomRight: Radius.circular(5)),
                                 color: btnColor),
-                            child: const Icon(
-                              Icons.search,
-                              color: background,
+                            child: InkWell(
+                              onTap: () {
+                                setState(() {
+                                  currentPage =
+                                      0; // Reset pagination when tab changes
+                                  getPackageList.clear(); // Clear the history
+                                  isLastPage = false;
+                                });
+                                fetchPackageList();
+                              },
+                              child: const Icon(
+                                Icons.search,
+                                color: background,
+                              ),
                             ))),
                   ),
                 ),
@@ -193,6 +254,7 @@ class _PackagesState extends State<Packages> {
             ),
             Expanded(
               child: SingleChildScrollView(
+                controller: _scrollController,
                 child: Column(
                   children: [
                     const CommonOfferContainer(
@@ -200,18 +262,29 @@ class _PackagesState extends State<Packages> {
                     ),
 
                     status == "Status.completed"
-                        ? packageList.isNotEmpty
+                        ? getPackageList.isNotEmpty
                             ? ListView.builder(
+                                // controller: _scrollController,
                                 shrinkWrap: true,
                                 physics: NeverScrollableScrollPhysics(),
                                 padding: const EdgeInsets.symmetric(
                                     vertical: 5, horizontal: 10),
-                                itemCount: packageList.length,
+                                itemCount: getPackageList.length +
+                                    (isLoadingMore ? 1 : 0),
                                 itemBuilder: (context, index) {
+                                  if (index == getPackageList.length) {
+                                    return isLoadingMore
+                                        ? const Center(
+                                            child: CircularProgressIndicator(
+                                            color: greenColor,
+                                          ))
+                                        : const SizedBox
+                                            .shrink(); // Hide if not loading
+                                  }
                                   List<PackageActivity> activityData =
-                                      packageList[index].packageActivities;
+                                      getPackageList[index].packageActivities;
                                   return PackageContainer(
-                                      packageImg: packageList[index]
+                                      packageImg: getPackageList[index]
                                           .packageActivities
                                           .expand((e) =>
                                               e.activity.activityImageUrl)
@@ -220,19 +293,19 @@ class _PackagesState extends State<Packages> {
                                       //   return url;
                                       // }).toList(),
                                       packageName:
-                                          packageList[index].packageName,
-                                      noOfDays: packageList[index].noOfDays,
+                                          getPackageList[index].packageName,
+                                      noOfDays: getPackageList[index].noOfDays,
                                       // noOfNights: "0",
-                                      country: packageList[index].country,
-                                      state: packageList[index].state,
-                                      location: packageList[index].location,
-                                      total: packageList[index].totalPrice,
+                                      country: getPackageList[index].country,
+                                      state: getPackageList[index].state,
+                                      location: getPackageList[index].location,
+                                      total: getPackageList[index].totalPrice,
                                       activityName: List.generate(
                                           activityData.length,
                                           (index) => activityData[index]
                                               .activity
                                               .activityName),
-                                      activity: packageList[index]
+                                      activity: getPackageList[index]
                                           .packageActivities
                                           .length
                                           .toString(),
@@ -252,10 +325,10 @@ class _PackagesState extends State<Packages> {
                                                 context,
                                                 {
                                                   "packageId":
-                                                      packageList[index]
+                                                      getPackageList[index]
                                                           .packageId
                                                 },
-                                                packageList[index].packageId,
+                                                getPackageList[index].packageId,
                                                 widget.ursID,
                                                 controller.text);
                                       }
@@ -392,6 +465,7 @@ class _PackageContainerState extends State<PackageContainer> {
                                 topRight: Radius.circular(5),
                                 topLeft: Radius.circular(5)),
                             child: Container(
+                                margin: EdgeInsets.all(2),
                                 width: double.infinity,
                                 decoration: const BoxDecoration(
                                   borderRadius: BorderRadius.only(
@@ -400,7 +474,7 @@ class _PackageContainerState extends State<PackageContainer> {
                                 ),
                                 child: Image.asset(
                                   tour,
-                                  height: 210,
+                                  height: 200,
                                   fit: BoxFit.cover,
                                 )),
                           ),
@@ -639,13 +713,6 @@ class _PackageContainerState extends State<PackageContainer> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            CustomButtonSmall(
-                              width: 120,
-                              height: 40,
-                              loading: widget.loader,
-                              btnHeading: "View Details",
-                              onTap: widget.ontap,
-                            ),
                             RichText(
                                 text: TextSpan(children: [
                               TextSpan(
@@ -667,6 +734,13 @@ class _PackageContainerState extends State<PackageContainer> {
                                       fontSize: 12,
                                       fontWeight: FontWeight.w600)),
                             ])),
+                            CustomButtonSmall(
+                              width: 120,
+                              height: 40,
+                              loading: widget.loader,
+                              btnHeading: "View Details",
+                              onTap: widget.ontap,
+                            ),
                           ],
                         ),
                       )

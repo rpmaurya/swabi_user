@@ -57,9 +57,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text.rich(TextSpan(children: [
-                          TextSpan(
-                              text: 'Enter new password',
-                              style: titleTextStyle),
+                          TextSpan(text: 'New password', style: titleTextStyle),
                           const TextSpan(
                               text: ' *', style: TextStyle(color: redColor))
                         ])),
@@ -70,6 +68,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                           focusNode: focusNode1,
                           fillColor: background,
                           obscureText: obscurePassword,
+                          enableInteractiveSelection: false,
                           obscuringCharacter: '*',
                           controller: password,
                           hintText: 'New password',
@@ -87,7 +86,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                           ),
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Enter your New password';
+                              return 'Please enter new password';
                             } else {
                               return Validatorclass.validatePassword(value);
                             }
@@ -98,8 +97,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                         ),
                         Text.rich(TextSpan(children: [
                           TextSpan(
-                              text: 'Enter confirm password',
-                              style: titleTextStyle),
+                              text: 'Confirm password', style: titleTextStyle),
                           const TextSpan(
                               text: ' *', style: TextStyle(color: redColor))
                         ])),
@@ -110,6 +108,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                           focusNode: focusNode2,
                           fillColor: background,
                           obscureText: obscureConfirmPassword,
+                          enableInteractiveSelection: false,
                           obscuringCharacter: '*',
                           controller: confirmpass,
                           hintText: 'Confirm password',
@@ -128,7 +127,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                           ),
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Enter your Confirm password';
+                              return 'Please enter confirm password';
                             } else if (value != password.text) {
                               return "Password do not match";
                             } else {
@@ -153,8 +152,8 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                         const SizedBox(height: 10),
                         Login_SignUpBtn(
                           onTap: () => context.push("/login"),
-                          btnHeading: 'Login',
-                          sideHeading: 'Remember your password?',
+                          btnHeading: 'Sign In',
+                          sideHeading: 'Back to',
                         ),
                       ],
                     )),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_cab/res/Common%20Widgets/common_alertTextfeild.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
+import 'package:flutter_cab/res/Custom%20%20Button/customdropdown_button.dart';
 import 'package:flutter_cab/res/Custom%20Page%20Layout/commonPage_Layout.dart';
 import 'package:flutter_cab/res/Custom%20Widgets/CustomTextFormfield.dart';
 import 'package:flutter_cab/res/customAppBar_widget.dart';
@@ -34,6 +35,7 @@ class _EditProfiePageState extends State<EditProfiePage> {
       List.generate(6, (index) => TextEditingController());
   TextEditingController phoneController = TextEditingController();
   TextEditingController countryCode = TextEditingController();
+  TextEditingController emailcontroller = TextEditingController();
   FocusNode focusNode1 = FocusNode();
   FocusNode focusNode2 = FocusNode();
   FocusNode focusNode3 = FocusNode();
@@ -61,6 +63,7 @@ class _EditProfiePageState extends State<EditProfiePage> {
         controllers[3].text = userData.gender;
         controllers[4].text = userData.countryCode;
         controllers[5].text = userData.mobile;
+        emailcontroller.text = userData.email;
         var list = countries
             .where((code) =>
                 code.dialCode == controllers[4].text.replaceAll('+', '').trim())
@@ -112,10 +115,10 @@ class _EditProfiePageState extends State<EditProfiePage> {
             Customtextformfield(
               focusNode: focusNode1,
               controller: controllers[0],
-              inputFormatters: [
-                FilteringTextInputFormatter.allow(RegExp("[a-zA-Z]")),
-              ],
-              prefixiconvisible: true,
+              // inputFormatters: [
+              //   FilteringTextInputFormatter.allow(RegExp("[a-zA-Z]")),
+              // ],
+              // prefixiconvisible: true,
               fillColor: background,
               img: user,
               hintText: 'First Name',
@@ -137,10 +140,10 @@ class _EditProfiePageState extends State<EditProfiePage> {
             Customtextformfield(
               focusNode: focusNode2,
               controller: controllers[1],
-              prefixiconvisible: true,
-              inputFormatters: [
-                FilteringTextInputFormatter.allow(RegExp("[a-zA-Z]")),
-              ],
+              // prefixiconvisible: true,
+              // inputFormatters: [
+              //   FilteringTextInputFormatter.allow(RegExp("[a-zA-Z]")),
+              // ],
               fillColor: background,
               img: user,
               hintText: 'Last Name',
@@ -150,6 +153,27 @@ class _EditProfiePageState extends State<EditProfiePage> {
                 }
                 return null;
               },
+            ),
+            const SizedBox(height: 5),
+
+            Text.rich(TextSpan(children: [
+              TextSpan(text: 'Email', style: titleTextStyle),
+              const TextSpan(text: ' *', style: TextStyle(color: redColor))
+            ])),
+            const SizedBox(height: 5),
+
+            Customtextformfield(
+              // focusNode: focusNode2,
+              controller: emailcontroller,
+              readOnly: true,
+              enableInteractiveSelection: false,
+              // prefixiconvisible: true,
+              // inputFormatters: [
+              //   FilteringTextInputFormatter.allow(RegExp("[a-zA-Z]")),
+              // ],
+              fillColor: background,
+              img: user,
+              hintText: 'Email',
             ),
             // LoginTextFeild(
             //   heading: "First Name",
@@ -180,7 +204,7 @@ class _EditProfiePageState extends State<EditProfiePage> {
             //     return null;
             //   },
             // ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 5),
 
             Text.rich(TextSpan(children: [
               TextSpan(text: 'Address', style: titleTextStyle),
@@ -220,14 +244,14 @@ class _EditProfiePageState extends State<EditProfiePage> {
                             border: const OutlineInputBorder(
                                 borderSide: BorderSide.none),
                             hintStyle: textTitleHint,
-                            prefixIcon: Padding(
-                              padding: const EdgeInsets.all(10.0),
-                              child: Image.asset(
-                                location,
-                                width: 10,
-                                height: 10,
-                              ),
-                            ),
+                            // prefixIcon: Padding(
+                            //   padding: const EdgeInsets.all(10.0),
+                            //   child: Image.asset(
+                            //     location,
+                            //     width: 10,
+                            //     height: 10,
+                            //   ),
+                            // ),
                             filled: true,
                             fillColor: background,
                             disabledBorder: const OutlineInputBorder(
@@ -402,25 +426,51 @@ class _EditProfiePageState extends State<EditProfiePage> {
             //   prefixIcon: true,
             //   img: address,
             // ),
+            // const SizedBox(height: 10),
+
+            // FormCommonSingleAlertSelector(
+            //   width: double.infinity,
+            //   elevation: 0,
+            //   title: "Gender",
+            //   controller: controllers[3],
+            //   showIcon: const Icon(
+            //     Icons.event_seat,
+            //     color: naturalGreyColor,
+            //   ),
+            //   iconReq: false,
+            //   data: const ["Male", "Female"],
+            //   // icons: gender,
+            //   icon: genderImg,
+
+            //   ///Hint Color
+            //   initialValue: "Select Gender",
+            //   alertBoxTitle: "Select Gender",
+            // ),
             const SizedBox(height: 10),
 
-            FormCommonSingleAlertSelector(
-              width: double.infinity,
-              elevation: 0,
-              title: "Gender",
+            Padding(
+                padding: EdgeInsets.only(bottom: 5),
+                child: Text.rich(TextSpan(children: [
+                  TextSpan(text: 'Gender', style: titleTextStyle),
+                  const TextSpan(text: ' *', style: TextStyle(color: redColor))
+                ]))),
+            CustomDropdownButton(
               controller: controllers[3],
-              showIcon: const Icon(
-                Icons.event_seat,
-                color: naturalGreyColor,
-              ),
-              iconReq: false,
-              data: const ["Male", "Female"],
-              // icons: gender,
-              icon: genderImg,
-
-              ///Hint Color
-              initialValue: "Select Gender",
-              alertBoxTitle: "Select Gender",
+              // focusNode: genderFocus,
+              itemsList: ['Male', 'Female'],
+              onChanged: (value) {
+                setState(() {
+                  // controller[4].text = value ?? '';
+                  print('cgghhh${controllers[3].text}');
+                });
+              },
+              hintText: 'Select Gender',
+              // validator: (p0) {
+              //   if (p0 == null || p0.isEmpty) {
+              //     return 'Please select gender';
+              //   }
+              //   return null;
+              // },
             ),
             const SizedBox(height: 10),
             Row(

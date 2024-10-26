@@ -6,12 +6,14 @@ import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/res/Custom%20Page%20Layout/commonPage_Layout.dart';
 import 'package:flutter_cab/res/customAppBar_widget.dart';
 import 'package:flutter_cab/res/custom_ListTile.dart';
+import 'package:flutter_cab/res/custom_modalbottomsheet.dart';
 import 'package:flutter_cab/res/login/login_customTextFeild.dart';
 import 'package:flutter_cab/utils/assets.dart';
 import 'package:flutter_cab/utils/color.dart';
 import 'package:flutter_cab/utils/dimensions.dart';
 import 'package:flutter_cab/utils/string_extenstion.dart';
 import 'package:flutter_cab/utils/text_styles.dart';
+import 'package:flutter_cab/view/dashboard/account_Pages/changePassword.dart';
 import 'package:flutter_cab/view_model/userProfile_view_model.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
@@ -257,12 +259,18 @@ class _ProfilePageState extends State<ProfilePage> {
                 // ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: CustomButtonSmall(
-                    btnHeading: 'CHANGE PASSWORD',
-                    onTap: () => context
-                        .push("/changePassword", extra: {"userId": dataUser}),
-                  ),
-                )
+                  child: CustomModalbottomsheet(
+                      title: 'CHANGE PASSWORD',
+                      child: ChangePassword(userId: dataUser)),
+                ),
+                // Padding(
+                //   padding: const EdgeInsets.all(8.0),
+                //   child: CustomButtonSmall(
+                //     btnHeading: 'CHANGE PASSWORD',
+                //     onTap: () => context
+                //         .push("/changePassword", extra: {"userId": dataUser}),
+                //   ),
+                // )
               ],
             ),
           )),

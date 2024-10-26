@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_cab/model/getIssueByBookingIdModel.dart';
@@ -194,7 +196,9 @@ class _PackagePageViewDetailsState extends State<PackagePageViewDetails> {
         context.watch<RaiseissueViewModel>().getIssueBybookingId.data;
     // debugPrint("${getPackageItineraryList.length} GetItineraryDetailsList");
     debugPrint("${widget.paymentId} paymentId......ramji");
-
+    String cancelStatus =
+        context.watch<PackageCancelViewModel>().packageCancel.status.toString();
+    debugPrint("$cancelStatus cancel status......ramji");
     return Scaffold(
       backgroundColor: bgGreyColor,
       appBar: const CustomAppBar(
@@ -240,22 +244,23 @@ class _PackagePageViewDetailsState extends State<PackagePageViewDetails> {
                   discountAmount: detailsData.discountAmount,
                   packageAmount: detailsData.packagePrice,
                   iteneryList: getPackageItineraryList,
+
                   alertOnTap: () {
-                    if (alertController.text.isEmpty) {
-                      Utils.toastMessage("Please enter your pickUp Location");
-                    } else {
-                      Provider.of<AddPickUpLocationPackageViewModel>(context,
-                              listen: false)
-                          .fetchAddPickUpLocationPackageViewModelApi(context, {
-                        "packageBookingId": widget.packageBookID,
-                        "pickupLocation": alertController.text
-                      });
-                      context.pop(context);
-                    }
+                    Provider.of<AddPickUpLocationPackageViewModel>(context,
+                            listen: false)
+                        .fetchAddPickUpLocationPackageViewModelApi(
+                            context,
+                            {
+                              "packageBookingId": widget.packageBookID,
+                              "pickupLocation": alertController.text
+                            },
+                            widget.packageBookID);
+                    // context.pop(context);
+
                     // setState(() {
                     //   debugPrint(alertController.text);
                     // });
-                    alertController.clear();
+                    // alertController.clear();
                   },
                   // totalAmt: detailsData.discountAmount.toString() == '0' ||
                   //         detailsData.discountAmount.toString().isEmpty
@@ -381,51 +386,106 @@ class _PackagePageViewDetailsState extends State<PackagePageViewDetails> {
                           },
                         ),
                   onTap: () {
-                    showDialog(
+                    showModalBottomSheet(
                         context: context,
-                        builder: (context) {
-                          // cancelController.clear();
-                          return StatefulBuilder(
-                            builder:
-                                (BuildContext context, StateSetter setState) {
-                              String cancelStatus = context
-                                  .watch<PackageCancelViewModel>()
-                                  .packageCancel
-                                  .status
-                                  .toString();
-                              return SingleChildScrollView(
+                        isDismissible: false,
+                        backgroundColor: background,
+                        isScrollControlled: true,
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.vertical(
+                            top: Radius.circular(10),
+                          ),
+                        ),
+                        builder: (BuildContext context) {
+                          return Padding(
+                            padding: EdgeInsets.only(
+                              bottom: MediaQuery.of(context)
+                                  .viewInsets
+                                  .bottom, // Adjust modal size when keyboard opens
+                            ),
+                            child: SingleChildScrollView(
                                 physics: const NeverScrollableScrollPhysics(),
-                                padding: EdgeInsets.only(
-                                    top: AppDimension.getHeight(context) * .2),
-                                child: CancelContainerDialog(
-                                  loading: cancelStatus == "Status.loading",
-                                  controllerCancel: cancelController,
-                                  onTap: () async {
-                                    // loading = true;
+                                child: StatefulBuilder(builder:
+                                    (BuildContext context,
+                                        StateSetter setstate) {
+                                  return CancelContainerDialog(
+                                    loading: cancelStatus == "Status.loading" &&
+                                        loading,
+                                    controllerCancel: cancelController,
+                                    onTap: () async {
+                                      setstate(() {
+                                        loading = true;
+                                      });
 
-                                    await Provider.of<PackageCancelViewModel>(
-                                            context,
-                                            listen: false)
-                                        .fetchPackageCancelViewModelApi(
-                                            context,
-                                            {
-                                              "packageBookingId":
-                                                  widget.packageBookID,
-                                              "cancellationReason":
-                                                  cancelController.text,
-                                              "cancelledBy": "USER"
-                                            },
-                                            widget.userId,
-                                            widget.packageBookID,
-                                            widget.paymentId);
-
-                                    // controller.dispose();
-                                  },
-                                ),
-                              );
-                            },
+                                      await Provider.of<PackageCancelViewModel>(
+                                              context,
+                                              listen: false)
+                                          .fetchPackageCancelViewModelApi(
+                                              context,
+                                              {
+                                                "packageBookingId":
+                                                    widget.packageBookID,
+                                                "cancellationReason":
+                                                    cancelController.text,
+                                                "cancelledBy": "USER"
+                                              },
+                                              widget.userId,
+                                              widget.packageBookID,
+                                              widget.paymentId);
+                                      setstate(() {
+                                        loading = false;
+                                      });
+                                      // controller.dispose();
+                                    },
+                                  );
+                                })),
                           );
                         });
+                    // showDialog(
+                    //     context: context,
+                    //     builder: (context) {
+                    //       // cancelController.clear();
+                    //       return StatefulBuilder(
+                    //         builder:
+                    //             (BuildContext context, StateSetter setState) {
+                    //           String cancelStatus = context
+                    //               .watch<PackageCancelViewModel>()
+                    //               .packageCancel
+                    //               .status
+                    //               .toString();
+                    //           return SingleChildScrollView(
+                    //             physics: const NeverScrollableScrollPhysics(),
+                    //             padding: EdgeInsets.only(
+                    //                 top: AppDimension.getHeight(context) * .2),
+                    //             child: CancelContainerDialog(
+                    //               loading: cancelStatus == "Status.loading",
+                    //               controllerCancel: cancelController,
+                    //               onTap: () async {
+                    //                 // loading = true;
+
+                    //                 await Provider.of<PackageCancelViewModel>(
+                    //                         context,
+                    //                         listen: false)
+                    //                     .fetchPackageCancelViewModelApi(
+                    //                         context,
+                    //                         {
+                    //                           "packageBookingId":
+                    //                               widget.packageBookID,
+                    //                           "cancellationReason":
+                    //                               cancelController.text,
+                    //                           "cancelledBy": "USER"
+                    //                         },
+                    //                         widget.userId,
+                    //                         widget.packageBookID,
+                    //                         widget.paymentId);
+
+                    //                 // controller.dispose();
+                    //               },
+                    //             ),
+                    //           );
+                    //         },
+                    //       );
+                    //     });
                   },
                 )
               : SizedBox()
@@ -570,64 +630,72 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
       required String secondaryNo}) {
     // String primaryCountry = getIsoCode(primaryCode);
     // String secondaryCountry = getIsoCode(secondaryCode);
-    final focusNode1 = FocusNode();
-    final focusNode2 = FocusNode();
+    FocusNode focusNode1 = FocusNode();
+    FocusNode focusNode2 = FocusNode();
 
     String primaryCountryCode = primaryCode;
     String secondaryCountryCode = secondaryCode;
 
     primaryController.text = primaryNo;
     secondaryController.text = secondaryNo;
-    showDialog(
+    showModalBottomSheet(
       context: context,
+      isDismissible: false,
+      backgroundColor: background,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(10),
+        ),
+      ),
       builder: (BuildContext context) {
         return StatefulBuilder(
             builder: (BuildContext context, StateSetter setstate) {
           debugPrint('Country code on dialog open: $secondaryCountryCode');
-          return SingleChildScrollView(
-            padding: const EdgeInsets.only(top: 70),
-            physics: const NeverScrollableScrollPhysics(),
-            child: Dialog(
-              backgroundColor: background,
-              surfaceTintColor: background,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10)),
-              insetPadding: EdgeInsets.all(30.0),
-              child: SizedBox(
-                width: double.infinity,
-                child: AlertDialog(
-                  contentPadding: EdgeInsets.zero,
-                  backgroundColor: background,
-                  surfaceTintColor: background,
-                  actionsAlignment: MainAxisAlignment.center,
-                  actionsPadding: const EdgeInsets.only(top: 10),
-                  titlePadding: const EdgeInsets.only(bottom: 20),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10)),
-                  title: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const CustomTextWidget(
-                          content: 'Change Contact',
-                          align: TextAlign.center,
-                          fontSize: 25),
-                      CustomButtonSmall(
-                        width: 30,
-                        height: 30,
-                        btnHeading: "X",
-                        onTap: () {
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                    ],
-                  ),
-                  content: Form(
+          return LayoutBuilder(builder: (context, constraints) {
+            return Padding(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context)
+                    .viewInsets
+                    .bottom, // Adjust modal size when keyboard opens
+              ),
+              child: SingleChildScrollView(
+                physics: const NeverScrollableScrollPhysics(),
+                child: Container(
+                  margin: const EdgeInsets.all(20),
+                  child: Form(
                     key: _formKey,
                     // autovalidateMode: AutovalidateMode.onUserInteraction,
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(
+                              'Change Contact',
+                              style: TextStyle(
+                                  color: btnColor,
+                                  fontSize: 17,
+                                  fontWeight: FontWeight.w600),
+                            ),
+                            InkWell(
+                              onTap: () {
+                                context.pop();
+                              },
+                              child: const Text(
+                                'X',
+                                style: TextStyle(
+                                    color: btnColor,
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.w600),
+                              ),
+                            )
+                          ],
+                        ),
+                        const SizedBox(height: 10),
+
                         Padding(
                           padding: const EdgeInsets.only(bottom: 5),
                           child: Text.rich(TextSpan(children: [
@@ -639,6 +707,7 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
                         ),
                         CustomMobilenumber(
                             textLength: 9,
+                            readOnly: true,
                             focusNode: focusNode1,
                             controller: primaryController,
                             hintText: 'Enter Primary number',
@@ -663,7 +732,7 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
                         //     });
                         //   },
                         // ),
-                        SizedBox(height: 10),
+                        const SizedBox(height: 10),
                         Padding(
                           padding: const EdgeInsets.only(bottom: 5),
                           child: Text.rich(TextSpan(children: [
@@ -699,43 +768,193 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
                             focusNode: focusNode2,
                             controller: secondaryController,
                             hintText: 'Enter phone number',
-                            countryCode: secondaryCountryCode)
+                            countryCode: secondaryCountryCode),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        CustomButtonSmall(
+                          width: double.infinity,
+                          height: 45,
+                          onTap: () {
+                            if (_formKey.currentState!.validate()) {
+                              debugPrint('succes');
+                              Map<String, dynamic> body = {
+                                "packageBookingId": widget.id,
+                                "mobile": primaryController.text,
+                                // "countryCode": primaryCode,
+                                "countryCode": primaryCountryCode,
+
+                                "alternateMobile": secondaryController.text,
+                                // "alternateMobileCountryCode": secondaryCode
+                                "alternateMobileCountryCode":
+                                    secondaryCountryCode
+                              };
+                              debugPrint('bodyData$body');
+                              Provider.of<ChangeMobileViewModel>(context,
+                                      listen: false)
+                                  .changeMobileApi(
+                                      context: context,
+                                      body: body,
+                                      bookingId: widget.id);
+                            }
+                          },
+                          btnHeading: "Change Contact",
+                        ),
                       ],
                     ),
                   ),
-                  actions: [
-                    Align(
-                      alignment: Alignment.center,
-                      child: CustomButtonSmall(
-                        width: 140,
-                        height: 40,
-                        onTap: () {
-                          if (_formKey.currentState!.validate()) {
-                            print('succes');
-                            Map<String, dynamic> body = {
-                              "packageBookingId": widget.id,
-                              "mobile": primaryController.text,
-                              // "countryCode": primaryCode,
-                              "countryCode": primaryCountryCode,
-
-                              "alternateMobile": secondaryController.text,
-                              // "alternateMobileCountryCode": secondaryCode
-                              "alternateMobileCountryCode": secondaryCountryCode
-                            };
-                            debugPrint('bodyData$body');
-                            Provider.of<ChangeMobileViewModel>(context,
-                                    listen: false)
-                                .changeMobileApi(
-                                    context: context,
-                                    body: body,
-                                    bookingId: widget.id);
-                          }
-                        },
-                        btnHeading: "Change Contact",
-                      ),
+                ),
+              ),
+            );
+          });
+          return Dialog(
+            backgroundColor: background,
+            surfaceTintColor: background,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            insetPadding: const EdgeInsets.all(30.0),
+            child: SizedBox(
+              width: double.infinity,
+              child: AlertDialog(
+                contentPadding: EdgeInsets.zero,
+                backgroundColor: background,
+                surfaceTintColor: background,
+                actionsAlignment: MainAxisAlignment.center,
+                actionsPadding: const EdgeInsets.only(top: 10),
+                titlePadding: const EdgeInsets.only(bottom: 20),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10)),
+                title: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const CustomTextWidget(
+                        content: 'Change Contact',
+                        align: TextAlign.center,
+                        fontSize: 25),
+                    CustomButtonSmall(
+                      width: 30,
+                      height: 30,
+                      btnHeading: "X",
+                      onTap: () {
+                        Navigator.of(context).pop();
+                      },
                     ),
                   ],
                 ),
+                content: Form(
+                  key: _formKey,
+                  // autovalidateMode: AutovalidateMode.onUserInteraction,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 5),
+                        child: Text.rich(TextSpan(children: [
+                          TextSpan(
+                              text: 'Primary Contact', style: titleTextStyle),
+                          const TextSpan(
+                              text: ' *', style: TextStyle(color: redColor))
+                        ])),
+                      ),
+                      CustomMobilenumber(
+                          textLength: 9,
+                          readOnly: true,
+                          focusNode: focusNode1,
+                          controller: primaryController,
+                          hintText: 'Enter Primary number',
+                          countryCode: primaryCountryCode),
+                      // Customphonefield(
+                      //   initalCountryCode: primaryCountry,
+                      //   controller: primaryController,
+                      //   onChanged: (phone) {
+                      //     setstate(() {
+                      //       primaryCode = phone.countryCode
+                      //           .replaceFirst('+', '')
+                      //           .trim();
+                      //       debugPrint('primarycountrycode.$primaryCode');
+                      //       debugPrint(
+                      //           'primarycountrycode.${primaryController.text}');
+                      //     });
+                      //   },
+                      //   onCountryChanged: (p0) {
+                      //     setstate(() {
+                      //       primaryCode = p0.dialCode;
+                      //       debugPrint('primarycountrycode.$primaryCode');
+                      //     });
+                      //   },
+                      // ),
+                      SizedBox(height: 10),
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 5),
+                        child: Text.rich(TextSpan(children: [
+                          TextSpan(
+                              text: 'Secondary Contact', style: titleTextStyle),
+                          const TextSpan(
+                              text: ' *', style: TextStyle(color: redColor))
+                        ])),
+                      ),
+                      // Customphonefield(
+                      //   initalCountryCode: secondaryCountry,
+                      //   controller: secondaryController,
+                      //   onChanged: (phone) {
+                      //     setstate(() {
+                      //       secondaryCode = phone.countryCode
+                      //           .replaceFirst('+', '')
+                      //           .trim();
+                      //       debugPrint('secondarycountrycode.$secondaryCode');
+                      //       debugPrint(
+                      //           'secondarycountrycode.${secondaryController.text}');
+                      //     });
+                      //   },
+                      //   onCountryChanged: (p0) {
+                      //     setstate(() {
+                      //       secondaryCode = p0.dialCode;
+                      //       debugPrint('secondarycountrycode.$secondaryCode');
+                      //     });
+                      //   },
+                      // ),
+                      CustomMobilenumber(
+                          textLength: 9,
+                          focusNode: focusNode2,
+                          controller: secondaryController,
+                          hintText: 'Enter phone number',
+                          countryCode: secondaryCountryCode)
+                    ],
+                  ),
+                ),
+                actions: [
+                  Align(
+                    alignment: Alignment.center,
+                    child: CustomButtonSmall(
+                      width: 140,
+                      height: 40,
+                      onTap: () {
+                        if (_formKey.currentState!.validate()) {
+                          print('succes');
+                          Map<String, dynamic> body = {
+                            "packageBookingId": widget.id,
+                            "mobile": primaryController.text,
+                            // "countryCode": primaryCode,
+                            "countryCode": primaryCountryCode,
+
+                            "alternateMobile": secondaryController.text,
+                            // "alternateMobileCountryCode": secondaryCode
+                            "alternateMobileCountryCode": secondaryCountryCode
+                          };
+                          debugPrint('bodyData$body');
+                          Provider.of<ChangeMobileViewModel>(context,
+                                  listen: false)
+                              .changeMobileApi(
+                                  context: context,
+                                  body: body,
+                                  bookingId: widget.id);
+                        }
+                      },
+                      btnHeading: "Change Contact",
+                    ),
+                  ),
+                ],
               ),
             ),
           );
@@ -744,6 +963,7 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
     );
   }
 
+  bool isLoading = false;
   @override
   Widget build(BuildContext context) {
     DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(
@@ -757,6 +977,11 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
         '${DateFormat('HH:mm').format(adjustedTime)} GMT (+05:30)';
     paymentRefund =
         context.watch<GetPaymentRefundViewModel>().getPaymentRefund.data;
+    String pickupstatus = context
+        .watch<AddPickUpLocationPackageViewModel>()
+        .addPickUpLocationPackage
+        .status
+        .toString();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -781,7 +1006,7 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
                           secondaryCode: '971',
                           secondaryNo: widget.secondaryMobileNo);
                     })
-                : SizedBox(),
+                : const SizedBox(),
             widget.bookingStatus == "BOOKED"
                 ? widget.pickUpLocation != "N/A" &&
                         widget.pickUpLocation.isEmpty
@@ -791,33 +1016,67 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
                         // width: AppDimension.getWidth(context) * .35,
                         btnHeading: "PickUp Location",
                         onTap: () {
-                          showDialog(
-                            context: context,
-                            builder: (context) {
-                              return SingleChildScrollView(
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  child: Column(
-                                    children: [
-                                      const SizedBox(height: 150),
-                                      CustomAlertBox(
-                                        heading: "Add PickUp Location",
-                                        height:
-                                            AppDimension.getHeight(context) /
-                                                3.4,
-                                        widgetReq: true,
-                                        crossIcon: true,
-                                        crossOnTap: () {
-                                          widget.controllerWidget.clear();
-                                          context.pop(context);
-                                        },
+                          showModalBottomSheet(
+                              context: context,
+                              isDismissible: false,
+                              backgroundColor: background,
+                              isScrollControlled: true,
+                              shape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.vertical(
+                                  top: Radius.circular(10),
+                                ),
+                              ),
+                              builder: (BuildContext context) {
+                                return Padding(
+                                  padding: EdgeInsets.only(
+                                    bottom: MediaQuery.of(context)
+                                        .viewInsets
+                                        .bottom, // Adjust modal size when keyboard opens
+                                  ),
+                                  child: SingleChildScrollView(
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
+                                    child: StatefulBuilder(builder:
+                                        (BuildContext context,
+                                            StateSetter setstate) {
+                                      return Container(
+                                        margin: EdgeInsets.all(20),
                                         child: Column(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                const Text(
+                                                  'Add PickUp Location',
+                                                  style: TextStyle(
+                                                      color: btnColor,
+                                                      fontSize: 17,
+                                                      fontWeight:
+                                                          FontWeight.w600),
+                                                ),
+                                                InkWell(
+                                                  onTap: () {
+                                                    context.pop();
+                                                  },
+                                                  child: const Text(
+                                                    'X',
+                                                    style: TextStyle(
+                                                        color: btnColor,
+                                                        fontSize: 17,
+                                                        fontWeight:
+                                                            FontWeight.w600),
+                                                  ),
+                                                )
+                                              ],
+                                            ),
+                                            const SizedBox(height: 10),
                                             Text.rich(TextSpan(children: [
                                               TextSpan(
-                                                  text:
-                                                      'Plz Add Pickup Location',
+                                                  text: 'Pickup Location',
                                                   style: titleTextStyle),
                                               const TextSpan(
                                                   text: ' *',
@@ -825,141 +1084,467 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
                                                       color: redColor))
                                             ])),
                                             const SizedBox(height: 5),
-                                            Container(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 0),
-                                              height: 50,
-                                              child:
-                                                  GooglePlaceAutoCompleteTextField(
-                                                textEditingController:
-                                                    widget.controllerWidget,
-                                                boxDecoration: BoxDecoration(
-                                                    color: background,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            5),
-                                                    border: Border.all(
-                                                        color: naturalGreyColor
-                                                            .withOpacity(0.3))),
-                                                googleAPIKey:
-                                                    "AIzaSyADRdiTbSYUR8oc6-ryM1F1NDNjkHDr0Yo",
-                                                inputDecoration:
-                                                    InputDecoration(
-                                                  contentPadding:
-                                                      const EdgeInsets
-                                                          .symmetric(
-                                                          horizontal: 5,
-                                                          vertical: 0),
-                                                  isDense: true,
-                                                  hintText:
-                                                      "Search your location",
-                                                  border:
-                                                      const OutlineInputBorder(
-                                                          borderSide:
-                                                              BorderSide.none),
-                                                  hintStyle: GoogleFonts.lato(
-                                                    color: greyColor1,
-                                                    fontSize: 16,
-                                                    fontWeight: FontWeight.w600,
-                                                  ),
-                                                  filled: true,
-                                                  fillColor: background,
-                                                  disabledBorder:
-                                                      const OutlineInputBorder(
-                                                          borderRadius:
-                                                              BorderRadius.all(
-                                                                  Radius
-                                                                      .circular(
-                                                                          5)),
-                                                          borderSide:
-                                                              BorderSide.none),
-                                                ),
-                                                textStyle: titleTextStyle,
-                                                debounceTime: 400,
-                                                // countries: ["ae", "fr"],
-                                                isLatLngRequired: true,
-                                                getPlaceDetailWithLatLng:
-                                                    (prediction) {
-                                                  print(
-                                                      "Latitude: ${prediction.lat}, Longitude: ${prediction.lng}");
-                                                  // You can use prediction.lat and prediction.lng here as needed
-                                                  // Example: Save them to variables or perform further actions
-                                                },
+                                            Form(
+                                              key: _formKey,
+                                              autovalidateMode: AutovalidateMode
+                                                  .onUserInteraction,
+                                              child: FormField<String>(
+                                                  autovalidateMode:
+                                                      AutovalidateMode
+                                                          .onUserInteraction,
+                                                  validator: (value) {
+                                                    if (widget.controllerWidget
+                                                        .text.isEmpty) {
+                                                      return '  Please select a location';
+                                                    }
+                                                    return null;
+                                                  },
+                                                  builder:
+                                                      (FormFieldState<String>
+                                                          field) {
+                                                    return Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Container(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .symmetric(
+                                                                  horizontal:
+                                                                      0),
+                                                          height: 50,
+                                                          child:
+                                                              GooglePlaceAutoCompleteTextField(
+                                                            textEditingController:
+                                                                widget
+                                                                    .controllerWidget,
 
-                                                itemClick: (prediction) {
-                                                  widget.controllerWidget.text =
-                                                      prediction.description ??
-                                                          "";
-                                                  widget.controllerWidget
-                                                          .selection =
-                                                      TextSelection.fromPosition(
-                                                          TextPosition(
-                                                              offset: prediction
-                                                                      .description
-                                                                      ?.length ??
-                                                                  0));
-                                                },
-                                                seperatedBuilder:
-                                                    const Divider(),
-
-                                                // OPTIONAL// If you want to customize list view item builder
-                                                itemBuilder: (context, index,
-                                                    prediction) {
-                                                  return Padding(
-                                                    padding: const EdgeInsets
-                                                        .symmetric(vertical: 5),
-                                                    child: Container(
-                                                      color: background,
-                                                      child: Row(
-                                                        children: [
-                                                          const Icon(
-                                                            Icons.location_on,
-                                                            size: 15,
-                                                          ),
-                                                          const SizedBox(
-                                                            width: 7,
-                                                          ),
-                                                          Expanded(
-                                                              child: Text(
-                                                            prediction
-                                                                    .description ??
-                                                                "",
-                                                            style:
+                                                            boxDecoration: BoxDecoration(
+                                                                color:
+                                                                    background,
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            5),
+                                                                border: Border.all(
+                                                                    color: naturalGreyColor
+                                                                        .withOpacity(
+                                                                            0.3))),
+                                                            googleAPIKey:
+                                                                "AIzaSyADRdiTbSYUR8oc6-ryM1F1NDNjkHDr0Yo",
+                                                            inputDecoration:
+                                                                InputDecoration(
+                                                              contentPadding:
+                                                                  const EdgeInsets
+                                                                      .symmetric(
+                                                                      horizontal:
+                                                                          5,
+                                                                      vertical:
+                                                                          0),
+                                                              isDense: true,
+                                                              hintText:
+                                                                  "Search your location",
+                                                              border: const OutlineInputBorder(
+                                                                  borderSide:
+                                                                      BorderSide
+                                                                          .none),
+                                                              hintStyle:
+                                                                  GoogleFonts
+                                                                      .lato(
+                                                                color:
+                                                                    greyColor1,
+                                                                fontSize: 16,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w600,
+                                                              ),
+                                                              filled: true,
+                                                              fillColor:
+                                                                  background,
+                                                              disabledBorder: const OutlineInputBorder(
+                                                                  borderRadius:
+                                                                      BorderRadius.all(
+                                                                          Radius.circular(
+                                                                              5)),
+                                                                  borderSide:
+                                                                      BorderSide
+                                                                          .none),
+                                                            ),
+                                                            textStyle:
                                                                 titleTextStyle,
-                                                          ))
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  );
-                                                },
-                                                isCrossBtnShown: false,
-                                                // default 600 ms ,
-                                              ),
+                                                            debounceTime: 400,
+                                                            // countries: ["ae", "fr"],
+                                                            isLatLngRequired:
+                                                                true,
+                                                            getPlaceDetailWithLatLng:
+                                                                (prediction) {
+                                                              print(
+                                                                  "Latitude: ${prediction.lat}, Longitude: ${prediction.lng}");
+                                                              // You can use prediction.lat and prediction.lng here as needed
+                                                              // Example: Save them to variables or perform further actions
+                                                            },
+
+                                                            itemClick:
+                                                                (prediction) {
+                                                              widget
+                                                                  .controllerWidget
+                                                                  .text = prediction
+                                                                      .description ??
+                                                                  "";
+                                                              widget.controllerWidget
+                                                                      .selection =
+                                                                  TextSelection.fromPosition(
+                                                                      TextPosition(
+                                                                          offset:
+                                                                              prediction.description?.length ?? 0));
+                                                              field.didChange(
+                                                                  prediction
+                                                                      .description);
+                                                            },
+                                                            seperatedBuilder:
+                                                                const Divider(),
+
+                                                            // OPTIONAL// If you want to customize list view item builder
+                                                            itemBuilder:
+                                                                (context, index,
+                                                                    prediction) {
+                                                              return Padding(
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                        .symmetric(
+                                                                        vertical:
+                                                                            5),
+                                                                child:
+                                                                    Container(
+                                                                  color:
+                                                                      background,
+                                                                  child: Row(
+                                                                    children: [
+                                                                      const Icon(
+                                                                        Icons
+                                                                            .location_on,
+                                                                        size:
+                                                                            15,
+                                                                      ),
+                                                                      const SizedBox(
+                                                                        width:
+                                                                            7,
+                                                                      ),
+                                                                      Expanded(
+                                                                          child:
+                                                                              Text(
+                                                                        prediction.description ??
+                                                                            "",
+                                                                        style:
+                                                                            titleTextStyle,
+                                                                      ))
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              );
+                                                            },
+                                                            isCrossBtnShown:
+                                                                false,
+                                                            // default 600 ms ,
+                                                          ),
+                                                        ),
+                                                        if (field.hasError)
+                                                          Text(
+                                                            field.errorText!,
+                                                            style:
+                                                                const TextStyle(
+                                                                    color:
+                                                                        redColor),
+                                                          ),
+                                                      ],
+                                                    );
+                                                  }),
                                             ),
                                             const SizedBox(height: 20),
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.end,
-                                              children: [
-                                                CustomButtonSmall(
-                                                    height: 40,
-                                                    width:
-                                                        AppDimension.getWidth(
-                                                                context) *
-                                                            .3,
-                                                    btnHeading: "Submit",
-                                                    onTap: widget.alertOnTap ??
-                                                        () => print('object'))
-                                              ],
-                                            )
+                                            CustomButtonSmall(
+                                                height: 50,
+                                                loading: pickupstatus ==
+                                                        "Status.loading" &&
+                                                    isLoading,
+                                                width: double.infinity,
+                                                btnHeading: "Submit",
+                                                onTap: () {
+                                                  if (_formKey.currentState!
+                                                      .validate()) {
+                                                    setstate(() {
+                                                      isLoading = true;
+                                                    });
+                                                    print(
+                                                        'kjnkjcnvmncvcnvmncv');
+                                                    widget.alertOnTap?.call();
+                                                    setstate(() {
+                                                      isLoading = false;
+                                                    });
+                                                  }
+                                                })
                                           ],
                                         ),
-                                      ),
-                                    ],
-                                  ));
-                            },
-                          );
+                                      );
+                                    }),
+                                  ),
+                                );
+                              });
+                          // showDialog(
+                          //   context: context,
+                          //   builder: (context) {
+                          //     return StatefulBuilder(
+                          //       builder: (BuildContext context,
+                          //           StateSetter setState) {
+                          //         String status = context
+                          //             .watch<
+                          //                 AddPickUpLocationPackageViewModel>()
+                          //             .addPickUpLocationPackage
+                          //             .status
+                          //             .toString();
+                          //         return SingleChildScrollView(
+                          //             physics:
+                          //                 const NeverScrollableScrollPhysics(),
+                          //             child: Column(
+                          //               children: [
+                          //                 const SizedBox(height: 150),
+                          //                 CustomAlertBox(
+                          //                   heading: "Add PickUp Location",
+                          //                   height: AppDimension.getHeight(
+                          //                           context) /
+                          //                       3.4,
+                          //                   widgetReq: true,
+                          //                   crossIcon: true,
+                          //                   crossOnTap: () {
+                          //                     widget.controllerWidget.clear();
+                          //                     context.pop(context);
+                          //                   },
+                          //                   child: Column(
+                          //                     crossAxisAlignment:
+                          //                         CrossAxisAlignment.start,
+                          //                     children: [
+                          //                       Text.rich(TextSpan(children: [
+                          //                         TextSpan(
+                          //                             text:
+                          //                                 'Plz Add Pickup Location',
+                          //                             style: titleTextStyle),
+                          //                         const TextSpan(
+                          //                             text: ' *',
+                          //                             style: TextStyle(
+                          //                                 color: redColor))
+                          //                       ])),
+                          //                       const SizedBox(height: 5),
+                          //                       Form(
+                          //                         key: _formKey,
+                          //                         autovalidateMode:
+                          //                             AutovalidateMode
+                          //                                 .onUserInteraction,
+                          //                         child: FormField<String>(
+                          //                             autovalidateMode:
+                          //                                 AutovalidateMode
+                          //                                     .onUserInteraction,
+                          //                             validator: (value) {
+                          //                               if (widget
+                          //                                   .controllerWidget
+                          //                                   .text
+                          //                                   .isEmpty) {
+                          //                                 return '  Please select a location';
+                          //                               }
+                          //                               return null;
+                          //                             },
+                          //                             builder: (FormFieldState<
+                          //                                     String>
+                          //                                 field) {
+                          //                               return Column(
+                          //                                 crossAxisAlignment:
+                          //                                     CrossAxisAlignment
+                          //                                         .start,
+                          //                                 children: [
+                          //                                   Container(
+                          //                                     padding:
+                          //                                         const EdgeInsets
+                          //                                             .symmetric(
+                          //                                             horizontal:
+                          //                                                 0),
+                          //                                     height: 50,
+                          //                                     child:
+                          //                                         GooglePlaceAutoCompleteTextField(
+                          //                                       textEditingController:
+                          //                                           widget
+                          //                                               .controllerWidget,
+
+                          //                                       boxDecoration: BoxDecoration(
+                          //                                           color:
+                          //                                               background,
+                          //                                           borderRadius:
+                          //                                               BorderRadius.circular(
+                          //                                                   5),
+                          //                                           border: Border.all(
+                          //                                               color: naturalGreyColor
+                          //                                                   .withOpacity(0.3))),
+                          //                                       googleAPIKey:
+                          //                                           "AIzaSyADRdiTbSYUR8oc6-ryM1F1NDNjkHDr0Yo",
+                          //                                       inputDecoration:
+                          //                                           InputDecoration(
+                          //                                         contentPadding: const EdgeInsets
+                          //                                             .symmetric(
+                          //                                             horizontal:
+                          //                                                 5,
+                          //                                             vertical:
+                          //                                                 0),
+                          //                                         isDense: true,
+                          //                                         hintText:
+                          //                                             "Search your location",
+                          //                                         border: const OutlineInputBorder(
+                          //                                             borderSide:
+                          //                                                 BorderSide
+                          //                                                     .none),
+                          //                                         hintStyle:
+                          //                                             GoogleFonts
+                          //                                                 .lato(
+                          //                                           color:
+                          //                                               greyColor1,
+                          //                                           fontSize:
+                          //                                               16,
+                          //                                           fontWeight:
+                          //                                               FontWeight
+                          //                                                   .w600,
+                          //                                         ),
+                          //                                         filled: true,
+                          //                                         fillColor:
+                          //                                             background,
+                          //                                         disabledBorder: const OutlineInputBorder(
+                          //                                             borderRadius:
+                          //                                                 BorderRadius.all(Radius.circular(
+                          //                                                     5)),
+                          //                                             borderSide:
+                          //                                                 BorderSide
+                          //                                                     .none),
+                          //                                       ),
+                          //                                       textStyle:
+                          //                                           titleTextStyle,
+                          //                                       debounceTime:
+                          //                                           400,
+                          //                                       // countries: ["ae", "fr"],
+                          //                                       isLatLngRequired:
+                          //                                           true,
+                          //                                       getPlaceDetailWithLatLng:
+                          //                                           (prediction) {
+                          //                                         print(
+                          //                                             "Latitude: ${prediction.lat}, Longitude: ${prediction.lng}");
+                          //                                         // You can use prediction.lat and prediction.lng here as needed
+                          //                                         // Example: Save them to variables or perform further actions
+                          //                                       },
+
+                          //                                       itemClick:
+                          //                                           (prediction) {
+                          //                                         widget.controllerWidget
+                          //                                                 .text =
+                          //                                             prediction
+                          //                                                     .description ??
+                          //                                                 "";
+                          //                                         widget.controllerWidget
+                          //                                                 .selection =
+                          //                                             TextSelection.fromPosition(TextPosition(
+                          //                                                 offset:
+                          //                                                     prediction.description?.length ?? 0));
+                          //                                         field.didChange(
+                          //                                             prediction
+                          //                                                 .description);
+                          //                                       },
+                          //                                       seperatedBuilder:
+                          //                                           const Divider(),
+
+                          //                                       // OPTIONAL// If you want to customize list view item builder
+                          //                                       itemBuilder:
+                          //                                           (context,
+                          //                                               index,
+                          //                                               prediction) {
+                          //                                         return Padding(
+                          //                                           padding: const EdgeInsets
+                          //                                               .symmetric(
+                          //                                               vertical:
+                          //                                                   5),
+                          //                                           child:
+                          //                                               Container(
+                          //                                             color:
+                          //                                                 background,
+                          //                                             child:
+                          //                                                 Row(
+                          //                                               children: [
+                          //                                                 const Icon(
+                          //                                                   Icons.location_on,
+                          //                                                   size:
+                          //                                                       15,
+                          //                                                 ),
+                          //                                                 const SizedBox(
+                          //                                                   width:
+                          //                                                       7,
+                          //                                                 ),
+                          //                                                 Expanded(
+                          //                                                     child: Text(
+                          //                                                   prediction.description ??
+                          //                                                       "",
+                          //                                                   style:
+                          //                                                       titleTextStyle,
+                          //                                                 ))
+                          //                                               ],
+                          //                                             ),
+                          //                                           ),
+                          //                                         );
+                          //                                       },
+                          //                                       isCrossBtnShown:
+                          //                                           false,
+                          //                                       // default 600 ms ,
+                          //                                     ),
+                          //                                   ),
+                          //                                   if (field.hasError)
+                          //                                     Text(
+                          //                                       field
+                          //                                           .errorText!,
+                          //                                       style: const TextStyle(
+                          //                                           color:
+                          //                                               redColor),
+                          //                                     ),
+                          //                                 ],
+                          //                               );
+                          //                             }),
+                          //                       ),
+                          //                       const SizedBox(height: 20),
+                          //                       Row(
+                          //                         mainAxisAlignment:
+                          //                             MainAxisAlignment.end,
+                          //                         children: [
+                          //                           CustomButtonSmall(
+                          //                               height: 40,
+                          //                               loading: status ==
+                          //                                   "Status.loading",
+                          //                               width: AppDimension
+                          //                                       .getWidth(
+                          //                                           context) *
+                          //                                   .3,
+                          //                               btnHeading: "Submit",
+                          //                               onTap: () {
+                          //                                 if (_formKey
+                          //                                     .currentState!
+                          //                                     .validate()) {
+                          //                                   print(
+                          //                                       'kjnkjcnvmncvcnvmncv');
+                          //                                   widget.alertOnTap
+                          //                                       ?.call();
+                          //                                 }
+                          //                               })
+                          //                         ],
+                          //                       )
+                          //                     ],
+                          //                   ),
+                          //                 ),
+                          //               ],
+                          //             ));
+                          //       },
+                          //     );
+                          //   },
+                          // );
                         },
                       )
                     : const SizedBox()
@@ -975,7 +1560,7 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
             textColor: textColor),
         const SizedBox(height: 10),
         CommonContainer(
-            height: 150,
+            height: 200,
             elevation: 0,
             width: double.infinity,
             borderRadius: BorderRadius.circular(5),
@@ -1331,7 +1916,7 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
           ),
         ),
         Padding(
-          padding: EdgeInsets.symmetric(vertical: 10),
+          padding: const EdgeInsets.symmetric(vertical: 10),
           child: Column(
             children: [
               const CustomTextWidget(
@@ -1535,14 +2120,31 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
                 ? CustomButtonSmall(
                     width: 120,
                     height: 40,
-                    btnHeading: 'Create Issue',
+                    btnHeading: 'Raised Issue',
                     onTap: () {
-                      showDialog(
+                      showModalBottomSheet(
                         context: context,
+                        isDismissible: false,
+                        backgroundColor: background,
+                        isScrollControlled: true,
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.vertical(
+                            top: Radius.circular(10),
+                          ),
+                        ),
                         builder: (BuildContext context) {
-                          return RaiseIssueDialog(
-                            bookingId: widget.id,
-                            bookingType: 'PACKAGE_BOOKING',
+                          return Padding(
+                            padding: EdgeInsets.only(
+                                bottom:
+                                    MediaQuery.of(context).viewInsets.bottom),
+                            child: SingleChildScrollView(child: StatefulBuilder(
+                                builder: (BuildContext context,
+                                    StateSetter setstate) {
+                              return RaiseIssueDialog(
+                                bookingId: widget.id,
+                                bookingType: 'PACKAGE_BOOKING',
+                              );
+                            })),
                           );
                         },
                       );

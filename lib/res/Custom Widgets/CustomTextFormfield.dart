@@ -16,6 +16,7 @@ class Customtextformfield extends StatefulWidget {
   final String? obscuringCharacter;
   final TextInputType? keyboardType;
   final TextAlignVertical? textAlignVertical;
+  final bool? enableInteractiveSelection;
   final bool? enabled;
   final bool? prefixiconvisible;
   final Widget? prefixIcon;
@@ -41,6 +42,7 @@ class Customtextformfield extends StatefulWidget {
       this.textAlignVertical,
       this.prefixiconvisible,
       this.prefixIcon,
+      this.enableInteractiveSelection,
       this.img,
       this.keyboardType,
       this.suffixIcons,
@@ -65,6 +67,7 @@ class _CustomtextformfieldState extends State<Customtextformfield> {
       width: widget.width,
       child: TextFormField(
         autovalidateMode: AutovalidateMode.onUserInteraction,
+        enableInteractiveSelection: widget.enableInteractiveSelection,
         focusNode: widget.focusNode,
         readOnly: widget.readOnly ?? false,
         obscureText: widget.obscureText ?? false,
@@ -81,6 +84,7 @@ class _CustomtextformfieldState extends State<Customtextformfield> {
         keyboardType: widget.keyboardType,
         enabled: widget.enabled,
         decoration: InputDecoration(
+          errorMaxLines: 2,
           errorText: widget.errorText,
           prefixIcon: widget.prefixiconvisible == true
               ? Padding(
@@ -136,6 +140,7 @@ class _CustomtextformfieldState extends State<Customtextformfield> {
               // width: 2.0,
             ),
           ),
+
           errorStyle: const TextStyle(
             color: redColor, // Change error text color
             fontSize: 13, // Adjust error text size if needed

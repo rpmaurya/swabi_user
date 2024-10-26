@@ -62,9 +62,10 @@ class _registration_screenState extends State<registration_screen> {
         r'x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])';
     final regex = RegExp(pattern);
     if (value == null || value.isEmpty) {
-      return 'Enter your email';
+      // return 'Please add email';
+      return 'Please enter a valid email address';
     } else if (!regex.hasMatch(value)) {
-      return 'Enter a valid email address';
+      return 'Please enter a valid email address';
     }
     return null;
   }
@@ -133,15 +134,15 @@ class _registration_screenState extends State<registration_screen> {
                     Customtextformfield(
                       focusNode: firstNameFocus,
                       controller: controller[0],
-                      inputFormatters: [
-                        FilteringTextInputFormatter.allow(RegExp("[a-zA-Z]")),
-                      ],
+                      // inputFormatters: [
+                      //   FilteringTextInputFormatter.allow(RegExp("[a-zA-Z]")),
+                      // ],
                       keyboardType: TextInputType.name,
                       fillColor: background,
-                      hintText: 'Enter Your first Name',
+                      hintText: 'Enter your first Name',
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Enter your first name';
+                          return 'Please enter first name';
                         }
                         return null;
                       },
@@ -152,14 +153,14 @@ class _registration_screenState extends State<registration_screen> {
                       focusNode: lastNameFocus,
                       controller: controller[1],
                       keyboardType: TextInputType.name,
-                      inputFormatters: [
-                        FilteringTextInputFormatter.allow(RegExp("[a-zA-Z]")),
-                      ],
+                      // inputFormatters: [
+                      //   FilteringTextInputFormatter.allow(RegExp("[a-zA-Z]")),
+                      // ],
                       fillColor: background,
-                      hintText: 'Enter Your last name',
+                      hintText: 'Enter your last name',
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Enter your last name';
+                          return 'Please enter last name';
                         }
                         return null;
                       },
@@ -215,7 +216,7 @@ class _registration_screenState extends State<registration_screen> {
                         autovalidateMode: AutovalidateMode.onUserInteraction,
                         validator: (value) {
                           if (controller[3].text.isEmpty) {
-                            return '  Please select a location';
+                            return 'Please enter address';
                           }
                           return null;
                         },
@@ -308,9 +309,12 @@ class _registration_screenState extends State<registration_screen> {
                                 ),
                               ),
                               if (field.hasError)
-                                Text(
-                                  field.errorText!,
-                                  style: TextStyle(color: redColor),
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 10),
+                                  child: Text(
+                                    field.errorText!,
+                                    style: TextStyle(color: redColor),
+                                  ),
                                 ),
                             ],
                           );
@@ -406,9 +410,10 @@ class _registration_screenState extends State<registration_screen> {
                     Customtextformfield(
                       focusNode: passwordFocus,
                       obscureText: obscurePassword,
+                      enableInteractiveSelection: false,
                       controller: controller[6],
                       fillColor: background,
-                      hintText: 'Enter Your Password',
+                      hintText: 'Enter your Password',
                       suffixIcons: IconButton(
                         icon: Icon(
                           obscurePassword
@@ -423,7 +428,7 @@ class _registration_screenState extends State<registration_screen> {
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Enter your password';
+                          return 'Please enter password';
                         } else {
                           return Validatorclass.validatePassword(value);
                         }
@@ -434,6 +439,7 @@ class _registration_screenState extends State<registration_screen> {
                     Customtextformfield(
                       focusNode: confPassFocus,
                       obscureText: obscureConfirmPassword,
+                      enableInteractiveSelection: false,
                       controller: controller[7],
                       fillColor: background,
                       suffixIcons: IconButton(
@@ -448,10 +454,10 @@ class _registration_screenState extends State<registration_screen> {
                           });
                         },
                       ),
-                      hintText: 'Enter Your Confirm Password',
+                      hintText: 'Enter your confirm Password',
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Enter your confirm password';
+                          return 'Please enter confirm password';
                         } else if (value != controller[6].text) {
                           return 'Password do not match';
                         } else {
@@ -504,7 +510,7 @@ class _registration_screenState extends State<registration_screen> {
                     const SizedBox(height: 10),
                     Login_SignUpBtn(
                       onTap: () => context.push("/login"),
-                      btnHeading: 'Login',
+                      btnHeading: 'Sign In',
                       sideHeading: 'Already have an account?',
                     ),
                     const SizedBox(height: 20),

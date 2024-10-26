@@ -75,12 +75,12 @@ class Custompaymentdetailscontainer extends StatelessWidget {
           const EdgeInsets.only(left: 10.0, right: 10.0, top: 5.0, bottom: 5.0),
       child: Row(
         children: [
-          Expanded(
-            flex: 2,
-            child: Text(
-              lable,
-              style: titleTextStyle,
-            ),
+          Text(
+            lable,
+            style: titleTextStyle,
+          ),
+          const SizedBox(
+            width: 10,
           ),
           Text(
             ':',
@@ -89,12 +89,9 @@ class Custompaymentdetailscontainer extends StatelessWidget {
           const SizedBox(
             width: 10,
           ),
-          Expanded(
-            flex: 3,
-            child: Text(
-              value,
-              style: titleTextStyle1,
-            ),
+          Text(
+            value,
+            style: titleTextStyle1,
           )
         ],
       ),

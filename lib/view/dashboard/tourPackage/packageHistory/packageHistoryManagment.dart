@@ -137,133 +137,141 @@ class _PackageHistoryManagementState extends State<PackageHistoryManagement>
         .status
         .toString();
     debugPrint('status $status');
-    return Scaffold(
-      appBar: const CustomAppBar(
-        heading: 'My Package History',
-      ),
-      body: Customtabbar(
-          controller: _tabController,
-          tabs: tabList,
-          sortVisiblty: true,
-          isVisible: isVisibleIcon,
-          onTap: (p0) {
-            setState(() {
-              currentPage = 0; // Reset pagination when tab changes
-              bookedHistory.clear(); // Clear the history
-              lastPage = false;
-            });
-            getPackageHistoryList();
-          },
-          onTapSort: () {
-            setState(() {
-              isVisibleIcon = !isVisibleIcon;
-              currentPage = 0; // Reset pagination when tab changes
-              bookedHistory.clear(); // Clear the history
-              lastPage = false;
-            });
+    // return Scaffold(
+    //   backgroundColor: bgGreyColor,
+    //   // appBar: const CustomAppBar(
+    //   //   heading: 'My Package History',
+    //   // ),
+    //   appBar: AppBar(
+    //     title: Text('data'),
+    //     backgroundColor: background,
+    //   ),
+    //   body:
+    return Customtabbar(
+        titleHeading: 'My Package History',
+        controller: _tabController,
+        tabs: tabList,
+        sortVisiblty: true,
+        isVisible: isVisibleIcon,
+        onTap: (p0) {
+          setState(() {
+            currentPage = 0; // Reset pagination when tab changes
+            bookedHistory.clear(); // Clear the history
+            lastPage = false;
+          });
+          getPackageHistoryList();
+        },
+        onTapSort: () {
+          setState(() {
+            isVisibleIcon = !isVisibleIcon;
+            currentPage = 0; // Reset pagination when tab changes
+            bookedHistory.clear(); // Clear the history
+            lastPage = false;
+          });
 
-            getPackageHistoryList();
-            print('njnkjnjknnm,');
-          },
-          viewchildren: List.generate(tabList.length, (index) {
-            return Consumer<GetPackageHistoryViewModel>(
-              builder: (context, viewModel, child) {
-                final response = viewModel.getBookedHistory;
+          getPackageHistoryList();
+          print('njnkjnjknnm,');
+        },
+        viewchildren: List.generate(tabList.length, (index) {
+          return Consumer<GetPackageHistoryViewModel>(
+            builder: (context, viewModel, child) {
+              final response = viewModel.getBookedHistory;
 
-                if (response.status.toString() == "Status.loading") {
-                  return const Center(
-                      child: CircularProgressIndicator(
-                    color: greenColor,
-                  ));
-                } else if (response.status.toString() == "Status.error") {
-                  return const Center(
-                      child: Text(
-                    'No Data',
-                    style: TextStyle(color: redColor),
-                  ));
-                } else if (response.status.toString() == "Status.completed") {
-                  final data = response.data?.data.content ?? [];
+              if (response.status.toString() == "Status.loading") {
+                return const Center(
+                    child: CircularProgressIndicator(
+                  color: greenColor,
+                ));
+              } else if (response.status.toString() == "Status.error") {
+                return const Center(
+                    child: Text(
+                  'No Data',
+                  style: TextStyle(color: redColor),
+                ));
+              } else if (response.status.toString() == "Status.completed") {
+                final data = response.data?.data.content ?? [];
 
-                  if (data.isEmpty && currentPage == 0) {
-                    // return const Center(child: Text('No Data Available'));
-                    return Center(
-                        child: Container(
-                            decoration: const BoxDecoration(),
-                            child: const Text(
-                              'No Data Found',
-                              style: TextStyle(
-                                  color: redColor, fontWeight: FontWeight.w600),
-                            )));
-                  }
-
-                  return ListView.builder(
-                    controller: _scrollController,
-                    itemCount: bookedHistory.length + (isLoadingMore ? 1 : 0),
-                    itemBuilder: (context, index) {
-                      if (index == bookedHistory.length) {
-                        return isLoadingMore
-                            ? const Center(
-                                child: CircularProgressIndicator(
-                                color: greenColor,
-                              ))
-                            : const SizedBox.shrink(); // Hide if not loading
-                      }
-
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 10),
-                        child: PackageHistoryContainer(
-                          status: bookedHistory[index].bookingStatus,
-                          pkgID: bookedHistory[index].packageBookingId,
-                          bookingDate: bookedHistory[index].bookingDate,
-                          members:
-                              bookedHistory[index].memberList.length.toString(),
-                          price: bookedHistory[index].totalPayableAmount,
-                          // price: bookedHistory[index]
-                          //             .discountAmount
-                          //             .toString()
-                          //             .isEmpty ||
-                          //         bookedHistory[index]
-                          //                 .discountAmount
-                          //                 .toString() ==
-                          //             '0'
-                          //     ? bookedHistory[index].totalAmount
-                          //     : bookedHistory[index].discountAmount,
-                          pkgName: bookedHistory[index].pkg.packageName,
-                          location: bookedHistory[index].pkg.country,
-                          imageList: bookedHistory[index]
-                              .pkg
-                              .packageActivities
-                              .expand((e) => e.activity.activityImageUrl)
-                              .toList(),
-                          loader: status == 'Status.loading' &&
-                              selectIndex == index,
-                          onTap: () {
-                            setState(() {
-                              selectIndex = index;
-                            });
-                            Provider.of<GetPackageHistoryDetailByIdViewModel>(
-                                    context,
-                                    listen: false)
-                                .fetchGetPackageHistoryDetailByIdViewModelApi(
-                                    context,
-                                    {
-                                      "packageBookingId":
-                                          bookedHistory[index].packageBookingId
-                                    },
-                                    widget.userID,
-                                    bookedHistory[index].packageBookingId);
-                          },
-                        ),
-                      );
-                    },
-                  );
+                if (data.isEmpty && currentPage == 0) {
+                  // return const Center(child: Text('No Data Available'));
+                  return Center(
+                      child: Container(
+                          decoration: const BoxDecoration(),
+                          child: const Text(
+                            'No Data Found',
+                            style: TextStyle(
+                                color: redColor, fontWeight: FontWeight.w600),
+                          )));
                 }
 
-                return const Center(child: Text('No data found'));
-              },
-            );
-          })),
-    );
+                return ListView.builder(
+                  controller: _scrollController,
+                  itemCount: bookedHistory.length + (isLoadingMore ? 1 : 0),
+                  itemBuilder: (context, index) {
+                    if (index == bookedHistory.length) {
+                      return isLoadingMore
+                          ? const Center(
+                              child: CircularProgressIndicator(
+                              color: greenColor,
+                            ))
+                          : const SizedBox.shrink(); // Hide if not loading
+                    }
+
+                    return Padding(
+                      padding: const EdgeInsets.only(
+                          bottom: 10, right: 10, left: 10),
+                      child: PackageHistoryContainer(
+                        status: bookedHistory[index].bookingStatus,
+                        pkgID: bookedHistory[index].packageBookingId,
+                        bookingDate: bookedHistory[index].bookingDate,
+                        members:
+                            bookedHistory[index].memberList.length.toString(),
+                        price: bookedHistory[index].totalPayableAmount,
+                        // price: bookedHistory[index]
+                        //             .discountAmount
+                        //             .toString()
+                        //             .isEmpty ||
+                        //         bookedHistory[index]
+                        //                 .discountAmount
+                        //                 .toString() ==
+                        //             '0'
+                        //     ? bookedHistory[index].totalAmount
+                        //     : bookedHistory[index].discountAmount,
+                        pkgName: bookedHistory[index].pkg.packageName,
+                        location: bookedHistory[index].pkg.country,
+                        imageList: bookedHistory[index]
+                            .pkg
+                            .packageActivities
+                            .expand((e) => e.activity.activityImageUrl)
+                            .toList(),
+                        loader:
+                            status == 'Status.loading' && selectIndex == index,
+                        onTap: () {
+                          setState(() {
+                            selectIndex = index;
+                          });
+                          Provider.of<GetPackageHistoryDetailByIdViewModel>(
+                                  context,
+                                  listen: false)
+                              .fetchGetPackageHistoryDetailByIdViewModelApi(
+                                  context,
+                                  {
+                                    "packageBookingId":
+                                        bookedHistory[index].packageBookingId
+                                  },
+                                  widget.userID,
+                                  bookedHistory[index].packageBookingId);
+                        },
+                      ),
+                    );
+                  },
+                );
+              }
+
+              return const Center(child: Text('No data found'));
+            },
+          );
+        }));
+    // );
   }
 }
 
@@ -301,97 +309,137 @@ class PackageHistoryContainer extends StatelessWidget {
       borderReq: true,
       child: Material(
         color: background,
-        child: InkWell(
-          // onTap: onTap,
-          child: Column(
-            children: [
-              SizedBox(
-                height: 180,
-                width: double.infinity,
-                child: MultiImageSlider(
-                  images: List.generate(
-                      imageList.length, (index) => imageList[index]),
-                ),
-                // child: Image.asset(tour,width: double.infinity,fit: BoxFit.fill,),
+        child: Column(
+          children: [
+            SizedBox(
+              height: 180,
+              width: double.infinity,
+              child: MultiImageSlider(
+                images: List.generate(
+                    imageList.length, (index) => imageList[index]),
               ),
-              Container(
-                height: 50,
-                // width: AppDimension.getWidth(context)* .5,
-                padding: const EdgeInsets.symmetric(horizontal: 5),
-                decoration: const BoxDecoration(
-                    border:
-                        Border(bottom: BorderSide(color: naturalGreyColor))),
-                child: Row(
-                  children: [
-                    const CustomTextWidget(
-                      content: "Package Name : ",
-                      fontWeight: FontWeight.w600,
-                      fontSize: 16,
+              // child: Image.asset(tour,width: double.infinity,fit: BoxFit.fill,),
+            ),
+            Container(
+              // height: 50,
+              // width: AppDimension.getWidth(context)* .5,
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              margin: EdgeInsets.only(bottom: 5, top: 10),
+              // decoration: const BoxDecoration(
+              //     border: Border(bottom: BorderSide(color: naturalGreyColor))),
+              child: Row(
+                children: [
+                  const CustomTextWidget(
+                    content: "Package Name : ",
+                    fontWeight: FontWeight.w600,
+                    fontSize: 16,
+                    textColor: textColor,
+                  ),
+                  SizedBox(
+                    width: AppDimension.getWidth(context) * .55,
+                    child: CustomText(
+                      content: pkgName,
+                      fontWeight: FontWeight.w400,
+                      fontSize: 15,
+                      align: TextAlign.start,
+                      textEllipsis: true,
+                      maxline: 1,
                       textColor: textColor,
                     ),
-                    SizedBox(
-                      width: AppDimension.getWidth(context) * .55,
-                      child: CustomText(
-                        content: pkgName,
-                        fontWeight: FontWeight.w400,
-                        fontSize: 15,
-                        align: TextAlign.start,
-                        textEllipsis: true,
-                        maxline: 1,
-                        textColor: textColor,
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-              Container(
-                height: 50,
-                padding: const EdgeInsets.symmetric(horizontal: 5),
-                decoration: const BoxDecoration(
-                    border:
-                        Border(bottom: BorderSide(color: naturalGreyColor))),
+            ),
+            Container(
+              // height: 50,
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              margin: EdgeInsets.only(bottom: 5),
+              // decoration: const BoxDecoration(
+              //     border: Border(bottom: BorderSide(color: naturalGreyColor))),
+              child: textTile(
+                  lable1: 'Booking Id',
+                  value1: pkgID,
+                  lable2: 'Status',
+                  value2: status),
+            ),
+            Container(
+                // height: 50,
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                margin: EdgeInsets.only(bottom: 5),
+                // decoration: const BoxDecoration(
+                //     border:
+                //         Border(bottom: BorderSide(color: naturalGreyColor))),
                 child: textTile(
-                    lable1: 'Booking Id',
-                    value1: pkgID,
-                    lable2: 'Status',
-                    value2: status),
-              ),
-              Container(
-                  height: 50,
-                  padding: const EdgeInsets.symmetric(horizontal: 5),
-                  decoration: const BoxDecoration(
-                      border:
-                          Border(bottom: BorderSide(color: naturalGreyColor))),
-                  child: textTile(
-                      lable1: 'Date',
-                      value1: bookingDate,
-                      lable2: "Member's",
-                      value2: members)),
-              Container(
-                  height: 50,
-                  padding: const EdgeInsets.symmetric(horizontal: 5),
-                  decoration: const BoxDecoration(
-                      border:
-                          Border(bottom: BorderSide(color: naturalGreyColor))),
-                  child: textTile(
-                      lable1: 'Price',
-                      value1: 'AED $price',
-                      lable2: 'Location',
-                      value2: location)),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Align(
-                  alignment: Alignment.centerRight,
-                  child: CustomButtonSmall(
+                    lable1: 'Date',
+                    value1: bookingDate,
+                    lable2: "Member's",
+                    value2: members)),
+            Container(
+                // height: 50,
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                margin: EdgeInsets.only(bottom: 5),
+                // decoration: const BoxDecoration(
+                //     border:
+                //         Border(bottom: BorderSide(color: naturalGreyColor))),
+                child: Center(
+                  child: _builtText(lable: 'Location', value: location),
+                )),
+            // Container(
+            //     height: 50,
+            //     padding: const EdgeInsets.symmetric(horizontal: 5),
+            //     decoration: const BoxDecoration(
+            //         border:
+            //             Border(bottom: BorderSide(color: naturalGreyColor))),
+            //     child: textTile(
+            //         lable1: 'Price',
+            //         value1: 'AED $price',
+            //         lable2: 'Location',
+            //         value2: location)),
+            // Padding(
+            //   padding: const EdgeInsets.all(5.0),
+            //   child: CustomButtonSmall(
+            //       loading: loader,
+            //       height: 40,
+            //       width: double.infinity,
+            //       btnHeading: 'View Details',
+            //       onTap: onTap),
+            // ),
+            Container(
+              // height: 50,
+              padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+              margin: EdgeInsets.all(5),
+              width: double.infinity,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(5),
+                  color: greyColor1.withOpacity(.1)),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  RichText(
+                      text: TextSpan(children: [
+                    TextSpan(
+                        text: "Price :",
+                        style: GoogleFonts.nunito(
+                            color: Colors.black,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w700)),
+                    TextSpan(
+                        text: " AED $price".toUpperCase(),
+                        style: GoogleFonts.nunito(
+                            color: Colors.black,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w700)),
+                  ])),
+                  CustomButtonSmall(
                       loading: loader,
                       height: 40,
                       width: 120,
                       btnHeading: 'View Details',
                       onTap: onTap),
-                ),
-              )
-            ],
-          ),
+                ],
+              ),
+            )
+          ],
         ),
       ),
     );

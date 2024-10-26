@@ -9,6 +9,7 @@ import 'package:flutter_cab/res/customAppBar_widget.dart';
 import 'package:flutter_cab/res/customContainer.dart';
 import 'package:flutter_cab/res/customTextWidget.dart';
 import 'package:flutter_cab/res/custom_mobileNumber.dart';
+import 'package:flutter_cab/utils/assets.dart';
 import 'package:flutter_cab/utils/color.dart';
 import 'package:flutter_cab/utils/dimensions.dart';
 import 'package:flutter_cab/utils/text_styles.dart';
@@ -51,6 +52,7 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
   List<TextEditingController> controller =
       List.generate(2, (index) => TextEditingController());
   final _formKey = GlobalKey<FormState>();
+  final _formCouponKey = GlobalKey<FormState>();
   TextEditingController nameController = TextEditingController();
   TextEditingController ageController = TextEditingController();
   TextEditingController genderController = TextEditingController();
@@ -166,173 +168,374 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
     return payAbleAmount == 0.0 || noAdultsPresent;
   }
 
+  void showBottomModal(
+      {required String title,
+      required Widget child,
+      required String btnHeading,
+      required void Function()? onTap}) {
+    showModalBottomSheet(
+      context: context,
+      isDismissible: false,
+      isScrollControlled: true,
+      backgroundColor: background,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(10),
+        ),
+      ),
+      builder: (context) {
+        return StatefulBuilder(
+            builder: (BuildContext context, StateSetter setstate) {
+          return Padding(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context)
+                  .viewInsets
+                  .bottom, // Adjust modal size when keyboard opens
+            ),
+            child: SingleChildScrollView(
+              physics: const NeverScrollableScrollPhysics(),
+              child: Container(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          title,
+                          style: buttonText,
+                        ),
+                        InkWell(
+                          onTap: () {
+                            context.pop();
+                          },
+                          child: Text(
+                            'X',
+                            style: buttonText,
+                          ),
+                        )
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    child,
+                    const SizedBox(height: 15),
+                    CustomButtonSmall(btnHeading: btnHeading, onTap: onTap)
+                  ],
+                ),
+              ),
+            ),
+          );
+        });
+      },
+    );
+  }
+
   /// Add memeber
   void _addMember(
       {required String title, required String ageUnit, required String type}) {
     nameController.text = '';
     ageController.text = '';
     genderController.text = '';
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return StatefulBuilder(
-            builder: (BuildContext context, StateSetter setstate) {
-          return SingleChildScrollView(
-            padding: const EdgeInsets.only(top: 70),
-            physics: const NeverScrollableScrollPhysics(),
-            child: AlertDialog(
-              backgroundColor: background,
-              surfaceTintColor: background,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10)),
-              title: CustomTextWidget(
-                  content: title, align: TextAlign.center, fontSize: 25),
-              content: Form(
-                key: _formKey,
-                // autovalidateMode: AutovalidateMode.disabled,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 5),
-                      child: Text.rich(TextSpan(children: [
-                        TextSpan(text: 'Name', style: titleTextStyle),
-                        TextSpan(text: ' *', style: TextStyle(color: redColor))
-                      ])),
-                    ),
-                    Customtextformfield(
-                      focusNode: focusNode1,
-                      controller: nameController,
-                      hintText: 'Enter Name',
-                      inputFormatters: [
-                        FilteringTextInputFormatter.allow(RegExp("[a-zA-Z]")),
-                      ],
-                      // errorText:
-                      //     validationMessage.isEmpty ? '' : validationMessage,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter name';
-                        }
-                        return null;
-                      },
-                      // onChanged: (p0) {
-                      //   if (p0 != '') {
-                      //     setstate(() {
-                      //       validationMessage = 'return error';
-                      //     });
-                      //   } else {
-                      //     validationMessage = '';
-                      //   }
-                      // },
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 5, top: 5),
-                      child: Text.rich(TextSpan(children: [
-                        TextSpan(text: 'Age', style: titleTextStyle),
-                        TextSpan(text: ' *', style: TextStyle(color: redColor))
-                      ])),
-                    ),
-                    Customtextformfield(
-                      focusNode: focusNode2,
-                      controller: ageController,
-                      keyboardType: TextInputType.number,
-                      hintText: 'Enter Age',
-                      validator: (value) {
-                        int age = int.tryParse(value ?? '')?.toInt() ?? 0;
-
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter age';
-                        } else if (type == 'Adult') {
-                          debugPrint('type of member1$type');
-                          if (age < 18 || age >= 100) {
-                            return 'Adult must be 18 Year or older';
-                          }
-                        } else if (type == 'Child') {
-                          print('type of member2$type');
-                          if (age <= 2 || age >= 18) {
-                            return 'Child must be under 2 to 18 Year';
-                          }
-                        } else if (type == 'Infant') {
-                          print('type of member3$type');
-                          if (age >= 24) {
-                            return 'Infant must be under 24 Month';
-                          }
-                        }
-                        return null;
-                      },
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 5, top: 5),
-                      child: Text.rich(TextSpan(children: [
-                        TextSpan(text: 'Gender', style: titleTextStyle),
-                        TextSpan(text: ' *', style: TextStyle(color: redColor))
-                      ])),
-                    ),
-                    CustomDropdownButton(
-                      controller: genderController,
-                      focusNode: focusNode3,
-                      itemsList: ['Male', 'Female'],
-                      onChanged: (value) {
-                        setState(() {
-                          genderController.text = value ?? '';
-                          print('validate gender ${genderController.text}');
-                        });
-                      },
-                      hintText: 'Select Gender',
-                      validator: (p0) {
-                        if (p0 == null || p0.isEmpty) {
-                          return 'Please select gender';
-                        }
-                        return null;
-                      },
-                    )
-                  ],
-                ),
+    showBottomModal(
+        title: title,
+        child: Form(
+          key: _formKey,
+          // autovalidateMode: AutovalidateMode.disabled,
+          child: Column(
+            // mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(bottom: 5),
+                child: Text.rich(TextSpan(children: [
+                  TextSpan(text: 'Name', style: titleTextStyle),
+                  const TextSpan(text: ' *', style: TextStyle(color: redColor))
+                ])),
               ),
-              actions: [
-                CustomButtonSmall(
-                  width: 100,
-                  btnHeading: "CANCEL",
-                  onTap: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-                CustomButtonSmall(
-                  width: 100,
-                  onTap: () {
-                    if (_formKey.currentState!.validate()) {
-                      print('succes');
-                      setState(() {
-                        members.add({
-                          'name': nameController.text,
-                          'age': ageController.text,
-                          'gender': genderController.text,
-                          'ageUnit': ageUnit,
-                          'type': type
-                        });
-                        // updateButtonStates();
-                      });
-                      type == 'Infant' ? null : _addAmount();
-                      ageUnit = '';
-                      type = '';
-                      nameController.text = '';
-                      ageController.text = '';
-                      genderController.text = '';
+              Customtextformfield(
+                focusNode: focusNode1,
+                controller: nameController,
+                hintText: 'Enter Name',
+                // inputFormatters: [
+                //   FilteringTextInputFormatter.allow(RegExp("[a-zA-Z]")),
+                // ],
+                // errorText:
+                //     validationMessage.isEmpty ? '' : validationMessage,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter name';
+                  }
+                  return null;
+                },
+                // onChanged: (p0) {
+                //   if (p0 != '') {
+                //     setstate(() {
+                //       validationMessage = 'return error';
+                //     });
+                //   } else {
+                //     validationMessage = '';
+                //   }
+                // },
+              ),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 5, top: 5),
+                child: Text.rich(TextSpan(children: [
+                  TextSpan(text: 'Age', style: titleTextStyle),
+                  TextSpan(
+                      text: type == 'Infant' ? '(Month)' : '(Year)',
+                      style: titleTextStyle),
+                  const TextSpan(text: ' *', style: TextStyle(color: redColor))
+                ])),
+              ),
+              Customtextformfield(
+                focusNode: focusNode2,
+                controller: ageController,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                keyboardType: TextInputType.number,
+                hintText: 'Enter Age',
+                validator: (value) {
+                  int age = int.tryParse(value ?? '')?.toInt() ?? 0;
 
-                      Navigator.of(context).pop();
-                    } else {
-                      print('jhhjhjcgnxbcnbxcnxbcxjc');
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter age';
+                  } else if (type == 'Adult') {
+                    debugPrint('type of member1$type');
+                    if (age < 18 || age >= 100) {
+                      return 'Adult must be 18 years or older';
                     }
-                  },
-                  btnHeading: "ADD",
-                ),
-              ],
-            ),
-          );
+                  } else if (type == 'Child') {
+                    print('type of member2$type');
+                    if (age <= 2 || age >= 18) {
+                      return 'Child must be between 2 and 18 years old';
+                    }
+                  } else if (type == 'Infant') {
+                    print('type of member3$type');
+                    if (age >= 24) {
+                      return 'Infant must be under 24 months';
+                    }
+                  }
+                  return null;
+                },
+              ),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 5, top: 5),
+                child: Text.rich(TextSpan(children: [
+                  TextSpan(text: 'Gender', style: titleTextStyle),
+                  const TextSpan(text: ' *', style: TextStyle(color: redColor))
+                ])),
+              ),
+              CustomDropdownButton(
+                controller: genderController,
+                focusNode: focusNode3,
+                itemsList: const ['Male', 'Female'],
+                onChanged: (value) {
+                  setState(() {
+                    genderController.text = value ?? '';
+                    print('validate gender ${genderController.text}');
+                  });
+                },
+                hintText: 'Select Gender',
+                validator: (p0) {
+                  if (p0 == null || p0.isEmpty) {
+                    return 'Please select gender';
+                  }
+                  return null;
+                },
+              )
+            ],
+          ),
+        ),
+        btnHeading: 'ADD',
+        onTap: () {
+          if (_formKey.currentState!.validate()) {
+            print('succes');
+            setState(() {
+              members.add({
+                'name': nameController.text,
+                'age': ageController.text,
+                'gender': genderController.text,
+                'ageUnit': ageUnit,
+                'type': type
+              });
+              // updateButtonStates();
+            });
+            type == 'Infant' ? null : _addAmount();
+            ageUnit = '';
+            type = '';
+            nameController.text = '';
+            ageController.text = '';
+            genderController.text = '';
+
+            Navigator.of(context).pop();
+          } else {
+            print('jhhjhjcgnxbcnbxcnxbcxjc');
+          }
         });
-      },
-    );
+    // showDialog(
+    //   context: context,
+    //   builder: (BuildContext context) {
+    //     return StatefulBuilder(
+    //         builder: (BuildContext context, StateSetter setstate) {
+    //       return SingleChildScrollView(
+    //         padding: const EdgeInsets.only(top: 70),
+    //         physics: const NeverScrollableScrollPhysics(),
+    //         child: AlertDialog(
+    //           backgroundColor: background,
+    //           surfaceTintColor: background,
+    //           shape: RoundedRectangleBorder(
+    //               borderRadius: BorderRadius.circular(10)),
+    //           title: CustomTextWidget(
+    //               content: title, align: TextAlign.center, fontSize: 25),
+    //           content: Form(
+    //             key: _formKey,
+    //             // autovalidateMode: AutovalidateMode.disabled,
+    //             child: Column(
+    //               mainAxisSize: MainAxisSize.min,
+    //               crossAxisAlignment: CrossAxisAlignment.start,
+    //               children: [
+    //                 Padding(
+    //                   padding: const EdgeInsets.only(bottom: 5),
+    //                   child: Text.rich(TextSpan(children: [
+    //                     TextSpan(text: 'Name', style: titleTextStyle),
+    //                     TextSpan(text: ' *', style: TextStyle(color: redColor))
+    //                   ])),
+    //                 ),
+    //                 Customtextformfield(
+    //                   focusNode: focusNode1,
+    //                   controller: nameController,
+    //                   hintText: 'Enter Name',
+    //                   // inputFormatters: [
+    //                   //   FilteringTextInputFormatter.allow(RegExp("[a-zA-Z]")),
+    //                   // ],
+    //                   // errorText:
+    //                   //     validationMessage.isEmpty ? '' : validationMessage,
+    //                   validator: (value) {
+    //                     if (value == null || value.isEmpty) {
+    //                       return 'Please enter name';
+    //                     }
+    //                     return null;
+    //                   },
+    //                   // onChanged: (p0) {
+    //                   //   if (p0 != '') {
+    //                   //     setstate(() {
+    //                   //       validationMessage = 'return error';
+    //                   //     });
+    //                   //   } else {
+    //                   //     validationMessage = '';
+    //                   //   }
+    //                   // },
+    //                 ),
+    //                 Padding(
+    //                   padding: const EdgeInsets.only(bottom: 5, top: 5),
+    //                   child: Text.rich(TextSpan(children: [
+    //                     TextSpan(text: 'Age', style: titleTextStyle),
+    //                     TextSpan(
+    //                         text: type == 'Infant' ? '(Month)' : '(Year)',
+    //                         style: titleTextStyle),
+    //                     TextSpan(text: ' *', style: TextStyle(color: redColor))
+    //                   ])),
+    //                 ),
+    //                 Customtextformfield(
+    //                   focusNode: focusNode2,
+    //                   controller: ageController,
+    //                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+    //                   keyboardType: TextInputType.number,
+    //                   hintText: 'Enter Age',
+    //                   validator: (value) {
+    //                     int age = int.tryParse(value ?? '')?.toInt() ?? 0;
+
+    //                     if (value == null || value.isEmpty) {
+    //                       return 'Please enter age';
+    //                     } else if (type == 'Adult') {
+    //                       debugPrint('type of member1$type');
+    //                       if (age < 18 || age >= 100) {
+    //                         return 'Adult must be 18 years or older';
+    //                       }
+    //                     } else if (type == 'Child') {
+    //                       print('type of member2$type');
+    //                       if (age <= 2 || age >= 18) {
+    //                         return 'Child must be between 2 and 18 years old';
+    //                       }
+    //                     } else if (type == 'Infant') {
+    //                       print('type of member3$type');
+    //                       if (age >= 24) {
+    //                         return 'Infant must be under 24 months';
+    //                       }
+    //                     }
+    //                     return null;
+    //                   },
+    //                 ),
+    //                 Padding(
+    //                   padding: const EdgeInsets.only(bottom: 5, top: 5),
+    //                   child: Text.rich(TextSpan(children: [
+    //                     TextSpan(text: 'Gender', style: titleTextStyle),
+    //                     TextSpan(text: ' *', style: TextStyle(color: redColor))
+    //                   ])),
+    //                 ),
+    //                 CustomDropdownButton(
+    //                   controller: genderController,
+    //                   focusNode: focusNode3,
+    //                   itemsList: ['Male', 'Female'],
+    //                   onChanged: (value) {
+    //                     setState(() {
+    //                       genderController.text = value ?? '';
+    //                       print('validate gender ${genderController.text}');
+    //                     });
+    //                   },
+    //                   hintText: 'Select Gender',
+    //                   validator: (p0) {
+    //                     if (p0 == null || p0.isEmpty) {
+    //                       return 'Please select gender';
+    //                     }
+    //                     return null;
+    //                   },
+    //                 )
+    //               ],
+    //             ),
+    //           ),
+    //           actions: [
+    //             CustomButtonSmall(
+    //               width: 100,
+    //               btnHeading: "CANCEL",
+    //               onTap: () {
+    //                 Navigator.of(context).pop();
+    //               },
+    //             ),
+    //             CustomButtonSmall(
+    //               width: 100,
+    //               onTap: () {
+    //                 if (_formKey.currentState!.validate()) {
+    //                   print('succes');
+    //                   setState(() {
+    //                     members.add({
+    //                       'name': nameController.text,
+    //                       'age': ageController.text,
+    //                       'gender': genderController.text,
+    //                       'ageUnit': ageUnit,
+    //                       'type': type
+    //                     });
+    //                     // updateButtonStates();
+    //                   });
+    //                   type == 'Infant' ? null : _addAmount();
+    //                   ageUnit = '';
+    //                   type = '';
+    //                   nameController.text = '';
+    //                   ageController.text = '';
+    //                   genderController.text = '';
+
+    //                   Navigator.of(context).pop();
+    //                 } else {
+    //                   print('jhhjhjcgnxbcnbxcnxbcxjc');
+    //                 }
+    //               },
+    //               btnHeading: "ADD",
+    //             ),
+    //           ],
+    //         ),
+    //       );
+    //     });
+    //   },
+    // );
   }
 
   /// Update memeber
@@ -344,148 +547,264 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
     nameController.text = members[index]['name'];
     ageController.text = members[index]['age'];
     genderController.text = members[index]['gender'];
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return SingleChildScrollView(
-          padding: const EdgeInsets.only(top: 70),
-          physics: const NeverScrollableScrollPhysics(),
-          child: AlertDialog(
-            backgroundColor: background,
-            surfaceTintColor: background,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-            title: CustomTextWidget(
-                content: title, align: TextAlign.center, fontSize: 25),
-            content: Form(
-              key: _formKey,
-              autovalidateMode: AutovalidateMode.onUserInteraction,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 5),
-                    child: Text.rich(TextSpan(children: [
-                      TextSpan(text: 'Name', style: titleTextStyle),
-                      TextSpan(text: ' *', style: TextStyle(color: redColor))
-                    ])),
-                  ),
-                  Customtextformfield(
-                    focusNode: focusNode1,
-                    controller: nameController,
-                    hintText: 'Enter Name',
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(RegExp("[a-zA-Z]")),
-                    ],
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter name';
-                      }
-                      return null;
-                    },
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 5, top: 5),
-                    child: Text.rich(TextSpan(children: [
-                      TextSpan(text: 'Age', style: titleTextStyle),
-                      TextSpan(text: ' *', style: TextStyle(color: redColor))
-                    ])),
-                  ),
-                  Customtextformfield(
-                    focusNode: focusNode2,
-                    controller: ageController,
-                    keyboardType: TextInputType.number,
-                    hintText: 'Enter Age',
-                    validator: (value) {
-                      int age = int.tryParse(value ?? '')?.toInt() ?? 0;
-
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter age';
-                      } else if (type == 'Adult') {
-                        print('type of member1$type');
-                        if (age <= 18 || age >= 100) {
-                          return 'Adult must be 18 Year or older';
-                        }
-                      } else if (type == 'Child') {
-                        print('type of member2$type');
-                        if (age >= 18) {
-                          return 'Child must be under 18 Year';
-                        }
-                      } else if (type == 'Infant') {
-                        print('type of member3$type');
-                        if (age >= 24) {
-                          return 'Infant must be under 24 Month';
-                        }
-                      }
-                      return null;
-                    },
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 5, top: 5),
-                    child: Text.rich(TextSpan(children: [
-                      TextSpan(text: 'Gender', style: titleTextStyle),
-                      TextSpan(text: ' *', style: TextStyle(color: redColor))
-                    ])),
-                  ),
-                  CustomDropdownButton(
-                    controller: genderController,
-                    focusNode: focusNode3,
-                    itemsList: ['Male', 'Female'],
-                    onChanged: (value) {
-                      setState(() {
-                        genderController.text = value ?? '';
-                      });
-                    },
-                    hintText: 'Select Gender',
-                    // validator: (p0) {
-                    //   if (p0 == null || p0.isEmpty) {
-                    //     return 'Please select gender';
-                    //   }
-                    //   return null;
-                    // },
-                  )
-                ],
+    showBottomModal(
+        title: title,
+        child: Form(
+          key: _formKey,
+          autovalidateMode: AutovalidateMode.onUserInteraction,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(bottom: 5),
+                child: Text.rich(TextSpan(children: [
+                  TextSpan(text: 'Name', style: titleTextStyle),
+                  const TextSpan(text: ' *', style: TextStyle(color: redColor))
+                ])),
               ),
-            ),
-            actions: [
-              CustomButtonSmall(
-                width: 100,
-                btnHeading: "CANCEL",
-                onTap: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-              CustomButtonSmall(
-                width: 100,
-                onTap: () {
-                  if (_formKey.currentState!.validate()) {
-                    print('succes');
-                    setState(() {
-                      members[index] = {
-                        'name': nameController.text,
-                        'age': ageController.text,
-                        'gender': genderController.text,
-                        'ageUnit': ageUnit,
-                        'type': type
-                      };
-                      // updateButtonStates();
-                    });
-                    // type == 'Infant' ? null : _subAmount();
-                    Navigator.of(context).pop();
+              Customtextformfield(
+                focusNode: focusNode1,
+                controller: nameController,
+                hintText: 'Enter Name',
+                // inputFormatters: [
+                //   FilteringTextInputFormatter.allow(RegExp("[a-zA-Z]")),
+                // ],
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter name';
                   }
+                  return null;
                 },
-                btnHeading: "ADD",
               ),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 5, top: 5),
+                child: Text.rich(TextSpan(children: [
+                  TextSpan(text: 'Age', style: titleTextStyle),
+                  const TextSpan(text: ' *', style: TextStyle(color: redColor))
+                ])),
+              ),
+              Customtextformfield(
+                focusNode: focusNode2,
+                controller: ageController,
+                keyboardType: TextInputType.number,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                hintText: 'Enter Age',
+                validator: (value) {
+                  int age = int.tryParse(value ?? '')?.toInt() ?? 0;
+
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter age';
+                  } else if (type == 'Adult') {
+                    print('type of member1$type');
+                    if (age <= 18 || age >= 100) {
+                      return 'Adult must be 18 Year or older';
+                    }
+                  } else if (type == 'Child') {
+                    print('type of member2$type');
+                    if (age >= 18) {
+                      return 'Child must be under 18 Year';
+                    }
+                  } else if (type == 'Infant') {
+                    print('type of member3$type');
+                    if (age >= 24) {
+                      return 'Infant must be under 24 Month';
+                    }
+                  }
+                  return null;
+                },
+              ),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 5, top: 5),
+                child: Text.rich(TextSpan(children: [
+                  TextSpan(text: 'Gender', style: titleTextStyle),
+                  const TextSpan(text: ' *', style: TextStyle(color: redColor))
+                ])),
+              ),
+              CustomDropdownButton(
+                controller: genderController,
+                focusNode: focusNode3,
+                itemsList: const ['Male', 'Female'],
+                onChanged: (value) {
+                  setState(() {
+                    genderController.text = value ?? '';
+                  });
+                },
+                hintText: 'Select Gender',
+                // validator: (p0) {
+                //   if (p0 == null || p0.isEmpty) {
+                //     return 'Please select gender';
+                //   }
+                //   return null;
+                // },
+              )
             ],
           ),
-        );
-      },
-    );
+        ),
+        btnHeading: "EDIT",
+        onTap: () {
+          if (_formKey.currentState!.validate()) {
+            print('succes');
+            setState(() {
+              members[index] = {
+                'name': nameController.text,
+                'age': ageController.text,
+                'gender': genderController.text,
+                'ageUnit': ageUnit,
+                'type': type
+              };
+              // updateButtonStates();
+            });
+            // type == 'Infant' ? null : _subAmount();
+            Navigator.of(context).pop();
+          }
+        });
+    // showDialog(
+    //   context: context,
+    //   builder: (BuildContext context) {
+    //     return SingleChildScrollView(
+    //       padding: const EdgeInsets.only(top: 70),
+    //       physics: const NeverScrollableScrollPhysics(),
+    //       child: AlertDialog(
+    //         backgroundColor: background,
+    //         surfaceTintColor: background,
+    //         shape:
+    //             RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+    //         title: CustomTextWidget(
+    //             content: title, align: TextAlign.center, fontSize: 25),
+    //         content: Form(
+    //           key: _formKey,
+    //           autovalidateMode: AutovalidateMode.onUserInteraction,
+    //           child: Column(
+    //             mainAxisSize: MainAxisSize.min,
+    //             crossAxisAlignment: CrossAxisAlignment.start,
+    //             children: [
+    //               Padding(
+    //                 padding: const EdgeInsets.only(bottom: 5),
+    //                 child: Text.rich(TextSpan(children: [
+    //                   TextSpan(text: 'Name', style: titleTextStyle),
+    //                   const TextSpan(
+    //                       text: ' *', style: TextStyle(color: redColor))
+    //                 ])),
+    //               ),
+    //               Customtextformfield(
+    //                 focusNode: focusNode1,
+    //                 controller: nameController,
+    //                 hintText: 'Enter Name',
+    //                 // inputFormatters: [
+    //                 //   FilteringTextInputFormatter.allow(RegExp("[a-zA-Z]")),
+    //                 // ],
+    //                 validator: (value) {
+    //                   if (value == null || value.isEmpty) {
+    //                     return 'Please enter name';
+    //                   }
+    //                   return null;
+    //                 },
+    //               ),
+    //               Padding(
+    //                 padding: const EdgeInsets.only(bottom: 5, top: 5),
+    //                 child: Text.rich(TextSpan(children: [
+    //                   TextSpan(text: 'Age', style: titleTextStyle),
+    //                   const TextSpan(
+    //                       text: ' *', style: TextStyle(color: redColor))
+    //                 ])),
+    //               ),
+    //               Customtextformfield(
+    //                 focusNode: focusNode2,
+    //                 controller: ageController,
+    //                 keyboardType: TextInputType.number,
+    //                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+    //                 hintText: 'Enter Age',
+    //                 validator: (value) {
+    //                   int age = int.tryParse(value ?? '')?.toInt() ?? 0;
+
+    //                   if (value == null || value.isEmpty) {
+    //                     return 'Please enter age';
+    //                   } else if (type == 'Adult') {
+    //                     print('type of member1$type');
+    //                     if (age <= 18 || age >= 100) {
+    //                       return 'Adult must be 18 Year or older';
+    //                     }
+    //                   } else if (type == 'Child') {
+    //                     print('type of member2$type');
+    //                     if (age >= 18) {
+    //                       return 'Child must be under 18 Year';
+    //                     }
+    //                   } else if (type == 'Infant') {
+    //                     print('type of member3$type');
+    //                     if (age >= 24) {
+    //                       return 'Infant must be under 24 Month';
+    //                     }
+    //                   }
+    //                   return null;
+    //                 },
+    //               ),
+    //               Padding(
+    //                 padding: const EdgeInsets.only(bottom: 5, top: 5),
+    //                 child: Text.rich(TextSpan(children: [
+    //                   TextSpan(text: 'Gender', style: titleTextStyle),
+    //                   const TextSpan(
+    //                       text: ' *', style: TextStyle(color: redColor))
+    //                 ])),
+    //               ),
+    //               CustomDropdownButton(
+    //                 controller: genderController,
+    //                 focusNode: focusNode3,
+    //                 itemsList: const ['Male', 'Female'],
+    //                 onChanged: (value) {
+    //                   setState(() {
+    //                     genderController.text = value ?? '';
+    //                   });
+    //                 },
+    //                 hintText: 'Select Gender',
+    //                 // validator: (p0) {
+    //                 //   if (p0 == null || p0.isEmpty) {
+    //                 //     return 'Please select gender';
+    //                 //   }
+    //                 //   return null;
+    //                 // },
+    //               )
+    //             ],
+    //           ),
+    //         ),
+    //         actions: [
+    //           CustomButtonSmall(
+    //             width: 100,
+    //             btnHeading: "CANCEL",
+    //             onTap: () {
+    //               Navigator.of(context).pop();
+    //             },
+    //           ),
+    //           CustomButtonSmall(
+    //             width: 100,
+    //             onTap: () {
+    //               if (_formKey.currentState!.validate()) {
+    //                 print('succes');
+    //                 setState(() {
+    //                   members[index] = {
+    //                     'name': nameController.text,
+    //                     'age': ageController.text,
+    //                     'gender': genderController.text,
+    //                     'ageUnit': ageUnit,
+    //                     'type': type
+    //                   };
+    //                   // updateButtonStates();
+    //                 });
+    //                 // type == 'Infant' ? null : _subAmount();
+    //                 Navigator.of(context).pop();
+    //               }
+    //             },
+    //             btnHeading: "ADD",
+    //           ),
+    //         ],
+    //       ),
+    //     );
+    //   },
+    // );
   }
 
   bool offerVisible = false;
-
+  bool isHovering = false;
   double disCountPer = 0;
   double maxDisAmount = 0;
   String? offerCode;
@@ -560,27 +879,60 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              SizedBox(
-                                height: 20,
-                                child: Marquee(
-                                  showFadingOnlyWhenScrolling: false,
-                                  text:
-                                      '*Children under 2 years old can be booked for free. and Certain activities are not recommended for senior citizens due to potential health risks.*',
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: redColor),
-                                  scrollAxis: Axis.horizontal,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  blankSpace: AppDimension.getWidth(context),
-                                  velocity: 100.0,
-                                  pauseAfterRound: const Duration(seconds: 1),
-                                  startPadding: 0,
-                                  accelerationDuration:
-                                      const Duration(seconds: 1),
-                                  accelerationCurve: Curves.linear,
-                                  decelerationDuration:
-                                      const Duration(milliseconds: 500),
-                                  decelerationCurve: Curves.easeOut,
+                              GestureDetector(
+                                behavior: HitTestBehavior.translucent,
+                                onPanDown: (event) {
+                                  setState(() {
+                                    isHovering = true;
+                                  });
+                                },
+                                onPanEnd: (event) {
+                                  setState(() {
+                                    isHovering = false;
+                                  });
+                                },
+                                onPanCancel: () {
+                                  setState(() {
+                                    isHovering = false;
+                                  });
+                                },
+                                child: SizedBox(
+                                  height: 20,
+                                  width: double.infinity,
+                                  child: isHovering
+                                      ? const SingleChildScrollView(
+                                          scrollDirection: Axis.horizontal,
+                                          child: Text(
+                                            '*Children under 2 years old can be booked for free. and Certain activities are not recommended for senior citizens due to potential health risks.*',
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: redColor,
+                                            ),
+                                          ),
+                                        )
+                                      : Marquee(
+                                          showFadingOnlyWhenScrolling: false,
+                                          text:
+                                              '*Children under 2 years old can be booked for free. and Certain activities are not recommended for senior citizens due to potential health risks.*',
+                                          style: const TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: redColor),
+                                          scrollAxis: Axis.horizontal,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          blankSpace:
+                                              AppDimension.getWidth(context),
+                                          velocity: 100.0,
+                                          pauseAfterRound:
+                                              const Duration(seconds: 1),
+                                          startPadding: 0,
+                                          accelerationDuration:
+                                              const Duration(seconds: 1),
+                                          accelerationCurve: Curves.linear,
+                                          decelerationDuration:
+                                              const Duration(milliseconds: 500),
+                                          decelerationCurve: Curves.easeOut,
+                                        ),
                                 ),
                               ),
                               Container(
@@ -626,10 +978,17 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
 
                               CustomMobilenumber(
                                   textLength: 9,
+                                  readOnly: true,
                                   focusNode: focusNode4,
                                   fillColor: background,
                                   controller: primaryNoController,
                                   hintText: 'Enter number',
+                                  suffixIcons: primaryNoController.text.isEmpty
+                                      ? const SpinKitThreeBounce(
+                                          size: 20,
+                                          color: btnColor,
+                                        )
+                                      : null,
                                   countryCode: primaryCountryCode),
                               // Customphonefield(
                               //   poneKey: _phoneKey,
@@ -704,129 +1063,136 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                                     const BorderRadius.all(Radius.circular(10)),
                                 border: Border.all(
                                     color: naturalGreyColor.withOpacity(.3))),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: Customtextformfield(
-                                        focusNode: couponFocus,
-                                        controller: couponController,
-                                        hintText: 'Coupon code',
-                                        readOnly: offerVisible ? true : false,
+                            child: Form(
+                              key: _formCouponKey,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Expanded(
+                                        child: Customtextformfield(
+                                          focusNode: couponFocus,
+                                          controller: couponController,
+                                          hintText: 'Coupon code',
+                                          readOnly: offerVisible ? true : false,
+                                          validator: (p0) {
+                                            if (members.isEmpty) {
+                                              return 'Please add members first';
+                                            } else if (p0 == null ||
+                                                p0.isEmpty) {
+                                              return "Please enter offer coupon";
+                                            }
+                                            return null;
+                                          },
+                                        ),
                                       ),
-                                    ),
-                                    const SizedBox(width: 10),
-                                    offerVisible
-                                        ? CustomButtonSmall(
-                                            height: 45,
-                                            width: 80,
-                                            btnHeading: 'Remove',
-                                            onTap: () {
-                                              FocusScope.of(context).unfocus();
+                                      const SizedBox(width: 10),
+                                      offerVisible
+                                          ? CustomButtonSmall(
+                                              height: 45,
+                                              width: 80,
+                                              btnHeading: 'Remove',
+                                              onTap: () {
+                                                FocusScope.of(context)
+                                                    .unfocus();
 
-                                              // Optionally, unfocus specific fields
-                                              couponFocus.unfocus();
-                                              setState(() {
-                                                offerVisible = false;
-                                                discountAmount = 0;
-                                              });
-                                            },
-                                          )
-                                        : CustomButtonSmall(
-                                            height: 45,
-                                            width: 80,
-                                            btnHeading: 'Apply',
-                                            onTap: () {
-                                              // double? amoun =
-                                              //     double.parse(amount.toString());
-                                              // taxAmount = taxamount();
-                                              if (members.isEmpty) {
-                                                // Utils.flushBarErrorMessage(
-                                                //     "Please add Members First", context);
-                                                Utils.toastMessage(
-                                                    'Please add Members First');
-                                              } else if (couponController
-                                                  .text.isEmpty) {
-                                                // Utils.flushBarErrorMessage(
-                                                //     'Please Enter Offer Coupon', context);
-                                                Utils.toastMessage(
-                                                    'Please Enter Offer Coupon');
-                                              } else {
-                                                Provider
-                                                        .of<
-                                                                OfferViewModel>(
-                                                            context,
-                                                            listen: false)
-                                                    .validateOffer(
-                                                        context: context,
-                                                        offerCode:
-                                                            couponController
-                                                                .text,
-                                                        bookingType:
-                                                            'PACKAGE_BOOKING',
-                                                        bookigAmount:
-                                                            payAbleAmount
-                                                                .toInt())
-                                                    .then((onValue) {
-                                                  if (onValue
-                                                          ?.status?.httpCode ==
-                                                      '200') {
-                                                    Utils.toastSuccessMessage(
-                                                        onValue?.status
-                                                                ?.message ??
-                                                            '');
-                                                    offerCode = onValue
-                                                        ?.data?.offerCode;
-                                                    disCountPer = onValue?.data
-                                                            ?.discountPercentage ??
-                                                        0;
-                                                    maxDisAmount = onValue?.data
-                                                            ?.maxDiscountAmount ??
-                                                        0;
-                                                    setState(() {
-                                                      offerVisible = true;
-                                                      discountAmount =
-                                                          getPercentage();
-                                                      debugPrint(
-                                                          'discountpercentage.....,..,.,$discountAmount');
-                                                    });
-                                                  } else {
-                                                    setState(() {
-                                                      discountAmount = 0;
-                                                    });
-                                                  }
+                                                // Optionally, unfocus specific fields
+                                                couponFocus.unfocus();
+                                                setState(() {
+                                                  offerVisible = false;
+                                                  discountAmount = 0;
                                                 });
-                                              }
-                                            },
-                                          )
-                                  ],
-                                ),
-                                offerVisible
-                                    ? Text(
-                                        'Congrats!  You have availed discount of AED ${disAmount.toInt()}.',
-                                        style: TextStyle(color: greenColor),
-                                      )
-                                    : Container(),
-                              ],
+                                              },
+                                            )
+                                          : CustomButtonSmall(
+                                              height: 45,
+                                              width: 80,
+                                              btnHeading: 'Apply',
+                                              onTap: () {
+                                                // double? amoun =
+                                                //     double.parse(amount.toString());
+                                                // taxAmount = taxamount();
+                                                // if (members.isEmpty) {
+                                                //   // Utils.flushBarErrorMessage(
+                                                //   //     "Please add Members First", context);
+                                                //   Utils.toastMessage(
+                                                //       'Please add Members First');
+                                                // } else if (couponController
+                                                //     .text.isEmpty) {
+                                                //   // Utils.flushBarErrorMessage(
+                                                //   //     'Please Enter Offer Coupon', context);
+                                                //   Utils.toastMessage(
+                                                //       'Please Enter Offer Coupon');
+                                                // } else {
+                                                if (_formCouponKey.currentState!
+                                                    .validate()) {
+                                                  Provider.of<OfferViewModel>(
+                                                          context,
+                                                          listen: false)
+                                                      .validateOffer(
+                                                          context: context,
+                                                          offerCode:
+                                                              couponController
+                                                                  .text,
+                                                          bookingType:
+                                                              'PACKAGE_BOOKING',
+                                                          bookigAmount:
+                                                              payAbleAmount
+                                                                  .toInt())
+                                                      .then((onValue) {
+                                                    if (onValue?.status
+                                                            ?.httpCode ==
+                                                        '200') {
+                                                      Utils.toastSuccessMessage(
+                                                          onValue?.status
+                                                                  ?.message ??
+                                                              '');
+                                                      offerCode = onValue
+                                                          ?.data?.offerCode;
+                                                      disCountPer = onValue
+                                                              ?.data
+                                                              ?.discountPercentage ??
+                                                          0;
+                                                      maxDisAmount = onValue
+                                                              ?.data
+                                                              ?.maxDiscountAmount ??
+                                                          0;
+                                                      setState(() {
+                                                        offerVisible = true;
+                                                        discountAmount =
+                                                            getPercentage();
+                                                        debugPrint(
+                                                            'discountpercentage.....,..,.,$discountAmount');
+                                                      });
+                                                    } else {
+                                                      setState(() {
+                                                        discountAmount = 0;
+                                                      });
+                                                    }
+                                                  });
+                                                }
+                                              },
+                                            )
+                                    ],
+                                  ),
+                                  offerVisible
+                                      ? Text(
+                                          'Congrats!  You have availed discount of AED ${disAmount.toInt()}.',
+                                          style: TextStyle(color: greenColor),
+                                        )
+                                      : Container(),
+                                ],
+                              ),
                             ),
                           ),
                           const SizedBox(height: 10),
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.end,
                             children: [
-                              Expanded(
-                                child: CustomButtonSmall(
-                                  titleReq: false,
-                                  elevation: 0,
-                                  elevationReq: true,
-                                  buttonColor: btnColor,
-                                  borderRadius: BorderRadius.circular(5),
-                                  // width: AppDimension.getWidth(context) / 4.5,
-                                  btnHeading: "Add Adult",
-                                  disable: isAddAdultDisabled,
-                                  height: 40,
+                              InkWell(
                                   onTap: () {
                                     FocusScope.of(context).unfocus();
 
@@ -838,27 +1204,15 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                                         title: 'Add Adult Member',
                                         ageUnit: 'Year',
                                         type: 'Adult');
-
-                                    // _addAdultMember();
-                                    // setState(() {
-                                    //   type = 'Adult';
-                                    //   updateButtonStates();
-                                    // });
                                   },
-                                ),
-                              ),
+                                  child: Image.asset(
+                                    adultIcon,
+                                    width: 24,
+                                    height: 24,
+                                    color: btnColor,
+                                  )),
                               const SizedBox(width: 10),
-                              Expanded(
-                                child: CustomButtonSmall(
-                                  titleReq: false,
-                                  elevation: 0,
-                                  elevationReq: true,
-                                  buttonColor: btnColor,
-                                  borderRadius: BorderRadius.circular(5),
-                                  // width: AppDimension.getWidth(context) / 4.5,
-                                  btnHeading: "Add Child",
-                                  height: 40,
-                                  disable: isAddChildDisabled,
+                              InkWell(
                                   onTap: () {
                                     FocusScope.of(context).unfocus();
 
@@ -870,27 +1224,17 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                                         title: 'Add Child Member',
                                         ageUnit: 'Year',
                                         type: 'Child');
-
-                                    // _addChildMember();
-                                    // setState(() {
-                                    //   type = 'Child';
-                                    //   updateButtonStates();
-                                    // });
                                   },
-                                ),
-                              ),
+                                  child: Image.asset(
+                                    childIcon,
+                                    width: 25,
+                                    height: 25,
+                                    color: btnColor,
+                                    fit: BoxFit.fill,
+                                  )),
                               const SizedBox(width: 10),
-                              Expanded(
-                                child: CustomButtonSmall(
-                                  titleReq: false,
-                                  elevation: 0,
-                                  elevationReq: true,
-                                  buttonColor: btnColor,
-                                  borderRadius: BorderRadius.circular(5),
-                                  // width: AppDimension.getWidth(context) / 4,
-                                  btnHeading: "Add Infant",
-                                  height: 40,
-                                  disable: isAddInfentDisabled,
+
+                              InkWell(
                                   onTap: () {
                                     FocusScope.of(context).unfocus();
 
@@ -902,15 +1246,108 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                                         title: 'Add Infant Member',
                                         ageUnit: 'Month',
                                         type: 'Infant');
-
-                                    // _addInfantdMember();
-                                    // setState(() {
-                                    //   type = 'Infant';
-                                    //   updateButtonStates();
-                                    // });
                                   },
-                                ),
-                              ),
+                                  child: Image.asset(
+                                    infantIcon,
+                                    width: 24,
+                                    height: 24,
+                                    color: btnColor,
+                                  )),
+                              // Expanded(
+                              //   child: CustomButtonSmall(
+                              //     titleReq: false,
+                              //     elevation: 0,
+                              //     elevationReq: true,
+                              //     buttonColor: btnColor,
+                              //     borderRadius: BorderRadius.circular(5),
+                              //     // width: AppDimension.getWidth(context) / 4.5,
+                              //     btnHeading: "Add Adult",
+                              //     disable: isAddAdultDisabled,
+                              //     height: 40,
+                              //     onTap: () {
+                              //       FocusScope.of(context).unfocus();
+
+                              //       // Optionally, unfocus specific fields
+                              //       focusNode4.unfocus();
+                              //       focusNode5.unfocus();
+                              //       couponFocus.unfocus();
+                              //       _addMember(
+                              //           title: 'Add Adult Member',
+                              //           ageUnit: 'Year',
+                              //           type: 'Adult');
+
+                              //       // _addAdultMember();
+                              //       // setState(() {
+                              //       //   type = 'Adult';
+                              //       //   updateButtonStates();
+                              //       // });
+                              //     },
+                              //   ),
+                              // ),
+                              // const SizedBox(width: 10),
+                              // Expanded(
+                              //   child: CustomButtonSmall(
+                              //     titleReq: false,
+                              //     elevation: 0,
+                              //     elevationReq: true,
+                              //     buttonColor: btnColor,
+                              //     borderRadius: BorderRadius.circular(5),
+                              //     // width: AppDimension.getWidth(context) / 4.5,
+                              //     btnHeading: "Add Child",
+                              //     height: 40,
+                              //     disable: isAddChildDisabled,
+                              //     onTap: () {
+                              //       FocusScope.of(context).unfocus();
+
+                              //       // Optionally, unfocus specific fields
+                              //       focusNode4.unfocus();
+                              //       focusNode5.unfocus();
+                              //       couponFocus.unfocus();
+                              //       _addMember(
+                              //           title: 'Add Child Member',
+                              //           ageUnit: 'Year',
+                              //           type: 'Child');
+
+                              //       // _addChildMember();
+                              //       // setState(() {
+                              //       //   type = 'Child';
+                              //       //   updateButtonStates();
+                              //       // });
+                              //     },
+                              //   ),
+                              // ),
+                              // const SizedBox(width: 10),
+                              // Expanded(
+                              //   child: CustomButtonSmall(
+                              //     titleReq: false,
+                              //     elevation: 0,
+                              //     elevationReq: true,
+                              //     buttonColor: btnColor,
+                              //     borderRadius: BorderRadius.circular(5),
+                              //     // width: AppDimension.getWidth(context) / 4,
+                              //     btnHeading: "Add Infant",
+                              //     height: 40,
+                              //     disable: isAddInfentDisabled,
+                              //     onTap: () {
+                              //       FocusScope.of(context).unfocus();
+
+                              //       // Optionally, unfocus specific fields
+                              //       focusNode4.unfocus();
+                              //       focusNode5.unfocus();
+                              //       couponFocus.unfocus();
+                              //       _addMember(
+                              //           title: 'Add Infant Member',
+                              //           ageUnit: 'Month',
+                              //           type: 'Infant');
+
+                              //       // _addInfantdMember();
+                              //       // setState(() {
+                              //       //   type = 'Infant';
+                              //       //   updateButtonStates();
+                              //       // });
+                              //     },
+                              //   ),
+                              // ),
                             ],
                           ),
                         ],
@@ -918,214 +1355,325 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                     ),
 
                     const SizedBox(height: 10),
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Column(
-                        children: [
-                          Table(
-                            columnWidths: const {
-                              0: FixedColumnWidth(120),
-                              1: FixedColumnWidth(75),
-                              2: FixedColumnWidth(75),
-                              3: FixedColumnWidth(70),
-                              4: FixedColumnWidth(80)
-                            },
-                            // defaultColumnWidth: FixedColumnWidth(100),
-                            children: [
-                              TableRow(
-                                  decoration: const BoxDecoration(
-                                    color: btnColor,
-                                  ),
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                          left: 15, bottom: 10, top: 10),
-                                      child: Text(
-                                        'Name',
-                                        style: tableheaderStyle,
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                          top: 10, bottom: 10),
-                                      child: Text(
-                                        'Age',
-                                        style: tableheaderStyle,
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                          top: 10, bottom: 10),
-                                      child: Text(
-                                        'Gender',
-                                        style: tableheaderStyle,
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                          top: 10, bottom: 10),
-                                      child: Text(
-                                        'Type',
-                                        style: tableheaderStyle,
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                          top: 10, bottom: 10),
-                                      child: Text(
-                                        'Action',
-                                        style: tableheaderStyle,
-                                      ),
-                                    ),
-                                  ])
-                            ],
-                          ),
-                          members.isEmpty
-                              ? const Center(
-                                  child: Padding(
-                                  padding: EdgeInsets.only(top: 50),
-                                  child: Text('No Members Added'),
-                                ))
-                              : Table(
-                                  columnWidths: const {
-                                    0: FixedColumnWidth(120),
-                                    1: FixedColumnWidth(75),
-                                    2: FixedColumnWidth(75),
-                                    3: FixedColumnWidth(70),
-                                    4: FixedColumnWidth(80)
-                                  },
-                                  // defaultColumnWidth: FixedColumnWidth(100),
-                                  children: members.map((member) {
-                                    int index = members.indexOf(member);
-                                    print('objectindex$index');
-                                    return TableRow(
-                                        // decoration:
-                                        //     BoxDecoration(color: background),
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                                left: 15, bottom: 10, top: 10),
-                                            child: Text(
-                                              member['name'],
-                                              style: titleTextStyle1,
-                                            ),
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                                top: 10, bottom: 10),
-                                            child: Text(
-                                              '${member['age']} ${member['ageUnit']}',
-                                              style: titleTextStyle1,
-                                            ),
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                                top: 10, bottom: 10),
-                                            child: Text(
-                                              member['gender'],
-                                              style: titleTextStyle1,
-                                            ),
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                                top: 10, bottom: 10),
-                                            child: Text(
-                                              member['ageUnit'] == 'Month'
-                                                  ? 'Infant'
-                                                  : int.parse(member['age']) <
-                                                          18
-                                                      ? 'Child'
-                                                      : int.parse(member[
-                                                                  'age']) <
-                                                              60
-                                                          ? 'Adult'
-                                                          : 'Senior*',
-                                              style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.w400,
-                                                  color: int.parse(
-                                                              member['age']) >=
-                                                          60
-                                                      ? redColor
-                                                      : blackColor),
-                                            ),
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                                top: 10, bottom: 10),
-                                            child: Row(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                InkWell(
-                                                  child: const Icon(Icons.edit,
-                                                      color: greenColor),
-                                                  onTap: () {
-                                                    int age = int.parse(
-                                                        member['age']
-                                                            .toString());
-                                                    String ageunit =
-                                                        member['ageUnit']
-                                                            .toString();
-                                                    if (ageunit == 'Month') {
-                                                      // _editInfantdMember(index);
-                                                      _editMember(
-                                                          title:
-                                                              'Edit Infant Member',
-                                                          index: index,
-                                                          ageUnit: 'Month',
-                                                          type: 'Infant');
-                                                    } else {
-                                                      if (age >= 18) {
-                                                        // _editAdultMember(index);
-                                                        _editMember(
-                                                            title:
-                                                                'Edit Adult Member',
-                                                            index: index,
-                                                            ageUnit: 'Year',
-                                                            type: 'Adult');
-                                                      } else {
-                                                        // _editChildMember(index);
-                                                        _editMember(
-                                                            title:
-                                                                'Edit Child Member',
-                                                            index: index,
-                                                            ageUnit: 'Year',
-                                                            type: 'Child');
-                                                        // addedChildCount++;
-                                                      }
-                                                    }
-                                                    setState(() {
-                                                      tableIcon = false;
-                                                      // updateButtonStates();
-                                                    });
-                                                  },
-                                                ),
-                                                const SizedBox(width: 10),
-                                                InkWell(
-                                                  child: const Icon(
-                                                      Icons.delete,
-                                                      color: redColor),
-                                                  onTap: () {
-                                                    setState(() {
-                                                      members.removeAt(index);
-                                                      // addAmount(members);
-                                                      member['ageUnit']
-                                                                  .toString() ==
-                                                              'Month'
-                                                          ? null
-                                                          : _subAmount();
-                                                      tableIcon = false;
-                                                    });
-                                                  },
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ]);
-                                  }).toList(),
+                    Column(
+                      children: [
+                        Table(
+                          columnWidths: const {
+                            0: FixedColumnWidth(110),
+                            1: FlexColumnWidth(),
+                            2: FixedColumnWidth(70),
+                            3: FlexColumnWidth(),
+                            4: FlexColumnWidth()
+                            // 1: FixedColumnWidth(75),
+                            // 2: FixedColumnWidth(70),
+                            // 3: FixedColumnWidth(60),
+                            // 4: FixedColumnWidth(60)
+                          },
+                          // defaultColumnWidth: FixedColumnWidth(100),
+                          children: [
+                            TableRow(
+                                decoration: const BoxDecoration(
+                                  color: btnColor,
                                 ),
-                        ],
-                      ),
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 15, bottom: 10, top: 10),
+                                    child: Text(
+                                      'Name',
+                                      style: tableheaderStyle,
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        top: 10, bottom: 10, right: 5),
+                                    child: Text(
+                                      'Age',
+                                      style: tableheaderStyle,
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                      top: 10,
+                                      bottom: 10,
+                                    ),
+                                    child: Text(
+                                      'Gender',
+                                      style: tableheaderStyle,
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        top: 10, bottom: 10),
+                                    child: Text(
+                                      'Type',
+                                      style: tableheaderStyle,
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        top: 10, bottom: 10),
+                                    child: Text(
+                                      'Action',
+                                      style: tableheaderStyle,
+                                    ),
+                                  ),
+                                ])
+                          ],
+                        ),
+                        members.isEmpty
+                            ? const Center(
+                                child: Padding(
+                                padding: EdgeInsets.only(top: 50),
+                                child: Text('No Members Added'),
+                              ))
+                            : Table(
+                                border: const TableBorder(
+                                  horizontalInside: BorderSide(
+                                    width: 1, // Width of the row separator
+                                    color: Colors
+                                        .grey, // Color of the row separator
+                                  ),
+                                  bottom: BorderSide(
+                                    width: 1,
+                                    color: Colors
+                                        .grey, // Bottom border of the table
+                                  ),
+                                ),
+
+                                columnWidths: const {
+                                  0: FixedColumnWidth(110),
+                                  1: FlexColumnWidth(),
+                                  2: FixedColumnWidth(70),
+                                  3: FlexColumnWidth(),
+                                  4: FlexColumnWidth()
+                                  // 0: FixedColumnWidth(120),
+                                  // 1: FixedColumnWidth(75),
+                                  // 2: FixedColumnWidth(70),
+                                  // 3: FixedColumnWidth(60),
+                                  // 4: FixedColumnWidth(60)
+                                },
+                                // defaultColumnWidth: FixedColumnWidth(100),
+                                children: members.map((member) {
+                                  int index = members.indexOf(member);
+                                  print('objectindex$index');
+                                  return TableRow(
+                                      // decoration:
+                                      //     BoxDecoration(color: background),
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              left: 15,
+                                              bottom: 10,
+                                              top: 10,
+                                              right: 10),
+                                          child: Text(
+                                            member['name'],
+                                            style: titleTextStyle1,
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                            top: 10,
+                                            bottom: 10,
+                                          ),
+                                          child: Text(
+                                            '${member['age']} ${member['ageUnit']}',
+                                            style: titleTextStyle1,
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              top: 10, bottom: 10),
+                                          child: Text(
+                                            member['gender'],
+                                            style: titleTextStyle1,
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              top: 10, bottom: 10),
+                                          child: Text(
+                                            member['ageUnit'] == 'Month'
+                                                ? 'Infant'
+                                                : int.parse(member['age']) < 18
+                                                    ? 'Child'
+                                                    : int.parse(member['age']) <
+                                                            60
+                                                        ? 'Adult'
+                                                        : 'Senior*',
+                                            style: TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w400,
+                                                color:
+                                                    int.parse(member['age']) >=
+                                                            60
+                                                        ? redColor
+                                                        : blackColor),
+                                          ),
+                                        ),
+                                        Center(
+                                          child: PopupMenuButton(
+                                            position: PopupMenuPosition.over,
+                                            surfaceTintColor: background,
+                                            icon: const Icon(Icons.more_vert),
+                                            onSelected: (value) {
+                                              // Handle the action based on selected item
+                                              if (value == 1) {
+                                                print("Edit selected");
+                                                int age = int.parse(
+                                                    member['age'].toString());
+                                                String ageunit =
+                                                    member['ageUnit']
+                                                        .toString();
+                                                if (ageunit == 'Month') {
+                                                  // _editInfantdMember(index);
+                                                  _editMember(
+                                                      title:
+                                                          'Edit Infant Member',
+                                                      index: index,
+                                                      ageUnit: 'Month',
+                                                      type: 'Infant');
+                                                } else {
+                                                  if (age >= 18) {
+                                                    // _editAdultMember(index);
+                                                    _editMember(
+                                                        title:
+                                                            'Edit Adult Member',
+                                                        index: index,
+                                                        ageUnit: 'Year',
+                                                        type: 'Adult');
+                                                  } else {
+                                                    // _editChildMember(index);
+                                                    _editMember(
+                                                        title:
+                                                            'Edit Child Member',
+                                                        index: index,
+                                                        ageUnit: 'Year',
+                                                        type: 'Child');
+                                                    // addedChildCount++;
+                                                  }
+                                                }
+                                                setState(() {
+                                                  tableIcon = false;
+                                                  // updateButtonStates();
+                                                });
+                                              } else if (value == 2) {
+                                                print("Delete selected");
+                                                setState(() {
+                                                  members.removeAt(index);
+                                                  // addAmount(members);
+                                                  member['ageUnit']
+                                                              .toString() ==
+                                                          'Month'
+                                                      ? null
+                                                      : _subAmount();
+                                                  tableIcon = false;
+                                                });
+                                              }
+                                            },
+                                            itemBuilder:
+                                                (BuildContext context) =>
+                                                    <PopupMenuEntry<int>>[
+                                              const PopupMenuItem<int>(
+                                                value: 1,
+                                                child: ListTile(
+                                                  leading: Icon(
+                                                    Icons.edit,
+                                                    color: greenColor,
+                                                  ),
+                                                  title: Text('Edit'),
+                                                ),
+                                              ),
+                                              const PopupMenuItem<int>(
+                                                value: 2,
+                                                child: ListTile(
+                                                  leading: Icon(
+                                                    Icons.delete,
+                                                    color: redColor,
+                                                  ),
+                                                  title: Text('Delete'),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        // Padding(
+                                        //   padding: const EdgeInsets.only(
+                                        //       top: 10, bottom: 10),
+                                        //   child: Row(
+                                        //     mainAxisSize: MainAxisSize.min,
+                                        //     children: [
+                                        //       InkWell(
+                                        //         child: const Icon(Icons.edit,
+                                        //             color: greenColor),
+                                        //         onTap: () {
+                                        //           int age = int.parse(
+                                        //               member['age']
+                                        //                   .toString());
+                                        //           String ageunit =
+                                        //               member['ageUnit']
+                                        //                   .toString();
+                                        //           if (ageunit == 'Month') {
+                                        //             // _editInfantdMember(index);
+                                        //             _editMember(
+                                        //                 title:
+                                        //                     'Edit Infant Member',
+                                        //                 index: index,
+                                        //                 ageUnit: 'Month',
+                                        //                 type: 'Infant');
+                                        //           } else {
+                                        //             if (age >= 18) {
+                                        //               // _editAdultMember(index);
+                                        //               _editMember(
+                                        //                   title:
+                                        //                       'Edit Adult Member',
+                                        //                   index: index,
+                                        //                   ageUnit: 'Year',
+                                        //                   type: 'Adult');
+                                        //             } else {
+                                        //               // _editChildMember(index);
+                                        //               _editMember(
+                                        //                   title:
+                                        //                       'Edit Child Member',
+                                        //                   index: index,
+                                        //                   ageUnit: 'Year',
+                                        //                   type: 'Child');
+                                        //               // addedChildCount++;
+                                        //             }
+                                        //           }
+                                        //           setState(() {
+                                        //             tableIcon = false;
+                                        //             // updateButtonStates();
+                                        //           });
+                                        //         },
+                                        //       ),
+                                        //       const SizedBox(width: 10),
+
+                                        //       InkWell(
+                                        //         child: const Icon(
+                                        //             Icons.delete,
+                                        //             color: redColor),
+                                        //         onTap: () {
+                                        //           setState(() {
+                                        //             members.removeAt(index);
+                                        //             // addAmount(members);
+                                        //             member['ageUnit']
+                                        //                         .toString() ==
+                                        //                     'Month'
+                                        //                 ? null
+                                        //                 : _subAmount();
+                                        //             tableIcon = false;
+                                        //           });
+                                        //         },
+                                        //       ),
+                                        //     ],
+                                        //   ),
+                                        // ),
+                                      ]);
+                                }).toList(),
+                              ),
+                      ],
                     ),
 
                     ///Package Total Booking Container
@@ -1310,34 +1858,26 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                RichText(
-                    text: TextSpan(children: [
-                  //Total Amt
-                  TextSpan(
-                      text: 'AED ',
-                      style: GoogleFonts.lato(
+                Expanded(
+                  child: Text(
+                    discountAmount == 0
+                        ? "AED ${payAbleAmount.toInt()}"
+                        : "AED ${discountAmount.toInt()}",
+                    style: TextStyle(
                         color: blackColor,
                         fontSize: 20,
-                        fontWeight: FontWeight.w600,
-                      )),
-                  TextSpan(
-                    text: discountAmount == 0
-                        ? "${payAbleAmount.toInt()} "
-                        : "${discountAmount.toInt()} ",
-                    style: GoogleFonts.lato(
-                      color: blackColor,
-                      fontSize: 20,
-                      fontWeight: FontWeight.w600,
-                    ),
+                        fontWeight: FontWeight.w600),
                   ),
-                  const TextSpan(
-                      text: '(Inclusive of taxes)',
-                      style: TextStyle(color: blackColor)),
-                ])),
+                ),
+                // const Flexible(
+                //   child: Text('(Inclusive of taxes)',
+                //       style: TextStyle(color: blackColor)),
+                // ),
+
                 InkWell(
                   onTap: _showPaymentDailog,
                   child: const Text(
-                    'Show Details',
+                    'View Details',
                     style: TextStyle(
                         decoration: TextDecoration.underline,
                         // decorationColor: greenColor,
@@ -1506,100 +2046,205 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
   }
 
   void _showPaymentDailog() {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return Dialog(
-          insetPadding: const EdgeInsets.all(20),
-          backgroundColor: background,
-          surfaceTintColor: background,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-          child: Container(
-            height: 220,
-            width: double.infinity,
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Amount Details',
-                      style: titleTextStyle,
-                    ),
-                    CustomButtonSmall(
-                        height: 35,
-                        width: 35,
-                        btnHeading: 'X',
+    showModalBottomSheet(
+        context: context,
+        isDismissible: false,
+        backgroundColor: background,
+        // isScrollControlled: true,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(10),
+          ),
+        ),
+        builder: (context) {
+          return StatefulBuilder(
+              builder: (BuildContext context, StateSetter setstate) {
+            return SingleChildScrollView(
+                child: Container(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Payment Summary',
+                        style: buttonText,
+                      ),
+                      InkWell(
                         onTap: () {
                           context.pop();
-                        }),
-                  ],
-                ),
-                const SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Package Amount',
-                      style: titleTextStyle,
-                    ),
-                    Text(
-                      'AED ${sumAmount.toInt()}',
-                      style: titleTextStyle1,
-                    )
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Tax Amount (5 %)',
-                      style: titleTextStyle,
-                    ),
-                    Text(
-                      '+ AED ${taxAmount.toInt()}',
-                      style: titleTextStyle1,
-                    )
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Save Amount',
-                      style: titleTextStyle,
-                    ),
-                    Text(
-                      discountAmount == 0
-                          ? '- AED ${discountAmount.toInt()}'
-                          : '- AED ${disAmount.toInt()}',
-                      style: titleTextStyle1,
-                    )
-                  ],
-                ),
-                const Divider(),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Payable Amount',
-                      style: titleTextStyle,
-                    ),
-                    Text(
-                      discountAmount == 0
-                          ? 'AED ${payAbleAmount.toInt()}'
-                          : 'AED ${discountAmount.toInt()}',
-                      style: titleTextStyle1,
-                    )
-                  ],
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
+                        },
+                        child: Text(
+                          'X',
+                          style: buttonText,
+                        ),
+                      )
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Package Amount',
+                        style: titleTextStyle,
+                      ),
+                      Text(
+                        'AED ${sumAmount.toInt()}',
+                        style: titleTextStyle1,
+                      )
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Tax Amount (5 %)',
+                        style: titleTextStyle,
+                      ),
+                      Text(
+                        '+ AED ${taxAmount.toInt()}',
+                        style: titleTextStyle1,
+                      )
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Save Amount',
+                        style: titleTextStyle,
+                      ),
+                      Text(
+                        discountAmount == 0
+                            ? '- AED ${discountAmount.toInt()}'
+                            : '- AED ${disAmount.toInt()}',
+                        style: titleTextStyle1,
+                      )
+                    ],
+                  ),
+                  const Divider(),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Payable Amount',
+                        style: pageHeadingTextStyle,
+                      ),
+                      Column(
+                        children: [
+                          Text(
+                            discountAmount == 0
+                                ? 'AED ${payAbleAmount.toInt()}'
+                                : 'AED ${discountAmount.toInt()}',
+                            style: pageHeadingTextStyle,
+                          ),
+                          Text('(Inclusive of Taxes)',
+                              style: TextStyle(color: blackColor))
+                        ],
+                      )
+                    ],
+                  ),
+                ],
+              ),
+            ));
+          });
+        });
+    // showDialog(
+    //   context: context,
+    //   builder: (context) {
+    //     return Dialog(
+    //       insetPadding: const EdgeInsets.all(20),
+    //       backgroundColor: background,
+    //       surfaceTintColor: background,
+    //       shape:
+    //           RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+    //       child: Container(
+    //         height: 220,
+    //         width: double.infinity,
+    //         padding: const EdgeInsets.all(20),
+    //         child: Column(
+    //           children: [
+    //             Row(
+    //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    //               children: [
+    //                 Text(
+    //                   'Amount Details',
+    //                   style: titleTextStyle,
+    //                 ),
+    //                 CustomButtonSmall(
+    //                     height: 35,
+    //                     width: 35,
+    //                     btnHeading: 'X',
+    //                     onTap: () {
+    //                       context.pop();
+    //                     }),
+    //               ],
+    //             ),
+    //             const SizedBox(height: 20),
+    //             Row(
+    //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    //               children: [
+    //                 Text(
+    //                   'Package Amount',
+    //                   style: titleTextStyle,
+    //                 ),
+    //                 Text(
+    //                   'AED ${sumAmount.toInt()}',
+    //                   style: titleTextStyle1,
+    //                 )
+    //               ],
+    //             ),
+    //             Row(
+    //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    //               children: [
+    //                 Text(
+    //                   'Tax Amount (5 %)',
+    //                   style: titleTextStyle,
+    //                 ),
+    //                 Text(
+    //                   '+ AED ${taxAmount.toInt()}',
+    //                   style: titleTextStyle1,
+    //                 )
+    //               ],
+    //             ),
+    //             Row(
+    //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    //               children: [
+    //                 Text(
+    //                   'Save Amount',
+    //                   style: titleTextStyle,
+    //                 ),
+    //                 Text(
+    //                   discountAmount == 0
+    //                       ? '- AED ${discountAmount.toInt()}'
+    //                       : '- AED ${disAmount.toInt()}',
+    //                   style: titleTextStyle1,
+    //                 )
+    //               ],
+    //             ),
+    //             const Divider(),
+    //             Row(
+    //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    //               children: [
+    //                 Text(
+    //                   'Payable Amount',
+    //                   style: titleTextStyle,
+    //                 ),
+    //                 Text(
+    //                   discountAmount == 0
+    //                       ? 'AED ${payAbleAmount.toInt()}'
+    //                       : 'AED ${discountAmount.toInt()}',
+    //                   style: titleTextStyle1,
+    //                 )
+    //               ],
+    //             ),
+    //           ],
+    //         ),
+    //       ),
+    //     );
+    //   },
+    // );
   }
 }

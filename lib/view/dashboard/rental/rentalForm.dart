@@ -381,106 +381,170 @@ class _RentalFormState extends State<RentalForm> with RouteAware {
             const SizedBox(height: 10),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: FormField<String>(
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                  validator: (value) {
-                    if (seatController.text.isEmpty) {
-                      return 'Please select seats';
-                    }
-                    return null;
-                  },
-                  builder: (FormFieldState<String> field) {
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        FormCommonSingleAlertSelector(
-                          width: double.infinity,
-                          title: "Select Seats",
-                          elevation: 0,
-                          controller: seatController,
-                          showIcon: const Icon(
-                            Icons.event_seat,
-                            color: naturalGreyColor,
-                          ),
-                          iconReq: true,
-                          data: items,
-                          border: false,
-
-                          ///Hint Color
-                          initialValue: "Select Seats",
-                          alertBoxTitle: "Select Seats",
-                        ),
-                        if (field.hasError)
-                          seatController.text.isEmpty
-                              ? Padding(
-                                  padding: const EdgeInsets.only(left: 10),
-                                  child: Text(
-                                    field.errorText!,
-                                    style: TextStyle(color: redColor),
-                                  ),
-                                )
-                              : Container(),
-                      ],
-                    );
-                  }),
+              child: Text.rich(TextSpan(children: [
+                TextSpan(text: 'Select seats', style: titleTextStyle),
+                TextSpan(text: ' *', style: TextStyle(color: redColor))
+              ])),
+              // child: Text("Pickup Location", style: titleTextStyle),
             ),
+            const SizedBox(height: 5),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: CustomDropdownButton(
+                // selecteValue: selectMin,
+
+                controller: seatController,
+                itemsList: items,
+                onChanged: (p0) {
+                  setState(() {
+                    seatController.text = p0 ?? '';
+                  });
+                },
+                hintText: 'Select Seats',
+                validator: (p0) {
+                  if (p0 == null || seatController.text.isEmpty) {
+                    return 'Please select seats';
+                  }
+                  return null;
+                },
+              ),
+            ),
+            const SizedBox(height: 10),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: Text.rich(TextSpan(children: [
+                TextSpan(text: 'Select Rental Package', style: titleTextStyle),
+                TextSpan(text: ' *', style: TextStyle(color: redColor))
+              ])),
+              // child: Text("Pickup Location", style: titleTextStyle),
+            ),
+            const SizedBox(height: 5),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: CustomDropdownButton(
+                // selecteValue: selectMin,
+
+                controller: rentalController,
+                itemsList: List.generate(
+                    rangeData.length,
+                    (index) =>
+                        "${rangeData[index].hours} Hr ${rangeData[index].kilometer} Km"),
+                onChanged: (p0) {
+                  setState(() {
+                    rentalController.text = p0 ?? '';
+                  });
+                },
+                hintText: 'Select Rental Package',
+                validator: (p0) {
+                  if (p0 == null || rentalController.text.isEmpty) {
+                    return 'Please select rental package';
+                  }
+                  return null;
+                },
+              ),
+            ),
+            // Padding(
+            //   padding: const EdgeInsets.symmetric(horizontal: 10),
+            //   child: FormField<String>(
+            //       autovalidateMode: AutovalidateMode.onUserInteraction,
+            //       validator: (value) {
+            //         if (seatController.text.isEmpty) {
+            //           return 'Please select seats';
+            //         }
+            //         return null;
+            //       },
+            //       builder: (FormFieldState<String> field) {
+            //         return Column(
+            //           crossAxisAlignment: CrossAxisAlignment.start,
+            //           children: [
+            //             FormCommonSingleAlertSelector(
+            //               width: double.infinity,
+            //               title: "Select Seats",
+            //               elevation: 0,
+            //               controller: seatController,
+            //               showIcon: const Icon(
+            //                 Icons.event_seat,
+            //                 color: naturalGreyColor,
+            //               ),
+            //               iconReq: true,
+            //               data: items,
+            //               border: false,
+
+            //               ///Hint Color
+            //               initialValue: "Select Seats",
+            //               alertBoxTitle: "Select Seats",
+            //             ),
+            //             if (field.hasError)
+            //               seatController.text.isEmpty
+            //                   ? Padding(
+            //                       padding: const EdgeInsets.only(left: 10),
+            //                       child: Text(
+            //                         field.errorText!,
+            //                         style: TextStyle(color: redColor),
+            //                       ),
+            //                     )
+            //                   : Container(),
+            //           ],
+            //         );
+            //       }),
+            // ),
 
             // TextFeildTiming(
             //     width: AppDimension.getWidth(context) * .9,
             //     title: "Time",
             //     hint: "PickUp Time",
             //     controller: controllers[2]),
-            const SizedBox(height: 10),
-            Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: FormField<String>(
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    validator: (value) {
-                      if (rentalController.text.isEmpty) {
-                        return 'Please select rental package';
-                      }
-                      return null;
-                    },
-                    builder: (FormFieldState<String> field) {
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          FormCommonSingleAlertSelector(
-                            width: double.infinity,
-                            title: "Select Rental Package",
-                            elevation: 0,
-                            controller: rentalController,
-                            showIcon: const Icon(
-                              Icons.add_road,
-                              color: naturalGreyColor,
-                            ),
-                            iconReq: true,
-                            data: List.generate(
-                                rangeData.length,
-                                (index) =>
-                                    "${rangeData[index].hours} Hr ${rangeData[index].kilometer} Km"),
 
-                            ///Hint Color
-                            initialValue: "Select Rental package",
-                            alertBoxTitle: "Select Rental package",
-                            border: false,
-                          ),
-                          if (field.hasError)
-                            Padding(
-                              padding: const EdgeInsets.only(left: 10),
-                              child: Text(
-                                rentalController.text.isEmpty
-                                    ? field.errorText!
-                                    : '',
-                                style: TextStyle(color: redColor),
-                              ),
-                            ),
-                        ],
-                      );
-                    })),
+            // Padding(
+            //     padding: const EdgeInsets.symmetric(horizontal: 10),
+            //     child: FormField<String>(
+            //         autovalidateMode: AutovalidateMode.onUserInteraction,
+            //         validator: (value) {
+            //           if (rentalController.text.isEmpty) {
+            //             return 'Please select rental package';
+            //           }
+            //           return null;
+            //         },
+            //         builder: (FormFieldState<String> field) {
+            //           return Column(
+            //             crossAxisAlignment: CrossAxisAlignment.start,
+            //             children: [
+            //               FormCommonSingleAlertSelector(
+            //                 width: double.infinity,
+            //                 title: "Select Rental Package",
+            //                 elevation: 0,
+            //                 controller: rentalController,
+            //                 showIcon: const Icon(
+            //                   Icons.add_road,
+            //                   color: naturalGreyColor,
+            //                 ),
+            //                 iconReq: true,
+            //                 data: List.generate(
+            //                     rangeData.length,
+            //                     (index) =>
+            //                         "${rangeData[index].hours} Hr ${rangeData[index].kilometer} Km"),
+
+            //                 ///Hint Color
+            //                 initialValue: "Select Rental package",
+            //                 alertBoxTitle: "Select Rental package",
+            //                 border: false,
+            //               ),
+            //               if (field.hasError)
+            //                 Padding(
+            //                   padding: const EdgeInsets.only(left: 10),
+            //                   child: Text(
+            //                     rentalController.text.isEmpty
+            //                         ? field.errorText!
+            //                         : '',
+            //                     style: TextStyle(color: redColor),
+            //                   ),
+            //                 ),
+            //             ],
+            //           );
+            //         })),
 
             // const Spacer(),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Padding(
               padding: const EdgeInsets.all(10.0),
               child: CustomButtonBig(

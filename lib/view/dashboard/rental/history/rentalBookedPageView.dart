@@ -245,14 +245,33 @@ class _RentalBookedPageViewState extends State<RentalBookedPageView> {
                         ? CustomButtonSmall(
                             height: 40,
                             width: 120,
-                            btnHeading: 'Create Issue',
+                            btnHeading: 'Raised Issue',
                             onTap: () {
-                              showDialog(
+                              showModalBottomSheet(
                                 context: context,
+                                isDismissible: false,
+                                backgroundColor: background,
+                                isScrollControlled: true,
+                                shape: const RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.vertical(
+                                    top: Radius.circular(10),
+                                  ),
+                                ),
                                 builder: (BuildContext context) {
-                                  return RaiseIssueDialog(
-                                    bookingId: widget.bookedId,
-                                    bookingType: 'RENTAL_BOOKING',
+                                  return Padding(
+                                    padding: EdgeInsets.only(
+                                        bottom: MediaQuery.of(context)
+                                            .viewInsets
+                                            .bottom),
+                                    child: SingleChildScrollView(child:
+                                        StatefulBuilder(builder:
+                                            (BuildContext context,
+                                                StateSetter setstate) {
+                                      return RaiseIssueDialog(
+                                        bookingId: widget.bookedId,
+                                        bookingType: 'RENTAL_BOOKING',
+                                      );
+                                    })),
                                   );
                                 },
                               );
@@ -267,70 +286,136 @@ class _RentalBookedPageViewState extends State<RentalBookedPageView> {
                               btnHeading: "Cancel Booking",
                               // loading: cancelledStatus == "Status.loading" && loading,
                               onTap: () {
-                                showDialog(
+                                showModalBottomSheet(
                                     context: context,
-                                    builder: (context) {
-                                      // controller.clear();
-                                      return StatefulBuilder(
-                                        builder: (BuildContext context,
-                                            StateSetter setState) {
+                                    isDismissible: false,
+                                    backgroundColor: background,
+                                    isScrollControlled: true,
+                                    shape: const RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.vertical(
+                                        top: Radius.circular(10),
+                                      ),
+                                    ),
+                                    builder: (BuildContext context) {
+                                      return Padding(
+                                        padding: EdgeInsets.only(
+                                            bottom: MediaQuery.of(context)
+                                                .viewInsets
+                                                .bottom),
+                                        child: SingleChildScrollView(child:
+                                            StatefulBuilder(builder:
+                                                (BuildContext context,
+                                                    StateSetter setstate) {
                                           String cancelledStatus = context
                                               .watch<
                                                   RentalBookingCancelViewModel>()
                                               .cancelldataList
                                               .status
                                               .toString();
+                                          return CancelContainerDialog(
+                                              loading: cancelledStatus ==
+                                                      "Status.loading" &&
+                                                  loading,
+                                              controllerCancel: controller,
+                                              onTap: () async {
+                                                print(
+                                                    'bnnvncvxcvxzvznbxvcbnvn');
+                                                setstate(() {
+                                                  loading = true;
+                                                });
+                                                await Provider
+                                                        .of<
+                                                                RentalBookingCancelViewModel>(
+                                                            context,
+                                                            listen: false)
+                                                    .fetchRentalBookingCancelViewModelApi(
+                                                        context,
+                                                        {
+                                                          "id": widget.bookedId,
+                                                          "reason":
+                                                              controller.text,
+                                                          "cancelledBy": "USER"
+                                                        },
+                                                        widget.useriD,
+                                                        fulldata?.id
+                                                                .toString() ??
+                                                            '',
+                                                        fulldata?.paymentId
+                                                                .toString() ??
+                                                            '');
 
-                                          debugPrint(
-                                              'loading status......>>>>>>>$cancelledStatus');
-                                          return SingleChildScrollView(
-                                            padding: EdgeInsets.only(
-                                                top: AppDimension.getHeight(
-                                                        context) *
-                                                    .2),
-                                            child: CancelContainerDialog(
-                                                loading: cancelledStatus ==
-                                                    "Status.loading",
-                                                controllerCancel: controller,
-                                                onTap: () async {
-                                                  print(
-                                                      'bnnvncvxcvxzvznbxvcbnvn');
-                                                  // setState(() {
-                                                  //   cancelledStatus =
-                                                  //       "Status.loading";
-                                                  // });
-                                                  await Provider.of<
-                                                              RentalBookingCancelViewModel>(
-                                                          context,
-                                                          listen: false)
-                                                      .fetchRentalBookingCancelViewModelApi(
-                                                          context,
-                                                          {
-                                                            "id":
-                                                                widget.bookedId,
-                                                            "reason":
-                                                                controller.text,
-                                                            "cancelledBy":
-                                                                "USER"
-                                                          },
-                                                          widget.useriD,
-                                                          fulldata?.id
-                                                                  .toString() ??
-                                                              '',
-                                                          fulldata?.paymentId
-                                                                  .toString() ??
-                                                              '');
-
-                                                  // setState(() {
-                                                  //   cancelledStatus =
-                                                  //       "Status.completed";
-                                                  // });
-                                                  // controller.dispose();
-                                                }),
-                                          );
-                                        },
+                                                setstate(() {
+                                                  loading = false;
+                                                });
+                                                // controller.dispose();
+                                              });
+                                        })),
                                       );
                                     });
+                                // showDialog(
+                                //     context: context,
+                                //     builder: (context) {
+                                //       // controller.clear();
+                                //       return StatefulBuilder(
+                                //         builder: (BuildContext context,
+                                //             StateSetter setState) {
+                                //           String cancelledStatus = context
+                                //               .watch<
+                                //                   RentalBookingCancelViewModel>()
+                                //               .cancelldataList
+                                //               .status
+                                //               .toString();
+
+                                //           debugPrint(
+                                //               'loading status......>>>>>>>$cancelledStatus');
+                                //           return SingleChildScrollView(
+                                //             padding: EdgeInsets.only(
+                                //                 top: AppDimension.getHeight(
+                                //                         context) *
+                                //                     .2),
+                                //             child: CancelContainerDialog(
+                                //                 loading: cancelledStatus ==
+                                //                     "Status.loading",
+                                //                 controllerCancel: controller,
+                                //                 onTap: () async {
+                                //                   print(
+                                //                       'bnnvncvxcvxzvznbxvcbnvn');
+                                //                   // setState(() {
+                                //                   //   cancelledStatus =
+                                //                   //       "Status.loading";
+                                //                   // });
+                                //                   await Provider.of<
+                                //                               RentalBookingCancelViewModel>(
+                                //                           context,
+                                //                           listen: false)
+                                //                       .fetchRentalBookingCancelViewModelApi(
+                                //                           context,
+                                //                           {
+                                //                             "id":
+                                //                                 widget.bookedId,
+                                //                             "reason":
+                                //                                 controller.text,
+                                //                             "cancelledBy":
+                                //                                 "USER"
+                                //                           },
+                                //                           widget.useriD,
+                                //                           fulldata?.id
+                                //                                   .toString() ??
+                                //                               '',
+                                //                           fulldata?.paymentId
+                                //                                   .toString() ??
+                                //                               '');
+
+                                //                   // setState(() {
+                                //                   //   cancelledStatus =
+                                //                   //       "Status.completed";
+                                //                   // });
+                                //                   // controller.dispose();
+                                //                 }),
+                                //           );
+                                //         },
+                                //       );
+                                //     });
                                 // context.pop();
                               },
                             ),
@@ -755,117 +840,123 @@ class VechicleDetailsContainer extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text("Vehicle Name : ", style: titleTextStyle),
-                              SizedBox(
-                                width: 100,
-                                child: Text(
-                                  vehicleName,
-                                  style: titleTextStyle1,
-                                  maxLines: 3,
-                                ),
-                              )
-                            ],
-                          ),
-                          const SizedBox(height: 5),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text("Brand Name : ", style: titleTextStyle),
-                              SizedBox(
-                                width: 100,
-                                child: Text(
-                                  brandName,
-                                  style: titleTextStyle1,
-                                  maxLines: 3,
-                                ),
-                              )
-                            ],
-                          ),
-                          const SizedBox(height: 5),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text("Vehicle No. : ", style: titleTextStyle),
-                              SizedBox(
-                                width: 100,
-                                child: Text(
-                                  vehicleNo,
-                                  style: titleTextStyle1,
-                                  maxLines: 3,
-                                ),
-                              )
-                            ],
-                          ),
-                        ],
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text("Colors : ", style: titleTextStyle),
-                              SizedBox(
-                                // width: 100,
-                                child: Text(
-                                  color,
-                                  style: titleTextStyle1,
-                                  maxLines: 3,
-                                ),
-                              )
-                            ],
-                          ),
-                          const SizedBox(height: 5),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text("Fuel Type : ", style: titleTextStyle),
-                              SizedBox(
-                                // width: 100,
-                                child: Text(
-                                  fuelType,
-                                  style: titleTextStyle1,
-                                  maxLines: 3,
-                                ),
-                              )
-                            ],
-                          ),
-                          const SizedBox(height: 5),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text("Seats : ", style: titleTextStyle),
-                              SizedBox(
-                                // width: 100,
-                                child: Text(
-                                  seats,
-                                  style: titleTextStyle1,
-                                  maxLines: 3,
-                                ),
-                              )
-                            ],
-                          ),
-                        ],
-                      )
-                    ],
-                  ),
+                  vehicleItem(lable: 'Vehicle Name', value: vehicleName),
+                  vehicleItem(lable: 'Brand Name', value: brandName),
+                  vehicleItem(lable: 'Vehicle No.', value: vehicleNo),
+                  vehicleItem(lable: 'Colors', value: color),
+                  vehicleItem(lable: 'Fuel Type', value: fuelType),
+                  vehicleItem(lable: 'Seats', value: seats),
+                  // Row(
+                  //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  //   crossAxisAlignment: CrossAxisAlignment.start,
+                  //   children: [
+                  //     Column(
+                  //       crossAxisAlignment: CrossAxisAlignment.start,
+                  //       mainAxisAlignment: MainAxisAlignment.start,
+                  //       children: [
+                  //         Row(
+                  //           mainAxisAlignment: MainAxisAlignment.start,
+                  //           crossAxisAlignment: CrossAxisAlignment.start,
+                  //           children: [
+                  //             Text("Vehicle Name : ", style: titleTextStyle),
+                  //             SizedBox(
+                  //               // width: 100,
+                  //               child: Text(
+                  //                 vehicleName,
+                  //                 style: titleTextStyle1,
+                  //                 maxLines: 3,
+                  //               ),
+                  //             )
+                  //           ],
+                  //         ),
+                  //         const SizedBox(height: 5),
+                  //         Row(
+                  //           mainAxisAlignment: MainAxisAlignment.start,
+                  //           crossAxisAlignment: CrossAxisAlignment.start,
+                  //           children: [
+                  //             Text("Brand Name : ", style: titleTextStyle),
+                  //             SizedBox(
+                  //               width: 100,
+                  //               child: Text(
+                  //                 brandName,
+                  //                 style: titleTextStyle1,
+                  //                 maxLines: 3,
+                  //               ),
+                  //             )
+                  //           ],
+                  //         ),
+                  //         const SizedBox(height: 5),
+                  //         Row(
+                  //           mainAxisAlignment: MainAxisAlignment.start,
+                  //           crossAxisAlignment: CrossAxisAlignment.start,
+                  //           children: [
+                  //             Text("Vehicle No. : ", style: titleTextStyle),
+                  //             SizedBox(
+                  //               width: 100,
+                  //               child: Text(
+                  //                 vehicleNo,
+                  //                 style: titleTextStyle1,
+                  //                 maxLines: 3,
+                  //               ),
+                  //             )
+                  //           ],
+                  //         ),
+                  //       ],
+                  //     ),
+                  //     Column(
+                  //       crossAxisAlignment: CrossAxisAlignment.start,
+                  //       children: [
+                  //         Row(
+                  //           mainAxisAlignment: MainAxisAlignment.start,
+                  //           crossAxisAlignment: CrossAxisAlignment.start,
+                  //           children: [
+                  //             Text("Colors : ", style: titleTextStyle),
+                  //             SizedBox(
+                  //               // width: 100,
+                  //               child: Text(
+                  //                 color,
+                  //                 style: titleTextStyle1,
+                  //                 maxLines: 3,
+                  //               ),
+                  //             )
+                  //           ],
+                  //         ),
+                  //         const SizedBox(height: 5),
+                  //         Row(
+                  //           mainAxisAlignment: MainAxisAlignment.start,
+                  //           crossAxisAlignment: CrossAxisAlignment.start,
+                  //           children: [
+                  //             Text("Fuel Type : ", style: titleTextStyle),
+                  //             SizedBox(
+                  //               // width: 100,
+                  //               child: Text(
+                  //                 fuelType,
+                  //                 style: titleTextStyle1,
+                  //                 maxLines: 3,
+                  //               ),
+                  //             )
+                  //           ],
+                  //         ),
+                  //         const SizedBox(height: 5),
+                  //         Row(
+                  //           mainAxisAlignment: MainAxisAlignment.start,
+                  //           crossAxisAlignment: CrossAxisAlignment.start,
+                  //           children: [
+                  //             Text("Seats : ", style: titleTextStyle),
+                  //             SizedBox(
+                  //               // width: 100,
+                  //               child: Text(
+                  //                 seats,
+                  //                 style: titleTextStyle1,
+                  //                 maxLines: 3,
+                  //               ),
+                  //             )
+                  //           ],
+                  //         ),
+                  //       ],
+                  //     )
+                  //   ],
+                  // ),
                 ],
               ),
             ),
@@ -873,6 +964,19 @@ class VechicleDetailsContainer extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  vehicleItem({required String lable, required String value}) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(flex: 2, child: Text(lable, style: titleTextStyle)),
+        Text(':', style: titleTextStyle),
+        const SizedBox(width: 10),
+        Expanded(flex: 2, child: Text(value, style: titleTextStyle1))
+      ],
     );
   }
 }

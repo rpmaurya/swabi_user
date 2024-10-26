@@ -74,9 +74,9 @@ class _AccountScreenState extends State<AccountScreen> {
             },
           ),
           Custom_ListTile(
-            img: distance,
+            img: rentalbooking,
             iconColor: btnColor,
-            heading: "My Trip",
+            heading: "My Rental Trip",
             onTap: () => context.push("/rentalForm/rentalHistory",
                 extra: {"myIdNo": widget.userId}),
             // context.push("/booking")
@@ -94,9 +94,9 @@ class _AccountScreenState extends State<AccountScreen> {
           //   onTap: () => context.push("/myCards"),
           // ),
           Custom_ListTile(
-            img: transaction,
+            img: moneyTransaction,
             iconColor: btnColor,
-            heading: "Transaction",
+            heading: "Transactions",
             onTap: () => context
                 .push("/myTransaction", extra: {"userId": widget.userId}),
           ),
@@ -127,14 +127,14 @@ class _AccountScreenState extends State<AccountScreen> {
 
           Custom_ListTile(
             iconColor: btnColor,
-            img: contact,
+            img: helpSupport,
             heading: "Help & Support",
             onTap: () => context.push("/help&support"),
           ),
           Custom_ListTile(
             img: offers,
             iconColor: btnColor,
-            heading: "Offers",
+            heading: "All Offers",
             onTap: () => context.push("/allOffer"),
           ),
           const Spacer(),
@@ -183,15 +183,15 @@ class _AccountScreenState extends State<AccountScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         CustomButtonSmall(
-                          width: 70,
-                          btnHeading: "NO",
+                          // width: 70,
+                          btnHeading: "Cancel",
                           onTap: () {
                             context.pop();
                           },
                         ),
                         CustomButtonSmall(
-                          width: 70,
-                          btnHeading: "YES",
+                          // width: 70,
+                          btnHeading: "Logout",
                           onTap: () {
                             userViewModel.remove(context);
                             context.go("/login");

@@ -20,7 +20,7 @@ class CustomMobilenumber extends StatefulWidget {
   final Color? fillColor;
   final String? countryCode;
   final FocusNode? focusNode;
-
+  final bool readOnly;
   final double? width;
   final double? hieght;
   const CustomMobilenumber(
@@ -32,6 +32,7 @@ class CustomMobilenumber extends StatefulWidget {
       this.obscureText,
       this.maxLines,
       this.minLines = 1,
+      this.readOnly = false,
       this.textLength,
       this.obscuringCharacter,
       this.textAlignVertical,
@@ -59,6 +60,7 @@ class _CustomMobilenumberState extends State<CustomMobilenumber> {
       child: TextFormField(
         autovalidateMode: AutovalidateMode.onUserInteraction,
         focusNode: widget.focusNode,
+        readOnly: widget.readOnly,
         obscureText: widget.obscureText ?? false,
         obscuringCharacter: widget.obscuringCharacter ?? '•',
         controller: widget.controller,
@@ -66,13 +68,15 @@ class _CustomMobilenumberState extends State<CustomMobilenumber> {
         textAlignVertical: widget.textAlignVertical,
         inputFormatters: [
           LengthLimitingTextInputFormatter(widget.textLength),
+          FilteringTextInputFormatter.digitsOnly
         ],
         maxLines: widget.maxLines ?? 1,
         minLines: widget.minLines,
-        keyboardType: widget.keyboardType ?? TextInputType.phone,
+        keyboardType: widget.keyboardType ?? TextInputType.number,
         enabled: widget.enabled,
         decoration: InputDecoration(
           errorText: errorText,
+
           suffixIcon: widget.suffixIcons,
           prefixIconConstraints: BoxConstraints(maxHeight: 25, maxWidth: 85),
           prefixIcon: Padding(
@@ -146,11 +150,11 @@ class _CustomMobilenumberState extends State<CustomMobilenumber> {
         ),
         validator: (value) {
           if (value == null || value.isEmpty) {
-            return 'Enter phone number';
+            return 'Please enter mobile number';
           } else if (value.length != widget.textLength) {
-            return 'Enter Valid Phone Number';
+            return 'Please enter valid mobile Number';
           } else if (!RegExp(uaePattern).hasMatch(value)) {
-            return 'Enter Valid Phone Number';
+            return 'Please enter valid mobile Number';
           }
           return null;
         },

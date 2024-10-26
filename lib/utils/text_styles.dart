@@ -40,10 +40,14 @@ TextStyle tableheaderStyle = GoogleFonts.lato(
     color: background, fontSize: 17, fontWeight: FontWeight.w600);
 TextStyle titleTextStyle1 = GoogleFonts.lato(
     color: blackColor, fontSize: 16, fontWeight: FontWeight.w400);
+TextStyle termCondition = GoogleFonts.lato(
+    color: blackColor, fontSize: 17, fontWeight: FontWeight.w500);
 TextStyle utilsTextStyle = GoogleFonts.lato(
     color: background, fontSize: 16, fontWeight: FontWeight.w700);
 TextStyle titleText = GoogleFonts.lato(
     color: blackColor, fontSize: 14, fontWeight: FontWeight.w600);
+TextStyle buttonText = GoogleFonts.lato(
+    color: btnColor, fontSize: 17, fontWeight: FontWeight.w600);
 //////////////////DEFAULT TEXT STYLE IN SWABI APPLICATION///////////////////////////////////////////
 
 TextStyle textTitleHeading = GoogleFonts.lato(

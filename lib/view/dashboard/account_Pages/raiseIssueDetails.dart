@@ -119,79 +119,82 @@ class _RaiseissuedetailsState extends State<Raiseissuedetails>
     // //     context.watch<RaiseissueViewModel>().getIssue?.data?.content ?? [];
     // // print('daaa${allRaiseList?.first.bookingId}');
 
-    return Scaffold(
-      appBar: const CustomAppBar(
-        heading: 'Raised Issue',
-      ),
-      body: Customtabbar(
-          controller: _tabController,
-          onTap: (index) {
-            setState(() {
-              currentPage = 0;
-              allRaiseList.clear();
-              isLastPage = false;
-            });
-            getRaiseIssue();
-          },
-          tabs: tabList,
-          viewchildren: List.generate(tabList.length, (index) {
-            return Consumer<RaiseissueViewModel>(
-              builder: (context, value, child) {
-                return value.isloading
-                    ? const Center(
-                        child: CircularProgressIndicator(
-                        color: greenColor,
-                      ))
-                    : allRaiseList.isNotEmpty
-                        ? ListView.builder(
-                            controller: _scrollController,
-                            itemCount:
-                                allRaiseList.length + (isLoadingMore ? 1 : 0),
-                            itemBuilder: (context, index) {
-                              var data = allRaiseList[index];
-                              if (index == allRaiseList.length) {
-                                return isLoadingMore
-                                    ? const Center(
-                                        child: CircularProgressIndicator(
-                                        color: greenColor,
-                                      ))
-                                    : const SizedBox
-                                        .shrink(); // Hide if not loading
-                              }
-                              return Padding(
-                                padding: const EdgeInsets.only(bottom: 10),
-                                child: IssueContainer(
-                                    issueId: data.issueId.toString(),
-                                    bookingId: data.bookingId.toString(),
-                                    userId: data.raisedById.toString(),
-                                    status: data.issueStatus.toString(),
-                                    issueDate: DateFormat('dd-MM-yyyy').format(
-                                        data.createdDate ?? DateTime.now()),
-                                    bookingType: data.bookingType.toString(),
-                                    loader: value.isloading1 &&
-                                        selectIndex == index,
-                                    onTap: () {
-                                      setState(() {
-                                        selectIndex = index;
-                                      });
+    // return Scaffold(
+    //   appBar: const CustomAppBar(
+    //     heading: 'Raised Issue',
+    //   ),
+    //   body:
+    return Customtabbar(
+        titleHeading: 'Raised Issue',
+        controller: _tabController,
+        onTap: (index) {
+          setState(() {
+            currentPage = 0;
+            allRaiseList.clear();
+            isLastPage = false;
+          });
+          getRaiseIssue();
+        },
+        tabs: tabList,
+        viewchildren: List.generate(tabList.length, (index) {
+          return Consumer<RaiseissueViewModel>(
+            builder: (context, value, child) {
+              return value.isloading
+                  ? const Center(
+                      child: CircularProgressIndicator(
+                      color: greenColor,
+                    ))
+                  : allRaiseList.isNotEmpty
+                      ? ListView.builder(
+                          controller: _scrollController,
+                          itemCount:
+                              allRaiseList.length + (isLoadingMore ? 1 : 0),
+                          itemBuilder: (context, index) {
+                            var data = allRaiseList[index];
+                            if (index == allRaiseList.length) {
+                              return isLoadingMore
+                                  ? const Center(
+                                      child: CircularProgressIndicator(
+                                      color: greenColor,
+                                    ))
+                                  : const SizedBox
+                                      .shrink(); // Hide if not loading
+                            }
+                            return Padding(
+                              padding: const EdgeInsets.only(
+                                  bottom: 10, left: 10, right: 10),
+                              child: IssueContainer(
+                                  issueId: data.issueId.toString(),
+                                  bookingId: data.bookingId.toString(),
+                                  userId: data.raisedById.toString(),
+                                  status: data.issueStatus.toString(),
+                                  issueDate: DateFormat('dd-MM-yyyy').format(
+                                      data.createdDate ?? DateTime.now()),
+                                  bookingType: data.bookingType.toString(),
+                                  loader:
+                                      value.isloading1 && selectIndex == index,
+                                  onTap: () {
+                                    setState(() {
+                                      selectIndex = index;
+                                    });
 
-                                      value.getRaiseIssueDetails(
-                                          context: context,
-                                          issueId: data.issueId.toString());
-                                    }),
-                              );
-                            })
-                        : Center(
-                            child: Container(
-                              child: Text(
-                                'No Raise Available',
-                                style: titleTextStyle,
-                              ),
+                                    value.getRaiseIssueDetails(
+                                        context: context,
+                                        issueId: data.issueId.toString());
+                                  }),
+                            );
+                          })
+                      : Center(
+                          child: Container(
+                            child: Text(
+                              'No Raise Available',
+                              style: titleTextStyle,
                             ),
-                          );
-              },
-            );
-          })),
-    );
+                          ),
+                        );
+            },
+          );
+        }));
+    // );
   }
 }

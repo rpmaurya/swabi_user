@@ -13,7 +13,7 @@ import 'package:flutter_cab/view_model/services/httpService.dart';
 class GetPackageListRepository {
   final BaseApiServices _apiServices = NetworkApiService();
 
-  Future<dynamic> getPackageListRepositoryApi(data) async {
+  Future<GetPackageListModel> getPackageListRepositoryApi(data) async {
     try {
       // dynamic response = await _apiServices.getGetApiResponse(AppUrl.getPackageList);
       dynamic response = await _apiServices.getGetApiResponse(
@@ -24,7 +24,8 @@ class GetPackageListRepository {
           // "&search=${data["search"]}&date=${data["date"]}"
           );
       print("Get Package List Repo Success");
-      return response = GetPackageListModel.fromJson(response);
+      var resp = GetPackageListModel.fromJson(response);
+      return resp;
     } catch (e) {
       print("Get Package List Repo Field");
       print(e);

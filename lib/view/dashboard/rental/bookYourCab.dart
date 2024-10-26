@@ -185,37 +185,37 @@ class _BookYourCabState extends State<BookYourCab> {
                       },
                       onCouponTap: () {
                         // double? amount = double.parse(rental.totalPrice);
-                        if (couponController.text.isEmpty) {
-                          Utils.toastMessage('Please Enter Offer Coupon');
-                        } else {
-                          Provider.of<OfferViewModel>(context, listen: false)
-                              .validateOffer(
-                                  context: context,
-                                  offerCode: couponController.text,
-                                  bookingType: 'RENTAL_BOOKING',
-                                  bookigAmount: payableAmount.toInt())
-                              .then((onValue) {
-                            if (onValue?.status?.httpCode == '200') {
-                              Utils.toastSuccessMessage(
-                                  onValue?.status?.message ?? '');
-                              offerCode = onValue?.data?.offerCode;
-                              maxDisAmount =
-                                  onValue?.data?.maxDiscountAmount ?? 0;
-                              discountPercentage =
-                                  onValue?.data?.discountPercentage ?? 0;
-                              setState(() {
-                                visibleCoupon = true;
-                                discountedAmount = getPercentage();
-                                print(
-                                    'discountpercentage.....,..,.,$discountedAmount');
-                              });
-                            } else {
-                              setState(() {
-                                discountedAmount = 0;
-                              });
-                            }
-                          });
-                        }
+                        // if (couponController.text.isEmpty) {
+                        //   Utils.toastMessage('Please Enter Offer Coupon');
+                        // } else {
+                        Provider.of<OfferViewModel>(context, listen: false)
+                            .validateOffer(
+                                context: context,
+                                offerCode: couponController.text,
+                                bookingType: 'RENTAL_BOOKING',
+                                bookigAmount: payableAmount.toInt())
+                            .then((onValue) {
+                          if (onValue?.status?.httpCode == '200') {
+                            Utils.toastSuccessMessage(
+                                onValue?.status?.message ?? '');
+                            offerCode = onValue?.data?.offerCode;
+                            maxDisAmount =
+                                onValue?.data?.maxDiscountAmount ?? 0;
+                            discountPercentage =
+                                onValue?.data?.discountPercentage ?? 0;
+                            setState(() {
+                              visibleCoupon = true;
+                              discountedAmount = getPercentage();
+                              print(
+                                  'discountpercentage.....,..,.,$discountedAmount');
+                            });
+                          } else {
+                            setState(() {
+                              discountedAmount = 0;
+                            });
+                          }
+                        });
+                        // }
                       },
                       onTap: () {
                         ////
@@ -839,6 +839,7 @@ class BookingContainer extends StatefulWidget {
 }
 
 class _BookingContainerState extends State<BookingContainer> {
+  final _formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     debugPrint('payableAmount...............,,,, ${widget.payableAmount}');
@@ -1029,7 +1030,7 @@ class _BookingContainerState extends State<BookingContainer> {
                             style: titleText,
                           ),
                           Text(
-                            "+ AED ${widget.taxAmount}",
+                            "+ AED ${widget.taxAmount.toInt()}",
                             style: titleText,
                           ),
                         ],
@@ -1085,40 +1086,55 @@ class _BookingContainerState extends State<BookingContainer> {
                 color: background,
                 borderRadius: const BorderRadius.all(Radius.circular(10)),
                 border: Border.all(color: naturalGreyColor.withOpacity(.3))),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: Customtextformfield(
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Customtextformfield(
                           controller: widget.couponController,
                           readOnly: widget.couponVisible ? true : false,
-                          hintText: 'Coupon code'),
-                    ),
-                    const SizedBox(width: 10),
-                    widget.couponVisible
-                        ? CustomButtonSmall(
-                            // disable: widget.couponVisible ?? false,
-                            height: 45,
-                            width: 80,
-                            btnHeading: 'Remove',
-                            onTap: widget.onCouponRemoveTap)
-                        : CustomButtonSmall(
-                            // disable: widget.couponVisible ?? false,
-                            height: 45,
-                            width: 80,
-                            btnHeading: 'Apply',
-                            onTap: widget.onCouponTap)
-                  ],
-                ),
-                widget.couponVisible
-                    ? Text(
-                        'Congrats!  You have availed discount of AED ${widget.offerDisAmount.toInt()}.',
-                        style: TextStyle(color: greenColor),
-                      )
-                    : Container()
-              ],
+                          hintText: 'Coupon code',
+                          validator: (p0) {
+                            if (p0 == null || p0.isEmpty) {
+                              return 'Please enter offer coupon';
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      widget.couponVisible
+                          ? CustomButtonSmall(
+                              // disable: widget.couponVisible ?? false,
+                              height: 45,
+                              width: 80,
+                              btnHeading: 'Remove',
+                              onTap: widget.onCouponRemoveTap)
+                          : CustomButtonSmall(
+                              // disable: widget.couponVisible ?? false,
+                              height: 45,
+                              width: 80,
+                              btnHeading: 'Apply',
+                              onTap: () {
+                                if (_formKey.currentState!.validate()) {
+                                  widget.onCouponTap();
+                                }
+                              })
+                    ],
+                  ),
+                  widget.couponVisible
+                      ? Text(
+                          'Congrats!  You have availed discount of AED ${widget.offerDisAmount.toInt()}.',
+                          style: TextStyle(color: greenColor),
+                        )
+                      : Container()
+                ],
+              ),
             ),
           ),
           const SizedBox(height: 15),
@@ -1160,13 +1176,13 @@ class _BookingContainerState extends State<BookingContainer> {
                   color: background,
                   borderRadius: const BorderRadius.all(Radius.circular(10)),
                   border: Border.all(color: naturalGreyColor.withOpacity(.3))),
-              child: const Column(
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      CustomText(
+                      const CustomText(
                           content: "Estimated Fare",
                           fontSize: 16,
                           maxline: 2,
@@ -1174,7 +1190,7 @@ class _BookingContainerState extends State<BookingContainer> {
                           fontWeight: FontWeight.w700,
                           textColor: textColor),
                       CustomText(
-                          content: "AED 1800",
+                          content: "AED ${widget.totalPrice}",
                           fontSize: 16,
                           maxline: 2,
                           align: TextAlign.start,
@@ -1198,14 +1214,15 @@ class _BookingContainerState extends State<BookingContainer> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       CustomText(
-                          content: "Base fare1 hr 10 km",
+                          content:
+                              "Base fare ${widget.hour} hr ${widget.kilometers} km",
                           fontSize: 16,
                           maxline: 2,
                           align: TextAlign.start,
-                          fontWeight: FontWeight.w600,
+                          fontWeight: FontWeight.w500,
                           textColor: textColor),
                       CustomText(
-                          content: "AED 1800",
+                          content: "AED ${widget.totalPrice}",
                           fontSize: 16,
                           maxline: 2,
                           align: TextAlign.start,
@@ -1221,7 +1238,7 @@ class _BookingContainerState extends State<BookingContainer> {
                           fontSize: 16,
                           maxline: 2,
                           align: TextAlign.start,
-                          fontWeight: FontWeight.w600,
+                          fontWeight: FontWeight.w500,
                           textColor: textColor),
                       CustomText(
                           content: "AED 15 per km",
@@ -1240,7 +1257,7 @@ class _BookingContainerState extends State<BookingContainer> {
                           fontSize: 16,
                           maxline: 2,
                           align: TextAlign.start,
-                          fontWeight: FontWeight.w600,
+                          fontWeight: FontWeight.w500,
                           textColor: textColor),
                       CustomText(
                           content: "AED 3 per min",
@@ -1267,15 +1284,12 @@ class _BookingContainerState extends State<BookingContainer> {
           ),
 
           const SizedBox(height: 10),
-          Align(
-            alignment: Alignment.centerRight,
-            child: CustomButtonSmall(
-              height: 40,
-              width: AppDimension.getWidth(context) * .25,
-              loading: widget.loading,
-              btnHeading: "Book Now",
-              onTap: widget.onTap,
-            ),
+          CustomButtonSmall(
+            height: 45,
+            width: double.infinity,
+            loading: widget.loading,
+            btnHeading: "Book Now",
+            onTap: widget.onTap,
           ),
           const SizedBox(height: 10),
         ],

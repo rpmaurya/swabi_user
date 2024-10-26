@@ -69,7 +69,7 @@ class _OfferdetailsScreenState extends State<OfferdetailsScreen> {
             child: Column(
               children: [
                 Container(
-                  padding: EdgeInsets.all(10),
+                  padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
                       color: background,
                       borderRadius: BorderRadius.circular(5)),
@@ -88,7 +88,7 @@ class _OfferdetailsScreenState extends State<OfferdetailsScreen> {
                       ),
                       const SizedBox(height: 10),
                       Text(
-                        ' ${viewModel.offerDetailByIdModel?.data?.offerName}',
+                        '${viewModel.offerDetailByIdModel?.data?.offerName}',
                         style: textTitleHeading,
                       ),
 
@@ -98,7 +98,7 @@ class _OfferdetailsScreenState extends State<OfferdetailsScreen> {
                       ),
                       Text(
                         viewModel.offerDetailByIdModel?.data?.description ?? '',
-                        style: titleTextStyle1,
+                        // style: titleTextStyle1,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -135,14 +135,18 @@ class _OfferdetailsScreenState extends State<OfferdetailsScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          offerTile(
-                              lable: 'Start Date',
-                              value:
-                                  '${viewModel.offerDetailByIdModel?.data?.startDate}'),
-                          offerTile(
-                              lable: 'End Date',
-                              value:
-                                  '${viewModel.offerDetailByIdModel?.data?.endDate}'),
+                          // Expanded(
+                          //   child: offerTile(
+                          //       lable: 'Start Date',
+                          //       value:
+                          //           '${viewModel.offerDetailByIdModel?.data?.startDate}'),
+                          // ),
+                          Expanded(
+                            child: offerTile(
+                                lable: 'End Date',
+                                value:
+                                    '${viewModel.offerDetailByIdModel?.data?.endDate}'),
+                          )
                         ],
                       ),
                       const SizedBox(height: 5),

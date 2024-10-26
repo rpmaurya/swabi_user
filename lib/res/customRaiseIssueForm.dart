@@ -54,6 +54,112 @@ class _RaiseIssueDialogState extends State<RaiseIssueDialog> {
 
   @override
   Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text('Raise Issue', style: buttonText),
+              InkWell(
+                onTap: () {
+                  context.pop();
+                },
+                child: Text(
+                  'X',
+                  style: buttonText,
+                ),
+              )
+            ],
+          ),
+          const SizedBox(height: 10),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: _issueOptions.map((issue) {
+              return RadioListTile<String>(
+                dense: true,
+                contentPadding: EdgeInsets.zero,
+                activeColor: btnColor,
+                visualDensity:
+                    const VisualDensity(horizontal: -4, vertical: -4),
+                title: Transform.translate(
+                  offset: const Offset(-10,
+                      0), // Adjust this value to move the title closer to the radio button
+                  child: Text(
+                    issue,
+                    style: titleTextStyle1,
+                  ),
+                ),
+                value: issue,
+                groupValue: _selectedIssue,
+                onChanged: (value) {
+                  setState(() {
+                    _selectedIssue = value;
+                  });
+                },
+              );
+            }).toList(),
+          ),
+          if (_selectedIssue == 'My reason is not listed')
+            Padding(
+              padding: const EdgeInsets.only(top: 10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  TextField(
+                    controller: _descriptionController,
+                    maxLength: 120,
+                    maxLines: 3,
+                    decoration: const InputDecoration(
+                      hintText: "Description For Issue",
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                  // Align(
+                  //   alignment: Alignment.centerRight,
+                  //   child: Text(
+                  //     '(${_descriptionController.text.length}/120)',
+                  //     style: TextStyle(fontSize: 12),
+                  //   ),
+                  // ),
+                ],
+              ),
+            ),
+          const SizedBox(height: 10),
+          CustomButtonSmall(
+              width: double.infinity,
+              height: 45,
+              btnHeading: 'Submit',
+              onTap: () {
+                if (_selectedIssue != null) {
+                  // Handle submit action
+                  print('Issue Selected: $_selectedIssue');
+                  if (_selectedIssue == 'My reason is not listed') {
+                    print('Description: ${_descriptionController.text}');
+                  }
+
+                  Provider.of<RaiseissueViewModel>(context, listen: false)
+                      .requestRaiseIssue(
+                          context: context,
+                          bookingId: widget.bookingId,
+                          bookingType: widget.bookingType,
+                          raisedById: userId.toString(),
+                          issueDescription:
+                              _selectedIssue == 'My reason is not listed'
+                                  ? _descriptionController.text
+                                  : _selectedIssue ?? '');
+                  Utils.toastSuccessMessage(
+                    'Raise Request Successfully',
+                  );
+                  Navigator.of(context).pop();
+                }
+              }),
+        ],
+      ),
+    );
     return AlertDialog(
       insetPadding: EdgeInsets.zero,
       surfaceTintColor: background,
@@ -66,14 +172,16 @@ class _RaiseIssueDialogState extends State<RaiseIssueDialog> {
       title: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text('Raise Issue', style: pageHeadingTextStyle),
-          CustomButtonSmall(
-              width: 30,
-              height: 30,
-              btnHeading: 'X',
-              onTap: () {
-                context.pop();
-              }),
+          Text('Raise Issue', style: buttonText),
+          InkWell(
+            onTap: () {
+              context.pop();
+            },
+            child: Text(
+              'X',
+              style: buttonText,
+            ),
+          )
         ],
       ),
       content: SingleChildScrollView(

@@ -348,7 +348,7 @@ class _ActivityContainerState extends State<ActivityContainer> {
             const SizedBox(height: 10),
             CommonContainer(
               elevation: 0,
-              height: 150,
+              height: 200,
               borderRadius: BorderRadius.circular(10),
               child: MultiImageSlider(
                 images: widget.actyImage,

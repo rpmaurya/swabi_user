@@ -154,137 +154,138 @@ class _RentalHistoryManagmentState extends State<RentalHistoryManagment>
   Widget build(BuildContext context) {
     var status =
         context.watch<RentalViewDetailViewModel>().dataList.status.toString();
-    return Scaffold(
-      appBar: const CustomAppBar(
-        heading: 'My Rental History',
-      ),
-      body: Customtabbar(
-          sortVisiblty: sortVisiblty,
-          isVisible: isVisibleIcon,
-          controller: _tabController,
-          tabs: tabList,
-          onTap: (p0) {
-            setState(() {
-              currentPage = 0; // Reset pagination when tab changes
-              bookingList.clear(); // Clear the history
-              lastPage = false;
-            });
-            getPackageHistoryList();
-          },
-          onTapSort: () {
-            setState(() {
-              isVisibleIcon = !isVisibleIcon;
-              currentPage = 0; // Reset pagination when tab changes
-              bookingList.clear(); // Clear the history
-              lastPage = false;
-            });
+    // return Scaffold(
+    //   appBar: const CustomAppBar(
+    //     heading: 'My Rental History',
+    //   ),
+    //   body:
+    return Customtabbar(
+        titleHeading: 'My Rental History',
+        sortVisiblty: sortVisiblty,
+        isVisible: isVisibleIcon,
+        controller: _tabController,
+        tabs: tabList,
+        onTap: (p0) {
+          setState(() {
+            currentPage = 0; // Reset pagination when tab changes
+            bookingList.clear(); // Clear the history
+            lastPage = false;
+          });
+          getPackageHistoryList();
+        },
+        onTapSort: () {
+          setState(() {
+            isVisibleIcon = !isVisibleIcon;
+            currentPage = 0; // Reset pagination when tab changes
+            bookingList.clear(); // Clear the history
+            lastPage = false;
+          });
 
-            getPackageHistoryList();
-            print('njnkjnjknnm,');
-          },
-          viewchildren: List.generate(tabList.length, (index) {
-            return Consumer<RentalBookingListViewModel>(
-              builder: (context, viewModel, child) {
-                final response = viewModel.rentalBookingList;
+          getPackageHistoryList();
+          print('njnkjnjknnm,');
+        },
+        viewchildren: List.generate(tabList.length, (index) {
+          return Consumer<RentalBookingListViewModel>(
+            builder: (context, viewModel, child) {
+              final response = viewModel.rentalBookingList;
 
-                if (response.status.toString() == "Status.loading") {
-                  return const Center(
-                      child: CircularProgressIndicator(
-                    color: greenColor,
-                  ));
-                } else if (response.status.toString() == "Status.error") {
-                  return const Center(
-                      child: Text(
-                    'No Data Found',
-                    style:
-                        TextStyle(color: redColor, fontWeight: FontWeight.w600),
-                  ));
-                } else if (response.status.toString() == "Status.completed") {
-                  final data = response.data?.data.content ?? [];
+              if (response.status.toString() == "Status.loading") {
+                return const Center(
+                    child: CircularProgressIndicator(
+                  color: greenColor,
+                ));
+              } else if (response.status.toString() == "Status.error") {
+                return const Center(
+                    child: Text(
+                  'No Data Found',
+                  style:
+                      TextStyle(color: redColor, fontWeight: FontWeight.w600),
+                ));
+              } else if (response.status.toString() == "Status.completed") {
+                final data = response.data?.data.content ?? [];
 
-                  if (data.isEmpty && currentPage == 0) {
-                    // return const Center(child: Text('No Data Available'));
+                if (data.isEmpty && currentPage == 0) {
+                  // return const Center(child: Text('No Data Available'));
 
-                    return Center(
-                        child: Container(
-                            decoration: const BoxDecoration(),
-                            child: const Text(
-                              'No Data Found',
-                              style: TextStyle(
-                                  color: redColor, fontWeight: FontWeight.w600),
-                            )));
-                  }
-
-                  return ListView.builder(
-                    controller: _scrollController,
-                    itemCount: bookingList.length + (isLoadingMore ? 1 : 0),
-                    itemBuilder: (context, index) {
-                      if (index == bookingList.length) {
-                        return isLoadingMore
-                            ? const Center(
-                                child: CircularProgressIndicator(
-                                color: greenColor,
-                              ))
-                            : const SizedBox.shrink(); // Hide if not loading
-                      }
-
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 10),
-                        child: RentalCarListingContainer(
-                          onTapContainer: () async {
-                            setState(() {
-                              intialloadingIndex = index;
-                            });
-                            if (bookingList[index].id != index.toString()) {
-                              Provider.of<RentalViewDetailViewModel>(context,
-                                      listen: false)
-                                  .fetchRentalBookedViewDetialViewModelApi(
-                                      context,
-                                      {
-                                        "id": bookingList[index].id,
-                                      },
-                                      bookingList[index].id.toString(),
-                                      widget.myId);
-
-                              bookingList[index].bookingStatus == 'CANCELLED'
-                                  ? await Provider.of<
-                                              GetPaymentRefundViewModel>(
-                                          context,
-                                          listen: false)
-                                      .getPaymentRefundApi(
-                                          context: context,
-                                          paymentId:
-                                              bookingList[index].paymentId)
-                                  : null;
-                            } else {
-                              const CircularProgressIndicator(
-                                  color: Colors.green);
-                            }
-                          },
-                          loader: status == 'Status.loading' &&
-                              intialloadingIndex == index,
-                          time: bookingList[index].pickupTime,
-                          bookingID: bookingList[index].id,
-                          pickUplocation: bookingList[index].pickupLocation,
-                          carName: bookingList[index].carType,
-                          status: bookingList[index].bookingStatus,
-                          date: bookingList[index].date,
-                          rentalCharge: bookingList[index].totalPayableAmount,
-                          // rentalCharge:
-                          //     bookingList[index].discountAmount.isEmpty ||
-                          //             bookingList[index].discountAmount == '0'
-                          //         ? bookingList[index].totalPayableAmount
-                          //         : bookingList[index].discountAmount,
-                        ),
-                      );
-                    },
-                  );
+                  return Center(
+                      child: Container(
+                          decoration: const BoxDecoration(),
+                          child: const Text(
+                            'No Data Found',
+                            style: TextStyle(
+                                color: redColor, fontWeight: FontWeight.w600),
+                          )));
                 }
 
-                return const Center(child: Text('No data found'));
-              },
-            );
-          })),
-    );
+                return ListView.builder(
+                  controller: _scrollController,
+                  itemCount: bookingList.length + (isLoadingMore ? 1 : 0),
+                  itemBuilder: (context, index) {
+                    if (index == bookingList.length) {
+                      return isLoadingMore
+                          ? const Center(
+                              child: CircularProgressIndicator(
+                              color: greenColor,
+                            ))
+                          : const SizedBox.shrink(); // Hide if not loading
+                    }
+
+                    return Padding(
+                      padding:
+                          const EdgeInsets.only(bottom: 5, left: 5, right: 5),
+                      child: RentalCarListingContainer(
+                        onTapContainer: () async {
+                          setState(() {
+                            intialloadingIndex = index;
+                          });
+                          if (bookingList[index].id != index.toString()) {
+                            Provider.of<RentalViewDetailViewModel>(context,
+                                    listen: false)
+                                .fetchRentalBookedViewDetialViewModelApi(
+                                    context,
+                                    {
+                                      "id": bookingList[index].id,
+                                    },
+                                    bookingList[index].id.toString(),
+                                    widget.myId);
+
+                            bookingList[index].bookingStatus == 'CANCELLED'
+                                ? await Provider.of<GetPaymentRefundViewModel>(
+                                        context,
+                                        listen: false)
+                                    .getPaymentRefundApi(
+                                        context: context,
+                                        paymentId: bookingList[index].paymentId)
+                                : null;
+                          } else {
+                            const CircularProgressIndicator(
+                                color: Colors.green);
+                          }
+                        },
+                        loader: status == 'Status.loading' &&
+                            intialloadingIndex == index,
+                        time: bookingList[index].pickupTime,
+                        bookingID: bookingList[index].id,
+                        pickUplocation: bookingList[index].pickupLocation,
+                        carName: bookingList[index].carType,
+                        status: bookingList[index].bookingStatus,
+                        date: bookingList[index].date,
+                        rentalCharge: bookingList[index].totalPayableAmount,
+                        // rentalCharge:
+                        //     bookingList[index].discountAmount.isEmpty ||
+                        //             bookingList[index].discountAmount == '0'
+                        //         ? bookingList[index].totalPayableAmount
+                        //         : bookingList[index].discountAmount,
+                      ),
+                    );
+                  },
+                );
+              }
+
+              return const Center(child: Text('No data found'));
+            },
+          );
+        }));
+    // );
   }
 }

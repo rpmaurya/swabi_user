@@ -52,7 +52,8 @@ class RentalCarListingContainer extends StatelessWidget {
                             bottom: BorderSide(
                                 color: naturalGreyColor.withOpacity(0.3)))),
                     child: ListTile(
-                      // contentPadding: const EdgeInsets.symmetric(horizontal: 10),
+                      contentPadding:
+                          const EdgeInsets.symmetric(horizontal: 10),
                       horizontalTitleGap: 10,
                       leading: SizedBox(
                         width: 80,
@@ -64,65 +65,69 @@ class RentalCarListingContainer extends StatelessWidget {
                               fit: BoxFit.fill,
                             )),
                       ),
-                      title: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            carName,
-                            style: titleTextStyle,
-                          ),
-                          Text(
-                            "⭐ 4.8",
-                            style: GoogleFonts.lato(
-                                color: greyColor,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w700),
-                          ),
-                        ],
+                      title: Text(
+                        carName,
+                        style: titleTextStyle,
                       ),
                       subtitle: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 5),
-                            child: Row(
-                              children: [
-                                const Icon(Icons.calendar_month_outlined,
-                                    size: 18),
-                                const SizedBox(
-                                  width: 5,
-                                ),
-                                Text(date, style: titleTextStyle),
-                              ],
-                            ),
+                          Row(
+                            children: [
+                              const Icon(Icons.calendar_month_outlined,
+                                  size: 18),
+                              const SizedBox(
+                                width: 5,
+                              ),
+                              Text(date, style: titleTextStyle1),
+                            ],
                           ),
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 5),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    const Icon(Icons.watch_later_outlined,
-                                        size: 18),
-                                    const SizedBox(
-                                      width: 5,
-                                    ),
-                                    Text(time, style: titleTextStyle),
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    Text(
-                                      "Booking Id : ",
-                                      style: titleTextStyle,
-                                    ),
-                                    Text(bookingID, style: titleTextStyle),
-                                  ],
-                                )
-                              ],
-                            ),
+                          Text(
+                            "Booking Id : $bookingID",
+                            style: titleTextStyle1,
+                          ),
+                          // Padding(
+                          //   padding: const EdgeInsets.only(bottom: 5),
+                          //   child: Row(
+                          //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          //     children: [
+                          //       Row(
+                          //         mainAxisAlignment: MainAxisAlignment.start,
+                          //         children: [
+                          //           const Icon(Icons.watch_later_outlined,
+                          //               size: 18),
+                          //           const SizedBox(
+                          //             width: 5,
+                          //           ),
+                          //           Text(time, style: titleTextStyle),
+                          //         ],
+                          //       ),
+                          //       Row(
+                          //         children: [
+                          //           Text(
+                          //             "Booking Id : ",
+                          //             style: titleTextStyle,
+                          //           ),
+                          //           Text(bookingID, style: titleTextStyle),
+                          //         ],
+                          //       )
+                          //     ],
+                          //   ),
+                          // ),
+                        ],
+                      ),
+                      trailing: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        // crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Charges",
+                            style: titleTextStyle,
+                          ),
+                          const SizedBox(height: 5),
+                          Text(
+                            "AED $rentalCharge",
+                            style: titleTextStyle1,
                           ),
                         ],
                       ),
@@ -133,78 +138,89 @@ class RentalCarListingContainer extends StatelessWidget {
                   decoration: const BoxDecoration(
                       border:
                           Border(bottom: BorderSide(color: curvePageColor))),
-                  child: ListTile(
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 5),
-                    horizontalTitleGap: 0,
-                    leading: SizedBox(
-                      width: 40,
-                      height: 40,
-                      child: ClipRRect(
-                          borderRadius: BorderRadius.circular(50),
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Image.asset(location),
-                          )),
-                    ),
-                    title: Text(
-                      "PickUp Location",
-                      style: titleTextStyle,
-                    ),
-                    subtitle: Row(
-                      children: [
-                        SizedBox(
-                          width: 145,
-                          child: Text(
-                            pickUplocation,
-                            style: titleTextStyle1,
-                            maxLines: 3,
-                            overflow: TextOverflow.ellipsis,
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: ListTile(
+                          dense: true,
+                          contentPadding:
+                              const EdgeInsets.symmetric(horizontal: 0),
+                          horizontalTitleGap: 0,
+                          leading: SizedBox(
+                            width: 35,
+                            height: 35,
+                            child: ClipRRect(
+                                borderRadius: BorderRadius.circular(50),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Image.asset(location),
+                                )),
                           ),
-
-                          // CustomText(
-                          //   content: ,
-                          //  fontSize: 16,
-                          //   align: TextAlign.start,
-                          //   textColor: blackColor,
-                          // ),
-                        ),
-                        const Spacer(),
-                      ],
-                    ),
-                    trailing: Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 10),
-                      width: 100,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          // SizedBox(
-                          //   width: 40,
-                          //   height: 40,
-                          //   child: ClipRRect(
-                          //       borderRadius: BorderRadius.circular(50),
-                          //       child: Padding(
-                          //         padding: const EdgeInsets.all(10.0),
-                          //         child: Image.asset(""),
-                          //       )),
-                          // ),
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                          title: Text(
+                            "PickUp Location",
+                            style: titleTextStyle,
+                          ),
+                          subtitle: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(
-                                "Charges",
-                                style: titleTextStyle,
+                              Expanded(
+                                child: Text(
+                                  pickUplocation,
+                                  style: titleTextStyle1,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
                               ),
-                              const SizedBox(height: 5),
-                              Text(
-                                "AED $rentalCharge",
-                                style: titleTextStyle1,
-                              ),
+                              // const Spacer(),
                             ],
                           ),
-                        ],
+                          // trailing: Container(
+                          //   margin: const EdgeInsets.symmetric(horizontal: 10),
+                          //   width: 100,
+                          //   child: Row(
+                          //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          //     children: [
+                          //       // SizedBox(
+                          //       //   width: 40,
+                          //       //   height: 40,
+                          //       //   child: ClipRRect(
+                          //       //       borderRadius: BorderRadius.circular(50),
+                          //       //       child: Padding(
+                          //       //         padding: const EdgeInsets.all(10.0),
+                          //       //         child: Image.asset(""),
+                          //       //       )),
+                          //       // ),
+                          //       Column(
+                          //         mainAxisAlignment: MainAxisAlignment.center,
+                          //         crossAxisAlignment: CrossAxisAlignment.start,
+                          //         children: [
+                          //           Text(
+                          //             "Charges",
+                          //             style: titleTextStyle,
+                          //           ),
+                          //           const SizedBox(height: 5),
+                          //           Text(
+                          //             "AED $rentalCharge",
+                          //             style: titleTextStyle1,
+                          //           ),
+                          //         ],
+                          //       ),
+                          //     ],
+                          //   ),
+                          // ),
+                        ),
                       ),
-                    ),
+                      Expanded(
+                        child: ListTile(
+                          contentPadding: EdgeInsets.only(left: 30),
+                          dense: true,
+                          horizontalTitleGap: 0,
+                          leading: Icon(Icons.watch_later_outlined, size: 18),
+                          title: Text('PickUp Time', style: titleTextStyle),
+                          subtitle: Text(time, style: titleTextStyle1),
+                        ),
+                      )
+                    ],
                   ),
                 ),
 

@@ -182,7 +182,8 @@ class TransContainer extends StatelessWidget {
                                       fontWeight: FontWeight.w700),
                                 ),
                                 Text(
-                                  "⭐ 4.8",
+                                  // "⭐ 4.8",
+                                  '',
                                   style: GoogleFonts.lato(
                                       color: greyColor,
                                       fontSize: 14,
@@ -241,58 +242,63 @@ class TransContainer extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        RichText(
-                            text: TextSpan(children: [
-                          TextSpan(
-                            text: "Kilometers : ",
-                            style: titleTextStyle,
-                          ),
-                          TextSpan(
-                            text: '${kilometers}/KM',
-                            style: titleTextStyle,
-                          ),
-                        ])),
-                        const SizedBox(height: 10),
-                        SizedBox(
-                          width: AppDimension.getWidth(context) * .55,
-                          child: Text(
-                            "Location : $pickUpLocation",
-                            style: titleTextStyle,
-                            maxLines: 3,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                        // const SizedBox(height: 5),
-                        // Text(
-                        //   pickUpLocation,
-                        //   style: titleTextStyle,
-                        // ),
-                      ],
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      mainAxisAlignment: MainAxisAlignment.start,
+                    RichText(
+                        text: TextSpan(children: [
+                      TextSpan(
+                        text: "Kilometers : ",
+                        style: titleTextStyle,
+                      ),
+                      TextSpan(
+                        text: '$kilometers/KM',
+                        style: titleTextStyle,
+                      ),
+                    ])),
+                    const SizedBox(height: 10),
+                    // Spacer(),
+                    Row(
                       children: [
                         Text(
-                          "AED $totalPrice",
-                          style: appbarTextStyle,
+                          'Location :',
+                          style: titleTextStyle,
                         ),
-                        CustomButtonSmall(
-                          width: 120,
-                          height: 40,
-                          loading: loading,
-                          btnHeading: "View Details",
-                          onTap: onTap,
+                        Text(
+                          pickUpLocation,
+                          style: titleTextStyle,
+                          maxLines: 3,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ],
-                    )
+                    ),
                   ],
                 ),
               ),
+              Container(
+                padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                margin: const EdgeInsets.all(5),
+                width: double.infinity,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    color: greyColor1.withOpacity(.1)),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    RichText(
+                        text: TextSpan(children: [
+                      TextSpan(text: "AED", style: appbarTextStyle),
+                      TextSpan(
+                          text: " ${totalPrice}".toUpperCase(),
+                          style: appbarTextStyle),
+                    ])),
+                    CustomButtonSmall(
+                      width: 120,
+                      height: 40,
+                      loading: loading,
+                      btnHeading: "View Details",
+                      onTap: onTap,
+                    ),
+                  ],
+                ),
+              )
               // Padding(
               //   padding: const EdgeInsets.all(8.0),
               //   child: Align(

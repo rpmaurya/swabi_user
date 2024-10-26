@@ -463,125 +463,83 @@ class _CancelContainerDialogState extends State<CancelContainerDialog> {
   final _formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
-    // return StatefulBuilder(
-    //   builder: (BuildContext context, StateSetter setState) {
-    return Dialog(
-      insetPadding: EdgeInsets.zero,
-      shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(10))),
-      child: Container(
-        decoration: const BoxDecoration(
-            color: background,
-            borderRadius: BorderRadius.all(Radius.circular(10))),
-        // height: AppDimension.getHeight(context)*.4,
-        padding: const EdgeInsets.only(bottom: 10),
-        width: AppDimension.getWidth(context) * .9,
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                  height: 50,
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  decoration: const BoxDecoration(
-                      color: btnColor,
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(10),
-                        topRight: Radius.circular(10),
-                      )),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const SizedBox(
-                        height: 30,
-                        width: 30,
-                      ),
-                      const CustomTextWidget(
-                        content: "Cancel Booking",
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        textColor: background,
-                      ),
-                      Material(
-                        color: btnColor,
-                        child: InkWell(
-                          onTap: () {
-                            context.pop();
-                          },
-                          child: Container(
-                              padding: const EdgeInsets.all(2),
-                              height: 30,
-                              width: 30,
-                              child: const Icon(
-                                Icons.close,
-                                color: background,
-                              )),
-                        ),
-                      ),
-                    ],
-                  )
-                  // const Center(
-                  //   child:
-                  // ),
-                  ),
-              const SizedBox(height: 10),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+    return Container(
+      // decoration: const BoxDecoration(
+      //     color: background,
+      //     borderRadius: BorderRadius.all(Radius.circular(10))),
+      // height: AppDimension.getHeight(context)*.4,
+      padding: const EdgeInsets.all(20),
+      width: double.infinity,
+      child: Form(
+        key: _formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Cancel Booking',
+                  style: buttonText,
+                ),
+                InkWell(
+                    onTap: () {
+                      context.pop();
+                    },
+                    child: Text(
+                      'X',
+                      style: buttonText,
+                    )),
+              ],
+            ),
+            const SizedBox(height: 10),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Row(
                   children: [
-                    const Row(
-                      children: [
-                        CustomTextWidget(
-                          content: "Reason for cancel booking",
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          textColor: greyColor,
-                        ),
-                        Text(
-                          ' *',
-                          style: TextStyle(color: redColor),
-                        )
-                      ],
+                    CustomTextWidget(
+                      content: "Reason for cancel booking",
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      textColor: greyColor,
                     ),
-                    const SizedBox(height: 10),
-                    Customtextformfield(
-                      minLines: 4,
-                      maxLines: 4,
-                      textLength: 120,
-                      controller: widget.controllerCancel,
-                      hintText: 'Reason for cancellation',
-                      validator: (p0) {
-                        if (p0 == null || p0.isEmpty) {
-                          return 'Please enter your reason';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 10),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        CustomButtonSmall(
-                            loading: widget.loading,
-                            height: 40,
-                            width: 120,
-                            // widht: AppDimension.getWidth(context) * .25,
-                            btnHeading: "Submit",
-                            onTap: () {
-                              if (_formKey.currentState!.validate()) {
-                                print('bncbjcxbcmnnc');
-                                widget.onTap();
-                              }
-                            }),
-                      ],
+                    Text(
+                      ' *',
+                      style: TextStyle(color: redColor),
                     )
                   ],
                 ),
-              )
-            ],
-          ),
+                const SizedBox(height: 10),
+                Customtextformfield(
+                  minLines: 4,
+                  maxLines: 4,
+                  textLength: 120,
+                  controller: widget.controllerCancel,
+                  hintText: 'Reason for cancellation',
+                  validator: (p0) {
+                    if (p0 == null || p0.isEmpty) {
+                      return 'Please enter your reason';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 10),
+                CustomButtonSmall(
+                    loading: widget.loading,
+                    height: 50,
+                    width: double.infinity,
+                    // widht: AppDimension.getWidth(context) * .25,
+                    btnHeading: "Submit",
+                    onTap: () {
+                      if (_formKey.currentState!.validate()) {
+                        print('bncbjcxbcmnnc');
+                        widget.onTap();
+                      }
+                    })
+              ],
+            )
+          ],
         ),
       ),
     );

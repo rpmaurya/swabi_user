@@ -18,8 +18,20 @@ class GetPackageListViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> fetchGetPackageListViewModelApi(
+  Future<GetPackageListModel?> fetchGetPackageListViewModelApi(
       BuildContext context, data) async {
+    try {
+      setDataList(ApiResponse.loading());
+      var resp = await _myRepo.getPackageListRepositoryApi(data);
+      setDataList(ApiResponse.completed(resp));
+      debugPrint('Get Package List Api Success');
+      return resp;
+    } catch (error) {
+      debugPrint(error.toString());
+      debugPrint('Get Package List Api Failed');
+      setDataList(ApiResponse.error(error.toString()));
+    }
+    return null;
     setDataList(ApiResponse.loading());
     _myRepo.getPackageListRepositoryApi(data).then((value) async {
       setDataList(ApiResponse.completed(value));
@@ -222,6 +234,8 @@ class PackageCancelViewModel with ChangeNotifier {
       String paymentId) async {
     try {
       setDataList(ApiResponse.loading());
+      // setDataList(ApiResponse.error(''));
+      // return null;
       await _myRepo
           .packageCancelRepositoryApi(context: context, query: data)
           .then((onValue) {
@@ -284,14 +298,20 @@ class AddPickUpLocationPackageViewModel with ChangeNotifier {
   }
 
   Future<void> fetchAddPickUpLocationPackageViewModelApi(
-      BuildContext context, data) async {
+      BuildContext context, data, String bookingId) async {
     setDataList(ApiResponse.loading());
+    // setDataList(ApiResponse.error(''));
+    // return null;
     _myRepo.addPickUpLocationPackageRepositoryApi(data).then((value) async {
+      Provider.of<GetPackageHistoryDetailByIdViewModel>(context, listen: false)
+          .fetchPackageHistoryDetailByIdViewModelApi(
+              context, {"packageBookingId": bookingId}, bookingId);
       // setDataList(ApiResponse.completed(value));
+      setDataList(ApiResponse.error(''));
       context.pop(context);
       // context.pop(context);
       Utils.toastSuccessMessage(
-        "PickUp Location Add Success",
+        "Pickup location added successfully",
       );
       debugPrint('Get Package Activity By Id ViewModel Success');
     }).onError((error, stackTrace) {

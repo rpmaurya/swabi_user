@@ -4,6 +4,7 @@ import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/res/Custom%20Page%20Layout/commonPage_Layout.dart';
 import 'package:flutter_cab/res/Custom%20Widgets/CustomTextFormfield.dart';
 import 'package:flutter_cab/utils/assets.dart';
+import 'package:flutter_cab/utils/text_styles.dart';
 import 'package:flutter_cab/utils/utils.dart';
 import 'package:flutter_cab/view_model/userProfile_view_model.dart';
 import 'package:flutter_cab/view_model/user_view_model.dart';
@@ -147,115 +148,160 @@ class _ChangePasswordState extends State<ChangePassword> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: bgGreyColor,
-      appBar: const CustomAppBar(
-        heading: "Change Password",
-      ),
-      body: PageLayout_Page(
-          child: SingleChildScrollView(
-        child: Form(
-          // autovalidateMode: AutovalidateMode.onUserInteraction,
-          key: _formKey,
-          child: Column(
-            children: [
-              const SizedBox(height: 50),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 50),
-                child: Center(child: Image.asset(appLogo1)),
-                // child: Center(child: Image.asset(appLogo1)),
-              ),
-              Customtextformfield(
-                fillColor: background,
-                obscureText: _obscureOldPassword,
-                // obscuringCharacter: '*',
-                controller: _oldPasswordController,
-                hintText: 'Enter current password',
-                suffixIcons: IconButton(
-                  icon: Icon(
-                    _obscureOldPassword
-                        ? Icons.visibility_off
-                        : Icons.visibility,
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      _obscureOldPassword = !_obscureOldPassword;
-                    });
-                  },
+    // return Scaffold(
+    //   backgroundColor: bgGreyColor,
+    //   appBar: const CustomAppBar(
+    //     heading: "Change Password",
+    //   ),
+    //   body: PageLayout_Page(
+    //       child: SingleChildScrollView(
+    //     child:
+
+    return Padding(
+      padding: const EdgeInsets.all(20.0),
+      child: Form(
+        // autovalidateMode: AutovalidateMode.onUserInteraction,
+        key: _formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Change password',
+                  style: buttonText,
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Enter your current password';
-                  }
-                  return null;
+                InkWell(
+                  onTap: () {
+                    context.pop();
+                  },
+                  child: Text(
+                    'X',
+                    style: buttonText,
+                  ),
+                )
+              ],
+            ),
+            const SizedBox(height: 20),
+            // Padding(
+            //   padding: const EdgeInsets.symmetric(vertical: 50),
+            //   child: Center(child: Image.asset(appLogo1)),
+            //   // child: Center(child: Image.asset(appLogo1)),
+            // ),
+            // Padding(
+            //   padding: const EdgeInsets.only(bottom: 5),
+            //   child: Text.rich(TextSpan(children: [
+            //     TextSpan(text: 'Current Password', style: titleTextStyle),
+            //     const TextSpan(text: ' *', style: TextStyle(color: redColor))
+            //   ])),
+            // ),
+            Customtextformfield(
+              fillColor: background,
+              obscureText: _obscureOldPassword,
+              // obscuringCharacter: '*',
+              controller: _oldPasswordController,
+              enableInteractiveSelection: false,
+              hintText: 'Enter current password',
+              suffixIcons: IconButton(
+                icon: Icon(
+                  _obscureOldPassword ? Icons.visibility_off : Icons.visibility,
+                ),
+                onPressed: () {
+                  setState(() {
+                    _obscureOldPassword = !_obscureOldPassword;
+                  });
                 },
               ),
-              const SizedBox(height: 16.0),
-              Customtextformfield(
-                fillColor: background,
-                obscureText: _obscureNewPassword,
-                // obscuringCharacter: '*',
-                controller: _newPasswordController,
-                hintText: 'Enter new password',
-                suffixIcons: IconButton(
-                  icon: Icon(
-                    _obscureNewPassword
-                        ? Icons.visibility_off
-                        : Icons.visibility,
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      _obscureNewPassword = !_obscureNewPassword;
-                    });
-                  },
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter current password';
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: 10.0),
+            // Padding(
+            //   padding: const EdgeInsets.only(bottom: 5),
+            //   child: Text.rich(TextSpan(children: [
+            //     TextSpan(text: 'New Password', style: titleTextStyle),
+            //     const TextSpan(text: ' *', style: TextStyle(color: redColor))
+            //   ])),
+            // ),
+            Customtextformfield(
+              fillColor: background,
+              obscureText: _obscureNewPassword,
+              // obscuringCharacter: '*',
+              enableInteractiveSelection: false,
+              controller: _newPasswordController,
+              hintText: 'Enter new password',
+              suffixIcons: IconButton(
+                icon: Icon(
+                  _obscureNewPassword ? Icons.visibility_off : Icons.visibility,
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Enter your new password';
-                  } else {
-                    return Validatorclass.validatePassword(value);
-                  }
+                onPressed: () {
+                  setState(() {
+                    _obscureNewPassword = !_obscureNewPassword;
+                  });
                 },
               ),
-              const SizedBox(height: 16.0),
-              Customtextformfield(
-                fillColor: background,
-                obscureText: _obscureConfirmPassword,
-                // obscuringCharacter: '*',
-                controller: _confirmPasswordController,
-                hintText: 'Enter confirm password',
-                suffixIcons: IconButton(
-                  icon: Icon(
-                    _obscureConfirmPassword
-                        ? Icons.visibility_off
-                        : Icons.visibility,
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      _obscureConfirmPassword = !_obscureConfirmPassword;
-                    });
-                  },
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter new password';
+                } else {
+                  return Validatorclass.validatePassword(value);
+                }
+              },
+            ),
+            const SizedBox(height: 10.0),
+            // Padding(
+            //   padding: const EdgeInsets.only(bottom: 5),
+            //   child: Text.rich(TextSpan(children: [
+            //     TextSpan(text: 'Confirm Password', style: titleTextStyle),
+            //     const TextSpan(text: ' *', style: TextStyle(color: redColor))
+            //   ])),
+            // ),
+            Customtextformfield(
+              fillColor: background,
+              obscureText: _obscureConfirmPassword,
+              // obscuringCharacter: '*',
+              enableInteractiveSelection: false,
+              controller: _confirmPasswordController,
+              hintText: 'Enter confirm password',
+              suffixIcons: IconButton(
+                icon: Icon(
+                  _obscureConfirmPassword
+                      ? Icons.visibility_off
+                      : Icons.visibility,
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Enter your Confirm password';
-                  } else if (value != _newPasswordController.text) {
-                    return "password do not match";
-                  } else {
-                    return Validatorclass.validatePassword(value);
-                  }
+                onPressed: () {
+                  setState(() {
+                    _obscureConfirmPassword = !_obscureConfirmPassword;
+                  });
                 },
               ),
-              const SizedBox(height: 20),
-              CustomButtonBig(
-                btnHeading: "Change Password",
-                onTap: () => _updatePassword(),
-              ),
-              const SizedBox(height: 10),
-            ],
-          ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter confirm password';
+                } else if (value != _newPasswordController.text) {
+                  return "Password do not match";
+                } else {
+                  return Validatorclass.validatePassword(value);
+                }
+              },
+            ),
+            const SizedBox(height: 20),
+            // Spacer(),
+            CustomButtonBig(
+              btnHeading: "Change Password",
+              onTap: () => _updatePassword(),
+            ),
+            // const SizedBox(height: 10),
+          ],
         ),
-      )),
+      ),
     );
+    // )),
+    // );
   }
 }
