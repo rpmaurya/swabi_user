@@ -93,7 +93,7 @@ class _OfferdetailsScreenState extends State<OfferdetailsScreen> {
                       ),
 
                       Text(
-                        'Save up to AED ${viewModel.offerDetailByIdModel?.data?.maxDiscountAmount?.toInt()}',
+                        'Save up to AED ${viewModel.offerDetailByIdModel?.data?.maxDiscountAmount?.toInt()} on ${viewModel.offerDetailByIdModel?.data?.bookingType == 'RENTAL_BOOKING' ? 'RENTAL BOOKING' : "PACKAGE BOOKING"}',
                         style: titleTextStyle1,
                       ),
                       Text(

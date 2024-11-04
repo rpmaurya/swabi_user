@@ -21,6 +21,7 @@ class AppUrl {
   static var verifyPayment = "/payment/verify_payment";
   static var changepasswordUrl = "/user/change_user_password";
   static var rentalCarBookingUrl = "/rental/booking_v2";
+  static var rentalCarSearchUrl = '/rental/rental_car_price';
   static var paymentDetailUrl = "/payment/get_payment_by_payment_id";
   static var changeMobileUrl = "/package_booking/change_mobile_number";
   static var raiseIssueUrl = "/booking_issue/raise_issue";

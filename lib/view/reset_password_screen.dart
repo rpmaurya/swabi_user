@@ -67,16 +67,16 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                         Customtextformfield(
                           focusNode: focusNode1,
                           fillColor: background,
-                          obscureText: obscurePassword,
-                          enableInteractiveSelection: false,
-                          obscuringCharacter: '*',
+                          obscureText: !obscurePassword,
+                          enableInteractiveSelection: obscurePassword,
+                          // obscuringCharacter: '*',
                           controller: password,
                           hintText: 'New password',
                           suffixIcons: IconButton(
                             icon: Icon(
                               obscurePassword
-                                  ? Icons.visibility_off
-                                  : Icons.visibility,
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
                             ),
                             onPressed: () {
                               setState(() {
@@ -107,16 +107,16 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                         Customtextformfield(
                           focusNode: focusNode2,
                           fillColor: background,
-                          obscureText: obscureConfirmPassword,
-                          enableInteractiveSelection: false,
-                          obscuringCharacter: '*',
+                          obscureText: !obscureConfirmPassword,
+                          enableInteractiveSelection: obscureConfirmPassword,
+                          // obscuringCharacter: '*',
                           controller: confirmpass,
                           hintText: 'Confirm password',
                           suffixIcons: IconButton(
                             icon: Icon(
                               obscureConfirmPassword
-                                  ? Icons.visibility_off
-                                  : Icons.visibility,
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
                             ),
                             onPressed: () {
                               setState(() {

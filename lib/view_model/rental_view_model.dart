@@ -31,7 +31,9 @@ class RentalViewModel with ChangeNotifier {
       String myUserId, double lati, double logi) async {
     setLoading(true);
     setDataList(ApiResponse.loading());
-    _myRepo.rentalRepositoryApi(data).then((value) async {
+    _myRepo
+        .rentalRepositoryApi(context: context, query: data)
+        .then((value) async {
       setLoading(false);
       setDataList(ApiResponse.completed(value));
       // debugPrint('Rental Api Success');

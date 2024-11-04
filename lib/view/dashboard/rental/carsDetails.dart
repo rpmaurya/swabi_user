@@ -62,6 +62,7 @@ class _CarsDetailsAvailableState extends State<CarsDetailsAvailable> {
               itemBuilder: (context, index) {
                 return TransContainer(
                     carName: rentalData[index].carType,
+                    carImage: rentalData[index].carImage,
                     pickTime: rentalData[index].pickupTime,
                     price: rentalData[index].price,
                     pickDate: rentalData[index].date,
@@ -104,6 +105,8 @@ class _CarsDetailsAvailableState extends State<CarsDetailsAvailable> {
 
 class TransContainer extends StatelessWidget {
   final String carName;
+  final String carImage;
+
   final String pickTime;
   final String pickDate;
   final String price;
@@ -118,6 +121,7 @@ class TransContainer extends StatelessWidget {
 
   const TransContainer(
       {this.carName = "",
+      this.carImage = "",
       this.pickTime = "",
       this.pickDate = "",
       this.loading = false,
@@ -147,9 +151,8 @@ class TransContainer extends StatelessWidget {
               border: Border.all(color: naturalGreyColor.withOpacity(.3))),
           child: Column(
             children: [
-              ///First Line of Design
               Container(
-                  padding: EdgeInsets.all(10),
+                  padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
                   decoration: const BoxDecoration(
                       border:
                           Border(bottom: BorderSide(color: curvePageColor))),
@@ -162,10 +165,15 @@ class TransContainer extends StatelessWidget {
                         height: 60,
                         child: ClipRRect(
                             borderRadius: BorderRadius.circular(10),
-                            child: Image.asset(
-                              rentalCar1,
-                              fit: BoxFit.cover,
-                            )),
+                            child: carImage.isNotEmpty
+                                ? Image.network(
+                                    carImage,
+                                    fit: BoxFit.fill,
+                                  )
+                                : Image.asset(
+                                    rentalCar1,
+                                    fit: BoxFit.cover,
+                                  )),
                       ),
                       const SizedBox(width: 10),
                       Expanded(
@@ -182,8 +190,7 @@ class TransContainer extends StatelessWidget {
                                       fontWeight: FontWeight.w700),
                                 ),
                                 Text(
-                                  // "⭐ 4.8",
-                                  '',
+                                  "Seats : ${seats}",
                                   style: GoogleFonts.lato(
                                       color: greyColor,
                                       fontSize: 14,
@@ -195,33 +202,14 @@ class TransContainer extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  "Hour : $hour",
+                                  "Hour : ${hour}",
                                   style: GoogleFonts.lato(
                                       color: greyColor,
                                       fontSize: 14,
                                       fontWeight: FontWeight.w600),
                                 ),
                                 Text(
-                                  "Time : $pickTime",
-                                  style: GoogleFonts.lato(
-                                      color: greyColor,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w600),
-                                ),
-                              ],
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  "Seats : $seats",
-                                  style: GoogleFonts.lato(
-                                      color: greyColor,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w700),
-                                ),
-                                Text(
-                                  "Date : $pickDate",
+                                  "Date : ${pickDate}",
                                   style: GoogleFonts.lato(
                                       color: greyColor,
                                       fontSize: 14,
@@ -236,42 +224,213 @@ class TransContainer extends StatelessWidget {
                   )),
 
               ///Second Line Design
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+              Container(
+                decoration: const BoxDecoration(
+                    border: Border(bottom: BorderSide(color: curvePageColor))),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    RichText(
-                        text: TextSpan(children: [
-                      TextSpan(
-                        text: "Kilometers : ",
-                        style: titleTextStyle,
-                      ),
-                      TextSpan(
-                        text: '$kilometers/KM',
-                        style: titleTextStyle,
-                      ),
-                    ])),
-                    const SizedBox(height: 10),
-                    // Spacer(),
-                    Row(
-                      children: [
-                        Text(
-                          'Location :',
-                          style: titleTextStyle,
+                    Expanded(
+                      child: ListTile(
+                        dense: true,
+                        horizontalTitleGap: 10,
+                        // contentPadding:
+                        //     const EdgeInsets.symmetric(horizontal: 10),
+                        leading: Icon(Icons.edit_road),
+                        title: Text(
+                          "Kilometer",
+                          style: titleText,
                         ),
-                        Text(
-                          pickUpLocation,
-                          style: titleTextStyle,
-                          maxLines: 3,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
+                        subtitle: Text('${kilometers}/KM', style: titleText),
+                      ),
                     ),
+                    Expanded(
+                      child: ListTile(
+                        dense: true,
+                        horizontalTitleGap: 10,
+                        contentPadding: const EdgeInsets.only(left: 45),
+                        leading: const Icon(Icons.lock_clock),
+                        title: Text(
+                          'Pickup Time',
+                          style: titleText,
+                        ),
+                        subtitle: Text(
+                          pickTime,
+                          style: titleText,
+                        ),
+                      ),
+                    )
                   ],
                 ),
               ),
+
+              ///Third Line Design
+              Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                  decoration: const BoxDecoration(
+                      border:
+                          Border(bottom: BorderSide(color: curvePageColor))),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Location : ",
+                        style: titleText,
+                      ),
+                      const SizedBox(height: 5),
+                      Text(
+                        pickUpLocation,
+                        style: titleText,
+                      )
+                      // SizedBox(
+                      //   width: AppDimension.getWidth(context) * .65,
+                      //   child: CustomText(
+                      //     content: widget.pickUpLocation,
+                      //     align: TextAlign.start,
+                      //     fontWeight: FontWeight.w400,
+                      //     maxline: 10,
+                      //     fontSize: 16,
+                      //   ),
+                      // )
+                      // Text(
+                      //   pickUpLocation,
+                      //   style: titleTextStyle,
+                      // ),
+                    ],
+                  )),
+
+              // ///First Line of Design
+              // Container(
+              //     padding: EdgeInsets.all(10),
+              //     decoration: const BoxDecoration(
+              //         border:
+              //             Border(bottom: BorderSide(color: curvePageColor))),
+              //     child: Row(
+              //       // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //       crossAxisAlignment: CrossAxisAlignment.start,
+              //       children: [
+              //         SizedBox(
+              //           width: 80,
+              //           height: 60,
+              //           child: ClipRRect(
+              //               borderRadius: BorderRadius.circular(10),
+              //               child: carImage.isNotEmpty
+              //                   ? Image.network(carImage)
+              //                   : Image.asset(
+              //                       rentalCar1,
+              //                       fit: BoxFit.cover,
+              //                     )),
+              //         ),
+              //         const SizedBox(width: 10),
+              //         Expanded(
+              //           child: Column(
+              //             children: [
+              //               Row(
+              //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //                 children: [
+              //                   Text(
+              //                     carName,
+              //                     style: GoogleFonts.lato(
+              //                         color: greyColor,
+              //                         fontSize: 17,
+              //                         fontWeight: FontWeight.w700),
+              //                   ),
+              //                   Text(
+              //                     // "⭐ 4.8",
+              //                     '',
+              //                     style: GoogleFonts.lato(
+              //                         color: greyColor,
+              //                         fontSize: 14,
+              //                         fontWeight: FontWeight.w600),
+              //                   ),
+              //                 ],
+              //               ),
+              //               Row(
+              //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //                 children: [
+              //                   Text(
+              //                     "Hour : $hour",
+              //                     style: GoogleFonts.lato(
+              //                         color: greyColor,
+              //                         fontSize: 14,
+              //                         fontWeight: FontWeight.w600),
+              //                   ),
+              //                   Text(
+              //                     "Time : $pickTime",
+              //                     style: GoogleFonts.lato(
+              //                         color: greyColor,
+              //                         fontSize: 14,
+              //                         fontWeight: FontWeight.w600),
+              //                   ),
+              //                 ],
+              //               ),
+              //               Row(
+              //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //                 children: [
+              //                   Text(
+              //                     "Seats : $seats",
+              //                     style: GoogleFonts.lato(
+              //                         color: greyColor,
+              //                         fontSize: 14,
+              //                         fontWeight: FontWeight.w700),
+              //                   ),
+              //                   Text(
+              //                     "Date : $pickDate",
+              //                     style: GoogleFonts.lato(
+              //                         color: greyColor,
+              //                         fontSize: 14,
+              //                         fontWeight: FontWeight.w600),
+              //                   ),
+              //                 ],
+              //               ),
+              //             ],
+              //           ),
+              //         )
+              //       ],
+              //     )),
+
+              // ///Second Line Design
+              // Padding(
+              //   padding:
+              //       const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+              //   child: Row(
+              //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //     children: [
+              //       RichText(
+              //           text: TextSpan(children: [
+              //         TextSpan(
+              //           text: "Kilometers : ",
+              //           style: titleTextStyle,
+              //         ),
+              //         TextSpan(
+              //           text: '$kilometers/KM',
+              //           style: titleTextStyle,
+              //         ),
+              //       ])),
+              //       const SizedBox(height: 10),
+              //       // Spacer(),
+              //       Expanded(
+              //         child: Row(
+              //           children: [
+              //             Text(
+              //               'Location :',
+              //               style: titleTextStyle,
+              //             ),
+              //             Expanded(
+              //               child: Text(
+              //                 pickUpLocation,
+              //                 style: titleTextStyle,
+              //                 maxLines: 3,
+              //                 overflow: TextOverflow.ellipsis,
+              //               ),
+              //             ),
+              //           ],
+              //         ),
+              //       ),
+              //     ],
+              //   ),
+              // ),
               Container(
                 padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
                 margin: const EdgeInsets.all(5),

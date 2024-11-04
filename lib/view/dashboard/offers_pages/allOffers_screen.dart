@@ -91,7 +91,7 @@ class _AlloffersScreenState extends State<AlloffersScreen> {
                           style: textTitleHeading,
                         ),
                         Text(
-                          'Save up to AED ${data?.maxDiscountAmount?.toInt()}',
+                          'Save up to AED ${data?.maxDiscountAmount?.toInt()} on ${data?.bookingType == 'RENTAL_BOOKING' ? 'RENTAL BOOKING' : 'PACKAGE BOOKING'}',
                           style: titleTextStyle1,
                         ),
                         const SizedBox(height: 10),

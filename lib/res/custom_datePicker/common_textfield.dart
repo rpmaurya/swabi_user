@@ -1058,8 +1058,12 @@ class _FormDatePickerExpenseState extends State<FormDatePickerExpense> {
               labelSmall: titleTextStyle,
               titleSmall: titleTextStyle,
             ),
-            buttonTheme:
-                const ButtonThemeData(textTheme: ButtonTextTheme.primary),
+            buttonTheme: ButtonThemeData(
+              textTheme: ButtonTextTheme.primary,
+              colorScheme: ColorScheme.light(
+                  primary: btnColor, // Change this to the desired color
+                  onPrimary: btnColor),
+            ),
           ),
           child: child!,
         );

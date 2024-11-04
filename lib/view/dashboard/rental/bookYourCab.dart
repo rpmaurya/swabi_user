@@ -162,6 +162,7 @@ class _BookYourCabState extends State<BookYourCab> {
                   children: [
                     BookingContainer(
                       carName: rental.carType,
+                      carImage: rental.carImage,
                       seats: rental.seats,
                       hour: rental.hours,
                       kilometers: rental.kilometers,
@@ -793,6 +794,7 @@ class _BookYourCabState extends State<BookYourCab> {
 
 class BookingContainer extends StatefulWidget {
   final String carName;
+  final String carImage;
   final String pickTime;
   final String pickDate;
   final String price;
@@ -814,6 +816,7 @@ class BookingContainer extends StatefulWidget {
 
   const BookingContainer(
       {this.carName = "",
+      this.carImage = "",
       this.pickTime = "",
       this.pickDate = "",
       this.loading = false,
@@ -855,7 +858,8 @@ class _BookingContainerState extends State<BookingContainer> {
               children: [
                 ///First Line of Design
                 Container(
-                    padding: EdgeInsets.all(10),
+                    padding:
+                        const EdgeInsets.only(left: 10, top: 10, right: 10),
                     decoration: const BoxDecoration(
                         border:
                             Border(bottom: BorderSide(color: curvePageColor))),
@@ -868,10 +872,15 @@ class _BookingContainerState extends State<BookingContainer> {
                           height: 60,
                           child: ClipRRect(
                               borderRadius: BorderRadius.circular(10),
-                              child: Image.asset(
-                                rentalCar1,
-                                fit: BoxFit.cover,
-                              )),
+                              child: widget.carImage.isNotEmpty
+                                  ? Image.network(
+                                      widget.carImage,
+                                      fit: BoxFit.fill,
+                                    )
+                                  : Image.asset(
+                                      rentalCar1,
+                                      fit: BoxFit.cover,
+                                    )),
                         ),
                         const SizedBox(width: 10),
                         Expanded(

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/utils/color.dart';
@@ -19,6 +21,38 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _otpController = TextEditingController();
   bool isloading = false;
+  late Timer _timer; // Timer object
+  int _start = 60; // Initial countdown time in seconds
+  bool _isButtonDisabled = true;
+
+  @override
+  void initState() {
+    super.initState();
+    startTimer();
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
+  }
+
+  void startTimer() {
+    _isButtonDisabled = true; // Disable the button when the timer starts
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      if (_start == 0) {
+        setState(() {
+          _isButtonDisabled = false; // Enable the button when countdown is over
+          timer.cancel();
+        });
+      } else {
+        setState(() {
+          _start--;
+        });
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     debugPrint('email....${widget.email}');
@@ -106,7 +140,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                     ),
                     CustomButtonSmall(
                         loading: viewModel.isLoading1,
-                        btnHeading: 'Verify Otp',
+                        btnHeading: 'Verify OTP',
                         onTap: () {
                           if (_formKey.currentState!.validate()) {
                             viewModel.verifyOtp(
@@ -122,26 +156,40 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                           "Didn't receive the code?",
                           style: TextStyle(
                               color: Color.fromRGBO(0, 0, 0, 10),
-                              fontSize: 13,
+                              fontSize: 12,
                               fontWeight: FontWeight.bold),
                         ),
                         TextButton(
-                            onPressed: () {
-                              viewModel.sendOtp(
-                                  context: context, email: widget.email);
-                            },
+                            onPressed: _isButtonDisabled
+                                ? null
+                                : () {
+                                    setState(() {
+                                      _start = 60; // Reset the countdown timer
+                                      _isButtonDisabled = true;
+                                    });
+                                    startTimer();
+                                    viewModel.sendOtp(
+                                        context: context, email: widget.email);
+                                  },
                             child: viewModel.isLoading
                                 ? const SizedBox(
                                     height: 25,
                                     width: 25,
                                     child: Center(
-                                        child: CircularProgressIndicator()),
+                                        child: CircularProgressIndicator(
+                                      color: greenColor,
+                                    )),
                                   )
-                                : const Text(
-                                    'Resend Otp',
+                                : Text(
+                                    _isButtonDisabled
+                                        ? 'Resend OTP ($_start seconds)'
+                                        : 'Resend OTP',
                                     style: TextStyle(
                                         fontWeight: FontWeight.w600,
-                                        color: greenColor),
+                                        fontSize: 12,
+                                        color: _isButtonDisabled
+                                            ? btnColor
+                                            : greenColor),
                                   ))
                       ],
                     )

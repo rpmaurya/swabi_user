@@ -147,7 +147,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     Customtextformfield(
                       focusNode: focusNode2,
                       controller: passwordControlller,
-                      obscureText: obsucePassword,
+                      obscureText: !obsucePassword,
+                      enableInteractiveSelection: obsucePassword,
                       // obscuringCharacter: '*',
                       keyboardType: TextInputType.visiblePassword,
                       fillColor: background,
@@ -155,8 +156,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       suffixIcons: IconButton(
                         icon: Icon(
                           obsucePassword
-                              ? Icons.visibility_off
-                              : Icons.visibility,
+                              ? Icons.visibility
+                              : Icons.visibility_off,
                         ),
                         onPressed: () {
                           setState(() {

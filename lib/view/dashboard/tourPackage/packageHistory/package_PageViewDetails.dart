@@ -684,12 +684,17 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
                               onTap: () {
                                 context.pop();
                               },
-                              child: const Text(
-                                'X',
-                                style: TextStyle(
-                                    color: btnColor,
-                                    fontSize: 17,
-                                    fontWeight: FontWeight.w600),
+                              child: const SizedBox(
+                                height: 35,
+                                width: 35,
+                                child: Text(
+                                  'X',
+                                  textAlign: TextAlign.end,
+                                  style: TextStyle(
+                                      color: btnColor,
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.w600),
+                                ),
                               ),
                             )
                           ],
@@ -798,7 +803,7 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
                                       bookingId: widget.id);
                             }
                           },
-                          btnHeading: "Change Contact",
+                          btnHeading: "Submit",
                         ),
                       ],
                     ),
@@ -1062,13 +1067,18 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
                                                   onTap: () {
                                                     context.pop();
                                                   },
-                                                  child: const Text(
-                                                    'X',
-                                                    style: TextStyle(
-                                                        color: btnColor,
-                                                        fontSize: 17,
-                                                        fontWeight:
-                                                            FontWeight.w600),
+                                                  child: const SizedBox(
+                                                    height: 35,
+                                                    width: 35,
+                                                    child: Text(
+                                                      'X',
+                                                      textAlign: TextAlign.end,
+                                                      style: TextStyle(
+                                                          color: btnColor,
+                                                          fontSize: 17,
+                                                          fontWeight:
+                                                              FontWeight.w600),
+                                                    ),
                                                   ),
                                                 )
                                               ],
@@ -1132,7 +1142,8 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
                                                                         .withOpacity(
                                                                             0.3))),
                                                             googleAPIKey:
-                                                                "AIzaSyADRdiTbSYUR8oc6-ryM1F1NDNjkHDr0Yo",
+                                                                // "AIzaSyADRdiTbSYUR8oc6-ryM1F1NDNjkHDr0Yo",
+                                                                'AIzaSyDhKIUQ4QBoDuOsooDfNY_EjCG0MB7Ami8',
                                                             inputDecoration:
                                                                 InputDecoration(
                                                               contentPadding:

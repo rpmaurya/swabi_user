@@ -209,9 +209,14 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                           onTap: () {
                             context.pop();
                           },
-                          child: Text(
-                            'X',
-                            style: buttonText,
+                          child: SizedBox(
+                            width: 35,
+                            height: 35,
+                            child: Text(
+                              'X',
+                              textAlign: TextAlign.end,
+                              style: buttonText,
+                            ),
                           ),
                         )
                       ],
@@ -281,6 +286,9 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                 padding: const EdgeInsets.only(bottom: 5, top: 5),
                 child: Text.rich(TextSpan(children: [
                   TextSpan(text: 'Age', style: titleTextStyle),
+                  const TextSpan(
+                    text: ' ',
+                  ),
                   TextSpan(
                       text: type == 'Infant' ? '(Month)' : '(Year)',
                       style: titleTextStyle),
@@ -581,6 +589,12 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                 padding: const EdgeInsets.only(bottom: 5, top: 5),
                 child: Text.rich(TextSpan(children: [
                   TextSpan(text: 'Age', style: titleTextStyle),
+                  const TextSpan(
+                    text: ' ',
+                  ),
+                  TextSpan(
+                      text: type == 'Infant' ? '(Month)' : '(Year)',
+                      style: titleTextStyle),
                   const TextSpan(text: ' *', style: TextStyle(color: redColor))
                 ])),
               ),
@@ -1227,8 +1241,8 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                                   },
                                   child: Image.asset(
                                     childIcon,
-                                    width: 25,
-                                    height: 25,
+                                    width: 26,
+                                    height: 26,
                                     color: btnColor,
                                     fit: BoxFit.fill,
                                   )),
@@ -1359,9 +1373,9 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                       children: [
                         Table(
                           columnWidths: const {
-                            0: FixedColumnWidth(110),
-                            1: FlexColumnWidth(),
-                            2: FixedColumnWidth(70),
+                            0: FixedColumnWidth(120),
+                            1: FixedColumnWidth(50),
+                            2: FlexColumnWidth(),
                             3: FlexColumnWidth(),
                             4: FlexColumnWidth()
                             // 1: FixedColumnWidth(75),
@@ -1394,9 +1408,7 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                                   ),
                                   Padding(
                                     padding: const EdgeInsets.only(
-                                      top: 10,
-                                      bottom: 10,
-                                    ),
+                                        top: 10, bottom: 10),
                                     child: Text(
                                       'Gender',
                                       style: tableheaderStyle,
@@ -1404,7 +1416,7 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                                   ),
                                   Padding(
                                     padding: const EdgeInsets.only(
-                                        top: 10, bottom: 10),
+                                        left: 5, top: 10, bottom: 10),
                                     child: Text(
                                       'Type',
                                       style: tableheaderStyle,
@@ -1442,9 +1454,9 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                                 ),
 
                                 columnWidths: const {
-                                  0: FixedColumnWidth(110),
-                                  1: FlexColumnWidth(),
-                                  2: FixedColumnWidth(70),
+                                  0: FixedColumnWidth(120),
+                                  1: FixedColumnWidth(50),
+                                  2: FlexColumnWidth(),
                                   3: FlexColumnWidth(),
                                   4: FlexColumnWidth()
                                   // 0: FixedColumnWidth(120),
@@ -1478,7 +1490,7 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                                             bottom: 10,
                                           ),
                                           child: Text(
-                                            '${member['age']} ${member['ageUnit']}',
+                                            '${member['age']}',
                                             style: titleTextStyle1,
                                           ),
                                         ),
@@ -1492,7 +1504,7 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                                         ),
                                         Padding(
                                           padding: const EdgeInsets.only(
-                                              top: 10, bottom: 10),
+                                              left: 5, top: 10, bottom: 10),
                                           child: Text(
                                             member['ageUnit'] == 'Month'
                                                 ? 'Infant'
@@ -1512,9 +1524,11 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                                                         : blackColor),
                                           ),
                                         ),
+
                                         Center(
                                           child: PopupMenuButton(
-                                            position: PopupMenuPosition.over,
+                                            // offset: Offset(-4, 0),
+                                            position: PopupMenuPosition.under,
                                             surfaceTintColor: background,
                                             icon: const Icon(Icons.more_vert),
                                             onSelected: (value) {
@@ -1575,24 +1589,34 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                                             itemBuilder:
                                                 (BuildContext context) =>
                                                     <PopupMenuEntry<int>>[
-                                              const PopupMenuItem<int>(
+                                              PopupMenuItem<int>(
+                                                padding: EdgeInsets.symmetric(
+                                                    horizontal: 20),
                                                 value: 1,
-                                                child: ListTile(
-                                                  leading: Icon(
+                                                child: Container(
+                                                  width:
+                                                      50, // Set the width of the popup menu item
+                                                  alignment: Alignment.center,
+                                                  child: Icon(
                                                     Icons.edit,
-                                                    color: greenColor,
+                                                    color: Colors
+                                                        .green, // Custom icon color
                                                   ),
-                                                  title: Text('Edit'),
                                                 ),
                                               ),
-                                              const PopupMenuItem<int>(
+                                              PopupMenuItem<int>(
+                                                padding: EdgeInsets.symmetric(
+                                                    horizontal: 20),
                                                 value: 2,
-                                                child: ListTile(
-                                                  leading: Icon(
+                                                child: Container(
+                                                  width:
+                                                      50, // Set the width of the popup menu item
+                                                  alignment: Alignment.center,
+                                                  child: Icon(
                                                     Icons.delete,
-                                                    color: redColor,
+                                                    color: Colors
+                                                        .red, // Custom icon color
                                                   ),
-                                                  title: Text('Delete'),
                                                 ),
                                               ),
                                             ],
@@ -2075,9 +2099,14 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                         onTap: () {
                           context.pop();
                         },
-                        child: Text(
-                          'X',
-                          style: buttonText,
+                        child: SizedBox(
+                          height: 35,
+                          width: 35,
+                          child: Text(
+                            'X',
+                            textAlign: TextAlign.end,
+                            style: buttonText,
+                          ),
                         ),
                       )
                     ],

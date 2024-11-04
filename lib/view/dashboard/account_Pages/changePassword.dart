@@ -176,9 +176,14 @@ class _ChangePasswordState extends State<ChangePassword> {
                   onTap: () {
                     context.pop();
                   },
-                  child: Text(
-                    'X',
-                    style: buttonText,
+                  child: SizedBox(
+                    height: 35,
+                    width: 35,
+                    child: Text(
+                      'X',
+                      textAlign: TextAlign.end,
+                      style: buttonText,
+                    ),
                   ),
                 )
               ],
@@ -198,14 +203,14 @@ class _ChangePasswordState extends State<ChangePassword> {
             // ),
             Customtextformfield(
               fillColor: background,
-              obscureText: _obscureOldPassword,
+              obscureText: !_obscureOldPassword,
               // obscuringCharacter: '*',
               controller: _oldPasswordController,
-              enableInteractiveSelection: false,
+              enableInteractiveSelection: _obscureOldPassword,
               hintText: 'Enter current password',
               suffixIcons: IconButton(
                 icon: Icon(
-                  _obscureOldPassword ? Icons.visibility_off : Icons.visibility,
+                  _obscureOldPassword ? Icons.visibility : Icons.visibility_off,
                 ),
                 onPressed: () {
                   setState(() {
@@ -230,14 +235,14 @@ class _ChangePasswordState extends State<ChangePassword> {
             // ),
             Customtextformfield(
               fillColor: background,
-              obscureText: _obscureNewPassword,
+              obscureText: !_obscureNewPassword,
               // obscuringCharacter: '*',
-              enableInteractiveSelection: false,
+              enableInteractiveSelection: _obscureNewPassword,
               controller: _newPasswordController,
               hintText: 'Enter new password',
               suffixIcons: IconButton(
                 icon: Icon(
-                  _obscureNewPassword ? Icons.visibility_off : Icons.visibility,
+                  _obscureNewPassword ? Icons.visibility : Icons.visibility_off,
                 ),
                 onPressed: () {
                   setState(() {
@@ -263,16 +268,16 @@ class _ChangePasswordState extends State<ChangePassword> {
             // ),
             Customtextformfield(
               fillColor: background,
-              obscureText: _obscureConfirmPassword,
+              obscureText: !_obscureConfirmPassword,
               // obscuringCharacter: '*',
-              enableInteractiveSelection: false,
+              enableInteractiveSelection: _obscureConfirmPassword,
               controller: _confirmPasswordController,
               hintText: 'Enter confirm password',
               suffixIcons: IconButton(
                 icon: Icon(
                   _obscureConfirmPassword
-                      ? Icons.visibility_off
-                      : Icons.visibility,
+                      ? Icons.visibility
+                      : Icons.visibility_off,
                 ),
                 onPressed: () {
                   setState(() {
@@ -293,7 +298,7 @@ class _ChangePasswordState extends State<ChangePassword> {
             const SizedBox(height: 20),
             // Spacer(),
             CustomButtonBig(
-              btnHeading: "Change Password",
+              btnHeading: "Submit",
               onTap: () => _updatePassword(),
             ),
             // const SizedBox(height: 10),

@@ -238,7 +238,8 @@ class _registration_screenState extends State<registration_screen> {
                                           color: naturalGreyColor
                                               .withOpacity(0.3))),
                                   googleAPIKey:
-                                      "AIzaSyADRdiTbSYUR8oc6-ryM1F1NDNjkHDr0Yo",
+                                      // "AIzaSyADRdiTbSYUR8oc6-ryM1F1NDNjkHDr0Yo",
+                                      'AIzaSyDhKIUQ4QBoDuOsooDfNY_EjCG0MB7Ami8',
                                   inputDecoration: InputDecoration(
                                     contentPadding: const EdgeInsets.symmetric(
                                         horizontal: 10, vertical: 10),
@@ -409,16 +410,16 @@ class _registration_screenState extends State<registration_screen> {
                     lableText('Password'),
                     Customtextformfield(
                       focusNode: passwordFocus,
-                      obscureText: obscurePassword,
-                      enableInteractiveSelection: false,
+                      obscureText: !obscurePassword,
+                      enableInteractiveSelection: obscurePassword,
                       controller: controller[6],
                       fillColor: background,
                       hintText: 'Enter your Password',
                       suffixIcons: IconButton(
                         icon: Icon(
                           obscurePassword
-                              ? Icons.visibility_off
-                              : Icons.visibility,
+                              ? Icons.visibility
+                              : Icons.visibility_off,
                         ),
                         onPressed: () {
                           setState(() {
@@ -438,15 +439,15 @@ class _registration_screenState extends State<registration_screen> {
                     lableText('Confirm Password'),
                     Customtextformfield(
                       focusNode: confPassFocus,
-                      obscureText: obscureConfirmPassword,
-                      enableInteractiveSelection: false,
+                      obscureText: !obscureConfirmPassword,
+                      enableInteractiveSelection: obscureConfirmPassword,
                       controller: controller[7],
                       fillColor: background,
                       suffixIcons: IconButton(
                         icon: Icon(
                           obscureConfirmPassword
-                              ? Icons.visibility_off
-                              : Icons.visibility,
+                              ? Icons.visibility
+                              : Icons.visibility_off,
                         ),
                         onPressed: () {
                           setState(() {

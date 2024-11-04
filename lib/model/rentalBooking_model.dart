@@ -166,6 +166,7 @@ class Body {
   String pickupTime;
   String hours;
   String carType;
+  String carImage;
   String totalPrice;
   String price;
   String latitude;
@@ -181,6 +182,7 @@ class Body {
     required this.carType,
     required this.totalPrice,
     required this.price,
+    required this.carImage,
     required this.latitude,
     required this.kilometers,
     required this.pickUpLocation,
@@ -193,6 +195,7 @@ class Body {
         pickupTime: json["pickupTime"],
         hours: json["hours"].toString(),
         carType: json["carType"] ?? "",
+        carImage: json["carImage"] ?? "",
         totalPrice: json["totalPrice"].toString(),
         price: json["price"].toString(),
         latitude: json["latitude"] ?? "",
@@ -207,6 +210,7 @@ class Body {
         "pickupTime": pickupTime,
         "hours": hours,
         "carType": carType,
+        "carImage": carImage,
         "totalPrice": totalPrice,
         "price": price,
         "latitude": latitude,
