@@ -499,7 +499,7 @@ class _CancelContainerDialogState extends State<CancelContainerDialog> {
                 const Row(
                   children: [
                     CustomTextWidget(
-                      content: "Reason for cancel booking",
+                      content: "Reason For Cancellation",
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                       textColor: greyColor,

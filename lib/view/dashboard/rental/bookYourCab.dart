@@ -1164,7 +1164,7 @@ class _BookingContainerState extends State<BookingContainer> {
                 children: [
                   CustomText(
                       content:
-                          "Cab and driver details. will be shared up to 30 min prior to departure.",
+                          "Cab and driver details will be shared up to 30 min prior to departure.",
                       fontSize: 16,
                       maxline: 2,
                       align: TextAlign.start,

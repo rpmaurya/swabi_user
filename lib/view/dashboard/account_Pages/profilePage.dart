@@ -238,7 +238,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
                 const SizedBox(height: 10),
                 CommonTextFeild(
-                  heading: "Contact No",
+                  heading: "Contact ",
                   headingReq: true,
                   prefixIcon: true,
                   initiValueReq: false,

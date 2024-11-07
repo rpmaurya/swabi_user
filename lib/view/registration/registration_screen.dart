@@ -139,7 +139,7 @@ class _registration_screenState extends State<registration_screen> {
                       // ],
                       keyboardType: TextInputType.name,
                       fillColor: background,
-                      hintText: 'Enter your first Name',
+                      hintText: 'Enter your first name',
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter first name';
@@ -339,7 +339,7 @@ class _registration_screenState extends State<registration_screen> {
                           print('cgghhh${controller[4].text}');
                         });
                       },
-                      hintText: 'Select Gender',
+                      hintText: 'Select gender',
                       validator: (p0) {
                         if (p0 == null || p0.isEmpty) {
                           return 'Please select gender';
@@ -388,7 +388,7 @@ class _registration_screenState extends State<registration_screen> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         CustomText(
-                            content: "Contact No",
+                            content: "Contact ",
                             textColor: blackColor,
                             fontSize: 16,
                             fontWeight: FontWeight.w700),
@@ -414,7 +414,7 @@ class _registration_screenState extends State<registration_screen> {
                       enableInteractiveSelection: obscurePassword,
                       controller: controller[6],
                       fillColor: background,
-                      hintText: 'Enter your Password',
+                      hintText: 'Enter your password',
                       suffixIcons: IconButton(
                         icon: Icon(
                           obscurePassword
@@ -455,7 +455,7 @@ class _registration_screenState extends State<registration_screen> {
                           });
                         },
                       ),
-                      hintText: 'Enter your confirm Password',
+                      hintText: 'Enter your confirm password',
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter confirm password';

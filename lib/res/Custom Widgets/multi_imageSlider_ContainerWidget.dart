@@ -121,15 +121,31 @@ class _MultiImageSliderState extends State<MultiImageSlider> {
               children: [
                 IconButton(
                     onPressed: _previousPage,
-                    icon: const Icon(
-                      Icons.arrow_back_ios_new_outlined,
-                      color: background,
+                    icon: Container(
+                      decoration: const BoxDecoration(
+                          shape: BoxShape.circle, color: btnColor),
+                      child: const Padding(
+                        padding: EdgeInsets.all(5.0),
+                        child: Icon(
+                          size: 20,
+                          Icons.arrow_back_ios_new_outlined,
+                          color: background,
+                        ),
+                      ),
                     )),
                 IconButton(
                     onPressed: _nextPage,
-                    icon: const Icon(
-                      Icons.arrow_forward_ios_outlined,
-                      color: background,
+                    icon: Container(
+                      decoration: const BoxDecoration(
+                          shape: BoxShape.circle, color: btnColor),
+                      child: const Padding(
+                        padding: EdgeInsets.all(5.0),
+                        child: Icon(
+                          size: 20,
+                          Icons.arrow_forward_ios_outlined,
+                          color: background,
+                        ),
+                      ),
                     ))
               ],
             ),

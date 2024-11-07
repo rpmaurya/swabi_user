@@ -90,7 +90,7 @@ class UserProfileUpdateViewModel with ChangeNotifier {
 
       setDataList(ApiResponse.completed(value));
       Utils.toastSuccessMessage(
-        "Profile Updated Success",
+        "Profile Updated Successfully",
       );
       // Utils.flushBarSuccessMessage("Profile Updated Success", context);
       // print("aaadtad");

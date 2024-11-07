@@ -114,6 +114,7 @@ class _RaiseIssueDialogState extends State<RaiseIssueDialog> {
                     maxLength: 120,
                     maxLines: 3,
                     decoration: const InputDecoration(
+                      hintStyle: TextStyle(fontSize: 13),
                       hintText: "Description For Issue",
                       border: OutlineInputBorder(),
                     ),

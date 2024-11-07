@@ -128,8 +128,19 @@ class _PackagesState extends State<Packages> {
             colorScheme: const ColorScheme.light(
               primary: btnColor,
             ),
-            buttonTheme:
-                const ButtonThemeData(textTheme: ButtonTextTheme.primary),
+            textButtonTheme: TextButtonThemeData(
+                style: ButtonStyle(
+              backgroundColor:
+                  MaterialStateProperty.all(btnColor), // Button background
+              foregroundColor:
+                  MaterialStateProperty.all(background), // Button text color
+              shape: MaterialStateProperty.all(
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              ),
+            )),
+            buttonTheme: const ButtonThemeData(
+              textTheme: ButtonTextTheme.primary,
+            ),
           ),
           child: child!,
         );
@@ -266,7 +277,7 @@ class _PackagesState extends State<Packages> {
                             ? ListView.builder(
                                 // controller: _scrollController,
                                 shrinkWrap: true,
-                                physics: NeverScrollableScrollPhysics(),
+                                physics: const NeverScrollableScrollPhysics(),
                                 padding: const EdgeInsets.symmetric(
                                     vertical: 5, horizontal: 10),
                                 itemCount: getPackageList.length +
@@ -599,6 +610,7 @@ class _PackageContainerState extends State<PackageContainer> {
                             padding: const EdgeInsets.only(bottom: 10),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.start,
+                              // crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Container(
                                   height: 15,

@@ -99,6 +99,8 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                         keyboardType: TextInputType.number,
                         enableActiveFill: true,
                         cursorColor: Colors.black,
+                        // errorTextMargin: const EdgeInsets.only(top: 20),
+                        errorTextSpace: 22,
                         appContext: context,
                         length: 6,
                         onChanged: (value) {
@@ -163,6 +165,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                             onPressed: _isButtonDisabled
                                 ? null
                                 : () {
+                                    _otpController.clear();
                                     setState(() {
                                       _start = 60; // Reset the countdown timer
                                       _isButtonDisabled = true;

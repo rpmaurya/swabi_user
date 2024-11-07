@@ -97,7 +97,8 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                         ),
                         Text.rich(TextSpan(children: [
                           TextSpan(
-                              text: 'Confirm password', style: titleTextStyle),
+                              text: 'Confirm new password',
+                              style: titleTextStyle),
                           const TextSpan(
                               text: ' *', style: TextStyle(color: redColor))
                         ])),
@@ -111,7 +112,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                           enableInteractiveSelection: obscureConfirmPassword,
                           // obscuringCharacter: '*',
                           controller: confirmpass,
-                          hintText: 'Confirm password',
+                          hintText: 'Confirm new password',
                           suffixIcons: IconButton(
                             icon: Icon(
                               obscureConfirmPassword

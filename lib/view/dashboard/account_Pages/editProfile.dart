@@ -95,6 +95,7 @@ class _EditProfiePageState extends State<EditProfiePage> {
     userData = context.watch<UserProfileViewModel>().DataList.data?.data ?? '';
     print(userData.toString());
     debugPrint(widget.usrId.toString());
+
     return Scaffold(
       backgroundColor: bgGreyColor,
       // resizeToAvoidBottomInset: false,
@@ -458,17 +459,18 @@ class _EditProfiePageState extends State<EditProfiePage> {
                     const TextSpan(
                         text: ' *', style: TextStyle(color: redColor))
                   ]))),
+
               CustomDropdownButton(
                 controller: controllers[3],
-                // focusNode: genderFocus,
-                itemsList: ['Male', 'Female'],
+                // focusNode: focusNode3,
+                itemsList: const ['Male', 'Female'],
                 onChanged: (value) {
                   setState(() {
-                    // controller[4].text = value ?? '';
-                    print('cgghhh${controllers[3].text}');
+                    controllers[3].text = value ?? '';
                   });
                 },
                 hintText: 'Select Gender',
+
                 // validator: (p0) {
                 //   if (p0 == null || p0.isEmpty) {
                 //     return 'Please select gender';
@@ -476,12 +478,13 @@ class _EditProfiePageState extends State<EditProfiePage> {
                 //   return null;
                 // },
               ),
+
               const SizedBox(height: 10),
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Text.rich(TextSpan(children: [
-                    TextSpan(text: 'Contact No', style: titleTextStyle),
+                    TextSpan(text: 'Contact', style: titleTextStyle),
                     const TextSpan(
                         text: ' *', style: TextStyle(color: redColor))
                   ])),
@@ -495,7 +498,7 @@ class _EditProfiePageState extends State<EditProfiePage> {
                   keyboardType: TextInputType.phone,
                   countryCode: controllers[4].text,
                   controller: controllers[5],
-                  hintText: 'Enter Mobile Number'),
+                  hintText: 'Enter mobile number'),
 
               const SizedBox(height: 20),
               // SizedBox(

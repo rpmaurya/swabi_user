@@ -92,7 +92,7 @@ class UserViewModel with ChangeNotifier {
     sp.remove('userId');
     sp.remove('baseUrl');
     // sp.clear();
-    Utils.toastSuccessMessage("Logout Successful");
+    Utils.toastSuccessMessage("Logout Successfully");
   }
 
   Future<dynamic> allClear(context) async {

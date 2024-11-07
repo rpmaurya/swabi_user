@@ -91,7 +91,14 @@ class _CommonOfferContainerState extends State<CommonOfferContainer> {
                       CommonContainer(
                         color: bgGreyColor,
                         onTap: () {
-                          context.push('/allOffer');
+                          context.push('/allOffer').then((onValue) {
+                            Provider.of<OfferViewModel>(context, listen: false)
+                                .getOfferList(
+                                    context: context,
+                                    date: DateFormat('dd-MM-yyyy')
+                                        .format(dateTime),
+                                    bookingType: widget.bookingType);
+                          });
                         },
                         elevation: 0,
                         borderRadius: BorderRadius.circular(0),
@@ -201,10 +208,16 @@ class _CommonOfferContainerState extends State<CommonOfferContainer> {
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
                                       children: [
-                                        Text(
-                                          data?.offerCode ?? '',
-                                          style: titleTextStyle,
-                                        ),
+                                        isCopied && selectIndex == index
+                                            ? const Text(
+                                                'Copied',
+                                                style: TextStyle(
+                                                    color: Colors.green),
+                                              )
+                                            : Text(
+                                                data?.offerCode ?? '',
+                                                style: titleTextStyle,
+                                              ),
                                         GestureDetector(
                                           onTap: () {
                                             setState(() {

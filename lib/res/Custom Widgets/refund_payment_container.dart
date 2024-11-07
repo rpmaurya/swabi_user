@@ -52,9 +52,9 @@ class RefundPaymentContainer extends StatelessWidget {
               textItem(
                   lable: 'Refund Status',
                   value: refundStatus == "created"
-                      ? "Pending"
+                      ? "PENDING"
                       : refundStatus == "processed"
-                          ? "Success"
+                          ? "PROCESSED"
                           : refundStatus),
 
               // textItem(

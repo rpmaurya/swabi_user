@@ -76,120 +76,113 @@ class _OfferdetailsScreenState extends State<OfferdetailsScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(5),
-                        child: Image.network(
-                          viewModel.offerDetailByIdModel?.data?.imageUrl ??
-                              'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS23qSvFQm2bH4nUAwxBk7ZzBQm5Qi__4imxg&s',
-                          width: double.infinity,
-                          height: 180,
-                          fit: BoxFit.fill,
+                      Container(
+                        width: double.infinity,
+                        height: 200,
+                        decoration: BoxDecoration(
+                            border: Border.all(
+                                color: naturalGreyColor.withOpacity(0.3)),
+                            borderRadius: BorderRadius.circular(5)),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(5),
+                          child: Image.network(
+                            viewModel.offerDetailByIdModel?.data?.imageUrl ??
+                                'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS23qSvFQm2bH4nUAwxBk7ZzBQm5Qi__4imxg&s',
+                            fit: BoxFit.fill,
+                          ),
                         ),
                       ),
                       const SizedBox(height: 10),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 5),
+                        decoration: BoxDecoration(
+                          color: Colors.red[100],
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Text(
+                          viewModel.offerDetailByIdModel?.data?.bookingType ==
+                                  'PACKAGE_BOOKING'
+                              ? "PACKAGE OFFER"
+                              : "RENTAL OFFER",
+                          style: textTitleHeading,
+                        ),
+                      ),
+                      const SizedBox(height: 5),
                       Text(
                         '${viewModel.offerDetailByIdModel?.data?.offerName}',
-                        style: textTitleHeading,
+                        style: pageHeadingTextStyle,
                       ),
-
                       Text(
                         'Save up to AED ${viewModel.offerDetailByIdModel?.data?.maxDiscountAmount?.toInt()} on ${viewModel.offerDetailByIdModel?.data?.bookingType == 'RENTAL_BOOKING' ? 'RENTAL BOOKING' : "PACKAGE BOOKING"}',
                         style: titleTextStyle1,
+                      ),
+                      Text(
+                        'Min booking AED ${viewModel.offerDetailByIdModel?.data?.minimumBookingAmount?.toInt()}',
+                        style: titleTextStyle1,
+                      ),
+                      const SizedBox(height: 5),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: offerTile(
+                                lable: 'Expire on ',
+                                value:
+                                    '${viewModel.offerDetailByIdModel?.data?.endDate}'),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 5, horizontal: 10),
+                            decoration: BoxDecoration(
+                                border: Border.all(
+                                    color: Colors.black.withOpacity(0.5)),
+                                borderRadius: BorderRadius.circular(20)),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                isCopied
+                                    ? const Text(
+                                        'Copied',
+                                        style: TextStyle(color: Colors.green),
+                                      )
+                                    : Text(
+                                        viewModel.offerDetailByIdModel?.data
+                                                ?.offerCode ??
+                                            '',
+                                        style: titleTextStyle,
+                                      ),
+                                const SizedBox(width: 20),
+                                GestureDetector(
+                                  onTap: () {
+                                    copyToClipboard(viewModel
+                                            .offerDetailByIdModel
+                                            ?.data
+                                            ?.offerCode ??
+                                        '');
+                                  },
+                                  child: isCopied
+                                      ? const Icon(
+                                          Icons.check,
+                                          color: Colors.green,
+                                        )
+                                      : const Icon(Icons.copy),
+                                )
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 5),
+                      Text(
+                        'Description :-',
+                        style: titleTextStyle,
                       ),
                       Text(
                         viewModel.offerDetailByIdModel?.data?.description ?? '',
                         // style: titleTextStyle1,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
-                      ),
-                      const SizedBox(height: 5),
-
-                      // const CustomTextWidget(
-                      //     sideLogo: true,
-                      //     content: "Offer Details",
-                      //     fontSize: 20,
-                      //     fontWeight: FontWeight.w700,
-                      //     textColor: textColor),
-                      // const SizedBox(height: 10),
-                      // offerTile(
-                      //     lable: 'Offer Name',
-                      //     value:
-                      //         viewModel.offerDetailByIdModel?.data?.offerName ??
-                      //             ''),
-                      // const SizedBox(height: 5),
-                      // offerTile(
-                      //     lable: 'Offer Code',
-                      //     value:
-                      //         viewModel.offerDetailByIdModel?.data?.offerCode ??
-                      //             ''),
-                      // offerTile(
-                      //     lable: 'Minimum Booking Amount',
-                      //     value:
-                      //         'AED ${viewModel.offerDetailByIdModel?.data?.minimumBookingAmount}'),
-                      // const SizedBox(height: 5),
-                      // offerTile(
-                      //     lable: 'Discount Percentage',
-                      //     value:
-                      //         '${viewModel.offerDetailByIdModel?.data?.discountPercentage} %'),
-                      // const SizedBox(height: 5),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          // Expanded(
-                          //   child: offerTile(
-                          //       lable: 'Start Date',
-                          //       value:
-                          //           '${viewModel.offerDetailByIdModel?.data?.startDate}'),
-                          // ),
-                          Expanded(
-                            child: offerTile(
-                                lable: 'End Date',
-                                value:
-                                    '${viewModel.offerDetailByIdModel?.data?.endDate}'),
-                          )
-                        ],
-                      ),
-                      const SizedBox(height: 5),
-
-                      Container(
-                        padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                            border: Border.all(color: Colors.black),
-                            borderRadius: BorderRadius.circular(5)),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              viewModel.offerDetailByIdModel?.data?.offerCode ??
-                                  '',
-                              style: titleTextStyle,
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                copyToClipboard(viewModel.offerDetailByIdModel
-                                        ?.data?.offerCode ??
-                                    '');
-                              },
-                              child: Row(
-                                children: [
-                                  isCopied
-                                      ? const Text(
-                                          'Copied',
-                                          style: TextStyle(color: Colors.green),
-                                        )
-                                      : Text('CopyCodes'),
-                                  const SizedBox(width: 5),
-                                  isCopied
-                                      ? const Icon(
-                                          Icons.check,
-                                          color: Colors.green,
-                                        )
-                                      : Icon(Icons.copy)
-                                ],
-                              ),
-                            )
-                          ],
-                        ),
                       ),
                       const SizedBox(height: 10),
                       Text(

@@ -19,7 +19,7 @@ class TermCondition extends StatelessWidget {
           child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("TERMS AND CONDITIONS",
+          Text("TERM AND CONDITION",
               style: pageHeadingTextStyle, textAlign: TextAlign.left),
           const SizedBox(
             height: 10,
@@ -30,8 +30,12 @@ class TermCondition extends StatelessWidget {
             decoration: BoxDecoration(
                 color: background, borderRadius: BorderRadius.circular(5)),
             child: Text(
-                "This agreement forms the basis of an enforceable legal relationship. It tells anyone browsing your website, whether they are a casual visitor or an active client, what their legal responsibilities and rights are."
-                "It also gives you, as the business owner and service provider, authority over certain undesirable things that a consumer may do on your website. However, let's consider the specific reasons why business owners should always include a Terms and Conditions agreement on their website.",
+                "Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et "
+                "massa mi. Aliquam in hendrerit urna. Pellentesque sit amet "
+                "sapien fringilla, mattis ligula consectetur, ultrices. Lorem "
+                "ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. "
+                "Aliquam in hendrerit urna. Pellentesque sit amet sapien "
+                "fringilla, mattis ligula consectetur, ultrices.",
                 style: termCondition,
                 textAlign: TextAlign.left),
           ),

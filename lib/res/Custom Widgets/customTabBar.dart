@@ -67,6 +67,7 @@ class _CustomtabbarState extends State<Customtabbar> {
                 labelPadding:
                     const EdgeInsets.symmetric(vertical: 0, horizontal: 0),
                 // indicatorPadding: EdgeInsets.zero,
+                indicatorWeight: 2.5,
                 indicatorColor: btnColor,
                 labelColor: blackColor,
                 dividerColor: Colors.transparent,
@@ -75,8 +76,8 @@ class _CustomtabbarState extends State<Customtabbar> {
                   return Tab(
                     child: Text(
                       widget.tabs[index].toString(),
-                      style:
-                          TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+                      style: const TextStyle(
+                          fontSize: 13, fontWeight: FontWeight.w600),
                     ),
                   );
                 }),

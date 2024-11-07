@@ -272,7 +272,7 @@ class _ChangePasswordState extends State<ChangePassword> {
               // obscuringCharacter: '*',
               enableInteractiveSelection: _obscureConfirmPassword,
               controller: _confirmPasswordController,
-              hintText: 'Enter confirm password',
+              hintText: 'Enter confirm new password',
               suffixIcons: IconButton(
                 icon: Icon(
                   _obscureConfirmPassword
@@ -287,7 +287,7 @@ class _ChangePasswordState extends State<ChangePassword> {
               ),
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return 'Please enter confirm password';
+                  return 'Please enter confirm new password';
                 } else if (value != _newPasswordController.text) {
                   return "Password do not match";
                 } else {

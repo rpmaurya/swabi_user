@@ -12,6 +12,7 @@ import 'package:flutter_cab/res/custom_mobileNumber.dart';
 import 'package:flutter_cab/utils/assets.dart';
 import 'package:flutter_cab/utils/color.dart';
 import 'package:flutter_cab/utils/dimensions.dart';
+import 'package:flutter_cab/utils/string_extenstion.dart';
 import 'package:flutter_cab/utils/text_styles.dart';
 import 'package:flutter_cab/utils/utils.dart';
 import 'package:flutter_cab/view_model/offer_view_model.dart';
@@ -20,13 +21,9 @@ import 'package:flutter_cab/view_model/payment_gateway_view_model.dart';
 import 'package:flutter_cab/view_model/services/paymentService.dart';
 import 'package:flutter_cab/view_model/userProfile_view_model.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
-
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl_phone_field/countries.dart';
-import 'package:marquee/marquee.dart';
-
+import 'package:marqueer/marqueer.dart';
 import 'package:provider/provider.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 
@@ -81,15 +78,6 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
   String primaryCountryCode = '';
   String secondaryCountryCode = '971';
   String initialCountryCode = 'AE';
-
-  // int adultNumber = 0;
-  // int childNumber = 0;
-  // int infentNumber = 0;
-
-  // int intAdultNumber = 0;
-  // int intChildNumber = 0;
-  // int intInfentdNumber = 0;
-  // String type = "";
 
   @override
   void initState() {
@@ -312,12 +300,12 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                       return 'Adult must be 18 years or older';
                     }
                   } else if (type == 'Child') {
-                    print('type of member2$type');
+                    debugPrint('type of member2$type');
                     if (age <= 2 || age >= 18) {
                       return 'Child must be between 2 and 18 years old';
                     }
                   } else if (type == 'Infant') {
-                    print('type of member3$type');
+                    debugPrint('type of member3$type');
                     if (age >= 24) {
                       return 'Infant must be under 24 months';
                     }
@@ -339,7 +327,7 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                 onChanged: (value) {
                   setState(() {
                     genderController.text = value ?? '';
-                    print('validate gender ${genderController.text}');
+                    debugPrint('validate gender ${genderController.text}');
                   });
                 },
                 hintText: 'Select Gender',
@@ -356,7 +344,7 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
         btnHeading: 'ADD',
         onTap: () {
           if (_formKey.currentState!.validate()) {
-            print('succes');
+            debugPrint('succes');
             setState(() {
               members.add({
                 'name': nameController.text,
@@ -376,174 +364,9 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
 
             Navigator.of(context).pop();
           } else {
-            print('jhhjhjcgnxbcnbxcnxbcxjc');
+            debugPrint('jhhjhjcgnxbcnbxcnxbcxjc');
           }
         });
-    // showDialog(
-    //   context: context,
-    //   builder: (BuildContext context) {
-    //     return StatefulBuilder(
-    //         builder: (BuildContext context, StateSetter setstate) {
-    //       return SingleChildScrollView(
-    //         padding: const EdgeInsets.only(top: 70),
-    //         physics: const NeverScrollableScrollPhysics(),
-    //         child: AlertDialog(
-    //           backgroundColor: background,
-    //           surfaceTintColor: background,
-    //           shape: RoundedRectangleBorder(
-    //               borderRadius: BorderRadius.circular(10)),
-    //           title: CustomTextWidget(
-    //               content: title, align: TextAlign.center, fontSize: 25),
-    //           content: Form(
-    //             key: _formKey,
-    //             // autovalidateMode: AutovalidateMode.disabled,
-    //             child: Column(
-    //               mainAxisSize: MainAxisSize.min,
-    //               crossAxisAlignment: CrossAxisAlignment.start,
-    //               children: [
-    //                 Padding(
-    //                   padding: const EdgeInsets.only(bottom: 5),
-    //                   child: Text.rich(TextSpan(children: [
-    //                     TextSpan(text: 'Name', style: titleTextStyle),
-    //                     TextSpan(text: ' *', style: TextStyle(color: redColor))
-    //                   ])),
-    //                 ),
-    //                 Customtextformfield(
-    //                   focusNode: focusNode1,
-    //                   controller: nameController,
-    //                   hintText: 'Enter Name',
-    //                   // inputFormatters: [
-    //                   //   FilteringTextInputFormatter.allow(RegExp("[a-zA-Z]")),
-    //                   // ],
-    //                   // errorText:
-    //                   //     validationMessage.isEmpty ? '' : validationMessage,
-    //                   validator: (value) {
-    //                     if (value == null || value.isEmpty) {
-    //                       return 'Please enter name';
-    //                     }
-    //                     return null;
-    //                   },
-    //                   // onChanged: (p0) {
-    //                   //   if (p0 != '') {
-    //                   //     setstate(() {
-    //                   //       validationMessage = 'return error';
-    //                   //     });
-    //                   //   } else {
-    //                   //     validationMessage = '';
-    //                   //   }
-    //                   // },
-    //                 ),
-    //                 Padding(
-    //                   padding: const EdgeInsets.only(bottom: 5, top: 5),
-    //                   child: Text.rich(TextSpan(children: [
-    //                     TextSpan(text: 'Age', style: titleTextStyle),
-    //                     TextSpan(
-    //                         text: type == 'Infant' ? '(Month)' : '(Year)',
-    //                         style: titleTextStyle),
-    //                     TextSpan(text: ' *', style: TextStyle(color: redColor))
-    //                   ])),
-    //                 ),
-    //                 Customtextformfield(
-    //                   focusNode: focusNode2,
-    //                   controller: ageController,
-    //                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-    //                   keyboardType: TextInputType.number,
-    //                   hintText: 'Enter Age',
-    //                   validator: (value) {
-    //                     int age = int.tryParse(value ?? '')?.toInt() ?? 0;
-
-    //                     if (value == null || value.isEmpty) {
-    //                       return 'Please enter age';
-    //                     } else if (type == 'Adult') {
-    //                       debugPrint('type of member1$type');
-    //                       if (age < 18 || age >= 100) {
-    //                         return 'Adult must be 18 years or older';
-    //                       }
-    //                     } else if (type == 'Child') {
-    //                       print('type of member2$type');
-    //                       if (age <= 2 || age >= 18) {
-    //                         return 'Child must be between 2 and 18 years old';
-    //                       }
-    //                     } else if (type == 'Infant') {
-    //                       print('type of member3$type');
-    //                       if (age >= 24) {
-    //                         return 'Infant must be under 24 months';
-    //                       }
-    //                     }
-    //                     return null;
-    //                   },
-    //                 ),
-    //                 Padding(
-    //                   padding: const EdgeInsets.only(bottom: 5, top: 5),
-    //                   child: Text.rich(TextSpan(children: [
-    //                     TextSpan(text: 'Gender', style: titleTextStyle),
-    //                     TextSpan(text: ' *', style: TextStyle(color: redColor))
-    //                   ])),
-    //                 ),
-    //                 CustomDropdownButton(
-    //                   controller: genderController,
-    //                   focusNode: focusNode3,
-    //                   itemsList: ['Male', 'Female'],
-    //                   onChanged: (value) {
-    //                     setState(() {
-    //                       genderController.text = value ?? '';
-    //                       print('validate gender ${genderController.text}');
-    //                     });
-    //                   },
-    //                   hintText: 'Select Gender',
-    //                   validator: (p0) {
-    //                     if (p0 == null || p0.isEmpty) {
-    //                       return 'Please select gender';
-    //                     }
-    //                     return null;
-    //                   },
-    //                 )
-    //               ],
-    //             ),
-    //           ),
-    //           actions: [
-    //             CustomButtonSmall(
-    //               width: 100,
-    //               btnHeading: "CANCEL",
-    //               onTap: () {
-    //                 Navigator.of(context).pop();
-    //               },
-    //             ),
-    //             CustomButtonSmall(
-    //               width: 100,
-    //               onTap: () {
-    //                 if (_formKey.currentState!.validate()) {
-    //                   print('succes');
-    //                   setState(() {
-    //                     members.add({
-    //                       'name': nameController.text,
-    //                       'age': ageController.text,
-    //                       'gender': genderController.text,
-    //                       'ageUnit': ageUnit,
-    //                       'type': type
-    //                     });
-    //                     // updateButtonStates();
-    //                   });
-    //                   type == 'Infant' ? null : _addAmount();
-    //                   ageUnit = '';
-    //                   type = '';
-    //                   nameController.text = '';
-    //                   ageController.text = '';
-    //                   genderController.text = '';
-
-    //                   Navigator.of(context).pop();
-    //                 } else {
-    //                   print('jhhjhjcgnxbcnbxcnxbcxjc');
-    //                 }
-    //               },
-    //               btnHeading: "ADD",
-    //             ),
-    //           ],
-    //         ),
-    //       );
-    //     });
-    //   },
-    // );
   }
 
   /// Update memeber
@@ -610,17 +433,17 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                   if (value == null || value.isEmpty) {
                     return 'Please enter age';
                   } else if (type == 'Adult') {
-                    print('type of member1$type');
+                    debugPrint('type of member1$type');
                     if (age <= 18 || age >= 100) {
                       return 'Adult must be 18 Year or older';
                     }
                   } else if (type == 'Child') {
-                    print('type of member2$type');
+                    debugPrint('type of member2$type');
                     if (age >= 18) {
                       return 'Child must be under 18 Year';
                     }
                   } else if (type == 'Infant') {
-                    print('type of member3$type');
+                    debugPrint('type of member3$type');
                     if (age >= 24) {
                       return 'Infant must be under 24 Month';
                     }
@@ -658,7 +481,7 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
         btnHeading: "EDIT",
         onTap: () {
           if (_formKey.currentState!.validate()) {
-            print('succes');
+            debugPrint('succes');
             setState(() {
               members[index] = {
                 'name': nameController.text,
@@ -673,150 +496,10 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
             Navigator.of(context).pop();
           }
         });
-    // showDialog(
-    //   context: context,
-    //   builder: (BuildContext context) {
-    //     return SingleChildScrollView(
-    //       padding: const EdgeInsets.only(top: 70),
-    //       physics: const NeverScrollableScrollPhysics(),
-    //       child: AlertDialog(
-    //         backgroundColor: background,
-    //         surfaceTintColor: background,
-    //         shape:
-    //             RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-    //         title: CustomTextWidget(
-    //             content: title, align: TextAlign.center, fontSize: 25),
-    //         content: Form(
-    //           key: _formKey,
-    //           autovalidateMode: AutovalidateMode.onUserInteraction,
-    //           child: Column(
-    //             mainAxisSize: MainAxisSize.min,
-    //             crossAxisAlignment: CrossAxisAlignment.start,
-    //             children: [
-    //               Padding(
-    //                 padding: const EdgeInsets.only(bottom: 5),
-    //                 child: Text.rich(TextSpan(children: [
-    //                   TextSpan(text: 'Name', style: titleTextStyle),
-    //                   const TextSpan(
-    //                       text: ' *', style: TextStyle(color: redColor))
-    //                 ])),
-    //               ),
-    //               Customtextformfield(
-    //                 focusNode: focusNode1,
-    //                 controller: nameController,
-    //                 hintText: 'Enter Name',
-    //                 // inputFormatters: [
-    //                 //   FilteringTextInputFormatter.allow(RegExp("[a-zA-Z]")),
-    //                 // ],
-    //                 validator: (value) {
-    //                   if (value == null || value.isEmpty) {
-    //                     return 'Please enter name';
-    //                   }
-    //                   return null;
-    //                 },
-    //               ),
-    //               Padding(
-    //                 padding: const EdgeInsets.only(bottom: 5, top: 5),
-    //                 child: Text.rich(TextSpan(children: [
-    //                   TextSpan(text: 'Age', style: titleTextStyle),
-    //                   const TextSpan(
-    //                       text: ' *', style: TextStyle(color: redColor))
-    //                 ])),
-    //               ),
-    //               Customtextformfield(
-    //                 focusNode: focusNode2,
-    //                 controller: ageController,
-    //                 keyboardType: TextInputType.number,
-    //                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-    //                 hintText: 'Enter Age',
-    //                 validator: (value) {
-    //                   int age = int.tryParse(value ?? '')?.toInt() ?? 0;
-
-    //                   if (value == null || value.isEmpty) {
-    //                     return 'Please enter age';
-    //                   } else if (type == 'Adult') {
-    //                     print('type of member1$type');
-    //                     if (age <= 18 || age >= 100) {
-    //                       return 'Adult must be 18 Year or older';
-    //                     }
-    //                   } else if (type == 'Child') {
-    //                     print('type of member2$type');
-    //                     if (age >= 18) {
-    //                       return 'Child must be under 18 Year';
-    //                     }
-    //                   } else if (type == 'Infant') {
-    //                     print('type of member3$type');
-    //                     if (age >= 24) {
-    //                       return 'Infant must be under 24 Month';
-    //                     }
-    //                   }
-    //                   return null;
-    //                 },
-    //               ),
-    //               Padding(
-    //                 padding: const EdgeInsets.only(bottom: 5, top: 5),
-    //                 child: Text.rich(TextSpan(children: [
-    //                   TextSpan(text: 'Gender', style: titleTextStyle),
-    //                   const TextSpan(
-    //                       text: ' *', style: TextStyle(color: redColor))
-    //                 ])),
-    //               ),
-    //               CustomDropdownButton(
-    //                 controller: genderController,
-    //                 focusNode: focusNode3,
-    //                 itemsList: const ['Male', 'Female'],
-    //                 onChanged: (value) {
-    //                   setState(() {
-    //                     genderController.text = value ?? '';
-    //                   });
-    //                 },
-    //                 hintText: 'Select Gender',
-    //                 // validator: (p0) {
-    //                 //   if (p0 == null || p0.isEmpty) {
-    //                 //     return 'Please select gender';
-    //                 //   }
-    //                 //   return null;
-    //                 // },
-    //               )
-    //             ],
-    //           ),
-    //         ),
-    //         actions: [
-    //           CustomButtonSmall(
-    //             width: 100,
-    //             btnHeading: "CANCEL",
-    //             onTap: () {
-    //               Navigator.of(context).pop();
-    //             },
-    //           ),
-    //           CustomButtonSmall(
-    //             width: 100,
-    //             onTap: () {
-    //               if (_formKey.currentState!.validate()) {
-    //                 print('succes');
-    //                 setState(() {
-    //                   members[index] = {
-    //                     'name': nameController.text,
-    //                     'age': ageController.text,
-    //                     'gender': genderController.text,
-    //                     'ageUnit': ageUnit,
-    //                     'type': type
-    //                   };
-    //                   // updateButtonStates();
-    //                 });
-    //                 // type == 'Infant' ? null : _subAmount();
-    //                 Navigator.of(context).pop();
-    //               }
-    //             },
-    //             btnHeading: "ADD",
-    //           ),
-    //         ],
-    //       ),
-    //     );
-    //   },
-    // );
   }
 
+  double marqueeVelocity = 100.0; // Default scrolling speed
+  bool visibleSecondaryContact = false;
   bool offerVisible = false;
   bool isHovering = false;
   double disCountPer = 0;
@@ -868,7 +551,7 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
     debugPrint("${widget.amt}amount");
     debugPrint('${primaryCountryCode}countrycode,,,,');
     debugPrint('${primaryNoController.text}primary number,,,,');
-
+    final marqueeController = MarqueerController();
     return Scaffold(
       backgroundColor: bgGreyColor,
       resizeToAvoidBottomInset: false,
@@ -884,7 +567,6 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     const SizedBox(height: 5),
-
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 10),
                       child: Column(
@@ -893,60 +575,40 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              GestureDetector(
-                                behavior: HitTestBehavior.translucent,
-                                onPanDown: (event) {
-                                  setState(() {
-                                    isHovering = true;
-                                  });
-                                },
-                                onPanEnd: (event) {
-                                  setState(() {
-                                    isHovering = false;
-                                  });
-                                },
-                                onPanCancel: () {
-                                  setState(() {
-                                    isHovering = false;
-                                  });
-                                },
-                                child: SizedBox(
-                                  height: 20,
-                                  width: double.infinity,
-                                  child: isHovering
-                                      ? const SingleChildScrollView(
-                                          scrollDirection: Axis.horizontal,
-                                          child: Text(
-                                            '*Children under 2 years old can be booked for free. and Certain activities are not recommended for senior citizens due to potential health risks.*',
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: redColor,
-                                            ),
-                                          ),
-                                        )
-                                      : Marquee(
-                                          showFadingOnlyWhenScrolling: false,
-                                          text:
-                                              '*Children under 2 years old can be booked for free. and Certain activities are not recommended for senior citizens due to potential health risks.*',
-                                          style: const TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: redColor),
-                                          scrollAxis: Axis.horizontal,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          blankSpace:
-                                              AppDimension.getWidth(context),
-                                          velocity: 100.0,
-                                          pauseAfterRound:
-                                              const Duration(seconds: 1),
-                                          startPadding: 0,
-                                          accelerationDuration:
-                                              const Duration(seconds: 1),
-                                          accelerationCurve: Curves.linear,
-                                          decelerationDuration:
-                                              const Duration(milliseconds: 500),
-                                          decelerationCurve: Curves.easeOut,
-                                        ),
+                              SizedBox(
+                                height: 20,
+                                child: Marqueer(
+                                  pps: 100,
+                                  controller: marqueeController,
+                                  direction: MarqueerDirection.rtl,
+                                  restartAfterInteractionDuration:
+                                      const Duration(seconds: 0),
+                                  restartAfterInteraction: true,
+                                  onChangeItemInViewPort: (index) {
+                                    debugPrint('item index: $index');
+                                  },
+                                  onInteraction: () {
+                                    debugPrint('on interaction callback');
+                                  },
+                                  onStarted: () {
+                                    debugPrint('on started callback');
+                                  },
+                                  onStopped: () {
+                                    debugPrint('on stopped callback');
+                                  },
+                                  child: Padding(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal:
+                                            MediaQuery.of(context).size.width /
+                                                2),
+                                    child: const Text(
+                                      '*Children under 2 years old can be booked for free. and Certain activities are not recommended for senior citizens due to potential health risks.*',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: redColor,
+                                      ),
+                                    ),
+                                  ),
                                 ),
                               ),
                               Container(
@@ -988,6 +650,7 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                                 'Primary Contact',
                                 style: titleTextStyle,
                               ),
+
                               const SizedBox(height: 5),
 
                               CustomMobilenumber(
@@ -1024,18 +687,24 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                               //   },
                               // ),
                               const SizedBox(height: 5),
-                              Text('Secondary Contact',
-                                  textAlign: TextAlign.start,
-                                  style: titleTextStyle),
+                              Row(
+                                children: [
+                                  Text('Secondary Contact ',
+                                      textAlign: TextAlign.start,
+                                      style: titleTextStyle),
+                                  Text('(Optional)',
+                                      textAlign: TextAlign.start,
+                                      style: titleTextStyle1),
+                                ],
+                              ),
                               const SizedBox(height: 5),
-
                               CustomMobilenumber(
                                   textLength: 9,
                                   focusNode: focusNode5,
                                   fillColor: background,
                                   controller: secondaryNoController,
                                   hintText: 'Enter number',
-                                  countryCode: secondaryCountryCode),
+                                  countryCode: secondaryCountryCode)
                               // Customphonefield(
                               //   focusNode: focusNode5,
                               //   initalCountryCode: 'AE',
@@ -1126,21 +795,6 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                                               width: 80,
                                               btnHeading: 'Apply',
                                               onTap: () {
-                                                // double? amoun =
-                                                //     double.parse(amount.toString());
-                                                // taxAmount = taxamount();
-                                                // if (members.isEmpty) {
-                                                //   // Utils.flushBarErrorMessage(
-                                                //   //     "Please add Members First", context);
-                                                //   Utils.toastMessage(
-                                                //       'Please add Members First');
-                                                // } else if (couponController
-                                                //     .text.isEmpty) {
-                                                //   // Utils.flushBarErrorMessage(
-                                                //   //     'Please Enter Offer Coupon', context);
-                                                //   Utils.toastMessage(
-                                                //       'Please Enter Offer Coupon');
-                                                // } else {
                                                 if (_formCouponKey.currentState!
                                                     .validate()) {
                                                   Provider.of<OfferViewModel>(
@@ -1204,8 +858,16 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                           ),
                           const SizedBox(height: 10),
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
+                            mainAxisAlignment: MainAxisAlignment.start,
                             children: [
+                              const Text(
+                                'Travellers Details',
+                                style: TextStyle(
+                                    color: btnColor,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w600),
+                              ),
+                              Spacer(),
                               InkWell(
                                   onTap: () {
                                     FocusScope.of(context).unfocus();
@@ -1219,13 +881,25 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                                         ageUnit: 'Year',
                                         type: 'Adult');
                                   },
-                                  child: Image.asset(
-                                    adultIcon,
-                                    width: 24,
-                                    height: 24,
-                                    color: btnColor,
+                                  child: Material(
+                                    elevation: 4,
+                                    color: bgGreyColor,
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                          shape: BoxShape.rectangle,
+                                          borderRadius:
+                                              BorderRadius.circular(2),
+                                          border: Border.all(color: btnColor)),
+                                      padding: EdgeInsets.all(2),
+                                      child: Image.asset(
+                                        adultIcon,
+                                        width: 24,
+                                        height: 24,
+                                        color: btnColor,
+                                      ),
+                                    ),
                                   )),
-                              const SizedBox(width: 10),
+                              const SizedBox(width: 20),
                               InkWell(
                                   onTap: () {
                                     FocusScope.of(context).unfocus();
@@ -1239,14 +913,26 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                                         ageUnit: 'Year',
                                         type: 'Child');
                                   },
-                                  child: Image.asset(
-                                    childIcon,
-                                    width: 26,
-                                    height: 26,
-                                    color: btnColor,
-                                    fit: BoxFit.fill,
+                                  child: Material(
+                                    elevation: 4,
+                                    color: bgGreyColor,
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                          shape: BoxShape.rectangle,
+                                          borderRadius:
+                                              BorderRadius.circular(2),
+                                          border: Border.all(color: btnColor)),
+                                      padding: const EdgeInsets.all(2),
+                                      child: Image.asset(
+                                        childIcon,
+                                        width: 26,
+                                        height: 26,
+                                        color: btnColor,
+                                        fit: BoxFit.fill,
+                                      ),
+                                    ),
                                   )),
-                              const SizedBox(width: 10),
+                              const SizedBox(width: 20),
 
                               InkWell(
                                   onTap: () {
@@ -1261,11 +947,39 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                                         ageUnit: 'Month',
                                         type: 'Infant');
                                   },
-                                  child: Image.asset(
-                                    infantIcon,
-                                    width: 24,
-                                    height: 24,
-                                    color: btnColor,
+                                  child: Material(
+                                    elevation: 4,
+                                    color: bgGreyColor,
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                          shape: BoxShape.rectangle,
+                                          // boxShadow: [
+                                          //   BoxShadow(offset: Offset(-2, 3))
+                                          // ],
+                                          borderRadius:
+                                              BorderRadius.circular(2),
+                                          border: Border.all(color: btnColor)),
+                                      padding: const EdgeInsets.all(3),
+                                      child: Stack(
+                                        children: [
+                                          Image.asset(
+                                            infantIcon,
+                                            width: 24,
+                                            height: 24,
+                                            color: btnColor,
+                                          ),
+                                          const Positioned(
+                                            right: -4,
+                                            bottom: 0,
+                                            child: Icon(
+                                              Icons.add_circle_outline_sharp,
+                                              color: btnColor,
+                                              size: 12,
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                    ),
                                   )),
                               // Expanded(
                               //   child: CustomButtonSmall(
@@ -1367,7 +1081,6 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                         ],
                       ),
                     ),
-
                     const SizedBox(height: 10),
                     Column(
                       children: [
@@ -1378,10 +1091,6 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                             2: FlexColumnWidth(),
                             3: FlexColumnWidth(),
                             4: FlexColumnWidth()
-                            // 1: FixedColumnWidth(75),
-                            // 2: FixedColumnWidth(70),
-                            // 3: FixedColumnWidth(60),
-                            // 4: FixedColumnWidth(60)
                           },
                           // defaultColumnWidth: FixedColumnWidth(100),
                           children: [
@@ -1437,7 +1146,12 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                             ? const Center(
                                 child: Padding(
                                 padding: EdgeInsets.only(top: 50),
-                                child: Text('No Members Added'),
+                                child: Text(
+                                  'No Travellers Added',
+                                  style: TextStyle(
+                                      color: redColor,
+                                      fontWeight: FontWeight.bold),
+                                ),
                               ))
                             : Table(
                                 border: const TableBorder(
@@ -1446,7 +1160,7 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                                     color: Colors
                                         .grey, // Color of the row separator
                                   ),
-                                  bottom: BorderSide(
+                                  top: BorderSide(
                                     width: 1,
                                     color: Colors
                                         .grey, // Bottom border of the table
@@ -1459,16 +1173,11 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                                   2: FlexColumnWidth(),
                                   3: FlexColumnWidth(),
                                   4: FlexColumnWidth()
-                                  // 0: FixedColumnWidth(120),
-                                  // 1: FixedColumnWidth(75),
-                                  // 2: FixedColumnWidth(70),
-                                  // 3: FixedColumnWidth(60),
-                                  // 4: FixedColumnWidth(60)
                                 },
                                 // defaultColumnWidth: FixedColumnWidth(100),
                                 children: members.map((member) {
                                   int index = members.indexOf(member);
-                                  print('objectindex$index');
+                                  debugPrint('objectindex$index');
                                   return TableRow(
                                       // decoration:
                                       //     BoxDecoration(color: background),
@@ -1480,7 +1189,9 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                                               top: 10,
                                               right: 10),
                                           child: Text(
-                                            member['name'],
+                                            member['name']
+                                                .toString()
+                                                .capitalizeFirstOfEach,
                                             style: titleTextStyle1,
                                           ),
                                         ),
@@ -1524,322 +1235,174 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                                                         : blackColor),
                                           ),
                                         ),
-
-                                        Center(
-                                          child: PopupMenuButton(
-                                            // offset: Offset(-4, 0),
-                                            position: PopupMenuPosition.under,
-                                            surfaceTintColor: background,
-                                            icon: const Icon(Icons.more_vert),
-                                            onSelected: (value) {
-                                              // Handle the action based on selected item
-                                              if (value == 1) {
-                                                print("Edit selected");
-                                                int age = int.parse(
-                                                    member['age'].toString());
-                                                String ageunit =
-                                                    member['ageUnit']
-                                                        .toString();
-                                                if (ageunit == 'Month') {
-                                                  // _editInfantdMember(index);
-                                                  _editMember(
-                                                      title:
-                                                          'Edit Infant Member',
-                                                      index: index,
-                                                      ageUnit: 'Month',
-                                                      type: 'Infant');
-                                                } else {
-                                                  if (age >= 18) {
-                                                    // _editAdultMember(index);
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              top: 10, bottom: 10),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              InkWell(
+                                                child: const Icon(Icons.edit,
+                                                    color: greenColor),
+                                                onTap: () {
+                                                  int age = int.parse(
+                                                      member['age'].toString());
+                                                  String ageunit =
+                                                      member['ageUnit']
+                                                          .toString();
+                                                  if (ageunit == 'Month') {
+                                                    // _editInfantdMember(index);
                                                     _editMember(
                                                         title:
-                                                            'Edit Adult Member',
+                                                            'Edit Infant Member',
                                                         index: index,
-                                                        ageUnit: 'Year',
-                                                        type: 'Adult');
+                                                        ageUnit: 'Month',
+                                                        type: 'Infant');
                                                   } else {
-                                                    // _editChildMember(index);
-                                                    _editMember(
-                                                        title:
-                                                            'Edit Child Member',
-                                                        index: index,
-                                                        ageUnit: 'Year',
-                                                        type: 'Child');
-                                                    // addedChildCount++;
+                                                    if (age >= 18) {
+                                                      // _editAdultMember(index);
+                                                      _editMember(
+                                                          title:
+                                                              'Edit Adult Member',
+                                                          index: index,
+                                                          ageUnit: 'Year',
+                                                          type: 'Adult');
+                                                    } else {
+                                                      // _editChildMember(index);
+                                                      _editMember(
+                                                          title:
+                                                              'Edit Child Member',
+                                                          index: index,
+                                                          ageUnit: 'Year',
+                                                          type: 'Child');
+                                                      // addedChildCount++;
+                                                    }
                                                   }
-                                                }
-                                                setState(() {
-                                                  tableIcon = false;
-                                                  // updateButtonStates();
-                                                });
-                                              } else if (value == 2) {
-                                                print("Delete selected");
-                                                setState(() {
-                                                  members.removeAt(index);
-                                                  // addAmount(members);
-                                                  member['ageUnit']
-                                                              .toString() ==
-                                                          'Month'
-                                                      ? null
-                                                      : _subAmount();
-                                                  tableIcon = false;
-                                                });
-                                              }
-                                            },
-                                            itemBuilder:
-                                                (BuildContext context) =>
-                                                    <PopupMenuEntry<int>>[
-                                              PopupMenuItem<int>(
-                                                padding: EdgeInsets.symmetric(
-                                                    horizontal: 20),
-                                                value: 1,
-                                                child: Container(
-                                                  width:
-                                                      50, // Set the width of the popup menu item
-                                                  alignment: Alignment.center,
-                                                  child: Icon(
-                                                    Icons.edit,
-                                                    color: Colors
-                                                        .green, // Custom icon color
-                                                  ),
-                                                ),
+                                                  setState(() {
+                                                    tableIcon = false;
+                                                    // updateButtonStates();
+                                                  });
+                                                },
                                               ),
-                                              PopupMenuItem<int>(
-                                                padding: EdgeInsets.symmetric(
-                                                    horizontal: 20),
-                                                value: 2,
-                                                child: Container(
-                                                  width:
-                                                      50, // Set the width of the popup menu item
-                                                  alignment: Alignment.center,
-                                                  child: Icon(
-                                                    Icons.delete,
-                                                    color: Colors
-                                                        .red, // Custom icon color
-                                                  ),
-                                                ),
+                                              const SizedBox(width: 10),
+                                              InkWell(
+                                                child: const Icon(Icons.delete,
+                                                    color: redColor),
+                                                onTap: () {
+                                                  // setState(() {
+                                                  //   members.removeAt(index);
+                                                  //   // addAmount(members);
+                                                  //   member['ageUnit']
+                                                  //               .toString() ==
+                                                  //           'Month'
+                                                  //       ? null
+                                                  //       : _subAmount();
+                                                  //   tableIcon = false;
+                                                  // });
+                                                  showDialog(
+                                                    context: context,
+                                                    barrierDismissible: false,
+                                                    builder: (context) {
+                                                      return Dialog(
+                                                        backgroundColor:
+                                                            background,
+                                                        child:
+                                                            SingleChildScrollView(
+                                                          child: Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .only(
+                                                                    left: 20,
+                                                                    right: 20,
+                                                                    top: 20,
+                                                                    bottom: 5),
+                                                            child: Column(
+                                                              children: [
+                                                                Text(
+                                                                  'Are you sure you want to delete this traveler ?',
+                                                                  // textAlign:
+                                                                  //     TextAlign
+                                                                  //         .center,
+                                                                  style:
+                                                                      titleTextStyle,
+                                                                ),
+                                                                const SizedBox(
+                                                                    height: 20),
+                                                                const Divider(
+                                                                    height: 0),
+                                                                Row(
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .center,
+                                                                  children: [
+                                                                    IconButton(
+                                                                        padding:
+                                                                            EdgeInsets
+                                                                                .zero,
+                                                                        onPressed:
+                                                                            () {
+                                                                          context
+                                                                              .pop();
+                                                                        },
+                                                                        icon:
+                                                                            const Icon(
+                                                                          Icons
+                                                                              .close,
+                                                                          color:
+                                                                              redColor,
+                                                                          size:
+                                                                              24,
+                                                                        )),
+                                                                    const SizedBox(
+                                                                        width:
+                                                                            10),
+                                                                    IconButton(
+                                                                        padding:
+                                                                            EdgeInsets
+                                                                                .zero,
+                                                                        onPressed:
+                                                                            () {
+                                                                          setState(
+                                                                              () {
+                                                                            members.removeAt(index);
+                                                                            // addAmount(members);
+                                                                            member['ageUnit'].toString() == 'Month'
+                                                                                ? null
+                                                                                : _subAmount();
+                                                                            tableIcon =
+                                                                                false;
+                                                                          });
+                                                                          context
+                                                                              .pop();
+                                                                        },
+                                                                        icon:
+                                                                            const Icon(
+                                                                          Icons
+                                                                              .check,
+                                                                          color:
+                                                                              greenColor,
+                                                                          size:
+                                                                              30,
+                                                                        ))
+                                                                  ],
+                                                                )
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      );
+                                                    },
+                                                  );
+                                                },
                                               ),
                                             ],
                                           ),
                                         ),
-                                        // Padding(
-                                        //   padding: const EdgeInsets.only(
-                                        //       top: 10, bottom: 10),
-                                        //   child: Row(
-                                        //     mainAxisSize: MainAxisSize.min,
-                                        //     children: [
-                                        //       InkWell(
-                                        //         child: const Icon(Icons.edit,
-                                        //             color: greenColor),
-                                        //         onTap: () {
-                                        //           int age = int.parse(
-                                        //               member['age']
-                                        //                   .toString());
-                                        //           String ageunit =
-                                        //               member['ageUnit']
-                                        //                   .toString();
-                                        //           if (ageunit == 'Month') {
-                                        //             // _editInfantdMember(index);
-                                        //             _editMember(
-                                        //                 title:
-                                        //                     'Edit Infant Member',
-                                        //                 index: index,
-                                        //                 ageUnit: 'Month',
-                                        //                 type: 'Infant');
-                                        //           } else {
-                                        //             if (age >= 18) {
-                                        //               // _editAdultMember(index);
-                                        //               _editMember(
-                                        //                   title:
-                                        //                       'Edit Adult Member',
-                                        //                   index: index,
-                                        //                   ageUnit: 'Year',
-                                        //                   type: 'Adult');
-                                        //             } else {
-                                        //               // _editChildMember(index);
-                                        //               _editMember(
-                                        //                   title:
-                                        //                       'Edit Child Member',
-                                        //                   index: index,
-                                        //                   ageUnit: 'Year',
-                                        //                   type: 'Child');
-                                        //               // addedChildCount++;
-                                        //             }
-                                        //           }
-                                        //           setState(() {
-                                        //             tableIcon = false;
-                                        //             // updateButtonStates();
-                                        //           });
-                                        //         },
-                                        //       ),
-                                        //       const SizedBox(width: 10),
-
-                                        //       InkWell(
-                                        //         child: const Icon(
-                                        //             Icons.delete,
-                                        //             color: redColor),
-                                        //         onTap: () {
-                                        //           setState(() {
-                                        //             members.removeAt(index);
-                                        //             // addAmount(members);
-                                        //             member['ageUnit']
-                                        //                         .toString() ==
-                                        //                     'Month'
-                                        //                 ? null
-                                        //                 : _subAmount();
-                                        //             tableIcon = false;
-                                        //           });
-                                        //         },
-                                        //       ),
-                                        //     ],
-                                        //   ),
-                                        // ),
                                       ]);
                                 }).toList(),
                               ),
                       ],
                     ),
-
-                    ///Package Total Booking Container
-                    // Container(
-                    //   padding:
-                    //       const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                    //   color: Colors.black,
-                    //   child: Row(
-                    //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    //     children: [
-                    //       RichText(
-                    //           text: TextSpan(children: [
-                    //         TextSpan(
-                    //             text: "Price : ",
-                    //             style: GoogleFonts.lato(
-                    //               color: background,
-                    //               fontSize: 16,
-                    //               fontWeight: FontWeight.w600,
-                    //             )),
-                    //         //Total Amt
-                    //         TextSpan(
-                    //           text: "$amount",
-                    //           style: GoogleFonts.lato(
-                    //             decoration: discountAmount == 0
-                    //                 ? null
-                    //                 : TextDecoration.lineThrough,
-                    //             color: background,
-                    //             fontSize: 20,
-                    //             fontWeight: FontWeight.w600,
-                    //           ),
-                    //         ),
-                    //         TextSpan(text: ' '),
-                    //         TextSpan(
-                    //           text: discountAmount == 0 ? '' : "$discountAmount",
-                    //           style: GoogleFonts.lato(
-                    //             color: background,
-                    //             fontSize: 20,
-                    //             fontWeight: FontWeight.w600,
-                    //           ),
-                    //         ),
-                    //       ])),
-                    //       CustomButtonSmall(
-                    //           width: 120,
-                    //           borderRadius: BorderRadius.circular(5),
-                    //           btnHeading: "BOOK NOW",
-                    //           elevation: 5,
-                    //           loading: status == "Status.loading" && loader,
-                    //           elevationReq: true,
-                    //           buttonColor: btnColor,
-                    //           disable: _shouldDisableButton(),
-                    //           // disable: amount == 0.0 ?  true : false,
-                    //           onTap: () {
-                    //             debugPrint('ghjkjhjkj$primaryCountryCode');
-                    //             if (members.isEmpty) {
-                    //               Utils.flushBarErrorMessage(
-                    //                   "Please add Members First", context);
-                    //             } else if (controller[0].text.isEmpty) {
-                    //               Utils.flushBarErrorMessage(
-                    //                   "Please select date", context);
-                    //             } else {
-                    //               loader = true;
-                    //               // ignore: unused_element
-                    //               // void initiatePayment(BuildContext context) {
-                    //               PaymentService paymentService = PaymentService(
-                    //                 context: context,
-                    //                 onPaymentSuccess:
-                    //                     (PaymentSuccessResponse response) {
-                    //                   print('paymentResponse#${response.orderId}');
-                    //                   Provider.of<PaymentVerifyViewModel>(context,
-                    //                           listen: false)
-                    //                       .paymentVerifyViewModelApi(
-                    //                           context: context,
-                    //                           userId: widget.userID.toString(),
-                    //                           paymentId: response.paymentId,
-                    //                           razorpayOrderId: response.orderId,
-                    //                           razorpaySignature: response.signature)
-                    //                       .then(
-                    //                     (value) {
-                    //                       if (value?.status.httpCode == '200') {
-                    //                         print(
-                    //                             'payment verification is successfull${value?.data.transactionId}');
-                    //                         debugPrint(response.orderId);
-                    //                         debugPrint(
-                    //                           response.paymentId,
-                    //                         );
-                    //                         debugPrint(response.signature);
-                    //                         Provider.of<GetPackageBookingByIdViewModel>(
-                    //                                 listen: false, context)
-                    //                             .fetchGetPackageBookingByIdViewModelApi(
-                    //                                 context,
-                    //                                 {
-                    //                                   "userId":
-                    //                                       widget.userID.toString(),
-                    //                                   "packageId": widget.packageID
-                    //                                       .toString(),
-                    //                                   "bookingDate":
-                    //                                       controller[0].text,
-                    //                                   "transactionId":
-                    //                                       value?.data.transactionId,
-                    //                                   "countryCode":
-                    //                                       primaryCountryCode
-                    //                                           .replaceAll("+", '')
-                    //                                           .trim(),
-                    //                                   "mobile":
-                    //                                       primaryNoController.text,
-                    //                                   "alternateMobileCountryCode":
-                    //                                       secondaryCountryCode,
-                    //                                   "alternateMobile":
-                    //                                       secondaryNoController
-                    //                                           .text,
-                    //                                   "offerCode": offerCode,
-                    //                                   "discountAmount":
-                    //                                       discountAmount,
-                    //                                   "numberOfMembers":
-                    //                                       members.length.toString(),
-                    //                                   "memberList": members,
-                    //                                 },
-                    //                                 widget.userID);
-                    //                         // context.pop();
-                    //                       }
-                    //                     },
-                    //                   );
-                    //                   // Call verify payment function after successful payment
-                    //                   // _verifyPayment(context, response);
-                    //                 },
-                    //               );
-
-                    //               paymentService.openCheckout(
-                    //                   amount: discountAmount,
-                    //                   userId: widget.userID.toString(),
-                    //                   coutryCode: profileUser?.countryCode,
-                    //                   mobileNo: profileUser?.mobile,
-                    //                   email: profileUser?.email);
-
-                    //               // }
-
-                    //               // Utils.flushBarSuccessMessage("Booking Success", context);
-                    //             }
-                    //           }),
-                    //     ],
-                    //   ),
-                    // )
                     const SizedBox(height: 80)
                   ],
                 ),
@@ -1868,7 +1431,7 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                         ),
                       ),
                     )
-                  : SizedBox()
+                  : const SizedBox()
             ],
           )),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
@@ -1885,9 +1448,9 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                 Expanded(
                   child: Text(
                     discountAmount == 0
-                        ? "AED ${payAbleAmount.toInt()}"
-                        : "AED ${discountAmount.toInt()}",
-                    style: TextStyle(
+                        ? "AED $payAbleAmount"
+                        : "AED $discountAmount",
+                    style: const TextStyle(
                         color: blackColor,
                         fontSize: 20,
                         fontWeight: FontWeight.w600),
@@ -1911,44 +1474,6 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                 )
               ],
             ),
-            // RichText(
-            //     text: TextSpan(children: [
-            //   TextSpan(
-            //       text: "Price : ",
-            //       style: GoogleFonts.lato(
-            //         color: blackColor,
-            //         fontSize: 16,
-            //         fontWeight: FontWeight.w600,
-            //       )),
-            //   //Total Amt
-            //   TextSpan(
-            //       text: 'AED ',
-            //       style: GoogleFonts.lato(
-            //         color: blackColor,
-            //         fontSize: 20,
-            //         fontWeight: FontWeight.w600,
-            //       )),
-            //   TextSpan(
-            //     text: "$payAbleAmount",
-            //     style: GoogleFonts.lato(
-            //       decoration:
-            //           discountAmount == 0 ? null : TextDecoration.lineThrough,
-            //       decorationColor: redColor,
-            //       color: blackColor,
-            //       fontSize: 20,
-            //       fontWeight: FontWeight.w600,
-            //     ),
-            //   ),
-            //   TextSpan(text: ' '),
-            //   TextSpan(
-            //     text: discountAmount == 0 ? '' : " $discountAmount",
-            //     style: GoogleFonts.lato(
-            //       color: discountAmount == 0 ? background : greenColor,
-            //       fontSize: 20,
-            //       fontWeight: FontWeight.w600,
-            //     ),
-            //   ),
-            // ])),
             CustomButtonSmall(
                 width: 120,
                 borderRadius: BorderRadius.circular(5),
@@ -1994,7 +1519,7 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                             .then(
                           (value) {
                             if (value?.status.httpCode == '200') {
-                              print(
+                              debugPrint(
                                   'payment verification is successfull${value?.data.transactionId}');
                               debugPrint(response.orderId);
                               debugPrint(
@@ -2111,7 +1636,7 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                       )
                     ],
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 15),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -2120,7 +1645,7 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                         style: titleTextStyle,
                       ),
                       Text(
-                        'AED ${sumAmount.toInt()}',
+                        'AED $sumAmount',
                         style: titleTextStyle1,
                       )
                     ],
@@ -2133,7 +1658,7 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                         style: titleTextStyle,
                       ),
                       Text(
-                        '+ AED ${taxAmount.toInt()}',
+                        '+ AED $taxAmount',
                         style: titleTextStyle1,
                       )
                     ],
@@ -2147,8 +1672,8 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                       ),
                       Text(
                         discountAmount == 0
-                            ? '- AED ${discountAmount.toInt()}'
-                            : '- AED ${disAmount.toInt()}',
+                            ? '- AED $discountAmount'
+                            : '- AED $disAmount',
                         style: titleTextStyle1,
                       )
                     ],
@@ -2165,11 +1690,11 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                         children: [
                           Text(
                             discountAmount == 0
-                                ? 'AED ${payAbleAmount.toInt()}'
-                                : 'AED ${discountAmount.toInt()}',
+                                ? 'AED $payAbleAmount'
+                                : 'AED $discountAmount',
                             style: pageHeadingTextStyle,
                           ),
-                          Text('(Inclusive of Taxes)',
+                          const Text('(Inclusive of Taxes)',
                               style: TextStyle(color: blackColor))
                         ],
                       )
@@ -2180,100 +1705,5 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
             ));
           });
         });
-    // showDialog(
-    //   context: context,
-    //   builder: (context) {
-    //     return Dialog(
-    //       insetPadding: const EdgeInsets.all(20),
-    //       backgroundColor: background,
-    //       surfaceTintColor: background,
-    //       shape:
-    //           RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-    //       child: Container(
-    //         height: 220,
-    //         width: double.infinity,
-    //         padding: const EdgeInsets.all(20),
-    //         child: Column(
-    //           children: [
-    //             Row(
-    //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    //               children: [
-    //                 Text(
-    //                   'Amount Details',
-    //                   style: titleTextStyle,
-    //                 ),
-    //                 CustomButtonSmall(
-    //                     height: 35,
-    //                     width: 35,
-    //                     btnHeading: 'X',
-    //                     onTap: () {
-    //                       context.pop();
-    //                     }),
-    //               ],
-    //             ),
-    //             const SizedBox(height: 20),
-    //             Row(
-    //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    //               children: [
-    //                 Text(
-    //                   'Package Amount',
-    //                   style: titleTextStyle,
-    //                 ),
-    //                 Text(
-    //                   'AED ${sumAmount.toInt()}',
-    //                   style: titleTextStyle1,
-    //                 )
-    //               ],
-    //             ),
-    //             Row(
-    //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    //               children: [
-    //                 Text(
-    //                   'Tax Amount (5 %)',
-    //                   style: titleTextStyle,
-    //                 ),
-    //                 Text(
-    //                   '+ AED ${taxAmount.toInt()}',
-    //                   style: titleTextStyle1,
-    //                 )
-    //               ],
-    //             ),
-    //             Row(
-    //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    //               children: [
-    //                 Text(
-    //                   'Save Amount',
-    //                   style: titleTextStyle,
-    //                 ),
-    //                 Text(
-    //                   discountAmount == 0
-    //                       ? '- AED ${discountAmount.toInt()}'
-    //                       : '- AED ${disAmount.toInt()}',
-    //                   style: titleTextStyle1,
-    //                 )
-    //               ],
-    //             ),
-    //             const Divider(),
-    //             Row(
-    //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    //               children: [
-    //                 Text(
-    //                   'Payable Amount',
-    //                   style: titleTextStyle,
-    //                 ),
-    //                 Text(
-    //                   discountAmount == 0
-    //                       ? 'AED ${payAbleAmount.toInt()}'
-    //                       : 'AED ${discountAmount.toInt()}',
-    //                   style: titleTextStyle1,
-    //                 )
-    //               ],
-    //             ),
-    //           ],
-    //         ),
-    //       ),
-    //     );
-    //   },
-    // );
   }
 }

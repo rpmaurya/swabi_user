@@ -118,7 +118,7 @@ class _PackageDetailsState extends State<PackageDetails> {
                                   .capitalizeFirstOfEach),
                           detailItem(
                               lable: 'Total Price',
-                              value: 'AED${packageActivity.totalPrice}'),
+                              value: 'AED ${packageActivity.totalPrice}'),
                           detailItem(
                               lable: 'No. Of Activities',
                               value: "${packageActivityList.length}"),
@@ -336,16 +336,16 @@ class _ActivityContainerState extends State<ActivityContainer> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 10),
-            CustomTextWidget(
-              sideLogo: true,
-              align: TextAlign.start,
-              content: widget.days == "null" ? "" : widget.days,
-              fontSize: 16,
-              fontWeight: FontWeight.w700,
-              textColor: blackColor,
-            ),
-            const SizedBox(height: 10),
+            // const SizedBox(height: 10),
+            // CustomTextWidget(
+            //   sideLogo: true,
+            //   align: TextAlign.start,
+            //   content: widget.days == "null" ? "" : widget.days,
+            //   fontSize: 16,
+            //   fontWeight: FontWeight.w700,
+            //   textColor: blackColor,
+            // ),
+            // const SizedBox(height: 10),
             CommonContainer(
               elevation: 0,
               height: 200,
@@ -522,7 +522,7 @@ class _ActivityContainerState extends State<ActivityContainer> {
                           fontWeight: FontWeight.w600,
                           color: textColor)),
                   TextSpan(
-                      text: widget.address,
+                      text: widget.address.capitalizeFirstOfEach,
                       style: GoogleFonts.lato(
                           fontSize: 14,
                           fontWeight: FontWeight.w400,

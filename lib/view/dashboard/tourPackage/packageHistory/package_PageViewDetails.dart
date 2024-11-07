@@ -34,6 +34,7 @@ import 'package:google_places_flutter/google_places_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:intl_phone_field/countries.dart';
 import 'package:marquee/marquee.dart';
+import 'package:marqueer/marqueer.dart';
 import 'package:provider/provider.dart';
 import 'package:readmore/readmore.dart';
 import '../../../../view_model/package_view_model.dart';
@@ -441,54 +442,9 @@ class _PackagePageViewDetailsState extends State<PackagePageViewDetails> {
                                 })),
                           );
                         });
-                    // showDialog(
-                    //     context: context,
-                    //     builder: (context) {
-                    //       // cancelController.clear();
-                    //       return StatefulBuilder(
-                    //         builder:
-                    //             (BuildContext context, StateSetter setState) {
-                    //           String cancelStatus = context
-                    //               .watch<PackageCancelViewModel>()
-                    //               .packageCancel
-                    //               .status
-                    //               .toString();
-                    //           return SingleChildScrollView(
-                    //             physics: const NeverScrollableScrollPhysics(),
-                    //             padding: EdgeInsets.only(
-                    //                 top: AppDimension.getHeight(context) * .2),
-                    //             child: CancelContainerDialog(
-                    //               loading: cancelStatus == "Status.loading",
-                    //               controllerCancel: cancelController,
-                    //               onTap: () async {
-                    //                 // loading = true;
-
-                    //                 await Provider.of<PackageCancelViewModel>(
-                    //                         context,
-                    //                         listen: false)
-                    //                     .fetchPackageCancelViewModelApi(
-                    //                         context,
-                    //                         {
-                    //                           "packageBookingId":
-                    //                               widget.packageBookID,
-                    //                           "cancellationReason":
-                    //                               cancelController.text,
-                    //                           "cancelledBy": "USER"
-                    //                         },
-                    //                         widget.userId,
-                    //                         widget.packageBookID,
-                    //                         widget.paymentId);
-
-                    //                 // controller.dispose();
-                    //               },
-                    //             ),
-                    //           );
-                    //         },
-                    //       );
-                    //     });
                   },
                 )
-              : SizedBox()
+              : const SizedBox()
         ],
       )),
     );
@@ -713,6 +669,7 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
                         CustomMobilenumber(
                             textLength: 9,
                             readOnly: true,
+                            fillColor: background,
                             focusNode: focusNode1,
                             controller: primaryController,
                             hintText: 'Enter Primary number',
@@ -812,162 +769,12 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
               ),
             );
           });
-          return Dialog(
-            backgroundColor: background,
-            surfaceTintColor: background,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-            insetPadding: const EdgeInsets.all(30.0),
-            child: SizedBox(
-              width: double.infinity,
-              child: AlertDialog(
-                contentPadding: EdgeInsets.zero,
-                backgroundColor: background,
-                surfaceTintColor: background,
-                actionsAlignment: MainAxisAlignment.center,
-                actionsPadding: const EdgeInsets.only(top: 10),
-                titlePadding: const EdgeInsets.only(bottom: 20),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10)),
-                title: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const CustomTextWidget(
-                        content: 'Change Contact',
-                        align: TextAlign.center,
-                        fontSize: 25),
-                    CustomButtonSmall(
-                      width: 30,
-                      height: 30,
-                      btnHeading: "X",
-                      onTap: () {
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                  ],
-                ),
-                content: Form(
-                  key: _formKey,
-                  // autovalidateMode: AutovalidateMode.onUserInteraction,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 5),
-                        child: Text.rich(TextSpan(children: [
-                          TextSpan(
-                              text: 'Primary Contact', style: titleTextStyle),
-                          const TextSpan(
-                              text: ' *', style: TextStyle(color: redColor))
-                        ])),
-                      ),
-                      CustomMobilenumber(
-                          textLength: 9,
-                          readOnly: true,
-                          focusNode: focusNode1,
-                          controller: primaryController,
-                          hintText: 'Enter Primary number',
-                          countryCode: primaryCountryCode),
-                      // Customphonefield(
-                      //   initalCountryCode: primaryCountry,
-                      //   controller: primaryController,
-                      //   onChanged: (phone) {
-                      //     setstate(() {
-                      //       primaryCode = phone.countryCode
-                      //           .replaceFirst('+', '')
-                      //           .trim();
-                      //       debugPrint('primarycountrycode.$primaryCode');
-                      //       debugPrint(
-                      //           'primarycountrycode.${primaryController.text}');
-                      //     });
-                      //   },
-                      //   onCountryChanged: (p0) {
-                      //     setstate(() {
-                      //       primaryCode = p0.dialCode;
-                      //       debugPrint('primarycountrycode.$primaryCode');
-                      //     });
-                      //   },
-                      // ),
-                      SizedBox(height: 10),
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 5),
-                        child: Text.rich(TextSpan(children: [
-                          TextSpan(
-                              text: 'Secondary Contact', style: titleTextStyle),
-                          const TextSpan(
-                              text: ' *', style: TextStyle(color: redColor))
-                        ])),
-                      ),
-                      // Customphonefield(
-                      //   initalCountryCode: secondaryCountry,
-                      //   controller: secondaryController,
-                      //   onChanged: (phone) {
-                      //     setstate(() {
-                      //       secondaryCode = phone.countryCode
-                      //           .replaceFirst('+', '')
-                      //           .trim();
-                      //       debugPrint('secondarycountrycode.$secondaryCode');
-                      //       debugPrint(
-                      //           'secondarycountrycode.${secondaryController.text}');
-                      //     });
-                      //   },
-                      //   onCountryChanged: (p0) {
-                      //     setstate(() {
-                      //       secondaryCode = p0.dialCode;
-                      //       debugPrint('secondarycountrycode.$secondaryCode');
-                      //     });
-                      //   },
-                      // ),
-                      CustomMobilenumber(
-                          textLength: 9,
-                          focusNode: focusNode2,
-                          controller: secondaryController,
-                          hintText: 'Enter phone number',
-                          countryCode: secondaryCountryCode)
-                    ],
-                  ),
-                ),
-                actions: [
-                  Align(
-                    alignment: Alignment.center,
-                    child: CustomButtonSmall(
-                      width: 140,
-                      height: 40,
-                      onTap: () {
-                        if (_formKey.currentState!.validate()) {
-                          print('succes');
-                          Map<String, dynamic> body = {
-                            "packageBookingId": widget.id,
-                            "mobile": primaryController.text,
-                            // "countryCode": primaryCode,
-                            "countryCode": primaryCountryCode,
-
-                            "alternateMobile": secondaryController.text,
-                            // "alternateMobileCountryCode": secondaryCode
-                            "alternateMobileCountryCode": secondaryCountryCode
-                          };
-                          debugPrint('bodyData$body');
-                          Provider.of<ChangeMobileViewModel>(context,
-                                  listen: false)
-                              .changeMobileApi(
-                                  context: context,
-                                  body: body,
-                                  bookingId: widget.id);
-                        }
-                      },
-                      btnHeading: "Change Contact",
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          );
         });
       },
     );
   }
 
+  final marqueeController = MarqueerController();
   bool isLoading = false;
   @override
   Widget build(BuildContext context) {
@@ -1045,7 +852,7 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
                                         (BuildContext context,
                                             StateSetter setstate) {
                                       return Container(
-                                        margin: EdgeInsets.all(20),
+                                        margin: const EdgeInsets.all(20),
                                         child: Column(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
@@ -1228,8 +1035,8 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
                                                                             5),
                                                                 child:
                                                                     Container(
-                                                                  color:
-                                                                      background,
+                                                                  // color:
+                                                                  //     background,
                                                                   child: Row(
                                                                     children: [
                                                                       const Icon(
@@ -1301,261 +1108,6 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
                                   ),
                                 );
                               });
-                          // showDialog(
-                          //   context: context,
-                          //   builder: (context) {
-                          //     return StatefulBuilder(
-                          //       builder: (BuildContext context,
-                          //           StateSetter setState) {
-                          //         String status = context
-                          //             .watch<
-                          //                 AddPickUpLocationPackageViewModel>()
-                          //             .addPickUpLocationPackage
-                          //             .status
-                          //             .toString();
-                          //         return SingleChildScrollView(
-                          //             physics:
-                          //                 const NeverScrollableScrollPhysics(),
-                          //             child: Column(
-                          //               children: [
-                          //                 const SizedBox(height: 150),
-                          //                 CustomAlertBox(
-                          //                   heading: "Add PickUp Location",
-                          //                   height: AppDimension.getHeight(
-                          //                           context) /
-                          //                       3.4,
-                          //                   widgetReq: true,
-                          //                   crossIcon: true,
-                          //                   crossOnTap: () {
-                          //                     widget.controllerWidget.clear();
-                          //                     context.pop(context);
-                          //                   },
-                          //                   child: Column(
-                          //                     crossAxisAlignment:
-                          //                         CrossAxisAlignment.start,
-                          //                     children: [
-                          //                       Text.rich(TextSpan(children: [
-                          //                         TextSpan(
-                          //                             text:
-                          //                                 'Plz Add Pickup Location',
-                          //                             style: titleTextStyle),
-                          //                         const TextSpan(
-                          //                             text: ' *',
-                          //                             style: TextStyle(
-                          //                                 color: redColor))
-                          //                       ])),
-                          //                       const SizedBox(height: 5),
-                          //                       Form(
-                          //                         key: _formKey,
-                          //                         autovalidateMode:
-                          //                             AutovalidateMode
-                          //                                 .onUserInteraction,
-                          //                         child: FormField<String>(
-                          //                             autovalidateMode:
-                          //                                 AutovalidateMode
-                          //                                     .onUserInteraction,
-                          //                             validator: (value) {
-                          //                               if (widget
-                          //                                   .controllerWidget
-                          //                                   .text
-                          //                                   .isEmpty) {
-                          //                                 return '  Please select a location';
-                          //                               }
-                          //                               return null;
-                          //                             },
-                          //                             builder: (FormFieldState<
-                          //                                     String>
-                          //                                 field) {
-                          //                               return Column(
-                          //                                 crossAxisAlignment:
-                          //                                     CrossAxisAlignment
-                          //                                         .start,
-                          //                                 children: [
-                          //                                   Container(
-                          //                                     padding:
-                          //                                         const EdgeInsets
-                          //                                             .symmetric(
-                          //                                             horizontal:
-                          //                                                 0),
-                          //                                     height: 50,
-                          //                                     child:
-                          //                                         GooglePlaceAutoCompleteTextField(
-                          //                                       textEditingController:
-                          //                                           widget
-                          //                                               .controllerWidget,
-
-                          //                                       boxDecoration: BoxDecoration(
-                          //                                           color:
-                          //                                               background,
-                          //                                           borderRadius:
-                          //                                               BorderRadius.circular(
-                          //                                                   5),
-                          //                                           border: Border.all(
-                          //                                               color: naturalGreyColor
-                          //                                                   .withOpacity(0.3))),
-                          //                                       googleAPIKey:
-                          //                                           "AIzaSyADRdiTbSYUR8oc6-ryM1F1NDNjkHDr0Yo",
-                          //                                       inputDecoration:
-                          //                                           InputDecoration(
-                          //                                         contentPadding: const EdgeInsets
-                          //                                             .symmetric(
-                          //                                             horizontal:
-                          //                                                 5,
-                          //                                             vertical:
-                          //                                                 0),
-                          //                                         isDense: true,
-                          //                                         hintText:
-                          //                                             "Search your location",
-                          //                                         border: const OutlineInputBorder(
-                          //                                             borderSide:
-                          //                                                 BorderSide
-                          //                                                     .none),
-                          //                                         hintStyle:
-                          //                                             GoogleFonts
-                          //                                                 .lato(
-                          //                                           color:
-                          //                                               greyColor1,
-                          //                                           fontSize:
-                          //                                               16,
-                          //                                           fontWeight:
-                          //                                               FontWeight
-                          //                                                   .w600,
-                          //                                         ),
-                          //                                         filled: true,
-                          //                                         fillColor:
-                          //                                             background,
-                          //                                         disabledBorder: const OutlineInputBorder(
-                          //                                             borderRadius:
-                          //                                                 BorderRadius.all(Radius.circular(
-                          //                                                     5)),
-                          //                                             borderSide:
-                          //                                                 BorderSide
-                          //                                                     .none),
-                          //                                       ),
-                          //                                       textStyle:
-                          //                                           titleTextStyle,
-                          //                                       debounceTime:
-                          //                                           400,
-                          //                                       // countries: ["ae", "fr"],
-                          //                                       isLatLngRequired:
-                          //                                           true,
-                          //                                       getPlaceDetailWithLatLng:
-                          //                                           (prediction) {
-                          //                                         print(
-                          //                                             "Latitude: ${prediction.lat}, Longitude: ${prediction.lng}");
-                          //                                         // You can use prediction.lat and prediction.lng here as needed
-                          //                                         // Example: Save them to variables or perform further actions
-                          //                                       },
-
-                          //                                       itemClick:
-                          //                                           (prediction) {
-                          //                                         widget.controllerWidget
-                          //                                                 .text =
-                          //                                             prediction
-                          //                                                     .description ??
-                          //                                                 "";
-                          //                                         widget.controllerWidget
-                          //                                                 .selection =
-                          //                                             TextSelection.fromPosition(TextPosition(
-                          //                                                 offset:
-                          //                                                     prediction.description?.length ?? 0));
-                          //                                         field.didChange(
-                          //                                             prediction
-                          //                                                 .description);
-                          //                                       },
-                          //                                       seperatedBuilder:
-                          //                                           const Divider(),
-
-                          //                                       // OPTIONAL// If you want to customize list view item builder
-                          //                                       itemBuilder:
-                          //                                           (context,
-                          //                                               index,
-                          //                                               prediction) {
-                          //                                         return Padding(
-                          //                                           padding: const EdgeInsets
-                          //                                               .symmetric(
-                          //                                               vertical:
-                          //                                                   5),
-                          //                                           child:
-                          //                                               Container(
-                          //                                             color:
-                          //                                                 background,
-                          //                                             child:
-                          //                                                 Row(
-                          //                                               children: [
-                          //                                                 const Icon(
-                          //                                                   Icons.location_on,
-                          //                                                   size:
-                          //                                                       15,
-                          //                                                 ),
-                          //                                                 const SizedBox(
-                          //                                                   width:
-                          //                                                       7,
-                          //                                                 ),
-                          //                                                 Expanded(
-                          //                                                     child: Text(
-                          //                                                   prediction.description ??
-                          //                                                       "",
-                          //                                                   style:
-                          //                                                       titleTextStyle,
-                          //                                                 ))
-                          //                                               ],
-                          //                                             ),
-                          //                                           ),
-                          //                                         );
-                          //                                       },
-                          //                                       isCrossBtnShown:
-                          //                                           false,
-                          //                                       // default 600 ms ,
-                          //                                     ),
-                          //                                   ),
-                          //                                   if (field.hasError)
-                          //                                     Text(
-                          //                                       field
-                          //                                           .errorText!,
-                          //                                       style: const TextStyle(
-                          //                                           color:
-                          //                                               redColor),
-                          //                                     ),
-                          //                                 ],
-                          //                               );
-                          //                             }),
-                          //                       ),
-                          //                       const SizedBox(height: 20),
-                          //                       Row(
-                          //                         mainAxisAlignment:
-                          //                             MainAxisAlignment.end,
-                          //                         children: [
-                          //                           CustomButtonSmall(
-                          //                               height: 40,
-                          //                               loading: status ==
-                          //                                   "Status.loading",
-                          //                               width: AppDimension
-                          //                                       .getWidth(
-                          //                                           context) *
-                          //                                   .3,
-                          //                               btnHeading: "Submit",
-                          //                               onTap: () {
-                          //                                 if (_formKey
-                          //                                     .currentState!
-                          //                                     .validate()) {
-                          //                                   print(
-                          //                                       'kjnkjcnvmncvcnvmncv');
-                          //                                   widget.alertOnTap
-                          //                                       ?.call();
-                          //                                 }
-                          //                               })
-                          //                         ],
-                          //                       )
-                          //                     ],
-                          //                   ),
-                          //                 ),
-                          //               ],
-                          //             ));
-                          //       },
-                          //     );
-                          //   },
-                          // );
                         },
                       )
                     : const SizedBox()
@@ -1581,7 +1133,7 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
               images: widget.pkgImage,
             )),
         Padding(
-          padding: EdgeInsets.symmetric(vertical: 10),
+          padding: const EdgeInsets.symmetric(vertical: 10),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -1816,9 +1368,9 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
                     textItem(
                         lable: 'Refund Status',
                         value: paymentRefund?.data?.refundStatus == 'created'
-                            ? "Pending"
+                            ? "PENDING"
                             : paymentRefund?.data?.refundStatus == 'processed'
-                                ? "Success"
+                                ? "PROCESSED"
                                 : '${paymentRefund?.data?.refundStatus}'),
                     // textItem(
                     //     lable: 'Refund Date',
@@ -1945,24 +1497,59 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
                   ? const SizedBox()
                   : SizedBox(
                       height: 20,
-                      child: Marquee(
-                        showFadingOnlyWhenScrolling: false,
-                        text:
+                      child: Marqueer(
+                        pps: 100,
+                        controller: marqueeController,
+                        direction: MarqueerDirection.rtl,
+                        restartAfterInteractionDuration:
+                            const Duration(seconds: 0),
+                        restartAfterInteraction: true,
+                        onChangeItemInViewPort: (index) {
+                          debugPrint('item index: $index');
+                        },
+                        onInteraction: () {
+                          debugPrint('on interaction callback');
+                        },
+                        onStarted: () {
+                          debugPrint('on started callback');
+                        },
+                        onStopped: () {
+                          debugPrint('on stopped callback');
+                        },
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal:
+                                  MediaQuery.of(context).size.width / 2),
+                          child: const Text(
                             '*The itinerary will be shared 24 hours before the package start *',
-                        style: const TextStyle(
-                            fontWeight: FontWeight.bold, color: redColor),
-                        scrollAxis: Axis.horizontal,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        blankSpace: AppDimension.getWidth(context),
-                        velocity: 100.0,
-                        pauseAfterRound: const Duration(seconds: 1),
-                        startPadding: 0,
-                        accelerationDuration: const Duration(seconds: 1),
-                        accelerationCurve: Curves.linear,
-                        decelerationDuration: const Duration(milliseconds: 500),
-                        decelerationCurve: Curves.easeOut,
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: redColor,
+                            ),
+                          ),
+                        ),
                       ),
                     ),
+              // : SizedBox(
+              //     height: 20,
+              //     child: Marquee(
+              //       showFadingOnlyWhenScrolling: false,
+              //       text:vcx
+              //           '*The itinerary will be shared 24 hours before the package start *',
+              //       style: const TextStyle(
+              //           fontWeight: FontWeight.bold, color: redColor),
+              //       scrollAxis: Axis.horizontal,
+              //       crossAxisAlignment: CrossAxisAlignment.start,
+              //       blankSpace: AppDimension.getWidth(context),
+              //       velocity: 100.0,
+              //       pauseAfterRound: const Duration(seconds: 1),
+              //       startPadding: 0,
+              //       accelerationDuration: const Duration(seconds: 1),
+              //       accelerationCurve: Curves.linear,
+              //       decelerationDuration: const Duration(milliseconds: 500),
+              //       decelerationCurve: Curves.easeOut,
+              //     ),
+              //   ),
             ],
           ),
         ),
@@ -2044,8 +1631,7 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
                                       content:
                                           driver.driver.gender.toString())),
                                   DataCell(CustomText(
-                                      content:
-                                          driver.driver.mobile.toString())),
+                                      content: '+971 ${driver.driver.mobile}')),
                                 ],
                               ))
                           .toList()),
@@ -2160,7 +1746,7 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
                         },
                       );
                     })
-                : SizedBox(),
+                : const SizedBox(),
             widget.bookingStatus != "CANCELLED"
                 ? Padding(
                     padding: const EdgeInsets.symmetric(vertical: 5),
@@ -2432,7 +2018,7 @@ class _ItineraryActivityContainerState
         const SizedBox(height: 10),
         CommonContainer(
           elevation: 0,
-          height: 150,
+          height: 200,
           borderRadius: BorderRadius.circular(10),
           child: MultiImageSlider(
             images: List.generate(image.length, (index) => image[index]),
@@ -2445,7 +2031,7 @@ class _ItineraryActivityContainerState
           maxline: 3,
           fontSize: 16,
           fontWeight: FontWeight.w700,
-          textColor: blackColor,
+          textColor: greenColor,
         ),
         const SizedBox(height: 5),
         ReadMoreText(
@@ -2468,7 +2054,7 @@ class _ItineraryActivityContainerState
             data.activity.endTime),
         data.activity.participantType.isNotEmpty
             ? const SizedBox(height: 10)
-            : SizedBox(),
+            : const SizedBox(),
         data.activity.participantType.isNotEmpty
             ? Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
@@ -2488,7 +2074,7 @@ class _ItineraryActivityContainerState
                   )
                 ],
               )
-            : SizedBox(),
+            : const SizedBox(),
         const SizedBox(height: 10),
         _buildLocationInfo(data.activity.address),
         const SizedBox(height: 5),

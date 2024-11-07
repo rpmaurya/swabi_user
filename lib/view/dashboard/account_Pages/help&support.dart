@@ -32,6 +32,7 @@ class HelpAndSupport extends StatelessWidget {
             //   onTap: () {},
             // ),
             Custom_ListTile(
+                disableColor: true,
                 img: contact,
                 iconColor: btnColor,
                 heading: "Contact Us",
@@ -39,6 +40,7 @@ class HelpAndSupport extends StatelessWidget {
                   // context.push("/contact");
                 }),
             Custom_ListTile(
+              disableColor: true,
               img: contact,
               iconColor: btnColor,
               heading: "Privacy & Policy",

@@ -370,7 +370,7 @@ class ChangeMobileViewModel with ChangeNotifier {
               .fetchPackageHistoryDetailByIdViewModelApi(
                   context, {"packageBookingId": bookingId}, bookingId);
           // print("Signup Success");
-          Utils.toastSuccessMessage("changed Successfully");
+          Utils.toastSuccessMessage("Contact Changed  Successfully");
         }
         context.pop();
       }).onError((error, stactrace) {

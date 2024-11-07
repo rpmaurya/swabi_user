@@ -97,7 +97,7 @@ class _CustomMobilenumberState extends State<CustomMobilenumber> {
               ],
             ),
           ),
-          fillColor: widget.fillColor,
+          fillColor: widget.readOnly ? Colors.red[50] : widget.fillColor,
           filled: widget.fillColor != null,
           hintText: widget.hintText,
           hintStyle: textTitleHint,

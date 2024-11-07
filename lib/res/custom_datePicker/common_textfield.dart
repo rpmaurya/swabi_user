@@ -171,6 +171,16 @@ class _FormDatePickerState extends State<FormDatePicker> {
         return Theme(
           data: ThemeData.light().copyWith(
             primaryColor: naturalGreyColor, // Change this to the desired color
+            textButtonTheme: TextButtonThemeData(
+                style: ButtonStyle(
+              backgroundColor:
+                  MaterialStateProperty.all(btnColor), // Button background
+              foregroundColor:
+                  MaterialStateProperty.all(background), // Button text color
+              shape: MaterialStateProperty.all(
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              ),
+            )),
             colorScheme: const ColorScheme.light(
               primary: naturalGreyColor, // Change this to the desired color
             ),
@@ -293,7 +303,17 @@ class _DatePickerFormState extends State<DatePickerForm> {
       builder: (BuildContext context, Widget? child) {
         return Theme(
           data: ThemeData.light().copyWith(
-            primaryColor: Colors.orange, // Change this to the desired color
+            primaryColor: Colors.orange,
+            textButtonTheme: TextButtonThemeData(
+                style: ButtonStyle(
+              backgroundColor:
+                  MaterialStateProperty.all(btnColor), // Button background
+              foregroundColor:
+                  MaterialStateProperty.all(background), // Button text color
+              shape: MaterialStateProperty.all(
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              ),
+            )), // Change this to the desired color
             colorScheme: const ColorScheme.light(
               primary: lightBrownColor, // Change this to the desired color
             ),
@@ -1037,6 +1057,10 @@ class _FormDatePickerExpenseState extends State<FormDatePickerExpense> {
       builder: (BuildContext context, Widget? child) {
         return Theme(
           data: ThemeData.light().copyWith(
+            dialogTheme: DialogTheme(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10)),
+                actionsPadding: EdgeInsets.all(10)),
             colorScheme: const ColorScheme.light(
               primary: btnColor, // Change this to the desired color
             ),
@@ -1058,6 +1082,16 @@ class _FormDatePickerExpenseState extends State<FormDatePickerExpense> {
               labelSmall: titleTextStyle,
               titleSmall: titleTextStyle,
             ),
+            textButtonTheme: TextButtonThemeData(
+                style: ButtonStyle(
+              backgroundColor:
+                  MaterialStateProperty.all(btnColor), // Button background
+              foregroundColor:
+                  MaterialStateProperty.all(background), // Button text color
+              shape: MaterialStateProperty.all(
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              ),
+            )),
             buttonTheme: ButtonThemeData(
               textTheme: ButtonTextTheme.primary,
               colorScheme: ColorScheme.light(
