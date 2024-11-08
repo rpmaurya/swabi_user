@@ -270,7 +270,10 @@ class _RentalHistoryManagmentState extends State<RentalHistoryManagment>
                         carName: bookingList[index].carType,
                         status: bookingList[index].bookingStatus,
                         date: bookingList[index].date,
-                        rentalCharge: bookingList[index].totalPayableAmount,
+                        rentalCharge:
+                            bookingList[index].totalPayableAmount.isEmpty
+                                ? bookingList[index].rentalCharge
+                                : bookingList[index].totalPayableAmount,
                         // rentalCharge:
                         //     bookingList[index].discountAmount.isEmpty ||
                         //             bookingList[index].discountAmount == '0'

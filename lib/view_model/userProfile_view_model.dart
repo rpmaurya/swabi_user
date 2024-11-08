@@ -142,7 +142,7 @@ class ResetPasswordViewModel with ChangeNotifier {
       notifyListeners();
       var resp = await _myRepo.sendOtpApi(context: context, query: query);
       if (resp?.status?.httpCode == '200') {
-        Utils.toastSuccessMessage(resp?.status?.message ?? '');
+        Utils.toastSuccessMessage(resp?.data?.body ?? '');
         isLoading = false;
         notifyListeners();
       }
@@ -169,7 +169,7 @@ class ResetPasswordViewModel with ChangeNotifier {
       notifyListeners();
       await _myRepo.verifyOtpApi(context: context, query: query).then((resp) {
         if (resp?.status?.httpCode == '200') {
-          Utils.toastSuccessMessage(resp?.status?.message ?? '');
+          Utils.toastSuccessMessage(resp?.data?.body ?? '');
           context.push('/resetPassword', extra: {"email": email});
           isLoading = false;
           notifyListeners();
@@ -195,7 +195,7 @@ class ResetPasswordViewModel with ChangeNotifier {
       notifyListeners();
       var resp = await _myRepo.resetPasswordApi(context: context, query: query);
       if (resp?.status?.httpCode == '200') {
-        Utils.toastSuccessMessage(resp?.status?.message ?? '');
+        Utils.toastSuccessMessage(resp?.data?.body ?? '');
         context.push('/login');
         isLoading2 = false;
         notifyListeners();

@@ -300,7 +300,10 @@ final GoRouter myRouter = GoRouter(
       path: '/allOffer',
       parentNavigatorKey: _rootNavigatorKey,
       builder: (BuildContext context, GoRouterState state) {
-        return const AlloffersScreen();
+        var data = state.extra as Map<String, dynamic>;
+        return AlloffersScreen(
+          initialIndex: data["initialIndex"],
+        );
       },
     ),
     GoRoute(

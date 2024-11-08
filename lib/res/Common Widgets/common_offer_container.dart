@@ -91,7 +91,10 @@ class _CommonOfferContainerState extends State<CommonOfferContainer> {
                       CommonContainer(
                         color: bgGreyColor,
                         onTap: () {
-                          context.push('/allOffer').then((onValue) {
+                          context.push('/allOffer', extra: {
+                            "initialIndex":
+                                widget.bookingType == 'PACKAGE_BOOKING' ? 1 : 0
+                          }).then((onValue) {
                             Provider.of<OfferViewModel>(context, listen: false)
                                 .getOfferList(
                                     context: context,

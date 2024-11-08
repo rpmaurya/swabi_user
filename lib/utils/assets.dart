@@ -8,7 +8,8 @@ const String card = "assets/images/card.png";
 const String contact = "assets/images/contact.png";
 const String faq = "assets/images/faq.png";
 const String offers = "assets/images/offers.png";
-
+const String appIcon = "assets/images/App-icon.png";
+const String appIcon1 = "assets/images/App-icon1.png";
 const String logout = "assets/images/logout.png";
 const String notification = "assets/images/noti.png";
 const String pass = "assets/images/password.png";
@@ -71,3 +72,6 @@ const String descendingIcon = "assets/images/descending.png";
 const String adultIcon = "assets/images/addAdult1.png";
 const String childIcon = "assets/images/child_logo.png";
 const String infantIcon = "assets/images/infantIcon.png";
+const String raiseIssue = "assets/images/ride_issue.webp";
+const String otherIssue = "assets/images/other_issue.png";
+const String privacyPolicy = "assets/images/privacy-policy.png";

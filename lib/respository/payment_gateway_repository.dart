@@ -139,12 +139,12 @@ class PaymentRefundRespository {
         queryParameters: query);
     try {
       Response<dynamic>? response = await http.request<dynamic>();
-      print({"GetTrasactionresponse": response?.data});
+      print({"Get Refunde details....": response?.data});
       var resp = PaymentRefundModel.fromJson(response?.data);
       return resp;
     } catch (error) {
       print({'error..': error});
-      http.handleErrorResponse(context: context, error: error);
+      // http.handleErrorResponse(context: context, error: error);
       rethrow;
     }
   }

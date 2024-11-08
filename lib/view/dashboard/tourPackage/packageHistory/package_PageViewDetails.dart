@@ -1,4 +1,4 @@
-import 'dart:ffi';
+// import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -75,6 +75,8 @@ class _PackagePageViewDetailsState extends State<PackagePageViewDetails> {
               bookingId: widget.packageBookID,
               userId: widget.userId,
               bookingType: 'PACKAGE_BOOKING');
+      // Provider.of<GetPaymentRefundViewModel>(context, listen: false)
+      //     .getPaymentRefundApi(context: context, paymentId: widget.paymentId);
     });
     // day = detailsData.bookingDate * pkgDetails.noOfDays;
   }
@@ -1351,7 +1353,7 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
                 ),
               )
             : Container(),
-        widget.bookingStatus == "CANCELLED"
+        paymentRefund?.data != null && widget.bookingStatus == "CANCELLED"
             ? CommonContainer(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
@@ -1697,6 +1699,8 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
                                   )),
                                   DataCell(CustomText(
                                       align: TextAlign.start,
+                                      textLenght: 20,
+                                      needTextLenght: true,
                                       maxline: 2,
                                       content:
                                           vehicle.vehicle.carName.toString())),

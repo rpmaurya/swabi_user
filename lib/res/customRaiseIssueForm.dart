@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
+import 'package:flutter_cab/res/Custom%20Widgets/CustomTextFormfield.dart';
 import 'package:flutter_cab/utils/color.dart';
 import 'package:flutter_cab/utils/text_styles.dart';
 import 'package:flutter_cab/utils/utils.dart';
@@ -29,6 +30,7 @@ class _RaiseIssueDialogState extends State<RaiseIssueDialog> {
 
   String? _selectedIssue;
   TextEditingController _descriptionController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
   final List<String> _issueOptions = [
     'Expected a shorter wait time',
     'Unable to contact driver',
@@ -106,27 +108,43 @@ class _RaiseIssueDialogState extends State<RaiseIssueDialog> {
           if (_selectedIssue == 'My reason is not listed')
             Padding(
               padding: const EdgeInsets.only(top: 10),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  TextField(
-                    controller: _descriptionController,
-                    maxLength: 120,
-                    maxLines: 3,
-                    decoration: const InputDecoration(
-                      hintStyle: TextStyle(fontSize: 13),
-                      hintText: "Description For Issue",
-                      border: OutlineInputBorder(),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Customtextformfield(
+                      controller: _descriptionController,
+                      hintText: 'Description For Issue',
+                      maxLines: 4,
+                      minLines: 4,
+                      textLength: 120,
+                      validator: (p0) {
+                        if (p0 == null || p0.isEmpty) {
+                          return 'Please enter description';
+                        }
+                        return null;
+                      },
                     ),
-                  ),
-                  // Align(
-                  //   alignment: Alignment.centerRight,
-                  //   child: Text(
-                  //     '(${_descriptionController.text.length}/120)',
-                  //     style: TextStyle(fontSize: 12),
-                  //   ),
-                  // ),
-                ],
+                    // TextField(
+                    //   controller: _descriptionController,
+                    //   maxLength: 120,
+                    //   maxLines: 3,
+                    //   decoration: const InputDecoration(
+                    //     hintStyle: TextStyle(fontSize: 13),
+                    //     hintText: "Description For Issue",
+                    //     border: OutlineInputBorder(),
+                    //   ),
+                    // ),
+                    // Align(
+                    //   alignment: Alignment.centerRight,
+                    //   child: Text(
+                    //     '(${_descriptionController.text.length}/120)',
+                    //     style: TextStyle(fontSize: 12),
+                    //   ),
+                    // ),
+                  ],
+                ),
               ),
             ),
           const SizedBox(height: 10),
@@ -137,25 +155,43 @@ class _RaiseIssueDialogState extends State<RaiseIssueDialog> {
               onTap: () {
                 if (_selectedIssue != null) {
                   // Handle submit action
-                  print('Issue Selected: $_selectedIssue');
+                  debugPrint('Issue Selected: $_selectedIssue');
                   if (_selectedIssue == 'My reason is not listed') {
-                    print('Description: ${_descriptionController.text}');
+                    debugPrint('Description: ${_descriptionController.text}');
+                    if (_formKey.currentState!.validate()) {
+                      Provider.of<RaiseissueViewModel>(context, listen: false)
+                          .requestRaiseIssue(
+                              context: context,
+                              bookingId: widget.bookingId,
+                              bookingType: widget.bookingType,
+                              raisedById: userId.toString(),
+                              issueDescription:
+                                  _selectedIssue == 'My reason is not listed'
+                                      ? _descriptionController.text
+                                      : _selectedIssue ?? '');
+                      Utils.toastSuccessMessage(
+                        'Raise Request Successfully',
+                      );
+                      Navigator.of(context).pop();
+                    }
+                  } else {
+                    Provider.of<RaiseissueViewModel>(context, listen: false)
+                        .requestRaiseIssue(
+                            context: context,
+                            bookingId: widget.bookingId,
+                            bookingType: widget.bookingType,
+                            raisedById: userId.toString(),
+                            issueDescription:
+                                _selectedIssue == 'My reason is not listed'
+                                    ? _descriptionController.text
+                                    : _selectedIssue ?? '');
+                    Utils.toastSuccessMessage(
+                      'Raise Request Successfully',
+                    );
+                    Navigator.of(context).pop();
                   }
-
-                  Provider.of<RaiseissueViewModel>(context, listen: false)
-                      .requestRaiseIssue(
-                          context: context,
-                          bookingId: widget.bookingId,
-                          bookingType: widget.bookingType,
-                          raisedById: userId.toString(),
-                          issueDescription:
-                              _selectedIssue == 'My reason is not listed'
-                                  ? _descriptionController.text
-                                  : _selectedIssue ?? '');
-                  Utils.toastSuccessMessage(
-                    'Raise Request Successfully',
-                  );
-                  Navigator.of(context).pop();
+                } else {
+                  Utils.toastMessage('Please select an issue.');
                 }
               }),
         ],

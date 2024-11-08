@@ -38,4 +38,6 @@ class AppUrl {
   static var getRefundPaymentUrl = "/payment/get_refund_by_payment_id";
   static var packageCancellUrl = "/package_booking/cancel_package_booking";
   static var rentalCancellUrl = "/rental/cancel_rental_booking";
+  static var getPackagelistUrl =
+      "/package_booking/get_package_booking_by_userId";
 }

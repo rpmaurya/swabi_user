@@ -10,7 +10,8 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class AlloffersScreen extends StatefulWidget {
-  const AlloffersScreen({super.key});
+  final int? initialIndex;
+  const AlloffersScreen({super.key, this.initialIndex});
 
   @override
   State<AlloffersScreen> createState() => _AlloffersScreenState();
@@ -27,7 +28,10 @@ class _AlloffersScreenState extends State<AlloffersScreen>
   void initState() {
     // TODO: implement initState
     super.initState();
-    _tabController = TabController(length: tabList.length, vsync: this);
+    _intialIndex = widget.initialIndex ?? _intialIndex;
+
+    _tabController = TabController(
+        length: tabList.length, vsync: this, initialIndex: _intialIndex);
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
       // Provider.of<OfferViewModel>(context, listen: false).getOfferList(
       //     context: context,
@@ -53,7 +57,7 @@ class _AlloffersScreenState extends State<AlloffersScreen>
         isCopied = true;
       });
       // Optionally reset "Copied" text after a few seconds
-      Future.delayed(Duration(seconds: 2), () {
+      Future.delayed(const Duration(seconds: 2), () {
         setState(() {
           isCopied = false;
         });

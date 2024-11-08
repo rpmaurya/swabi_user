@@ -131,62 +131,72 @@ class _home_screenState extends State<home_screen>
                   )),
               title: Row(
                 children: [
-                  Container(
-                    width: 40, // Adjust to match the radius
-                    height: 40, // Adjust to match the radius
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      image: DecorationImage(
-                        image: NetworkImage(
-                          (userdata?.profileImageUrl ?? '').isNotEmpty
-                              ? userdata?.profileImageUrl ?? ''
-                              : 'https://up.yimg.com/ib/th?id=OIP.eCrcK2BiqwBGE1naWwK3UwHaHa&pid=Api&rs=1&c=1&qlt=95&w=115&h=115',
+                  InkWell(
+                      onTap: () {
+                        setState(() {
+                          _tabcontroller?.index = 0;
+                        });
+
+                        context.go('/');
+                        debugPrint("Custom Appbar");
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 0, horizontal: 0),
+                        child: Image.asset(
+                          // appIcon1,
+                          appLogo1,
+                          height: 24,
+                          // width: 50,
+                          fit: BoxFit.cover,
                         ),
-                        fit:
-                            BoxFit.cover, // Ensures the image covers the circle
+                      )
+                      // child: Image.asset(appLogo1)
                       ),
-                    ),
-                    // Fallback color when the image is loading or fails
-                    child: userdata?.profileImageUrl == null
-                        ? Icon(Icons.person, size: 20, color: Colors.grey[700])
-                        : null,
-                  ),
-                  const SizedBox(
-                    width: 5,
-                  ),
-                  const Text(
-                    'Hi,',
-                    style: TextStyle(color: Colors.green),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(5.0),
-                    child: Text(
-                      userdata?.firstName.capitalizeFirstOfEach ?? '',
-                      style: titleTextStyle,
-                    ),
-                  )
                 ],
               ),
               actions: [
                 InkWell(
-                    onTap: () {
-                      setState(() {
-                        _tabcontroller?.index = 0;
-                      });
-
-                      context.go('/');
-                      debugPrint("Custom Appbar");
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 10, horizontal: 10),
-                      child: Image.asset(
-                        appLogo1,
-                        height: 25,
+                    onTap: () {},
+                    child: const Icon(
+                      Icons.notifications_none_outlined,
+                      color: btnColor,
+                      size: 30,
+                    )),
+                const SizedBox(
+                  width: 5,
+                ),
+                Container(
+                  width: 35, // Adjust to match the radius
+                  height: 35, // Adjust to match the radius
+                  margin: const EdgeInsets.symmetric(horizontal: 5),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    image: DecorationImage(
+                      image: NetworkImage(
+                        (userdata?.profileImageUrl ?? '').isNotEmpty
+                            ? userdata?.profileImageUrl ?? ''
+                            : 'https://up.yimg.com/ib/th?id=OIP.eCrcK2BiqwBGE1naWwK3UwHaHa&pid=Api&rs=1&c=1&qlt=95&w=115&h=115',
                       ),
-                    )
-                    // child: Image.asset(appLogo1)
-                    )
+                      fit: BoxFit.cover, // Ensures the image covers the circle
+                    ),
+                  ),
+                  // Fallback color when the image is loading or fails
+                  child: userdata?.profileImageUrl == null
+                      ? Icon(Icons.person, size: 20, color: Colors.grey[700])
+                      : null,
+                ),
+                const Text(
+                  'Hi,',
+                  style: TextStyle(color: Colors.green),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(5.0),
+                  child: Text(
+                    userdata?.firstName.capitalizeFirstOfEach ?? '',
+                    style: titleTextStyle,
+                  ),
+                ),
               ],
             ),
             body: Container(
@@ -277,71 +287,47 @@ class _home_screenState extends State<home_screen>
 
   ///Exit Container Dialog Box
   Widget exitContainer() {
-    return SizedBox(
-      width: AppDimension.getWidth(context) * .7,
-      height: AppDimension.getHeight(context) * .5,
-      child: Dialog(
-        backgroundColor: Colors.white,
-        surfaceTintColor: Colors.transparent,
-        child: Stack(clipBehavior: Clip.none, children: [
-          SizedBox(
-            width: AppDimension.getWidth(context) * .7,
-            height: AppDimension.getHeight(context) * .2,
-            child: Column(
-              children: [
-                const Padding(
-                  padding: EdgeInsets.only(top: 50, bottom: 20, left: 20),
-                  child: CustomTextWidget(
-                      content: "Are you sure want to exit ?",
-                      fontSize: 18,
-                      align: TextAlign.center,
-                      fontWeight: FontWeight.w600,
-                      textColor: textColor),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    CustomButtonSmall(
-                      width: 70,
-                      btnHeading: "NO",
-                      onTap: () {
-                        context.pop();
-                      },
-                    ),
-                    CustomButtonSmall(
-                      width: 70,
-                      btnHeading: "YES",
-                      onTap: () {
-                        exit(0);
-                      },
-                    )
-                  ],
-                )
-              ],
-            ),
-          ),
-          Positioned(
-              top: -60,
-              left: 0,
-              right: 0,
-              child: SizedBox(
-                // decoration: BoxDecoration(
-                //   border: Border.all(color: btnColor),
-                //   borderRadius: BorderRadius.circular(10)
-                // ),
-                height: 100,
-                width: 100,
-                child: Card(
-                  surfaceTintColor: background,
-                  elevation: 5,
-                  shape: const CircleBorder(),
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Image.asset(question),
+    return Dialog(
+      backgroundColor: Colors.white,
+      surfaceTintColor: Colors.transparent,
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 15),
+          child: Column(
+            children: [
+              Text(
+                'Are you sure want to exit ?',
+                style: pageHeadingTextStyle,
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CustomButtonSmall(
+                    width: 70,
+                    height: 40,
+                    btnHeading: "NO",
+                    onTap: () {
+                      context.pop();
+                    },
                   ),
-                ),
-              ))
-        ]),
+                  const SizedBox(
+                    width: 25,
+                  ),
+                  CustomButtonSmall(
+                    width: 70,
+                    height: 40,
+                    btnHeading: "YES",
+                    onTap: () {
+                      exit(0);
+                    },
+                  )
+                ],
+              )
+            ],
+          ),
+        ),
       ),
     );
   }

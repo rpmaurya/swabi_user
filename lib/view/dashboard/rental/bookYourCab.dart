@@ -946,7 +946,7 @@ class _BookingContainerState extends State<BookingContainer> {
                           horizontalTitleGap: 10,
                           // contentPadding:
                           //     const EdgeInsets.symmetric(horizontal: 10),
-                          leading: Icon(Icons.edit_road),
+                          leading: const Icon(Icons.edit_road),
                           title: Text(
                             "Kilometer",
                             style: titleText,
@@ -990,9 +990,11 @@ class _BookingContainerState extends State<BookingContainer> {
                           style: titleText,
                         ),
                         const SizedBox(height: 5),
-                        Text(
-                          widget.pickUpLocation,
-                          style: titleText,
+                        Expanded(
+                          child: Text(
+                            widget.pickUpLocation,
+                            style: titleText,
+                          ),
                         )
                         // SizedBox(
                         //   width: AppDimension.getWidth(context) * .65,
@@ -1039,7 +1041,7 @@ class _BookingContainerState extends State<BookingContainer> {
                             style: titleText,
                           ),
                           Text(
-                            "+ AED ${widget.taxAmount.toInt()}",
+                            "+ AED ${widget.taxAmount}",
                             style: titleText,
                           ),
                         ],
@@ -1054,12 +1056,12 @@ class _BookingContainerState extends State<BookingContainer> {
                                   style: titleText,
                                 ),
                                 Text(
-                                  "- AED ${widget.offerDisAmount.toInt()}",
+                                  "- AED ${widget.offerDisAmount}",
                                   style: titleText,
                                 ),
                               ],
                             ),
-                      Divider(),
+                      const Divider(),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -1069,8 +1071,8 @@ class _BookingContainerState extends State<BookingContainer> {
                           ),
                           Text(
                             widget.discountedAmount == 0
-                                ? 'AED ${widget.payableAmount.toInt()}'
-                                : "AED ${widget.discountedAmount.toInt()}",
+                                ? 'AED ${widget.payableAmount}'
+                                : "AED ${widget.discountedAmount}",
                             style: pageHeadingTextStyle,
                           ),
                         ],
@@ -1090,7 +1092,7 @@ class _BookingContainerState extends State<BookingContainer> {
           ),
           const SizedBox(height: 10),
           Container(
-            padding: EdgeInsets.all(10),
+            padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
                 color: background,
                 borderRadius: const BorderRadius.all(Radius.circular(10)),
@@ -1139,7 +1141,7 @@ class _BookingContainerState extends State<BookingContainer> {
                   widget.couponVisible
                       ? Text(
                           'Congrats!  You have availed discount of AED ${widget.offerDisAmount.toInt()}.',
-                          style: TextStyle(color: greenColor),
+                          style: const TextStyle(color: greenColor),
                         )
                       : Container()
                 ],
@@ -1207,8 +1209,8 @@ class _BookingContainerState extends State<BookingContainer> {
                           textColor: textColor),
                     ],
                   ),
-                  SizedBox(height: 2),
-                  Row(
+                  const SizedBox(height: 2),
+                  const Row(
                     children: [
                       CustomText(
                           content: "Applied rate card",
@@ -1218,7 +1220,7 @@ class _BookingContainerState extends State<BookingContainer> {
                           textColor: textColor),
                     ],
                   ),
-                  SizedBox(height: 3),
+                  const SizedBox(height: 3),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -1239,7 +1241,7 @@ class _BookingContainerState extends State<BookingContainer> {
                           textColor: textColor),
                     ],
                   ),
-                  Row(
+                  const Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       CustomText(
@@ -1258,7 +1260,7 @@ class _BookingContainerState extends State<BookingContainer> {
                           textColor: textColor),
                     ],
                   ),
-                  Row(
+                  const Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       CustomText(
@@ -1277,8 +1279,8 @@ class _BookingContainerState extends State<BookingContainer> {
                           textColor: textColor),
                     ],
                   ),
-                  SizedBox(height: 10),
-                  CustomText(
+                  const SizedBox(height: 10),
+                  const CustomText(
                       maxline: 5,
                       align: TextAlign.start,
                       fontSize: 16,

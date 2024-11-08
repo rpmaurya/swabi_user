@@ -135,7 +135,7 @@ class _AccountScreenState extends State<AccountScreen> {
             img: offers,
             iconColor: btnColor,
             heading: "All Offers",
-            onTap: () => context.push("/allOffer"),
+            onTap: () => context.push("/allOffer", extra: {'initialIndex': 0}),
           ),
           const Spacer(),
           CustomButtonLogout(

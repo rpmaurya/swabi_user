@@ -20,7 +20,7 @@ class HelpAndSupport extends StatelessWidget {
         child: Column(
           children: [
             Custom_ListTile(
-              img: tnc,
+              img: raiseIssue,
               iconColor: btnColor,
               heading: "Raised Issue",
               onTap: () => context.push("/raiseIssueDetail"),
@@ -41,7 +41,7 @@ class HelpAndSupport extends StatelessWidget {
                 }),
             Custom_ListTile(
               disableColor: true,
-              img: contact,
+              img: privacyPolicy,
               iconColor: btnColor,
               heading: "Privacy & Policy",
               onTap: () {},

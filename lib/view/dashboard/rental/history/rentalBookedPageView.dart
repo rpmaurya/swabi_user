@@ -195,16 +195,17 @@ class _RentalBookedPageViewState extends State<RentalBookedPageView> {
                         rentalAmount: fulldata?.rentalCharge ?? '',
                         paymentTime: formattedTime)
                     : Container(),
-                fulldata?.bookingStatus != 'CANCELLED'
-                    ? Container()
-                    : RefundPaymentContainer(
+                paymentRefund?.data != null &&
+                        fulldata?.bookingStatus == 'CANCELLED'
+                    ? RefundPaymentContainer(
                         // refundId: paymentRefund?.data?.refundId ?? '',
                         refundAmount:
                             paymentRefund?.data?.refundedAmount.toString() ??
                                 '',
                         refundStatus: paymentRefund?.data?.refundStatus ?? '',
                         // refundDate: paymentRefund?.data?.createdAt ?? 0
-                      ),
+                      )
+                    : Container(),
                 const SizedBox(height: 10),
                 fulldata?.vehicle != null &&
                         fulldata?.vehicle.carName != null &&

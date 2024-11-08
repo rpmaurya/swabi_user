@@ -12,6 +12,7 @@ import 'package:flutter_cab/utils/color.dart';
 import 'package:flutter_cab/utils/dimensions.dart';
 import 'package:flutter_cab/utils/text_styles.dart';
 import 'package:flutter_cab/view_model/package_view_model.dart';
+import 'package:flutter_cab/view_model/payment_gateway_view_model.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
@@ -223,9 +224,13 @@ class _PackageHistoryManagementState extends State<PackageHistoryManagement>
                         status: bookedHistory[index].bookingStatus,
                         pkgID: bookedHistory[index].packageBookingId,
                         bookingDate: bookedHistory[index].bookingDate,
-                        members:
-                            bookedHistory[index].memberList.length.toString(),
-                        price: bookedHistory[index].totalPayableAmount,
+                        members: bookedHistory[index].numberOfMembers,
+                        price:
+                            bookedHistory[index].totalPayableAmount.isNotEmpty
+                                ? bookedHistory[index].totalPayableAmount
+                                : bookedHistory[index].packagePrice == 'null'
+                                    ? '0'
+                                    : bookedHistory[index].packagePrice,
                         // price: bookedHistory[index]
                         //             .discountAmount
                         //             .toString()
@@ -260,6 +265,13 @@ class _PackageHistoryManagementState extends State<PackageHistoryManagement>
                                   },
                                   widget.userID,
                                   bookedHistory[index].packageBookingId);
+                          bookedHistory[index].bookingStatus == 'CANCELLED'
+                              ? Provider.of<GetPaymentRefundViewModel>(context,
+                                      listen: false)
+                                  .getPaymentRefundApi(
+                                      context: context,
+                                      paymentId: bookedHistory[index].paymentId)
+                              : null;
                         },
                       ),
                     );

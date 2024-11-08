@@ -279,9 +279,13 @@ class TransContainer extends StatelessWidget {
                         style: titleText,
                       ),
                       const SizedBox(height: 5),
-                      Text(
-                        pickUpLocation,
-                        style: titleText,
+                      Expanded(
+                        child: Text(
+                          pickUpLocation,
+                          style: titleText,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       )
                       // SizedBox(
                       //   width: AppDimension.getWidth(context) * .65,

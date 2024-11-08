@@ -164,18 +164,20 @@ class _EditProfiePageState extends State<EditProfiePage> {
               ])),
               const SizedBox(height: 5),
 
-              Customtextformfield(
-                // focusNode: focusNode2,
-                controller: emailcontroller,
-                readOnly: true,
-                enableInteractiveSelection: false,
-                // prefixiconvisible: true,
-                // inputFormatters: [
-                //   FilteringTextInputFormatter.allow(RegExp("[a-zA-Z]")),
-                // ],
-                fillColor: background,
-                img: user,
-                hintText: 'Email',
+              Material(
+                child: Customtextformfield(
+                  // focusNode: focusNode2,
+                  controller: emailcontroller,
+                  readOnly: true,
+                  enableInteractiveSelection: false,
+                  // prefixiconvisible: true,
+                  // inputFormatters: [
+                  //   FilteringTextInputFormatter.allow(RegExp("[a-zA-Z]")),
+                  // ],
+                  fillColor: background,
+                  img: user,
+                  hintText: 'Email',
+                ),
               ),
               // LoginTextFeild(
               //   heading: "First Name",

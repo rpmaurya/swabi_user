@@ -142,7 +142,8 @@ class GetPackageHistoryViewModel with ChangeNotifier {
       setDataList(ApiResponse.loading());
 
       // Await the API call
-      final value = await _myRepo.getPackageHistoryRepositoryApi(data);
+      final value = await _myRepo.getPackageHistoryRepositoryApi(
+          context: context, data: data);
 
       // Set the state to completed when the API call is successful
       setDataList(ApiResponse.completed(value));

@@ -1484,8 +1484,10 @@ class PackageHistoryData {
 
   factory PackageHistoryData.fromJson(Map<String, dynamic> json) =>
       PackageHistoryData(
-        content: List<PackageHistoryContent>.from(
-            json["content"].map((x) => PackageHistoryContent.fromJson(x))),
+        content: (json["content"] != null)
+            ? List<PackageHistoryContent>.from(
+                json["content"].map((x) => PackageHistoryContent.fromJson(x)))
+            : [],
         pageable: PackageHistoryPageable.fromJson(json["pageable"]),
         totalPages: json["totalPages"],
         totalElements: json["totalElements"],
@@ -1528,6 +1530,7 @@ class PackageHistoryContent {
   String packagePrice;
   String taxAmount;
   String taxPercentage;
+  String paymentId;
   String totalPayableAmount;
   String numberOfMembers;
   List<PackageHistoryMemberList> memberList;
@@ -1545,6 +1548,7 @@ class PackageHistoryContent {
     required this.discountAmount,
     required this.taxAmount,
     required this.taxPercentage,
+    required this.paymentId,
     required this.totalPayableAmount,
     required this.numberOfMembers,
     required this.memberList,
@@ -1566,10 +1570,13 @@ class PackageHistoryContent {
         packagePrice: json["packagePrice"].toString(),
         taxAmount: json["taxAmount"]?.toString() ?? '',
         taxPercentage: json["taxPercentage"]?.toString() ?? '',
+        paymentId: json["paymentId"]?.toString() ?? '',
         totalPayableAmount: json["totalPayableAmount"]?.toString() ?? '',
         numberOfMembers: json["numberOfMembers"].toString(),
-        memberList: List<PackageHistoryMemberList>.from(json["memberList"]
-            .map((x) => PackageHistoryMemberList.fromJson(x))),
+        memberList: (json["memberList"] != null)
+            ? List<PackageHistoryMemberList>.from(json["memberList"]
+                .map((x) => PackageHistoryMemberList.fromJson(x)))
+            : [],
       );
 
   Map<String, dynamic> toJson() => {
@@ -1587,6 +1594,7 @@ class PackageHistoryContent {
         "packagePrice": packagePrice,
         "taxAmount": taxAmount,
         "taxPercentage": taxPercentage,
+        "paymentId": paymentId,
         "totalPayableAmount": totalPayableAmount,
         "numberOfMembers": numberOfMembers,
         "memberList": List<dynamic>.from(memberList.map((x) => x.toJson())),

@@ -97,8 +97,9 @@ class _CustomtextformfieldState extends State<Customtextformfield> {
                 )
               : widget.prefixIcon,
           suffixIcon: widget.suffixIcons,
-          fillColor:
-              widget.readOnly == true ? Colors.red[50] : widget.fillColor,
+          fillColor: widget.readOnly == true
+              ? greyColor1.withOpacity(.2)
+              : widget.fillColor,
           filled: widget.fillColor != null,
           hintText: widget.hintText,
           hintStyle: textTitleHint,
