@@ -124,6 +124,28 @@ class PaymentTrasactionRespository {
       rethrow;
     }
   }
+
+  Future<GetTransactionByIdModel?> getRefundTrasactionByIdApi(
+      {required BuildContext context,
+      required Map<String, dynamic> query}) async {
+    var http = HttpService(
+        isAuthorizeRequest: false,
+        baseURL: AppUrl.baseUrl,
+        endURL: AppUrl.getRefundTransactionByIdUrl,
+        methodType: HttpMethodType.GET,
+        bodyType: HttpBodyType.JSON,
+        queryParameters: query);
+    try {
+      Response<dynamic>? response = await http.request<dynamic>();
+      debugPrint("GetTrasactionresponse ${response?.data}");
+      var resp = GetTransactionByIdModel.fromJson(response?.data);
+      return resp;
+    } catch (error) {
+      print({'error..': error});
+      http.handleErrorResponse(context: context, error: error);
+      rethrow;
+    }
+  }
 }
 
 class PaymentRefundRespository {

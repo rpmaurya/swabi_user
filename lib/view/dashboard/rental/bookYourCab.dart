@@ -1041,7 +1041,7 @@ class _BookingContainerState extends State<BookingContainer> {
                             style: titleText,
                           ),
                           Text(
-                            "+ AED ${widget.taxAmount}",
+                            "+ AED ${widget.taxAmount.toStringAsFixed(2)}",
                             style: titleText,
                           ),
                         ],

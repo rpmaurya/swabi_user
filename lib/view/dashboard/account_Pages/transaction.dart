@@ -83,10 +83,20 @@ class _MyTransactionState extends State<MyTransaction>
       "bookingType": 'ALL',
       "transactionStatus": status
     };
+    Map<String, dynamic> refundquery = {
+      "userId": widget.userId,
+      "pageNumber": currentPage,
+      "pageSize": pageSize,
+    };
     try {
-      var resp =
-          await Provider.of<GetTranactionViewModel>(context, listen: false)
-              .getTranactionApi(context: context, query: query);
+      GetTransactionByIdModel? resp;
+      if (status == 'Refunded') {
+        resp = await Provider.of<GetTranactionViewModel>(context, listen: false)
+            .getRefundTranactionApi(context: context, query: refundquery);
+      } else {
+        resp = await Provider.of<GetTranactionViewModel>(context, listen: false)
+            .getTranactionApi(context: context, query: query);
+      }
       var data = resp?.data?.content ?? [];
       if (data.isNotEmpty) {
         setState(() {
@@ -153,9 +163,15 @@ class _MyTransactionState extends State<MyTransaction>
                           controller: _scrollController,
                           itemBuilder: (context, index) {
                             var data = allTranaction[index];
-                            DateTime date = DateTime.fromMillisecondsSinceEpoch(
-                                data.createdDate ?? 0 * 1000,
-                                isUtc: false);
+                            DateTime date = tabList[intialIndex] == 'REFUNDED'
+                                ? DateTime.fromMillisecondsSinceEpoch(
+                                    data.createdDate == 0
+                                        ? data.modifiedDate ?? 0 * 1000
+                                        : (data.createdDate ?? 0) * 1000,
+                                    isUtc: false)
+                                : DateTime.fromMillisecondsSinceEpoch(
+                                    data.createdDate ?? 0 * 1000,
+                                    isUtc: false);
                             String formateDate =
                                 DateFormat('MMM d, yyyy h:mm a').format(date);
                             if (index == allTranaction.length) {
@@ -230,10 +246,14 @@ class _MyTransactionState extends State<MyTransaction>
                                         style: titleTextStyle,
                                       ),
                                       Text(
-                                        data.transactionStatus == 'Captured'
+                                        (data.transactionStatus == 'Captured' ||
+                                                data.transactionStatus ==
+                                                    'processed')
                                             ? 'Success'
-                                            : data.transactionStatus ==
-                                                    'Created'
+                                            : (data.transactionStatus ==
+                                                        'Created' ||
+                                                    data.transactionStatus ==
+                                                        'created')
                                                 ? 'Pending'
                                                 : data.transactionStatus ==
                                                         'failed'
@@ -243,16 +263,17 @@ class _MyTransactionState extends State<MyTransaction>
                                                         '',
                                         style: TextStyle(
                                             fontWeight: FontWeight.w600,
-                                            color: data.transactionStatus ==
-                                                    'Captured'
+                                            color: (data.transactionStatus ==
+                                                        'Captured' ||
+                                                    data.transactionStatus ==
+                                                        'processed')
                                                 ? greenColor
-                                                : data.transactionStatus ==
-                                                        'Created'
-                                                    ? Colors.yellow
-                                                    : data.transactionStatus ==
-                                                            'Refunded'
-                                                        ? greenColor
-                                                        : redColor),
+                                                : (data.transactionStatus ==
+                                                            'Created' ||
+                                                        data.transactionStatus ==
+                                                            'created')
+                                                    ? Colors.orange
+                                                    : redColor),
                                       )
                                     ],
                                   ),

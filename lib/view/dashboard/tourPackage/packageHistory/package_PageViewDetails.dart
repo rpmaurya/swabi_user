@@ -1526,7 +1526,7 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
                             '*The itinerary will be shared 24 hours before the package start *',
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
-                              color: redColor,
+                              color: btnColor,
                             ),
                           ),
                         ),

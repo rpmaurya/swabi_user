@@ -217,6 +217,7 @@ class _RentalBookedPageViewState extends State<RentalBookedPageView> {
                         vehicleNo: fulldata?.vehicle.vehicleNumber ?? '',
                         fuelType: fulldata?.vehicle.fuelType ?? '',
                         seats: fulldata?.vehicle.seats ?? '',
+                        vehicleType: fulldata?.carType ?? '',
                         vehicleImage: fulldata?.vehicle.images ?? [],
                       )
                     : Container(),
@@ -775,6 +776,7 @@ class VechicleDetailsContainer extends StatelessWidget {
   final String vehicleName;
   final String vehicleNo;
   final String fuelType;
+  final String vehicleType;
   final String brandName;
   final String seats;
   final String color;
@@ -786,6 +788,7 @@ class VechicleDetailsContainer extends StatelessWidget {
     this.seats = '',
     required this.vehicleNo,
     required this.fuelType,
+    required this.vehicleType,
     required this.brandName,
     required this.vehicleImage,
     required this.color,
@@ -842,6 +845,7 @@ class VechicleDetailsContainer extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   vehicleItem(lable: 'Vehicle Name', value: vehicleName),
+                  vehicleItem(lable: 'Vehicle Type', value: vehicleType),
                   vehicleItem(lable: 'Brand Name', value: brandName),
                   vehicleItem(lable: 'Vehicle No.', value: vehicleNo),
                   vehicleItem(lable: 'Colors', value: color),

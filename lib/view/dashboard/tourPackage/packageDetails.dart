@@ -76,13 +76,13 @@ class _PackageDetailsState extends State<PackageDetails> {
                       const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
                   children: [
                     const SizedBox(height: 10),
-                    const CustomTextWidget(
-                        sideLogo: true,
-                        content: "Package Images",
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700,
-                        textColor: textColor),
-                    const SizedBox(height: 10),
+                    // const CustomTextWidget(
+                    //     sideLogo: true,
+                    //     content: "Package Images",
+                    //     fontSize: 20,
+                    //     fontWeight: FontWeight.w700,
+                    //     textColor: textColor),
+                    // const SizedBox(height: 10),
                     CommonContainer(
                       elevation: 0,
                       borderReq: true,

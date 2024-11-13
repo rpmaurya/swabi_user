@@ -35,6 +35,7 @@ class AppUrl {
   static var getOfferDetailUrl = "/offer/get_offer_by_id";
   static var validateOfferUrl = "/offer/validate_offer";
   static var getTransactionByIdUrl = "/payment/get_transaction_by_userId";
+  static var getRefundTransactionByIdUrl = '/payment/get_refund_by_userId';
   static var getRefundPaymentUrl = "/payment/get_refund_by_payment_id";
   static var packageCancellUrl = "/package_booking/cancel_package_booking";
   static var rentalCancellUrl = "/rental/cancel_rental_booking";

@@ -151,6 +151,23 @@ class GetTranactionViewModel with ChangeNotifier {
     }
     return null;
   }
+
+  Future<GetTransactionByIdModel?> getRefundTranactionApi(
+      {required BuildContext context,
+      required Map<String, dynamic> query}) async {
+    try {
+      print('bodyofpaymentverification..$query');
+      setDataList(ApiResponse.loading());
+      var resp = await _myRepo.getRefundTrasactionByIdApi(
+          context: context, query: query);
+      setDataList(ApiResponse.completed(resp));
+      // Utils.flushBarSuccessMessage("Payment paymentVerify Success", context);
+      return resp;
+    } catch (e) {
+      print(e);
+    }
+    return null;
+  }
 }
 
 class GetPaymentRefundViewModel with ChangeNotifier {
