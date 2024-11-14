@@ -264,7 +264,7 @@ class _EditProfiePageState extends State<EditProfiePage> {
                                       BorderRadius.all(Radius.circular(5)),
                                   borderSide: BorderSide.none),
                             ),
-                            textStyle: titleTextStyle,
+                            textStyle: titleTextStyle1,
                             debounceTime: 400,
                             // countries: ["ae", "fr"],
                             isLatLngRequired: true,

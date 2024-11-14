@@ -240,191 +240,199 @@ class _RentalBookedPageViewState extends State<RentalBookedPageView> {
                       )
                     : Container(),
                 const SizedBox(height: 10),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    (getIssueByBookingId?.data ?? []).isEmpty
-                        ? CustomButtonSmall(
-                            height: 40,
-                            width: 120,
-                            btnHeading: 'Raised Issue',
-                            onTap: () {
-                              showModalBottomSheet(
-                                context: context,
-                                isDismissible: false,
-                                backgroundColor: background,
-                                isScrollControlled: true,
-                                shape: const RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.vertical(
-                                    top: Radius.circular(10),
-                                  ),
-                                ),
-                                builder: (BuildContext context) {
-                                  return Padding(
-                                    padding: EdgeInsets.only(
-                                        bottom: MediaQuery.of(context)
-                                            .viewInsets
-                                            .bottom),
-                                    child: SingleChildScrollView(child:
-                                        StatefulBuilder(builder:
-                                            (BuildContext context,
-                                                StateSetter setstate) {
-                                      return RaiseIssueDialog(
-                                        bookingId: widget.bookedId,
-                                        bookingType: 'RENTAL_BOOKING',
-                                      );
-                                    })),
-                                  );
-                                },
-                              );
-                            })
-                        : Container(),
-                    fulldata?.bookingStatus == "BOOKED"
-                        ? Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 10),
-                            child: CustomButtonSmall(
-                              width: AppDimension.getWidth(context) * .35,
-                              height: 40,
-                              btnHeading: "Cancel Booking",
-                              // loading: cancelledStatus == "Status.loading" && loading,
-                              onTap: () {
-                                showModalBottomSheet(
-                                    context: context,
-                                    isDismissible: false,
-                                    backgroundColor: background,
-                                    isScrollControlled: true,
-                                    shape: const RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.vertical(
-                                        top: Radius.circular(10),
+                fulldata?.bookingStatus == "COMPLETED"
+                    ? const SizedBox.shrink()
+                    : Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          (getIssueByBookingId?.data ?? []).isEmpty
+                              ? CustomButtonSmall(
+                                  height: 40,
+                                  width: 120,
+                                  btnHeading: 'Raised Issue',
+                                  onTap: () {
+                                    showModalBottomSheet(
+                                      context: context,
+                                      isDismissible: false,
+                                      backgroundColor: background,
+                                      isScrollControlled: true,
+                                      shape: const RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.vertical(
+                                          top: Radius.circular(10),
+                                        ),
                                       ),
-                                    ),
-                                    builder: (BuildContext context) {
-                                      return Padding(
-                                        padding: EdgeInsets.only(
-                                            bottom: MediaQuery.of(context)
-                                                .viewInsets
-                                                .bottom),
-                                        child: SingleChildScrollView(child:
-                                            StatefulBuilder(builder:
-                                                (BuildContext context,
-                                                    StateSetter setstate) {
-                                          String cancelledStatus = context
-                                              .watch<
-                                                  RentalBookingCancelViewModel>()
-                                              .cancelldataList
-                                              .status
-                                              .toString();
-                                          return CancelContainerDialog(
-                                              loading: cancelledStatus ==
-                                                      "Status.loading" &&
-                                                  loading,
-                                              controllerCancel: controller,
-                                              onTap: () async {
-                                                print(
-                                                    'bnnvncvxcvxzvznbxvcbnvn');
-                                                setstate(() {
-                                                  loading = true;
-                                                });
-                                                await Provider
-                                                        .of<
-                                                                RentalBookingCancelViewModel>(
-                                                            context,
-                                                            listen: false)
-                                                    .fetchRentalBookingCancelViewModelApi(
-                                                        context,
-                                                        {
-                                                          "id": widget.bookedId,
-                                                          "reason":
-                                                              controller.text,
-                                                          "cancelledBy": "USER"
-                                                        },
-                                                        widget.useriD,
-                                                        fulldata?.id
-                                                                .toString() ??
-                                                            '',
-                                                        fulldata?.paymentId
-                                                                .toString() ??
-                                                            '');
+                                      builder: (BuildContext context) {
+                                        return Padding(
+                                          padding: EdgeInsets.only(
+                                              bottom: MediaQuery.of(context)
+                                                  .viewInsets
+                                                  .bottom),
+                                          child: SingleChildScrollView(child:
+                                              StatefulBuilder(builder:
+                                                  (BuildContext context,
+                                                      StateSetter setstate) {
+                                            return RaiseIssueDialog(
+                                              bookingId: widget.bookedId,
+                                              bookingType: 'RENTAL_BOOKING',
+                                            );
+                                          })),
+                                        );
+                                      },
+                                    );
+                                  })
+                              : Container(),
+                          fulldata?.bookingStatus == "BOOKED"
+                              ? Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10),
+                                  child: CustomButtonSmall(
+                                    width: AppDimension.getWidth(context) * .35,
+                                    height: 40,
+                                    btnHeading: "Cancel Booking",
+                                    // loading: cancelledStatus == "Status.loading" && loading,
+                                    onTap: () {
+                                      showModalBottomSheet(
+                                          context: context,
+                                          isDismissible: false,
+                                          backgroundColor: background,
+                                          isScrollControlled: true,
+                                          shape: const RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.vertical(
+                                              top: Radius.circular(10),
+                                            ),
+                                          ),
+                                          builder: (BuildContext context) {
+                                            return Padding(
+                                              padding: EdgeInsets.only(
+                                                  bottom: MediaQuery.of(context)
+                                                      .viewInsets
+                                                      .bottom),
+                                              child: SingleChildScrollView(
+                                                  child: StatefulBuilder(
+                                                      builder:
+                                                          (BuildContext context,
+                                                              StateSetter
+                                                                  setstate) {
+                                                String cancelledStatus = context
+                                                    .watch<
+                                                        RentalBookingCancelViewModel>()
+                                                    .cancelldataList
+                                                    .status
+                                                    .toString();
+                                                return CancelContainerDialog(
+                                                    loading: cancelledStatus ==
+                                                            "Status.loading" &&
+                                                        loading,
+                                                    controllerCancel:
+                                                        controller,
+                                                    onTap: () async {
+                                                      print(
+                                                          'bnnvncvxcvxzvznbxvcbnvn');
+                                                      setstate(() {
+                                                        loading = true;
+                                                      });
+                                                      await Provider.of<
+                                                                  RentalBookingCancelViewModel>(
+                                                              context,
+                                                              listen: false)
+                                                          .fetchRentalBookingCancelViewModelApi(
+                                                              context,
+                                                              {
+                                                                "id": widget
+                                                                    .bookedId,
+                                                                "reason":
+                                                                    controller
+                                                                        .text,
+                                                                "cancelledBy":
+                                                                    "USER"
+                                                              },
+                                                              widget.useriD,
+                                                              fulldata?.id
+                                                                      .toString() ??
+                                                                  '',
+                                                              fulldata?.paymentId
+                                                                      .toString() ??
+                                                                  '');
 
-                                                setstate(() {
-                                                  loading = false;
-                                                });
-                                                // controller.dispose();
-                                              });
-                                        })),
-                                      );
-                                    });
-                                // showDialog(
-                                //     context: context,
-                                //     builder: (context) {
-                                //       // controller.clear();
-                                //       return StatefulBuilder(
-                                //         builder: (BuildContext context,
-                                //             StateSetter setState) {
-                                //           String cancelledStatus = context
-                                //               .watch<
-                                //                   RentalBookingCancelViewModel>()
-                                //               .cancelldataList
-                                //               .status
-                                //               .toString();
+                                                      setstate(() {
+                                                        loading = false;
+                                                      });
+                                                      // controller.dispose();
+                                                    });
+                                              })),
+                                            );
+                                          });
+                                      // showDialog(
+                                      //     context: context,
+                                      //     builder: (context) {
+                                      //       // controller.clear();
+                                      //       return StatefulBuilder(
+                                      //         builder: (BuildContext context,
+                                      //             StateSetter setState) {
+                                      //           String cancelledStatus = context
+                                      //               .watch<
+                                      //                   RentalBookingCancelViewModel>()
+                                      //               .cancelldataList
+                                      //               .status
+                                      //               .toString();
 
-                                //           debugPrint(
-                                //               'loading status......>>>>>>>$cancelledStatus');
-                                //           return SingleChildScrollView(
-                                //             padding: EdgeInsets.only(
-                                //                 top: AppDimension.getHeight(
-                                //                         context) *
-                                //                     .2),
-                                //             child: CancelContainerDialog(
-                                //                 loading: cancelledStatus ==
-                                //                     "Status.loading",
-                                //                 controllerCancel: controller,
-                                //                 onTap: () async {
-                                //                   print(
-                                //                       'bnnvncvxcvxzvznbxvcbnvn');
-                                //                   // setState(() {
-                                //                   //   cancelledStatus =
-                                //                   //       "Status.loading";
-                                //                   // });
-                                //                   await Provider.of<
-                                //                               RentalBookingCancelViewModel>(
-                                //                           context,
-                                //                           listen: false)
-                                //                       .fetchRentalBookingCancelViewModelApi(
-                                //                           context,
-                                //                           {
-                                //                             "id":
-                                //                                 widget.bookedId,
-                                //                             "reason":
-                                //                                 controller.text,
-                                //                             "cancelledBy":
-                                //                                 "USER"
-                                //                           },
-                                //                           widget.useriD,
-                                //                           fulldata?.id
-                                //                                   .toString() ??
-                                //                               '',
-                                //                           fulldata?.paymentId
-                                //                                   .toString() ??
-                                //                               '');
+                                      //           debugPrint(
+                                      //               'loading status......>>>>>>>$cancelledStatus');
+                                      //           return SingleChildScrollView(
+                                      //             padding: EdgeInsets.only(
+                                      //                 top: AppDimension.getHeight(
+                                      //                         context) *
+                                      //                     .2),
+                                      //             child: CancelContainerDialog(
+                                      //                 loading: cancelledStatus ==
+                                      //                     "Status.loading",
+                                      //                 controllerCancel: controller,
+                                      //                 onTap: () async {
+                                      //                   print(
+                                      //                       'bnnvncvxcvxzvznbxvcbnvn');
+                                      //                   // setState(() {
+                                      //                   //   cancelledStatus =
+                                      //                   //       "Status.loading";
+                                      //                   // });
+                                      //                   await Provider.of<
+                                      //                               RentalBookingCancelViewModel>(
+                                      //                           context,
+                                      //                           listen: false)
+                                      //                       .fetchRentalBookingCancelViewModelApi(
+                                      //                           context,
+                                      //                           {
+                                      //                             "id":
+                                      //                                 widget.bookedId,
+                                      //                             "reason":
+                                      //                                 controller.text,
+                                      //                             "cancelledBy":
+                                      //                                 "USER"
+                                      //                           },
+                                      //                           widget.useriD,
+                                      //                           fulldata?.id
+                                      //                                   .toString() ??
+                                      //                               '',
+                                      //                           fulldata?.paymentId
+                                      //                                   .toString() ??
+                                      //                               '');
 
-                                //                   // setState(() {
-                                //                   //   cancelledStatus =
-                                //                   //       "Status.completed";
-                                //                   // });
-                                //                   // controller.dispose();
-                                //                 }),
-                                //           );
-                                //         },
-                                //       );
-                                //     });
-                                // context.pop();
-                              },
-                            ),
-                          )
-                        : Container(),
-                  ],
-                )
+                                      //                   // setState(() {
+                                      //                   //   cancelledStatus =
+                                      //                   //       "Status.completed";
+                                      //                   // });
+                                      //                   // controller.dispose();
+                                      //                 }),
+                                      //           );
+                                      //         },
+                                      //       );
+                                      //     });
+                                      // context.pop();
+                                    },
+                                  ),
+                                )
+                              : Container(),
+                        ],
+                      )
               ],
             ),
             if (loading)

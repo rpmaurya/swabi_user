@@ -283,7 +283,7 @@ class TransContainer extends StatelessWidget {
                         child: Text(
                           pickUpLocation,
                           style: titleText,
-                          maxLines: 1,
+                          maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),
                       )

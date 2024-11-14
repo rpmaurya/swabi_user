@@ -64,7 +64,7 @@ class _CustomMobilenumberState extends State<CustomMobilenumber> {
         obscureText: widget.obscureText ?? false,
         obscuringCharacter: widget.obscuringCharacter ?? '•',
         controller: widget.controller,
-        style: titleTextStyle,
+        style: titleTextStyle1,
         textAlignVertical: widget.textAlignVertical,
         inputFormatters: [
           LengthLimitingTextInputFormatter(widget.textLength),
@@ -78,7 +78,8 @@ class _CustomMobilenumberState extends State<CustomMobilenumber> {
           errorText: errorText,
 
           suffixIcon: widget.suffixIcons,
-          prefixIconConstraints: BoxConstraints(maxHeight: 25, maxWidth: 85),
+          prefixIconConstraints:
+              const BoxConstraints(maxHeight: 25, maxWidth: 85),
           prefixIcon: Padding(
             padding: const EdgeInsets.only(left: 8),
             child: Row(
@@ -89,10 +90,10 @@ class _CustomMobilenumberState extends State<CustomMobilenumber> {
                   height: 25,
                   fit: BoxFit.fill,
                 ),
-                SizedBox(width: 5),
+                const SizedBox(width: 5),
                 Text(
                   '+${widget.countryCode ?? '971'}',
-                  style: titleTextStyle,
+                  style: titleTextStyle1,
                 ),
               ],
             ),

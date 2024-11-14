@@ -160,7 +160,7 @@ class _RentalHistoryManagmentState extends State<RentalHistoryManagment>
     //   ),
     //   body:
     return Customtabbar(
-        titleHeading: 'My Rental History',
+        titleHeading: 'My Rental Trip',
         sortVisiblty: sortVisiblty,
         isVisible: isVisibleIcon,
         controller: _tabController,
@@ -266,6 +266,7 @@ class _RentalHistoryManagmentState extends State<RentalHistoryManagment>
                             intialloadingIndex == index,
                         time: bookingList[index].pickupTime,
                         bookingID: bookingList[index].id,
+                        images: bookingList[index].vehicle.images,
                         pickUplocation: bookingList[index].pickupLocation,
                         carName: bookingList[index].carType,
                         status: bookingList[index].bookingStatus,

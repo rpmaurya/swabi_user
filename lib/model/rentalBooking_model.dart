@@ -674,7 +674,7 @@ class Content {
   String createdDate;
   String modifiedDate;
   String rentalManagement;
-  String vehicle;
+  RentalDetialsSingleVehicle vehicle;
   String driver;
   String rideStartTime;
   String rideEndTime;
@@ -738,7 +738,7 @@ class Content {
       createdDate: json["createdDate"].toString(),
       modifiedDate: json["modifiedDate"].toString(),
       rentalManagement: json["rentalManagement"].toString(),
-      vehicle: json["vehicle"].toString(),
+      vehicle: RentalDetialsSingleVehicle.fromJson(json["vehicle"] ?? {}),
       driver: json["driver"].toString(),
       rideStartTime: json["rideStartTime"].toString(),
       rideEndTime: json["rideEndTime"].toString(),
@@ -770,7 +770,7 @@ class Content {
         "createdDate": createdDate,
         "modifiedDate": modifiedDate,
         "rentalManagement": rentalManagement,
-        "vehicle": vehicle,
+        "vehicle": vehicle?.toJson(),
         "driver": driver,
         "rideStartTime": rideStartTime,
         "rideEndTime": rideEndTime,
@@ -938,7 +938,8 @@ class Vehicle {
         "modifiedDate": modifiedDate.toIso8601String(),
         "status": status,
         "bookingStatus": bookingStatus,
-        "images": List<dynamic>.from(images.map((x) => x)),
+        "images": images,
+        // "images": List<dynamic>.from(images.map((x) => x)),
         "vehicleAvailability": vehicleAvailability,
       };
 }

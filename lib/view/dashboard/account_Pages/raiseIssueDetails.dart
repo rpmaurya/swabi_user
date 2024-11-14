@@ -184,12 +184,11 @@ class _RaiseissuedetailsState extends State<Raiseissuedetails>
                                   }),
                             );
                           })
-                      : Center(
-                          child: Container(
-                            child: Text(
-                              'No Raise Available',
-                              style: titleTextStyle,
-                            ),
+                      : const Center(
+                          child: Text(
+                            'No Data Found',
+                            style: TextStyle(
+                                color: redColor, fontWeight: FontWeight.bold),
                           ),
                         );
             },

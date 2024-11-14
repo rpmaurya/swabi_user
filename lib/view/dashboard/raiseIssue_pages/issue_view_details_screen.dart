@@ -63,7 +63,9 @@ class _IssueviewdetailsState extends State<Issueviewdetails> {
                             decoration: BoxDecoration(
                                 color: issueData?.issueStatus == 'OPEN'
                                     ? redColor
-                                    : Colors.green,
+                                    : issueData?.issueStatus == 'IN_PROGRESS'
+                                        ? Colors.orange
+                                        : Colors.green,
                                 borderRadius: BorderRadius.circular(5)),
                             child: Center(
                               child: Text(

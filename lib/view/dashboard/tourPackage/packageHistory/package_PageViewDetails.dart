@@ -1,5 +1,6 @@
 // import 'dart:ffi';
 
+import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_cab/model/getIssueByBookingIdModel.dart';
@@ -776,6 +777,7 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
     );
   }
 
+  final ScrollController _scrollController = ScrollController();
   final marqueeController = MarqueerController();
   bool isLoading = false;
   @override
@@ -848,8 +850,8 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
                                         .bottom, // Adjust modal size when keyboard opens
                                   ),
                                   child: SingleChildScrollView(
-                                    physics:
-                                        const NeverScrollableScrollPhysics(),
+                                    // physics:
+                                    //     const NeverScrollableScrollPhysics(),
                                     child: StatefulBuilder(builder:
                                         (BuildContext context,
                                             StateSetter setstate) {
@@ -858,6 +860,7 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
                                         child: Column(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
+                                          mainAxisSize: MainAxisSize.min,
                                           children: [
                                             Row(
                                               mainAxisAlignment:
@@ -903,142 +906,140 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
                                                       color: redColor))
                                             ])),
                                             const SizedBox(height: 5),
-                                            Form(
-                                              key: _formKey,
-                                              autovalidateMode: AutovalidateMode
-                                                  .onUserInteraction,
-                                              child: FormField<String>(
-                                                  autovalidateMode:
-                                                      AutovalidateMode
-                                                          .onUserInteraction,
-                                                  validator: (value) {
-                                                    if (widget.controllerWidget
-                                                        .text.isEmpty) {
-                                                      return '  Please select a location';
-                                                    }
-                                                    return null;
-                                                  },
-                                                  builder:
-                                                      (FormFieldState<String>
-                                                          field) {
-                                                    return Column(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        Container(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .symmetric(
-                                                                  horizontal:
-                                                                      0),
-                                                          height: 50,
-                                                          child:
-                                                              GooglePlaceAutoCompleteTextField(
-                                                            textEditingController:
-                                                                widget
-                                                                    .controllerWidget,
+                                            SingleChildScrollView(
+                                              child: Form(
+                                                key: _formKey,
+                                                autovalidateMode:
+                                                    AutovalidateMode
+                                                        .onUserInteraction,
+                                                child: FormField<String>(
+                                                    autovalidateMode:
+                                                        AutovalidateMode
+                                                            .onUserInteraction,
+                                                    validator: (value) {
+                                                      if (widget
+                                                          .controllerWidget
+                                                          .text
+                                                          .isEmpty) {
+                                                        return '  Please select a location';
+                                                      }
+                                                      return null;
+                                                    },
+                                                    builder:
+                                                        (FormFieldState<String>
+                                                            field) {
+                                                      return Column(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Container(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .symmetric(
+                                                                    horizontal:
+                                                                        0),
+                                                            height: 50,
+                                                            child:
+                                                                GooglePlaceAutoCompleteTextField(
+                                                              textEditingController:
+                                                                  widget
+                                                                      .controllerWidget,
 
-                                                            boxDecoration: BoxDecoration(
-                                                                color:
-                                                                    background,
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            5),
-                                                                border: Border.all(
-                                                                    color: naturalGreyColor
-                                                                        .withOpacity(
-                                                                            0.3))),
-                                                            googleAPIKey:
-                                                                // "AIzaSyADRdiTbSYUR8oc6-ryM1F1NDNjkHDr0Yo",
-                                                                'AIzaSyDhKIUQ4QBoDuOsooDfNY_EjCG0MB7Ami8',
-                                                            inputDecoration:
-                                                                InputDecoration(
-                                                              contentPadding:
-                                                                  const EdgeInsets
-                                                                      .symmetric(
-                                                                      horizontal:
-                                                                          5,
-                                                                      vertical:
-                                                                          0),
-                                                              isDense: true,
-                                                              hintText:
-                                                                  "Search your location",
-                                                              border: const OutlineInputBorder(
-                                                                  borderSide:
-                                                                      BorderSide
-                                                                          .none),
-                                                              hintStyle:
-                                                                  GoogleFonts
-                                                                      .lato(
-                                                                color:
-                                                                    greyColor1,
-                                                                fontSize: 16,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w600,
-                                                              ),
-                                                              filled: true,
-                                                              fillColor:
-                                                                  background,
-                                                              disabledBorder: const OutlineInputBorder(
+                                                              boxDecoration: BoxDecoration(
+                                                                  color:
+                                                                      background,
                                                                   borderRadius:
-                                                                      BorderRadius.all(
-                                                                          Radius.circular(
-                                                                              5)),
-                                                                  borderSide:
-                                                                      BorderSide
-                                                                          .none),
-                                                            ),
-                                                            textStyle:
-                                                                titleTextStyle,
-                                                            debounceTime: 400,
-                                                            // countries: ["ae", "fr"],
-                                                            isLatLngRequired:
-                                                                true,
-                                                            getPlaceDetailWithLatLng:
-                                                                (prediction) {
-                                                              print(
-                                                                  "Latitude: ${prediction.lat}, Longitude: ${prediction.lng}");
-                                                              // You can use prediction.lat and prediction.lng here as needed
-                                                              // Example: Save them to variables or perform further actions
-                                                            },
-
-                                                            itemClick:
-                                                                (prediction) {
-                                                              widget
-                                                                  .controllerWidget
-                                                                  .text = prediction
-                                                                      .description ??
-                                                                  "";
-                                                              widget.controllerWidget
-                                                                      .selection =
-                                                                  TextSelection.fromPosition(
-                                                                      TextPosition(
-                                                                          offset:
-                                                                              prediction.description?.length ?? 0));
-                                                              field.didChange(
-                                                                  prediction
-                                                                      .description);
-                                                            },
-                                                            seperatedBuilder:
-                                                                const Divider(),
-
-                                                            // OPTIONAL// If you want to customize list view item builder
-                                                            itemBuilder:
-                                                                (context, index,
-                                                                    prediction) {
-                                                              return Padding(
-                                                                padding:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              5),
+                                                                  border: Border.all(
+                                                                      color: naturalGreyColor
+                                                                          .withOpacity(
+                                                                              0.3))),
+                                                              googleAPIKey:
+                                                                  // "AIzaSyADRdiTbSYUR8oc6-ryM1F1NDNjkHDr0Yo",
+                                                                  'AIzaSyDhKIUQ4QBoDuOsooDfNY_EjCG0MB7Ami8',
+                                                              inputDecoration:
+                                                                  InputDecoration(
+                                                                contentPadding:
                                                                     const EdgeInsets
                                                                         .symmetric(
+                                                                        horizontal:
+                                                                            5,
                                                                         vertical:
-                                                                            5),
-                                                                child:
-                                                                    Container(
-                                                                  // color:
-                                                                  //     background,
+                                                                            0),
+                                                                isDense: true,
+                                                                hintText:
+                                                                    "Search your location",
+                                                                border: const OutlineInputBorder(
+                                                                    borderSide:
+                                                                        BorderSide
+                                                                            .none),
+                                                                hintStyle:
+                                                                    GoogleFonts
+                                                                        .lato(
+                                                                  color:
+                                                                      greyColor1,
+                                                                  fontSize: 16,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w600,
+                                                                ),
+                                                                filled: true,
+                                                                fillColor:
+                                                                    background,
+                                                                disabledBorder: const OutlineInputBorder(
+                                                                    borderRadius:
+                                                                        BorderRadius.all(Radius.circular(
+                                                                            5)),
+                                                                    borderSide:
+                                                                        BorderSide
+                                                                            .none),
+                                                              ),
+                                                              textStyle:
+                                                                  titleTextStyle,
+                                                              debounceTime: 400,
+                                                              // countries: ["ae", "fr"],
+                                                              isLatLngRequired:
+                                                                  true,
+                                                              getPlaceDetailWithLatLng:
+                                                                  (prediction) {
+                                                                print(
+                                                                    "Latitude: ${prediction.lat}, Longitude: ${prediction.lng}");
+                                                                // You can use prediction.lat and prediction.lng here as needed
+                                                                // Example: Save them to variables or perform further actions
+                                                              },
+
+                                                              itemClick:
+                                                                  (prediction) {
+                                                                widget
+                                                                    .controllerWidget
+                                                                    .text = prediction
+                                                                        .description ??
+                                                                    "";
+                                                                widget.controllerWidget
+                                                                        .selection =
+                                                                    TextSelection.fromPosition(TextPosition(
+                                                                        offset: prediction.description?.length ??
+                                                                            0));
+                                                                field.didChange(
+                                                                    prediction
+                                                                        .description);
+                                                              },
+                                                              seperatedBuilder:
+                                                                  const Divider(),
+
+                                                              // OPTIONAL// If you want to customize list view item builder
+                                                              itemBuilder:
+                                                                  (context,
+                                                                      index,
+                                                                      prediction) {
+                                                                return Padding(
+                                                                  padding: const EdgeInsets
+                                                                      .symmetric(
+                                                                      vertical:
+                                                                          5),
                                                                   child: Row(
                                                                     children: [
                                                                       const Icon(
@@ -1061,25 +1062,24 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
                                                                       ))
                                                                     ],
                                                                   ),
-                                                                ),
-                                                              );
-                                                            },
-                                                            isCrossBtnShown:
-                                                                false,
-                                                            // default 600 ms ,
+                                                                );
+                                                              },
+                                                              isCrossBtnShown:
+                                                                  false,
+                                                              // default 600 ms ,
+                                                            ),
                                                           ),
-                                                        ),
-                                                        if (field.hasError)
-                                                          Text(
-                                                            field.errorText!,
-                                                            style:
-                                                                const TextStyle(
-                                                                    color:
-                                                                        redColor),
-                                                          ),
-                                                      ],
-                                                    );
-                                                  }),
+                                                          if (field.hasError)
+                                                            Text(
+                                                              field.errorText!,
+                                                              style: const TextStyle(
+                                                                  color:
+                                                                      redColor),
+                                                            ),
+                                                        ],
+                                                      );
+                                                    }),
+                                              ),
                                             ),
                                             const SizedBox(height: 20),
                                             CustomButtonSmall(
@@ -1316,7 +1316,7 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
                 child: Column(
                   children: [
                     textItem(
-                        lable: 'PaymentId',
+                        lable: 'Payment Id',
                         value: widget.paymentDetails?.data?.id ?? ''),
                     textItem(
                         lable: 'Package Amount',
@@ -1325,7 +1325,7 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
                         lable: 'Tax Amount (5%)',
                         value: 'AED ${widget.taxAmount}'),
                     widget.discountAmount == '0.0'
-                        ? SizedBox()
+                        ? const SizedBox()
                         : textItem(
                             lable: 'Discount Amount',
                             value: 'AED ${widget.discountAmount}'),
@@ -1334,10 +1334,10 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
                         value:
                             'AED ${double.parse(widget.paymentDetails?.data?.amount.toString() ?? '') / 100}'),
                     textItem(
-                      lable: 'PaymentDate',
+                      lable: 'Payment Date',
                       value: DateFormat('dd-MM-yyyy').format(dateTime),
                     ),
-                    textItem(lable: 'PaymentTime', value: formattedTime)
+                    textItem(lable: 'Payment Time', value: formattedTime)
                   ],
                 ),
               )
@@ -1532,26 +1532,6 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
                         ),
                       ),
                     ),
-              // : SizedBox(
-              //     height: 20,
-              //     child: Marquee(
-              //       showFadingOnlyWhenScrolling: false,
-              //       text:vcx
-              //           '*The itinerary will be shared 24 hours before the package start *',
-              //       style: const TextStyle(
-              //           fontWeight: FontWeight.bold, color: redColor),
-              //       scrollAxis: Axis.horizontal,
-              //       crossAxisAlignment: CrossAxisAlignment.start,
-              //       blankSpace: AppDimension.getWidth(context),
-              //       velocity: 100.0,
-              //       pauseAfterRound: const Duration(seconds: 1),
-              //       startPadding: 0,
-              //       accelerationDuration: const Duration(seconds: 1),
-              //       accelerationCurve: Curves.linear,
-              //       decelerationDuration: const Duration(milliseconds: 500),
-              //       decelerationCurve: Curves.easeOut,
-              //     ),
-              //   ),
             ],
           ),
         ),
@@ -1574,69 +1554,76 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
 
         ///Driver Details Container
         widget.driverDetails.isNotEmpty
-            ? CommonContainer(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
-                width: double.infinity,
-                elevation: 0,
-                borderRadius: BorderRadius.circular(5),
-                borderReq: true,
-                borderColor: naturalGreyColor.withOpacity(0.3),
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: DataTable(
-                      horizontalMargin: 10,
-                      columnSpacing: 20,
-                      headingRowHeight: 40,
-                      dividerThickness: 0,
-                      dataTextStyle: titleTextStyle1,
-                      columns: const [
-                        DataColumn(
-                            label: CustomTextWidget(
-                          content: "Date",
-                          fontSize: 18,
-                          fontWeight: FontWeight.w700,
-                        )),
-                        DataColumn(
-                            label: SizedBox(
-                                // width: 60,
-                                child: CustomTextWidget(
-                                    content: "Name",
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w700))),
-                        DataColumn(
-                            label: CustomTextWidget(
-                                content: "Gender",
-                                fontSize: 18,
-                                fontWeight: FontWeight.w700)),
-                        DataColumn(
-                            label: CustomTextWidget(
-                                content: "Contact",
-                                fontSize: 18,
-                                fontWeight: FontWeight.w700)),
-                      ],
-                      rows: widget.driverDetails
-                          .map((AssignedDriverOnPackageBooking driver) =>
-                              DataRow(
-                                cells: [
-                                  DataCell(CustomText(
-                                    content: driver.date.toString(),
-                                    textEllipsis: true,
-                                  )),
-                                  DataCell(CustomText(
-                                      // maxline: 2,
-                                      align: TextAlign.start,
+            ? Scrollbar(
+                controller: _scrollController,
+                thumbVisibility: true,
+                radius: const Radius.circular(10),
+                child: CommonContainer(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
+                  width: double.infinity,
+                  elevation: 0,
+                  borderRadius: BorderRadius.circular(5),
+                  borderReq: true,
+                  borderColor: naturalGreyColor.withOpacity(0.3),
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    controller: _scrollController,
+                    child: DataTable(
+                        horizontalMargin: 10,
+                        columnSpacing: 20,
+                        headingRowHeight: 40,
+                        dividerThickness: 0,
+                        dataTextStyle: titleTextStyle1,
+                        columns: const [
+                          DataColumn(
+                              label: CustomTextWidget(
+                            content: "Date",
+                            fontSize: 18,
+                            fontWeight: FontWeight.w700,
+                          )),
+                          DataColumn(
+                              label: SizedBox(
+                                  // width: 60,
+                                  child: CustomTextWidget(
+                                      content: "Name",
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w700))),
+                          DataColumn(
+                              label: CustomTextWidget(
+                                  content: "Gender",
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w700)),
+                          DataColumn(
+                              label: CustomTextWidget(
+                                  content: "Contact",
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w700)),
+                        ],
+                        rows: widget.driverDetails
+                            .map((AssignedDriverOnPackageBooking driver) =>
+                                DataRow(
+                                  cells: [
+                                    DataCell(CustomText(
+                                      content: driver.date.toString(),
                                       textEllipsis: true,
-                                      content:
-                                          "${driver.driver.firstName.toString()} ${driver.driver.lastName.toString()}")),
-                                  DataCell(CustomText(
-                                      content:
-                                          driver.driver.gender.toString())),
-                                  DataCell(CustomText(
-                                      content: '+971 ${driver.driver.mobile}')),
-                                ],
-                              ))
-                          .toList()),
+                                    )),
+                                    DataCell(CustomText(
+                                        // maxline: 2,
+                                        align: TextAlign.start,
+                                        textEllipsis: true,
+                                        content:
+                                            "${driver.driver.firstName.toString()} ${driver.driver.lastName.toString()}")),
+                                    DataCell(CustomText(
+                                        content:
+                                            driver.driver.gender.toString())),
+                                    DataCell(CustomText(
+                                        content:
+                                            '+971 ${driver.driver.mobile}')),
+                                  ],
+                                ))
+                            .toList()),
+                  ),
                 ),
               )
             : const SizedBox(),
@@ -1654,62 +1641,67 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
 
         ///Vehicle Details Container
         widget.vehicleDetails.isNotEmpty
-            ? CommonContainer(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
-                width: double.infinity,
-                elevation: 0,
-                borderRadius: BorderRadius.circular(5),
-                borderReq: true,
-                borderColor: naturalGreyColor.withOpacity(0.3),
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: DataTable(
-                      columnSpacing: 30,
-                      headingRowHeight: 40,
-                      dividerThickness: 0,
-                      dataTextStyle: titleTextStyle1,
-                      columns: const [
-                        DataColumn(
-                            label: CustomTextWidget(
-                          content: "Date",
-                          fontSize: 18,
-                          fontWeight: FontWeight.w700,
-                        )),
-                        DataColumn(
-                            label: SizedBox(
-                                width: 100,
-                                child: CustomTextWidget(
-                                    content: "Name",
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w700))),
-                        DataColumn(
-                            label: CustomTextWidget(
-                                content: "Number",
-                                fontSize: 18,
-                                fontWeight: FontWeight.w700)),
-                      ],
-                      rows: widget.vehicleDetails
-                          .map((AssignedVehicleOnPackageBooking vehicle) =>
-                              DataRow(
-                                cells: [
-                                  DataCell(CustomText(
-                                    content: vehicle.date.toString(),
-                                    textEllipsis: true,
-                                  )),
-                                  DataCell(CustomText(
-                                      align: TextAlign.start,
-                                      textLenght: 20,
-                                      needTextLenght: true,
-                                      maxline: 2,
-                                      content:
-                                          vehicle.vehicle.carName.toString())),
-                                  DataCell(CustomText(
-                                      content: vehicle.vehicle.vehicleNumber
-                                          .toString())),
-                                ],
-                              ))
-                          .toList()),
+            ? Scrollbar(
+                controller: _scrollController,
+                thumbVisibility: true,
+                radius: const Radius.circular(10),
+                child: CommonContainer(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
+                  width: double.infinity,
+                  elevation: 0,
+                  borderRadius: BorderRadius.circular(5),
+                  borderReq: true,
+                  borderColor: naturalGreyColor.withOpacity(0.3),
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: DataTable(
+                        columnSpacing: 30,
+                        headingRowHeight: 40,
+                        dividerThickness: 0,
+                        dataTextStyle: titleTextStyle1,
+                        columns: const [
+                          DataColumn(
+                              label: CustomTextWidget(
+                            content: "Date",
+                            fontSize: 18,
+                            fontWeight: FontWeight.w700,
+                          )),
+                          DataColumn(
+                              label: SizedBox(
+                                  width: 100,
+                                  child: CustomTextWidget(
+                                      content: "Name",
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w700))),
+                          DataColumn(
+                              label: CustomTextWidget(
+                                  content: "Number",
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w700)),
+                        ],
+                        rows: widget.vehicleDetails
+                            .map((AssignedVehicleOnPackageBooking vehicle) =>
+                                DataRow(
+                                  cells: [
+                                    DataCell(CustomText(
+                                      content: vehicle.date.toString(),
+                                      textEllipsis: true,
+                                    )),
+                                    DataCell(CustomText(
+                                        align: TextAlign.start,
+                                        textLenght: 20,
+                                        needTextLenght: true,
+                                        maxline: 2,
+                                        content: vehicle.vehicle.carName
+                                            .toString())),
+                                    DataCell(CustomText(
+                                        content: vehicle.vehicle.vehicleNumber
+                                            .toString())),
+                                  ],
+                                ))
+                            .toList()),
+                  ),
                 ),
               )
             : const SizedBox(),
@@ -2011,15 +2003,15 @@ class _ItineraryActivityContainerState
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SizedBox(height: 10),
-        CustomTextWidget(
-          // sideLogo: true,
-          align: TextAlign.start,
-          content: days,
-          fontSize: 16,
-          fontWeight: FontWeight.w700,
-          textColor: blackColor,
-        ),
-        const SizedBox(height: 10),
+        // CustomTextWidget(
+        //   // sideLogo: true,
+        //   align: TextAlign.start,
+        //   content: days,
+        //   fontSize: 16,
+        //   fontWeight: FontWeight.w700,
+        //   textColor: blackColor,
+        // ),
+        // const SizedBox(height: 10),
         CommonContainer(
           elevation: 0,
           height: 200,
@@ -2065,7 +2057,11 @@ class _ItineraryActivityContainerState
                 children: [
                   Text(
                     'Suitable For : ',
-                    style: titleTextStyle,
+                    style: GoogleFonts.lato(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: textColor,
+                    ),
                   ),
                   Row(
                     children: List.generate(

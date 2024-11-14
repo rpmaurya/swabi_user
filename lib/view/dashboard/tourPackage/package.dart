@@ -142,7 +142,14 @@ class _PackagesState extends State<Packages> {
               textTheme: ButtonTextTheme.primary,
             ),
           ),
-          child: child!,
+          child: Dialog(
+              insetPadding: const EdgeInsets.all(20),
+              backgroundColor: background,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16.0), // Border radius here
+              ),
+              child: SingleChildScrollView(
+                  padding: EdgeInsets.zero, child: child!)),
         );
       },
     );
@@ -463,7 +470,7 @@ class _PackageContainerState extends State<PackageContainer> {
                     widget.packageImg.isNotEmpty
                         ? SizedBox(
                             width: double.infinity,
-                            height: AppDimension.getHeight(context) / 3.5,
+                            height: 200,
                             child: ClipRRect(
                                 borderRadius: const BorderRadius.only(
                                     topRight: Radius.circular(5),
@@ -476,7 +483,7 @@ class _PackageContainerState extends State<PackageContainer> {
                                 topRight: Radius.circular(5),
                                 topLeft: Radius.circular(5)),
                             child: Container(
-                                margin: EdgeInsets.all(2),
+                                margin: const EdgeInsets.all(2),
                                 width: double.infinity,
                                 decoration: const BoxDecoration(
                                   borderRadius: BorderRadius.only(
@@ -515,7 +522,7 @@ class _PackageContainerState extends State<PackageContainer> {
                               child: CustomText(
                                   content: widget.packageName,
                                   align: TextAlign.start,
-                                  fontSize: 15,
+                                  fontSize: 17,
                                   maxline: 1,
                                   fontWeight: FontWeight.w600,
                                   textColor: textColor),
@@ -596,7 +603,7 @@ class _PackageContainerState extends State<PackageContainer> {
                                         width:
                                             AppDimension.getWidth(context) * .4,
                                         child: CustomText(
-                                          content: widget.state.toUpperCase(),
+                                          content: widget.state,
                                           fontSize: 15,
                                           maxline: 2,
                                           align: TextAlign.start,
@@ -625,7 +632,7 @@ class _PackageContainerState extends State<PackageContainer> {
                                 SizedBox(
                                   width: AppDimension.getWidth(context) * .3,
                                   child: CustomText(
-                                    content: widget.country.toUpperCase(),
+                                    content: widget.country,
                                     fontSize: 15,
                                     maxline: 2,
                                     align: TextAlign.start,
@@ -667,7 +674,7 @@ class _PackageContainerState extends State<PackageContainer> {
                           ),
                           Column(
                             children: List.generate(
-                                widget.activityName.length,
+                                widget.activityName.take(3).length,
                                 (index) => Padding(
                                       padding:
                                           const EdgeInsets.only(bottom: 10),

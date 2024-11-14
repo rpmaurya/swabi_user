@@ -36,7 +36,7 @@ class _RentalFormState extends State<RentalForm> with RouteAware {
   final rentalController = TextEditingController();
   final hoursController = TextEditingController();
   final minsController = TextEditingController();
-
+  final FocusNode locationFocusNode = FocusNode();
   String selectHour = '';
   String selectMin = '';
 
@@ -93,6 +93,13 @@ class _RentalFormState extends State<RentalForm> with RouteAware {
     // controllers[0].addListener(() {
     //   onChange();
     // });
+  }
+
+  void _unfocusLocationField() {
+    print('jcmzxcmnzxbcmnxzbcnxz..,,..,..............');
+    if (locationFocusNode.hasFocus) {
+      locationFocusNode.unfocus();
+    }
   }
 
   @override
@@ -176,6 +183,7 @@ class _RentalFormState extends State<RentalForm> with RouteAware {
                         padding: const EdgeInsets.symmetric(horizontal: 10),
                         height: 50,
                         child: GooglePlaceAutoCompleteTextField(
+                          focusNode: locationFocusNode,
                           textEditingController: pickuplocationController,
                           boxDecoration: BoxDecoration(
                               color: background,
@@ -289,6 +297,7 @@ class _RentalFormState extends State<RentalForm> with RouteAware {
                           title: "Pickup Date",
                           controller: pickupdateController,
                           hint: "PickUp Date",
+                          onfocusTap: _unfocusLocationField,
                         ),
                         if (field.hasError)
                           pickupdateController.text.isEmpty

@@ -11,6 +11,7 @@ class RentalCarListingContainer extends StatelessWidget {
   final String date;
   final String rentalCharge;
   final String status;
+  final List<dynamic> images;
   final String time;
   final String bookingID;
   final String pickUplocation;
@@ -22,6 +23,7 @@ class RentalCarListingContainer extends StatelessWidget {
       required this.carName,
       required this.date,
       required this.time,
+      required this.images,
       required this.bookingID,
       required this.pickUplocation,
       required this.rentalCharge,
@@ -60,10 +62,15 @@ class RentalCarListingContainer extends StatelessWidget {
                         height: 60,
                         child: ClipRRect(
                             borderRadius: BorderRadius.circular(10),
-                            child: Image.asset(
-                              rentalCar1,
-                              fit: BoxFit.fill,
-                            )),
+                            child: images.isEmpty
+                                ? Image.asset(
+                                    rentalCar1,
+                                    fit: BoxFit.fill,
+                                  )
+                                : Image.network(
+                                    images[0],
+                                    fit: BoxFit.cover,
+                                  )),
                       ),
                       title: Text(
                         carName,

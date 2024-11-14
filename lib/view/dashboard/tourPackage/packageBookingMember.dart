@@ -297,17 +297,17 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                   } else if (type == 'Adult') {
                     debugPrint('type of member1$type');
                     if (age < 18 || age >= 100) {
-                      return 'Adult must be 18 years or older';
+                      return 'Age must be between 18 to 99 years';
                     }
                   } else if (type == 'Child') {
                     debugPrint('type of member2$type');
-                    if (age <= 2 || age >= 18) {
-                      return 'Child must be between 2 and 18 years old';
+                    if (age < 1 || age <= 2 || age >= 18) {
+                      return 'Age must be between 3 to 18 years';
                     }
                   } else if (type == 'Infant') {
                     debugPrint('type of member3$type');
-                    if (age >= 24) {
-                      return 'Infant must be under 24 months';
+                    if (age < 1 || age >= 24) {
+                      return 'Age must be between 1 to 24 months';
                     }
                   }
                   return null;
@@ -435,17 +435,17 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                   } else if (type == 'Adult') {
                     debugPrint('type of member1$type');
                     if (age <= 18 || age >= 100) {
-                      return 'Adult must be 18 Year or older';
+                      return 'Age must be between 18 to 99 years';
                     }
                   } else if (type == 'Child') {
                     debugPrint('type of member2$type');
-                    if (age >= 18) {
-                      return 'Child must be under 18 Year';
+                    if (age < 1 || age <= 2 || age >= 18) {
+                      return 'Age must be between 3 to 18 years';
                     }
                   } else if (type == 'Infant') {
                     debugPrint('type of member3$type');
-                    if (age >= 24) {
-                      return 'Infant must be under 24 Month';
+                    if (age < 1 || age >= 24) {
+                      return 'Age must be between 1 to 24 months';
                     }
                   }
                   return null;
@@ -877,7 +877,7 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                                     focusNode5.unfocus();
                                     couponFocus.unfocus();
                                     _addMember(
-                                        title: 'Add Adult Member',
+                                        title: 'Add Adult',
                                         ageUnit: 'Year',
                                         type: 'Adult');
                                   },
@@ -909,7 +909,7 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                                     focusNode5.unfocus();
                                     couponFocus.unfocus();
                                     _addMember(
-                                        title: 'Add Child Member',
+                                        title: 'Add Child',
                                         ageUnit: 'Year',
                                         type: 'Child');
                                   },
@@ -943,7 +943,7 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                                     focusNode5.unfocus();
                                     couponFocus.unfocus();
                                     _addMember(
-                                        title: 'Add Infant Member',
+                                        title: 'Add Infant',
                                         ageUnit: 'Month',
                                         type: 'Infant');
                                   },
@@ -1253,8 +1253,7 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                                                   if (ageunit == 'Month') {
                                                     // _editInfantdMember(index);
                                                     _editMember(
-                                                        title:
-                                                            'Edit Infant Member',
+                                                        title: 'Edit Infant',
                                                         index: index,
                                                         ageUnit: 'Month',
                                                         type: 'Infant');
@@ -1262,16 +1261,14 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                                                     if (age >= 18) {
                                                       // _editAdultMember(index);
                                                       _editMember(
-                                                          title:
-                                                              'Edit Adult Member',
+                                                          title: 'Edit Adult',
                                                           index: index,
                                                           ageUnit: 'Year',
                                                           type: 'Adult');
                                                     } else {
                                                       // _editChildMember(index);
                                                       _editMember(
-                                                          title:
-                                                              'Edit Child Member',
+                                                          title: 'Edit Child',
                                                           index: index,
                                                           ageUnit: 'Year',
                                                           type: 'Child');

@@ -149,7 +149,7 @@ class _PackageHistoryManagementState extends State<PackageHistoryManagement>
     //   ),
     //   body:
     return Customtabbar(
-        titleHeading: 'My Package History',
+        titleHeading: 'My Packages',
         controller: _tabController,
         tabs: tabList,
         sortVisiblty: true,
@@ -324,7 +324,7 @@ class PackageHistoryContainer extends StatelessWidget {
         child: Column(
           children: [
             SizedBox(
-              height: 180,
+              height: 200,
               width: double.infinity,
               child: MultiImageSlider(
                 images: List.generate(
@@ -336,7 +336,7 @@ class PackageHistoryContainer extends StatelessWidget {
               // height: 50,
               // width: AppDimension.getWidth(context)* .5,
               padding: const EdgeInsets.symmetric(horizontal: 10),
-              margin: EdgeInsets.only(bottom: 5, top: 10),
+              margin: const EdgeInsets.only(bottom: 5, top: 10),
               // decoration: const BoxDecoration(
               //     border: Border(bottom: BorderSide(color: naturalGreyColor))),
               child: Row(

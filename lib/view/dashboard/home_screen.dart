@@ -192,9 +192,21 @@ class _home_screenState extends State<home_screen>
                 ),
                 Padding(
                   padding: const EdgeInsets.all(5.0),
-                  child: Text(
-                    userdata?.firstName.capitalizeFirstOfEach ?? '',
-                    style: titleTextStyle,
+                  child: Row(
+                    children: [
+                      Text(
+                        userdata?.firstName.isNotEmpty == true
+                            ? userdata?.firstName[0].toUpperCase() ?? ''
+                            : '',
+                        style: titleTextStyle,
+                      ),
+                      Text(
+                        userdata?.lastName.isNotEmpty == true
+                            ? userdata?.lastName[0].toUpperCase() ?? ''
+                            : "",
+                        style: titleTextStyle,
+                      ),
+                    ],
                   ),
                 ),
               ],

@@ -244,7 +244,7 @@ class _GuestRentalBookingFormState extends State<GuestRentalBookingForm> {
             // ),
             const Spacer(),
             CustomButtonBig(
-              btnHeading: "Book Now",
+              btnHeading: "Pay Now",
               loading: status == "Status.loading" && loader,
               onTap: () async {
                 // if (controller[0].text.isEmpty) {

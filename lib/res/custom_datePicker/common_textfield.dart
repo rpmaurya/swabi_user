@@ -1018,13 +1018,14 @@ class FormDatePickerExpense extends StatefulWidget {
   final double? width;
   final bool headingReq;
   final TextEditingController controller;
-
+  final VoidCallback? onfocusTap;
   const FormDatePickerExpense({
     Key? key,
     required this.title,
     this.width,
     this.headingReq = true,
     required this.controller,
+    this.onfocusTap,
     this.hint = '',
   }) : super(key: key);
 
@@ -1059,7 +1060,7 @@ class _FormDatePickerExpenseState extends State<FormDatePickerExpense> {
           data: ThemeData.light().copyWith(
             dialogTheme: DialogTheme(
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10)),
+                    borderRadius: BorderRadius.circular(5)),
                 actionsPadding: EdgeInsets.all(10)),
             colorScheme: const ColorScheme.light(
               primary: btnColor, // Change this to the desired color
@@ -1092,14 +1093,23 @@ class _FormDatePickerExpenseState extends State<FormDatePickerExpense> {
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
               ),
             )),
-            buttonTheme: ButtonThemeData(
+            buttonTheme: const ButtonThemeData(
               textTheme: ButtonTextTheme.primary,
               colorScheme: ColorScheme.light(
                   primary: btnColor, // Change this to the desired color
                   onPrimary: btnColor),
             ),
           ),
-          child: child!,
+          child: Dialog(
+              insetPadding: const EdgeInsets.all(20),
+              backgroundColor: background,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16.0), // Border radius here
+              ),
+              child: SingleChildScrollView(
+                  physics: NeverScrollableScrollPhysics(),
+                  padding: EdgeInsets.zero,
+                  child: child!)),
         );
       },
     );
@@ -1133,7 +1143,11 @@ class _FormDatePickerExpenseState extends State<FormDatePickerExpense> {
           elevation: 0,
           color: background,
           child: InkWell(
-            onTap: () => _selectDate(context),
+            onTap: () {
+              widget.onfocusTap!();
+              // FocusScope.of(context).unfocus();
+              _selectDate(context);
+            },
             borderRadius: BorderRadius.circular(5),
             child: Container(
               height: 50,

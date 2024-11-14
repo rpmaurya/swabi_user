@@ -185,8 +185,8 @@ class _CommonOfferContainerState extends State<CommonOfferContainer> {
                                     ),
                                     child: Text(
                                       data?.bookingType == 'RENTAL_BOOKING'
-                                          ? 'Rental Booking'
-                                          : 'Package Booking',
+                                          ? 'Rental Offer'
+                                          : 'Package Offer',
                                       style: const TextStyle(
                                           color: background,
                                           fontSize: 16,
