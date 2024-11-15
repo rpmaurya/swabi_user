@@ -65,15 +65,15 @@ class _RaiseIssueDialogState extends State<RaiseIssueDialog> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text('Raise Issue', style: buttonText),
-              InkWell(
-                onTap: () {
-                  context.pop();
-                },
-                child: Text(
-                  'X',
-                  style: buttonText,
-                ),
-              )
+              IconButton(
+                  padding: const EdgeInsets.only(left: 15),
+                  onPressed: () {
+                    context.pop();
+                  },
+                  icon: const Icon(
+                    Icons.close,
+                    color: btnColor,
+                  ))
             ],
           ),
           const SizedBox(height: 10),

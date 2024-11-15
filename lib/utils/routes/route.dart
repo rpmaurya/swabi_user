@@ -387,17 +387,17 @@ final GoRouter myRouter = GoRouter(
             },
           ),
           /////Test Member design
-          GoRoute(
-            path: 'packageMember',
-            parentNavigatorKey: _rootNavigatorKey,
-            builder: (BuildContext context, GoRouterState state) {
-              // final pkgId = state.extra as Map<String, dynamic>;
-              // final usrId = state.extra as Map<String, dynamic>;
-              // final amt = state.extra as Map<String, dynamic>;
-              // final bookingDate = state.extra as Map<String, dynamic>;
-              return const PackageBooking();
-            },
-          ),
+          // GoRoute(
+          //   path: 'packageMember',
+          //   parentNavigatorKey: _rootNavigatorKey,
+          //   builder: (BuildContext context, GoRouterState state) {
+          //     // final pkgId = state.extra as Map<String, dynamic>;
+          //     // final usrId = state.extra as Map<String, dynamic>;
+          //     // final amt = state.extra as Map<String, dynamic>;
+          //     // final bookingDate = state.extra as Map<String, dynamic>;
+          //     return const PackageBooking();
+          //   },
+          // ),
 
           ///History Pages
           GoRoute(

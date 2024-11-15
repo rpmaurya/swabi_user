@@ -193,20 +193,15 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                           title,
                           style: buttonText,
                         ),
-                        InkWell(
-                          onTap: () {
-                            context.pop();
-                          },
-                          child: SizedBox(
-                            width: 35,
-                            height: 35,
-                            child: Text(
-                              'X',
-                              textAlign: TextAlign.end,
-                              style: buttonText,
-                            ),
-                          ),
-                        )
+                        IconButton(
+                            padding: const EdgeInsets.only(left: 15),
+                            onPressed: () {
+                              context.pop();
+                            },
+                            icon: const Icon(
+                              Icons.close,
+                              color: btnColor,
+                            ))
                       ],
                     ),
                     const SizedBox(height: 10),
@@ -1617,20 +1612,15 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                         'Payment Summary',
                         style: buttonText,
                       ),
-                      InkWell(
-                        onTap: () {
-                          context.pop();
-                        },
-                        child: SizedBox(
-                          height: 35,
-                          width: 35,
-                          child: Text(
-                            'X',
-                            textAlign: TextAlign.end,
-                            style: buttonText,
-                          ),
-                        ),
-                      )
+                      IconButton(
+                          padding: const EdgeInsets.only(left: 15),
+                          onPressed: () {
+                            context.pop();
+                          },
+                          icon: const Icon(
+                            Icons.close,
+                            color: btnColor,
+                          ))
                     ],
                   ),
                   const SizedBox(height: 15),

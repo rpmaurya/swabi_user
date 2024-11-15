@@ -100,9 +100,10 @@ class _PackagePageViewDetailsState extends State<PackagePageViewDetails> {
   List<AssignedDriverOnPackageBooking> packageDriverDetails = [];
   List<AssignedVehicleOnPackageBooking> packageVehicleDetail = [];
   List<String> packageImage = [];
-
+  FocusNode? focusNode;
   ////GetPackageItinerary
   var getPackageItinerary;
+  String? selectedText;
   List<ItineraryDetail> getPackageItineraryList = [];
   @override
   void dispose() {
@@ -539,6 +540,11 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
   @override
   void initState() {
     super.initState();
+    locationFocus.addListener(() {
+      setState(() {
+        // Rebuild to adjust padding when focus changes
+      });
+    });
   }
 
   Future<List<double>?> getCoordinates(String location) async {
@@ -639,23 +645,15 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
                                   fontSize: 17,
                                   fontWeight: FontWeight.w600),
                             ),
-                            InkWell(
-                              onTap: () {
-                                context.pop();
-                              },
-                              child: const SizedBox(
-                                height: 35,
-                                width: 35,
-                                child: Text(
-                                  'X',
-                                  textAlign: TextAlign.end,
-                                  style: TextStyle(
-                                      color: btnColor,
-                                      fontSize: 17,
-                                      fontWeight: FontWeight.w600),
-                                ),
-                              ),
-                            )
+                            IconButton(
+                                padding: const EdgeInsets.only(left: 15),
+                                onPressed: () {
+                                  context.pop();
+                                },
+                                icon: const Icon(
+                                  Icons.close,
+                                  color: btnColor,
+                                ))
                           ],
                         ),
                         const SizedBox(height: 10),
@@ -777,9 +775,17 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
     );
   }
 
+  @override
+  void dispose() {
+    locationFocus.dispose(); // Dispose focus node to avoid memory leaks
+    super.dispose();
+  }
+
   final ScrollController _scrollController = ScrollController();
   final marqueeController = MarqueerController();
   bool isLoading = false;
+  String? selectedText;
+  FocusNode locationFocus = FocusNode();
   @override
   Widget build(BuildContext context) {
     DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(
@@ -875,24 +881,17 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
                                                       fontWeight:
                                                           FontWeight.w600),
                                                 ),
-                                                InkWell(
-                                                  onTap: () {
-                                                    context.pop();
-                                                  },
-                                                  child: const SizedBox(
-                                                    height: 35,
-                                                    width: 35,
-                                                    child: Text(
-                                                      'X',
-                                                      textAlign: TextAlign.end,
-                                                      style: TextStyle(
-                                                          color: btnColor,
-                                                          fontSize: 17,
-                                                          fontWeight:
-                                                              FontWeight.w600),
-                                                    ),
-                                                  ),
-                                                )
+                                                IconButton(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            left: 15),
+                                                    onPressed: () {
+                                                      context.pop();
+                                                    },
+                                                    icon: const Icon(
+                                                      Icons.close,
+                                                      color: btnColor,
+                                                    ))
                                               ],
                                             ),
                                             const SizedBox(height: 10),
@@ -907,6 +906,17 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
                                             ])),
                                             const SizedBox(height: 5),
                                             SingleChildScrollView(
+                                              padding: EdgeInsets.only(
+                                                bottom: MediaQuery.of(context)
+                                                    .viewInsets
+                                                    .bottom,
+
+                                                // bottom: (selectedText == null ||
+                                                //         locationFocus.hasFocus)
+                                                //     ? MediaQuery.of(context)
+                                                //         .viewInsets
+                                                //         .bottom:0, // Adjust modal size when keyboard opens
+                                              ),
                                               child: Form(
                                                 key: _formKey,
                                                 autovalidateMode:
@@ -942,6 +952,8 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
                                                             height: 50,
                                                             child:
                                                                 GooglePlaceAutoCompleteTextField(
+                                                              focusNode:
+                                                                  locationFocus,
                                                               textEditingController:
                                                                   widget
                                                                       .controllerWidget,
@@ -1013,6 +1025,13 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
 
                                                               itemClick:
                                                                   (prediction) {
+                                                                setstate(() {
+                                                                  selectedText =
+                                                                      prediction
+                                                                          .description
+                                                                          .toString();
+                                                                });
+
                                                                 widget
                                                                     .controllerWidget
                                                                     .text = prediction
@@ -1022,7 +1041,7 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
                                                                         .selection =
                                                                     TextSelection.fromPosition(TextPosition(
                                                                         offset: prediction.description?.length ??
-                                                                            0));
+                                                                            10));
                                                                 field.didChange(
                                                                     prediction
                                                                         .description);
@@ -1039,7 +1058,7 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
                                                                   padding: const EdgeInsets
                                                                       .symmetric(
                                                                       vertical:
-                                                                          5),
+                                                                          15),
                                                                   child: Row(
                                                                     children: [
                                                                       const Icon(
