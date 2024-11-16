@@ -191,69 +191,7 @@ class RentalCancelledContainer extends StatelessWidget {
                         fontWeight: FontWeight.w700),
                   )),
             ),
-            // Align(
-            //     alignment: Alignment.center,
-            //     child: Text(
-            //       "Car Details",
-            //       style: titleTextStyle,
-            //     )),
-            // Container(
-            //   // height: 50,
-            //   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-            //   decoration: const BoxDecoration(
-            //       border: Border(bottom: BorderSide(color: greyColor))),
-            //   child: Column(
-            //     crossAxisAlignment: CrossAxisAlignment.start,
-            //     children: [
-            //       Row(
-            //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //         crossAxisAlignment: CrossAxisAlignment.start,
-            //         children: [
-            //           Column(
-            //             crossAxisAlignment: CrossAxisAlignment.start,
-            //             children: [
-            //               RichText(
-            //                   overflow: TextOverflow.ellipsis,
-            //                   text: TextSpan(children: [
-            //                     TextSpan(
-            //                       text: "Car : ",
-            //                       style: titleTextStyle,
-            //                     ),
-            //                     TextSpan(
-            //                       text: carName,
-            //                       style: textTextStyle,
-            //                     ),
-            //                   ])),
-            //             ],
-            //           ),
-            //           const Column(
-            //             crossAxisAlignment: CrossAxisAlignment.start,
-            //             children: [
-            //               // RichText(
-            //               //     overflow: TextOverflow.ellipsis,
-            //               //     text: TextSpan(children: [
-            //               //       TextSpan(
-            //               //         text: "Paid : ",
-            //               //         style: titleTextStyle,
-            //               //       ),
-            //               //       TextSpan(
-            //               //         text: paid,
-            //               //         style: textTextStyle,
-            //               //       ),
-            //               //     ])),
-            //             ],
-            //           )
-            //         ],
-            //       ),
-            //     ],
-            //   ),
-            // ),
-            // Align(
-            //     alignment: Alignment.center,
-            //     child: Text(
-            //       "Booking Details",
-            //       style: titleTextStyle,
-            //     )),
+
             ///3rd Container
             Container(
               // height: 100,

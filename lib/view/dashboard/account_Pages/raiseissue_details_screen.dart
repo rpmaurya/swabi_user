@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_cab/model/GetIssueModel.dart';
-import 'package:flutter_cab/res/Custom%20Widgets/customTabBar.dart';
+import 'package:flutter_cab/model/getissue_model.dart';
+import 'package:flutter_cab/res/Custom%20Widgets/custom_tabbar.dart';
 import 'package:flutter_cab/res/customAppBar_widget.dart';
 import 'package:flutter_cab/utils/color.dart';
 import 'package:flutter_cab/utils/text_styles.dart';

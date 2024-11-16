@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/response/api_response.dart';
-import 'package:flutter_cab/model/getTrasactionByIdModel.dart';
-import 'package:flutter_cab/model/paymentGetWay_model.dart';
+import 'package:flutter_cab/model/get_trasactionbyid_model.dart';
+import 'package:flutter_cab/model/payment_getway_model.dart';
 import 'package:flutter_cab/model/payment_refund_model.dart';
 import 'package:flutter_cab/respository/payment_gateway_repository.dart';
 import 'package:flutter_cab/utils/utils.dart';

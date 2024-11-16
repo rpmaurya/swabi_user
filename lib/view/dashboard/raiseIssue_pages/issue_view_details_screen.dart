@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_cab/model/IssueDetailModel.dart';
+import 'package:flutter_cab/model/issuedetail_model.dart';
 import 'package:flutter_cab/res/customAppBar_widget.dart';
 import 'package:flutter_cab/utils/color.dart';
 import 'package:flutter_cab/utils/text_styles.dart';

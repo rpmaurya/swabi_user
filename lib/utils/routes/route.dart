@@ -4,37 +4,38 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cab/res/Custom%20Page%20Layout/commonPage_Layout.dart';
 import 'package:flutter_cab/view/dashboard/account_Pages/booking.dart';
 import 'package:flutter_cab/view/dashboard/account_Pages/cardPage.dart';
-import 'package:flutter_cab/view/dashboard/account_Pages/changePassword.dart';
+import 'package:flutter_cab/view/dashboard/account_Pages/change_password.dart';
 import 'package:flutter_cab/view/dashboard/account_Pages/contact.dart';
-import 'package:flutter_cab/view/dashboard/account_Pages/faqPage.dart';
-import 'package:flutter_cab/view/dashboard/account_Pages/help&support.dart';
+import 'package:flutter_cab/view/dashboard/account_Pages/faq_page_screen.dart';
+import 'package:flutter_cab/view/dashboard/account_Pages/help&support_screen.dart';
 import 'package:flutter_cab/view/dashboard/account_Pages/notification.dart';
-import 'package:flutter_cab/view/dashboard/account_Pages/profilePage.dart';
-import 'package:flutter_cab/view/dashboard/account_Pages/raiseIssueDetails.dart';
-import 'package:flutter_cab/view/dashboard/account_Pages/term_condition.dart';
+import 'package:flutter_cab/view/dashboard/account_Pages/profile_page_screen.dart';
+import 'package:flutter_cab/view/dashboard/account_Pages/raiseissue_details_screen.dart';
+import 'package:flutter_cab/view/dashboard/account_Pages/term_condition_screen.dart';
 import 'package:flutter_cab/view/dashboard/account_Pages/transaction.dart';
-import 'package:flutter_cab/view/dashboard/account_Pages/verifyPassword.dart';
+import 'package:flutter_cab/view/dashboard/account_Pages/verify_password_screen.dart';
 import 'package:flutter_cab/view/dashboard/home_screen.dart';
 import 'package:flutter_cab/view/dashboard/account_screen.dart';
-import 'package:flutter_cab/view/dashboard/offers_pages/allOffers_screen.dart';
-import 'package:flutter_cab/view/dashboard/offers_pages/offerDetails_screen.dart';
+import 'package:flutter_cab/view/dashboard/offers_pages/all_offers_screen.dart';
+import 'package:flutter_cab/view/dashboard/offers_pages/offer_details_screen.dart';
 import 'package:flutter_cab/view/dashboard/raiseIssue_pages/issue_view_details_screen.dart';
-import 'package:flutter_cab/view/dashboard/rental/bookYourCab.dart';
-import 'package:flutter_cab/view/dashboard/rental/carBooking.dart';
-import 'package:flutter_cab/view/dashboard/rental/carsDetails.dart';
-import 'package:flutter_cab/view/dashboard/rental/guestRentalBookingForm.dart';
-import 'package:flutter_cab/view/dashboard/rental/happyBookingScreen.dart';
-import 'package:flutter_cab/view/dashboard/rental/history/rentalBookedPageView.dart';
-import 'package:flutter_cab/view/dashboard/rental/history/rentalCancelPageView.dart';
-import 'package:flutter_cab/view/dashboard/rental/history/rentalHistoryManagment.dart';
-import 'package:flutter_cab/view/dashboard/rental/rentalForm.dart';
-import 'package:flutter_cab/view/dashboard/tourPackage/addMemberDesign.dart';
-import 'package:flutter_cab/view/dashboard/tourPackage/package.dart';
-import 'package:flutter_cab/view/dashboard/tourPackage/packageBookingMember.dart';
-import 'package:flutter_cab/view/dashboard/tourPackage/packageDetails.dart';
-import 'package:flutter_cab/view/dashboard/tourPackage/packageHistory/packageHistoryManagment.dart';
+import 'package:flutter_cab/view/dashboard/rental/book_your_ride_screen_.dart';
+import 'package:flutter_cab/view/dashboard/rental/cancel_booking.dart';
+import 'package:flutter_cab/view/dashboard/rental/cars_available_screen.dart';
+import 'package:flutter_cab/view/dashboard/rental/guestdetails_bookingform_screen.dart';
+import 'package:flutter_cab/view/dashboard/rental/happy_booking_screen.dart';
+import 'package:flutter_cab/view/dashboard/rental/history/rental_bookedpage_view.dart';
+import 'package:flutter_cab/view/dashboard/rental/history/rental_cancel_page_view.dart';
+import 'package:flutter_cab/view/dashboard/rental/history/rental_history_managment_screen.dart';
+import 'package:flutter_cab/view/dashboard/rental/rental_form.dart';
+// import 'package:flutter_cab/view/dashboard/tourPackage/addMemberDesign.dart';
+import 'package:flutter_cab/view/dashboard/tourPackage/package_screen.dart';
+import 'package:flutter_cab/view/dashboard/tourPackage/package_booking_member_screen.dart';
+import 'package:flutter_cab/view/dashboard/tourPackage/package_viewdetails_screen.dart';
+import 'package:flutter_cab/view/dashboard/tourPackage/packageHistory/mypackage_history_screen.dart';
 import 'package:flutter_cab/view/dashboard/tourPackage/tourPackageForm.dart';
-import 'package:flutter_cab/view/dashboard/account_Pages/editProfile.dart';
+import 'package:flutter_cab/view/dashboard/account_Pages/edit_profile_screen.dart';
+import 'package:flutter_cab/view/dashboard/wallet_pages/wallet_screen.dart';
 import 'package:flutter_cab/view/registration/forgot_screen.dart';
 import 'package:flutter_cab/view/registration/login_screen.dart';
 import 'package:flutter_cab/view/registration/otp_verification_screen.dart';
@@ -43,7 +44,7 @@ import 'package:flutter_cab/view/registration/splash_screen.dart';
 import 'package:flutter_cab/view/reset_password_screen.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../view/dashboard/tourPackage/packageHistory/package_PageViewDetails.dart';
+import '../../view/dashboard/tourPackage/packageHistory/package_booking_details.dart';
 
 final _shellNavigatorKey = GlobalKey<NavigatorState>();
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -325,6 +326,17 @@ final GoRouter myRouter = GoRouter(
       },
     ),
     GoRoute(
+      path: '/myWallet',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (BuildContext context, GoRouterState state) {
+        var userId = state.extra as Map<String, dynamic>;
+
+        return WalletScreen(
+          userId: userId["userId"],
+        );
+      },
+    ),
+    GoRoute(
       path: '/setting',
       parentNavigatorKey: _rootNavigatorKey,
       builder: (BuildContext context, GoRouterState state) {
@@ -348,13 +360,13 @@ final GoRouter myRouter = GoRouter(
           );
         },
         routes: [
-          GoRoute(
-            path: 'tourPackage',
-            parentNavigatorKey: _rootNavigatorKey,
-            builder: (BuildContext context, GoRouterState state) {
-              return const TourPackage();
-            },
-          ),
+          // GoRoute(
+          //   path: 'tourPackage',
+          //   parentNavigatorKey: _rootNavigatorKey,
+          //   builder: (BuildContext context, GoRouterState state) {
+          //     return const TourPackage();
+          //   },
+          // ),
           GoRoute(
             path: 'packageDetails',
             parentNavigatorKey: _rootNavigatorKey,

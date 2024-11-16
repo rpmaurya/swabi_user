@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_cab/model/packageModels.dart';
+import 'package:flutter_cab/model/package_models.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/res/Custom%20Page%20Layout/commonPage_Layout.dart';
-import 'package:flutter_cab/res/Custom%20Widgets/customTabBar.dart';
+import 'package:flutter_cab/res/Custom%20Widgets/custom_tabbar.dart';
 import 'package:flutter_cab/res/Custom%20Widgets/multi_imageSlider_ContainerWidget.dart';
 import 'package:flutter_cab/res/customAppBar_widget.dart';
 import 'package:flutter_cab/res/customContainer.dart';
@@ -171,7 +171,6 @@ class _PackageHistoryManagementState extends State<PackageHistoryManagement>
           });
 
           getPackageHistoryList();
-          print('njnkjnjknnm,');
         },
         viewchildren: List.generate(tabList.length, (index) {
           return Consumer<GetPackageHistoryViewModel>(
@@ -313,7 +312,6 @@ class PackageHistoryContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('images  list................$loader');
     return CommonContainer(
       borderRadius: BorderRadius.circular(5),
       elevation: 0,
@@ -365,7 +363,7 @@ class PackageHistoryContainer extends StatelessWidget {
             Container(
               // height: 50,
               padding: const EdgeInsets.symmetric(horizontal: 10),
-              margin: EdgeInsets.only(bottom: 5),
+              margin: const EdgeInsets.only(bottom: 5),
               // decoration: const BoxDecoration(
               //     border: Border(bottom: BorderSide(color: naturalGreyColor))),
               child: textTile(
@@ -377,7 +375,7 @@ class PackageHistoryContainer extends StatelessWidget {
             Container(
                 // height: 50,
                 padding: const EdgeInsets.symmetric(horizontal: 10),
-                margin: EdgeInsets.only(bottom: 5),
+                margin: const EdgeInsets.only(bottom: 5),
                 // decoration: const BoxDecoration(
                 //     border:
                 //         Border(bottom: BorderSide(color: naturalGreyColor))),
@@ -389,37 +387,17 @@ class PackageHistoryContainer extends StatelessWidget {
             Container(
                 // height: 50,
                 padding: const EdgeInsets.symmetric(horizontal: 10),
-                margin: EdgeInsets.only(bottom: 5),
+                margin: const EdgeInsets.only(bottom: 5),
                 // decoration: const BoxDecoration(
                 //     border:
                 //         Border(bottom: BorderSide(color: naturalGreyColor))),
                 child: Center(
                   child: _builtText(lable: 'Location', value: location),
                 )),
-            // Container(
-            //     height: 50,
-            //     padding: const EdgeInsets.symmetric(horizontal: 5),
-            //     decoration: const BoxDecoration(
-            //         border:
-            //             Border(bottom: BorderSide(color: naturalGreyColor))),
-            //     child: textTile(
-            //         lable1: 'Price',
-            //         value1: 'AED $price',
-            //         lable2: 'Location',
-            //         value2: location)),
-            // Padding(
-            //   padding: const EdgeInsets.all(5.0),
-            //   child: CustomButtonSmall(
-            //       loading: loader,
-            //       height: 40,
-            //       width: double.infinity,
-            //       btnHeading: 'View Details',
-            //       onTap: onTap),
-            // ),
             Container(
               // height: 50,
               padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-              margin: EdgeInsets.all(5),
+              margin: const EdgeInsets.all(5),
               width: double.infinity,
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(5),

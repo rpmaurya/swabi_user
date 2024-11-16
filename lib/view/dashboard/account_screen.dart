@@ -137,6 +137,13 @@ class _AccountScreenState extends State<AccountScreen> {
             heading: "All Offers",
             onTap: () => context.push("/allOffer", extra: {'initialIndex': 0}),
           ),
+          Custom_ListTile(
+            img: myWallet,
+            iconColor: btnColor,
+            heading: "My Wallet",
+            onTap: () =>
+                context.push("/myWallet", extra: {"userId": widget.userId}),
+          ),
           const Spacer(),
           CustomButtonLogout(
               img: logout,

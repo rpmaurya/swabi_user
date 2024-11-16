@@ -6,7 +6,7 @@ import 'package:flutter_cab/res/custom_dropDown.dart';
 import 'package:flutter_cab/utils/assets.dart';
 import 'package:flutter_cab/utils/text_styles.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:flutter_cab/model/rentalBooking_model.dart';
+import 'package:flutter_cab/model/rentalbooking_model.dart';
 import 'package:flutter_cab/res/Common%20Widgets/common_alertTextfeild.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/res/Custom%20Page%20Layout/commonPage_Layout.dart';
@@ -152,17 +152,17 @@ class _RentalFormState extends State<RentalForm> with RouteAware {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             const CommonOfferContainer(
               bookingType: 'RENTAL_BOOKING',
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
 
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10),
               child: Text.rich(TextSpan(children: [
                 TextSpan(text: 'Pickup Location', style: titleTextStyle),
-                TextSpan(text: ' *', style: TextStyle(color: redColor))
+                const TextSpan(text: ' *', style: TextStyle(color: redColor))
               ])),
               // child: Text("Pickup Location", style: titleTextStyle),
             ),
@@ -220,7 +220,7 @@ class _RentalFormState extends State<RentalForm> with RouteAware {
                           debounceTime: 400,
                           isLatLngRequired: true,
                           getPlaceDetailWithLatLng: (prediction) {
-                            print(
+                            debugPrint(
                                 "Latitude: ${prediction.lat}, Longitude: ${prediction.lng}");
                             setState(() {
                               lati = double.parse(prediction.lat ?? '0.0');
@@ -270,7 +270,7 @@ class _RentalFormState extends State<RentalForm> with RouteAware {
                                 padding: const EdgeInsets.only(left: 20),
                                 child: Text(
                                   field.errorText!,
-                                  style: TextStyle(color: redColor),
+                                  style: const TextStyle(color: redColor),
                                 ),
                               )
                             : Container(),
@@ -305,7 +305,7 @@ class _RentalFormState extends State<RentalForm> with RouteAware {
                                   padding: const EdgeInsets.only(left: 10),
                                   child: Text(
                                     field.errorText!,
-                                    style: TextStyle(color: redColor),
+                                    style: const TextStyle(color: redColor),
                                   ),
                                 )
                               : Container(),
@@ -320,7 +320,7 @@ class _RentalFormState extends State<RentalForm> with RouteAware {
                 padding: const EdgeInsets.only(left: 10),
                 child: Text.rich(TextSpan(children: [
                   TextSpan(text: 'Pickup Time', style: titleTextStyle),
-                  TextSpan(text: ' *', style: TextStyle(color: redColor))
+                  const TextSpan(text: ' *', style: TextStyle(color: redColor))
                 ])),
               ),
             ),
@@ -393,7 +393,7 @@ class _RentalFormState extends State<RentalForm> with RouteAware {
               padding: const EdgeInsets.symmetric(horizontal: 10),
               child: Text.rich(TextSpan(children: [
                 TextSpan(text: 'Select seats', style: titleTextStyle),
-                TextSpan(text: ' *', style: TextStyle(color: redColor))
+                const TextSpan(text: ' *', style: TextStyle(color: redColor))
               ])),
               // child: Text("Pickup Location", style: titleTextStyle),
             ),
@@ -424,7 +424,7 @@ class _RentalFormState extends State<RentalForm> with RouteAware {
               padding: const EdgeInsets.symmetric(horizontal: 10),
               child: Text.rich(TextSpan(children: [
                 TextSpan(text: 'Select Rental Package', style: titleTextStyle),
-                TextSpan(text: ' *', style: TextStyle(color: redColor))
+                const TextSpan(text: ' *', style: TextStyle(color: redColor))
               ])),
               // child: Text("Pickup Location", style: titleTextStyle),
             ),
@@ -453,105 +453,6 @@ class _RentalFormState extends State<RentalForm> with RouteAware {
                 },
               ),
             ),
-            // Padding(
-            //   padding: const EdgeInsets.symmetric(horizontal: 10),
-            //   child: FormField<String>(
-            //       autovalidateMode: AutovalidateMode.onUserInteraction,
-            //       validator: (value) {
-            //         if (seatController.text.isEmpty) {
-            //           return 'Please select seats';
-            //         }
-            //         return null;
-            //       },
-            //       builder: (FormFieldState<String> field) {
-            //         return Column(
-            //           crossAxisAlignment: CrossAxisAlignment.start,
-            //           children: [
-            //             FormCommonSingleAlertSelector(
-            //               width: double.infinity,
-            //               title: "Select Seats",
-            //               elevation: 0,
-            //               controller: seatController,
-            //               showIcon: const Icon(
-            //                 Icons.event_seat,
-            //                 color: naturalGreyColor,
-            //               ),
-            //               iconReq: true,
-            //               data: items,
-            //               border: false,
-
-            //               ///Hint Color
-            //               initialValue: "Select Seats",
-            //               alertBoxTitle: "Select Seats",
-            //             ),
-            //             if (field.hasError)
-            //               seatController.text.isEmpty
-            //                   ? Padding(
-            //                       padding: const EdgeInsets.only(left: 10),
-            //                       child: Text(
-            //                         field.errorText!,
-            //                         style: TextStyle(color: redColor),
-            //                       ),
-            //                     )
-            //                   : Container(),
-            //           ],
-            //         );
-            //       }),
-            // ),
-
-            // TextFeildTiming(
-            //     width: AppDimension.getWidth(context) * .9,
-            //     title: "Time",
-            //     hint: "PickUp Time",
-            //     controller: controllers[2]),
-
-            // Padding(
-            //     padding: const EdgeInsets.symmetric(horizontal: 10),
-            //     child: FormField<String>(
-            //         autovalidateMode: AutovalidateMode.onUserInteraction,
-            //         validator: (value) {
-            //           if (rentalController.text.isEmpty) {
-            //             return 'Please select rental package';
-            //           }
-            //           return null;
-            //         },
-            //         builder: (FormFieldState<String> field) {
-            //           return Column(
-            //             crossAxisAlignment: CrossAxisAlignment.start,
-            //             children: [
-            //               FormCommonSingleAlertSelector(
-            //                 width: double.infinity,
-            //                 title: "Select Rental Package",
-            //                 elevation: 0,
-            //                 controller: rentalController,
-            //                 showIcon: const Icon(
-            //                   Icons.add_road,
-            //                   color: naturalGreyColor,
-            //                 ),
-            //                 iconReq: true,
-            //                 data: List.generate(
-            //                     rangeData.length,
-            //                     (index) =>
-            //                         "${rangeData[index].hours} Hr ${rangeData[index].kilometer} Km"),
-
-            //                 ///Hint Color
-            //                 initialValue: "Select Rental package",
-            //                 alertBoxTitle: "Select Rental package",
-            //                 border: false,
-            //               ),
-            //               if (field.hasError)
-            //                 Padding(
-            //                   padding: const EdgeInsets.only(left: 10),
-            //                   child: Text(
-            //                     rentalController.text.isEmpty
-            //                         ? field.errorText!
-            //                         : '',
-            //                     style: TextStyle(color: redColor),
-            //                   ),
-            //                 ),
-            //             ],
-            //           );
-            //         })),
 
             // const Spacer(),
             const SizedBox(height: 10),
@@ -571,7 +472,7 @@ class _RentalFormState extends State<RentalForm> with RouteAware {
                             context,
                             {
                               "date": pickupdateController.text,
-                              "pickupTime": '${selectHour}:${selectMin}',
+                              "pickupTime": '$selectHour:$selectMin',
                               "seat": seatController.text,
                               "hours": rentalController.text.split(' ')[0],
                               "kilometers": rentalController.text.split(' ')[2],
@@ -582,64 +483,13 @@ class _RentalFormState extends State<RentalForm> with RouteAware {
                             widget.userId,
                             logi,
                             lati);
-                    print("${status}Status Hai Ye");
+                    debugPrint("${status}Status Hai Ye");
                     // if(status == "Status.completed"){
                     // context.push('/rentalForm/carsDetails',extra: {'id': widget.userId});
                     // }else{
                     //   Utils.flushBarErrorMessage("No vehicle available with the selected number of seats.", context, redColor);
                     // }
                   }
-
-                  // /////API Calling
-                  // if (pickuplocationController.text.isEmpty) {
-                  //   Utils.flushBarErrorMessage(
-                  //       "Please select your pickup point", context);
-                  // } else if (pickupdateController.text.isEmpty ||
-                  //     pickupdateController.text == "0") {
-                  //   Utils.flushBarErrorMessage(
-                  //       "Please select pickup date", context);
-                  // } else if (selectHour.isEmpty || selectHour == "00") {
-                  //   Utils.flushBarErrorMessage("Please select hour", context);
-                  // } else if (selectMin.isEmpty) {
-                  //   Utils.flushBarErrorMessage("Please select min", context);
-                  // } else if (seatController.text.isEmpty) {
-                  //   Utils.flushBarErrorMessage(
-                  //       "Please select your seats", context);
-                  // } else if (rentalController.text.isEmpty) {
-                  //   Utils.flushBarErrorMessage(
-                  //       "Please select your range", context);
-                  // } else {
-                  //   // String pickupTime = controllers[2].text;
-                  //   // if (pickupTime.length < 5) {
-                  //   //   pickupTime = '0$pickupTime';
-                  //   // }
-                  //   onTap = true;
-                  //   // print(pickupTime);
-                  //   Provider.of<RentalViewModel>(context, listen: false)
-                  //       .fetchRentalViewModelApi(
-                  //           context,
-                  //           {
-                  //             "date": pickupdateController.text,
-                  //             "pickupTime": '${selectHour}:${selectMin}',
-                  //             "seat": seatController.text,
-                  //             "hours": rentalController.text.split(' ')[0],
-                  //             "kilometers": rentalController.text.split(' ')[2],
-                  //             "pickUpLocation": pickuplocationController.text,
-                  //             "latitude": lati.toString(),
-                  //             "longitude": logi.toString(),
-                  //           },
-                  //           widget.userId,
-                  //           logi,
-                  //           lati);
-                  //   print("${status}Status Hai Ye");
-                  //   // if(status == "Status.completed"){
-                  //   // context.push('/rentalForm/carsDetails',extra: {'id': widget.userId});
-                  //   // }else{
-                  //   //   Utils.flushBarErrorMessage("No vehicle available with the selected number of seats.", context, redColor);
-                  //   // }
-
-                  //   sourceLocation = '';
-                  // }
                 },
               ),
             )

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_cab/model/rentalBooking_model.dart';
+import 'package:flutter_cab/model/rentalbooking_model.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/res/Custom%20Page%20Layout/commonPage_Layout.dart';
 import 'package:flutter_cab/res/customAppBar_widget.dart';
@@ -44,8 +44,8 @@ class _CarsDetailsAvailableState extends State<CarsDetailsAvailable> {
   int selectIndex = -1;
   @override
   Widget build(BuildContext context) {
-    print("${widget.latitude}Latii");
-    print("${widget.longitude}Logii");
+    debugPrint("${widget.latitude}Latii");
+    debugPrint("${widget.longitude}Logii");
     var status = context.watch<RentalViewModel>().DataList.status.toString();
     if (status == "Status.completed") {
       rentalData =
@@ -190,7 +190,7 @@ class TransContainer extends StatelessWidget {
                                       fontWeight: FontWeight.w700),
                                 ),
                                 Text(
-                                  "Seats : ${seats}",
+                                  "Seats : $seats",
                                   style: GoogleFonts.lato(
                                       color: greyColor,
                                       fontSize: 14,
@@ -202,14 +202,14 @@ class TransContainer extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  "Hour : ${hour}",
+                                  "Hour : $hour",
                                   style: GoogleFonts.lato(
                                       color: greyColor,
                                       fontSize: 14,
                                       fontWeight: FontWeight.w600),
                                 ),
                                 Text(
-                                  "Date : ${pickDate}",
+                                  "Date : $pickDate",
                                   style: GoogleFonts.lato(
                                       color: greyColor,
                                       fontSize: 14,
@@ -236,12 +236,12 @@ class TransContainer extends StatelessWidget {
                         horizontalTitleGap: 10,
                         // contentPadding:
                         //     const EdgeInsets.symmetric(horizontal: 10),
-                        leading: Icon(Icons.edit_road),
+                        leading: const Icon(Icons.edit_road),
                         title: Text(
                           "Kilometer",
                           style: titleText,
                         ),
-                        subtitle: Text('${kilometers}/KM', style: titleText),
+                        subtitle: Text('$kilometers/KM', style: titleText),
                       ),
                     ),
                     Expanded(
@@ -287,154 +287,9 @@ class TransContainer extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                         ),
                       )
-                      // SizedBox(
-                      //   width: AppDimension.getWidth(context) * .65,
-                      //   child: CustomText(
-                      //     content: widget.pickUpLocation,
-                      //     align: TextAlign.start,
-                      //     fontWeight: FontWeight.w400,
-                      //     maxline: 10,
-                      //     fontSize: 16,
-                      //   ),
-                      // )
-                      // Text(
-                      //   pickUpLocation,
-                      //   style: titleTextStyle,
-                      // ),
                     ],
                   )),
 
-              // ///First Line of Design
-              // Container(
-              //     padding: EdgeInsets.all(10),
-              //     decoration: const BoxDecoration(
-              //         border:
-              //             Border(bottom: BorderSide(color: curvePageColor))),
-              //     child: Row(
-              //       // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //       crossAxisAlignment: CrossAxisAlignment.start,
-              //       children: [
-              //         SizedBox(
-              //           width: 80,
-              //           height: 60,
-              //           child: ClipRRect(
-              //               borderRadius: BorderRadius.circular(10),
-              //               child: carImage.isNotEmpty
-              //                   ? Image.network(carImage)
-              //                   : Image.asset(
-              //                       rentalCar1,
-              //                       fit: BoxFit.cover,
-              //                     )),
-              //         ),
-              //         const SizedBox(width: 10),
-              //         Expanded(
-              //           child: Column(
-              //             children: [
-              //               Row(
-              //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //                 children: [
-              //                   Text(
-              //                     carName,
-              //                     style: GoogleFonts.lato(
-              //                         color: greyColor,
-              //                         fontSize: 17,
-              //                         fontWeight: FontWeight.w700),
-              //                   ),
-              //                   Text(
-              //                     // "⭐ 4.8",
-              //                     '',
-              //                     style: GoogleFonts.lato(
-              //                         color: greyColor,
-              //                         fontSize: 14,
-              //                         fontWeight: FontWeight.w600),
-              //                   ),
-              //                 ],
-              //               ),
-              //               Row(
-              //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //                 children: [
-              //                   Text(
-              //                     "Hour : $hour",
-              //                     style: GoogleFonts.lato(
-              //                         color: greyColor,
-              //                         fontSize: 14,
-              //                         fontWeight: FontWeight.w600),
-              //                   ),
-              //                   Text(
-              //                     "Time : $pickTime",
-              //                     style: GoogleFonts.lato(
-              //                         color: greyColor,
-              //                         fontSize: 14,
-              //                         fontWeight: FontWeight.w600),
-              //                   ),
-              //                 ],
-              //               ),
-              //               Row(
-              //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //                 children: [
-              //                   Text(
-              //                     "Seats : $seats",
-              //                     style: GoogleFonts.lato(
-              //                         color: greyColor,
-              //                         fontSize: 14,
-              //                         fontWeight: FontWeight.w700),
-              //                   ),
-              //                   Text(
-              //                     "Date : $pickDate",
-              //                     style: GoogleFonts.lato(
-              //                         color: greyColor,
-              //                         fontSize: 14,
-              //                         fontWeight: FontWeight.w600),
-              //                   ),
-              //                 ],
-              //               ),
-              //             ],
-              //           ),
-              //         )
-              //       ],
-              //     )),
-
-              // ///Second Line Design
-              // Padding(
-              //   padding:
-              //       const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-              //   child: Row(
-              //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //     children: [
-              //       RichText(
-              //           text: TextSpan(children: [
-              //         TextSpan(
-              //           text: "Kilometers : ",
-              //           style: titleTextStyle,
-              //         ),
-              //         TextSpan(
-              //           text: '$kilometers/KM',
-              //           style: titleTextStyle,
-              //         ),
-              //       ])),
-              //       const SizedBox(height: 10),
-              //       // Spacer(),
-              //       Expanded(
-              //         child: Row(
-              //           children: [
-              //             Text(
-              //               'Location :',
-              //               style: titleTextStyle,
-              //             ),
-              //             Expanded(
-              //               child: Text(
-              //                 pickUpLocation,
-              //                 style: titleTextStyle,
-              //                 maxLines: 3,
-              //                 overflow: TextOverflow.ellipsis,
-              //               ),
-              //             ),
-              //           ],
-              //         ),
-              //       ),
-              //     ],
-              //   ),
-              // ),
               Container(
                 padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
                 margin: const EdgeInsets.all(5),
@@ -449,7 +304,7 @@ class TransContainer extends StatelessWidget {
                         text: TextSpan(children: [
                       TextSpan(text: "AED", style: appbarTextStyle),
                       TextSpan(
-                          text: " ${totalPrice}".toUpperCase(),
+                          text: " $totalPrice".toUpperCase(),
                           style: appbarTextStyle),
                     ])),
                     CustomButtonSmall(
@@ -462,18 +317,6 @@ class TransContainer extends StatelessWidget {
                   ],
                 ),
               )
-              // Padding(
-              //   padding: const EdgeInsets.all(8.0),
-              //   child: Align(
-              //     alignment: Alignment.centerRight,
-              //     child: CustomButtonSmall(
-              //         loading: loading,
-              //         height: 40,
-              //         width: 80,
-              //         btnHeading: 'View',
-              //         onTap: onTap),
-              //   ),
-              // )
             ],
           ),
         ),

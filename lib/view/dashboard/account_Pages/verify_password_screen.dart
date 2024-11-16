@@ -26,29 +26,32 @@ class _VerifyPasswordState extends State<VerifyPassword> {
       ),
       body: PageLayout_Page(
           child: Column(
-            children: [
-              LoginTextFeild(
-                  headingReq: true,
-                  controller: TextEditingController(),
-                  heading: "Old Password",
-                img: pass,
-                prefixIcon: true,
-                obscure: true,
-                suffixIcon: true,
-                hint: "Enter your old password",
-              ),
-              const SizedBox(height: 10),
-              SizedBox(
-                  width: AppDimension.getWidth(context)*.9,
-                  child: Text("Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien.",
-                  style: infoTextStyle,
-                  )),
-              const Spacer(),
-              CustomButtonBig(btnHeading: "Next",
-                onTap: () => context.push("/changePassword"),),
-              const SizedBox(height: 10),
-            ],
-          )),
+        children: [
+          LoginTextFeild(
+            headingReq: true,
+            controller: TextEditingController(),
+            heading: "Old Password",
+            img: pass,
+            prefixIcon: true,
+            obscure: true,
+            suffixIcon: true,
+            hint: "Enter your old password",
+          ),
+          const SizedBox(height: 10),
+          SizedBox(
+              width: AppDimension.getWidth(context) * .9,
+              child: Text(
+                "Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien.",
+                style: infoTextStyle,
+              )),
+          const Spacer(),
+          CustomButtonBig(
+            btnHeading: "Next",
+            onTap: () => context.push("/changePassword"),
+          ),
+          const SizedBox(height: 10),
+        ],
+      )),
     );
   }
 }

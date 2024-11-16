@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_cab/model/offerListModel.dart';
+import 'package:flutter_cab/model/offer_list_model.dart';
 import 'package:flutter_cab/res/customContainer.dart';
 import 'package:flutter_cab/res/customTextWidget.dart';
 import 'package:flutter_cab/utils/color.dart';

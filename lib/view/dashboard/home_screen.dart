@@ -1,21 +1,16 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_cab/model/offerListModel.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_cab/model/offer_list_model.dart';
 
 import 'package:flutter_cab/model/user_profile_model.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
-
-import 'package:flutter_cab/res/customContainer.dart';
-import 'package:flutter_cab/res/customTextWidget.dart';
-import 'package:flutter_cab/res/custom_gridViewBuilder.dart';
 import 'package:flutter_cab/utils/assets.dart';
 import 'package:flutter_cab/utils/color.dart';
-import 'package:flutter_cab/utils/dimensions.dart';
-import 'package:flutter_cab/utils/string_extenstion.dart';
 import 'package:flutter_cab/utils/text_styles.dart';
-import 'package:flutter_cab/view/dashboard/rental/rentalForm.dart';
-import 'package:flutter_cab/view/dashboard/tourPackage/package.dart';
+import 'package:flutter_cab/view/dashboard/rental/rental_form.dart';
+import 'package:flutter_cab/view/dashboard/tourPackage/package_screen.dart';
 import 'package:flutter_cab/view_model/offer_view_model.dart';
 import 'package:flutter_cab/view_model/userProfile_view_model.dart';
 import 'package:flutter_cab/view_model/user_view_model.dart';
@@ -63,7 +58,7 @@ class _home_screenState extends State<home_screen>
         setState(() {
           _initialIndex = _tabcontroller?.index ?? 0;
         });
-        print({'gfgfgfgh': _initialIndex});
+        debugPrint('gfgfgfgh $_initialIndex');
       });
       // Provider.of<OfferViewModel>(context, listen: false).getOfferList(
       //     context: context, date: DateFormat('dd-MM-yyyy').format(dateTime));
@@ -79,16 +74,7 @@ class _home_screenState extends State<home_screen>
   }
 
   bool loading = false;
-  // List<String> images = [
-  //   packageImg,
-  //   tour,
-  //   tour2,
-  //   viewImg,
-  //   packageImg,
-  //   tour,
-  //   tour2,
-  //   viewImg
-  // ];
+
   ProfileData? userdata;
   OfferListModel? offerListData;
   bool isLoadingData = false;

@@ -56,3 +56,5 @@ TextStyle textTitleSubHeading = GoogleFonts.lato(
     color: blackColor, fontSize: 16, fontWeight: FontWeight.w500);
 TextStyle textTitleHint = GoogleFonts.lato(
     color: greyColor1, fontSize: 16, fontWeight: FontWeight.w500);
+TextStyle subtitleText = GoogleFonts.lato(
+    color: blackColor, fontSize: 14, fontWeight: FontWeight.w500);

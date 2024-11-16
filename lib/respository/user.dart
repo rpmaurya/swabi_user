@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_cab/data/app_url.dart';
 import 'package:flutter_cab/model/user_model.dart';
-import 'package:flutter_cab/view_model/services/httpService.dart';
+import 'package:flutter_cab/view_model/services/http_service.dart';
 import '../data/network/base_apiservices.dart';
 import '../data/network/network_apiservice.dart';
 

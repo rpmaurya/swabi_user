@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_cab/model/getTrasactionByIdModel.dart';
+import 'package:flutter_cab/model/get_trasactionbyid_model.dart';
 import 'package:flutter_cab/res/Custom%20Page%20Layout/commonPage_Layout.dart';
-import 'package:flutter_cab/res/Custom%20Widgets/customTabBar.dart';
+import 'package:flutter_cab/res/Custom%20Widgets/custom_tabbar.dart';
 import 'package:flutter_cab/res/customAppBar_widget.dart';
 import 'package:flutter_cab/res/login/login_customTextFeild.dart';
 import 'package:flutter_cab/utils/assets.dart';

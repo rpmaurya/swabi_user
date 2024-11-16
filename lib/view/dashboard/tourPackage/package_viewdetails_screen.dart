@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_cab/model/packageModels.dart';
+import 'package:flutter_cab/model/package_models.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/res/Custom%20Page%20Layout/commonPage_Layout.dart';
 import 'package:flutter_cab/res/Custom%20Widgets/multi_imageSlider_ContainerWidget.dart';
@@ -382,9 +382,9 @@ class _ActivityContainerState extends State<ActivityContainer> {
                 fontWeight: FontWeight.w400,
               ),
               moreStyle: const TextStyle(
-                  fontWeight: FontWeight.w500, color: redColor, fontSize: 15),
+                  fontWeight: FontWeight.w600, color: redColor, fontSize: 15),
               lessStyle: const TextStyle(
-                  fontWeight: FontWeight.w500, color: redColor, fontSize: 15),
+                  fontWeight: FontWeight.w600, color: redColor, fontSize: 15),
             ),
             const SizedBox(height: 15),
             // words.length >= 30 ? Padding(

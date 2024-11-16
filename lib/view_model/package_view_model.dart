@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/response/api_response.dart';
-import 'package:flutter_cab/model/changeMobileModel.dart';
-import 'package:flutter_cab/model/packageModels.dart';
-import 'package:flutter_cab/respository/packageRepository.dart';
+import 'package:flutter_cab/model/change_mobile_model.dart';
+import 'package:flutter_cab/model/package_models.dart';
+import 'package:flutter_cab/respository/package_repository.dart';
 import 'package:flutter_cab/utils/utils.dart';
 import 'package:flutter_cab/view_model/payment_gateway_view_model.dart';
 import 'package:go_router/go_router.dart';

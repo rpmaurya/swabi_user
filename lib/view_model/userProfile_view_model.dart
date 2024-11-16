@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/response/api_response.dart';
 import 'package:flutter_cab/model/changepassword_model.dart';
-import 'package:flutter_cab/model/commonModel.dart';
+import 'package:flutter_cab/model/common_model.dart';
 import 'package:flutter_cab/model/user_profile_model.dart';
 import 'package:flutter_cab/respository/user_profi_repository.dart';
 import 'package:flutter_cab/utils/utils.dart';

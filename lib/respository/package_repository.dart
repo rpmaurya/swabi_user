@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/app_url.dart';
 import 'package:flutter_cab/data/network/base_apiservices.dart';
 import 'package:flutter_cab/data/network/network_apiservice.dart';
-import 'package:flutter_cab/data/response/baseResponse.dart';
-import 'package:flutter_cab/model/changeMobileModel.dart';
-import 'package:flutter_cab/model/packageModels.dart';
+import 'package:flutter_cab/data/response/base_response.dart';
+import 'package:flutter_cab/model/change_mobile_model.dart';
+import 'package:flutter_cab/model/package_models.dart';
 import 'package:flutter_cab/utils/utils.dart';
-import 'package:flutter_cab/view_model/services/httpService.dart';
+import 'package:flutter_cab/view_model/services/http_service.dart';
 
 ///Get Package List Repo
 class GetPackageListRepository {

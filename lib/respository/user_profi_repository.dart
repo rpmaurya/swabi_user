@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/app_url.dart';
 import 'package:flutter_cab/data/network/base_apiservices.dart';
 import 'package:flutter_cab/data/network/network_apiservice.dart';
-import 'package:flutter_cab/data/response/baseResponse.dart';
+import 'package:flutter_cab/data/response/base_response.dart';
 import 'package:flutter_cab/model/changepassword_model.dart';
-import 'package:flutter_cab/model/commonModel.dart';
+import 'package:flutter_cab/model/common_model.dart';
 import 'package:flutter_cab/model/user_profile_model.dart';
-import 'package:flutter_cab/view_model/services/httpService.dart';
+import 'package:flutter_cab/view_model/services/http_service.dart';
 
 ///Rental View Single Detail Repo
 class UserProfileRepository {

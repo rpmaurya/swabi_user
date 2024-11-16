@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_cab/model/packageModels.dart';
+import 'package:flutter_cab/model/package_models.dart';
 import 'package:flutter_cab/res/Common%20Widgets/common_offer_container.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/res/Custom%20Page%20Layout/commonPage_Layout.dart';

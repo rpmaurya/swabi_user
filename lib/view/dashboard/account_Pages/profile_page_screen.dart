@@ -13,7 +13,7 @@ import 'package:flutter_cab/utils/color.dart';
 import 'package:flutter_cab/utils/dimensions.dart';
 import 'package:flutter_cab/utils/string_extenstion.dart';
 import 'package:flutter_cab/utils/text_styles.dart';
-import 'package:flutter_cab/view/dashboard/account_Pages/changePassword.dart';
+import 'package:flutter_cab/view/dashboard/account_Pages/change_password.dart';
 import 'package:flutter_cab/view_model/userProfile_view_model.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';

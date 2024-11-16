@@ -93,34 +93,6 @@ class RentalCarListingContainer extends StatelessWidget {
                             "Booking Id : $bookingID",
                             style: titleTextStyle1,
                           ),
-                          // Padding(
-                          //   padding: const EdgeInsets.only(bottom: 5),
-                          //   child: Row(
-                          //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          //     children: [
-                          //       Row(
-                          //         mainAxisAlignment: MainAxisAlignment.start,
-                          //         children: [
-                          //           const Icon(Icons.watch_later_outlined,
-                          //               size: 18),
-                          //           const SizedBox(
-                          //             width: 5,
-                          //           ),
-                          //           Text(time, style: titleTextStyle),
-                          //         ],
-                          //       ),
-                          //       Row(
-                          //         children: [
-                          //           Text(
-                          //             "Booking Id : ",
-                          //             style: titleTextStyle,
-                          //           ),
-                          //           Text(bookingID, style: titleTextStyle),
-                          //         ],
-                          //       )
-                          //     ],
-                          //   ),
-                          // ),
                         ],
                       ),
                       trailing: Column(
@@ -181,48 +153,15 @@ class RentalCarListingContainer extends StatelessWidget {
                               // const Spacer(),
                             ],
                           ),
-                          // trailing: Container(
-                          //   margin: const EdgeInsets.symmetric(horizontal: 10),
-                          //   width: 100,
-                          //   child: Row(
-                          //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          //     children: [
-                          //       // SizedBox(
-                          //       //   width: 40,
-                          //       //   height: 40,
-                          //       //   child: ClipRRect(
-                          //       //       borderRadius: BorderRadius.circular(50),
-                          //       //       child: Padding(
-                          //       //         padding: const EdgeInsets.all(10.0),
-                          //       //         child: Image.asset(""),
-                          //       //       )),
-                          //       // ),
-                          //       Column(
-                          //         mainAxisAlignment: MainAxisAlignment.center,
-                          //         crossAxisAlignment: CrossAxisAlignment.start,
-                          //         children: [
-                          //           Text(
-                          //             "Charges",
-                          //             style: titleTextStyle,
-                          //           ),
-                          //           const SizedBox(height: 5),
-                          //           Text(
-                          //             "AED $rentalCharge",
-                          //             style: titleTextStyle1,
-                          //           ),
-                          //         ],
-                          //       ),
-                          //     ],
-                          //   ),
-                          // ),
                         ),
                       ),
                       Expanded(
                         child: ListTile(
-                          contentPadding: EdgeInsets.only(left: 30),
+                          contentPadding: const EdgeInsets.only(left: 30),
                           dense: true,
                           horizontalTitleGap: 0,
-                          leading: Icon(Icons.watch_later_outlined, size: 18),
+                          leading:
+                              const Icon(Icons.watch_later_outlined, size: 18),
                           title: Text('PickUp Time', style: titleTextStyle),
                           subtitle: Text(time, style: titleTextStyle1),
                         ),

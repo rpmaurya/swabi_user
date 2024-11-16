@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_cab/model/offerDetailByIdModel.dart';
-import 'package:flutter_cab/model/offerListModel.dart';
+import 'package:flutter_cab/model/offer_detailbyid_model.dart';
+import 'package:flutter_cab/model/offer_list_model.dart';
 import 'package:flutter_cab/respository/offer_repository.dart';
 import 'package:go_router/go_router.dart';
 

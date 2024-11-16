@@ -94,6 +94,7 @@ dependencies:
   shimmer: ^3.0.0
   carousel_slider: ^5.0.0
   marqueer: ^1.4.5
+  group_button: ^5.3.4
  
 
   # country_codes: ^2.0.0

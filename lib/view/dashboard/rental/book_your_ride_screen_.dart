@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_cab/model/rentalBooking_model.dart';
+import 'package:flutter_cab/model/rentalbooking_model.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
-import 'package:flutter_cab/res/Custom%20Widgets/CustomTextFormfield.dart';
+import 'package:flutter_cab/res/Custom%20Widgets/custom_textformfield.dart';
 import 'package:flutter_cab/res/customAlertBox.dart';
 import 'package:flutter_cab/res/customAppBar_widget.dart';
 import 'package:flutter_cab/res/customTextWidget.dart';
@@ -13,7 +13,7 @@ import 'package:flutter_cab/utils/utils.dart';
 import 'package:flutter_cab/view_model/offer_view_model.dart';
 import 'package:flutter_cab/view_model/payment_gateway_view_model.dart';
 import 'package:flutter_cab/view_model/rental_view_model.dart';
-import 'package:flutter_cab/view_model/services/paymentService.dart';
+import 'package:flutter_cab/view_model/services/payment_service.dart';
 import 'package:flutter_cab/view_model/userProfile_view_model.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:go_router/go_router.dart';

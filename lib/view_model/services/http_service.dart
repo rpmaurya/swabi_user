@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/app_url.dart';
-import 'package:flutter_cab/data/response/baseResponse.dart';
+import 'package:flutter_cab/data/response/base_response.dart';
 import 'package:flutter_cab/data/string.dart';
 import 'package:flutter_cab/utils/color.dart';
 import 'package:flutter_cab/utils/utils.dart';
