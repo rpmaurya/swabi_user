@@ -2612,7 +2612,7 @@ class PackageHIstoryDetailsMemberList {
   factory PackageHIstoryDetailsMemberList.fromJson(Map<String, dynamic> json) =>
       PackageHIstoryDetailsMemberList(
         memberId: json["memberId"].toString(),
-        name: json["name"] ?? "",
+        name: json["name"]?.toString() ?? "",
         age: json["age"].toString(),
         ageUnit: json["ageUnit"].toString(),
         // type: json["type"],

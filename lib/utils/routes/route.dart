@@ -35,6 +35,7 @@ import 'package:flutter_cab/view/dashboard/tourPackage/package_viewdetails_scree
 import 'package:flutter_cab/view/dashboard/tourPackage/packageHistory/mypackage_history_screen.dart';
 import 'package:flutter_cab/view/dashboard/tourPackage/tourPackageForm.dart';
 import 'package:flutter_cab/view/dashboard/account_Pages/edit_profile_screen.dart';
+import 'package:flutter_cab/view/dashboard/wallet_pages/wallet_history_screen.dart';
 import 'package:flutter_cab/view/dashboard/wallet_pages/wallet_screen.dart';
 import 'package:flutter_cab/view/registration/forgot_screen.dart';
 import 'package:flutter_cab/view/registration/login_screen.dart';
@@ -332,6 +333,17 @@ final GoRouter myRouter = GoRouter(
         var userId = state.extra as Map<String, dynamic>;
 
         return WalletScreen(
+          userId: userId["userId"],
+        );
+      },
+    ),
+    GoRoute(
+      path: '/walletHistory',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (BuildContext context, GoRouterState state) {
+        var userId = state.extra as Map<String, dynamic>;
+
+        return WalletHistoryScreen(
           userId: userId["userId"],
         );
       },

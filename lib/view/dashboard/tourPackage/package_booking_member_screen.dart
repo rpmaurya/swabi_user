@@ -265,73 +265,98 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                 //   }
                 // },
               ),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 5, top: 5),
-                child: Text.rich(TextSpan(children: [
-                  TextSpan(text: 'Age', style: titleTextStyle),
-                  const TextSpan(
-                    text: ' ',
-                  ),
-                  TextSpan(
-                      text: type == 'Infant' ? '(Month)' : '(Year)',
-                      style: titleTextStyle),
-                  const TextSpan(text: ' *', style: TextStyle(color: redColor))
-                ])),
-              ),
-              Customtextformfield(
-                focusNode: focusNode2,
-                controller: ageController,
-                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                keyboardType: TextInputType.number,
-                hintText: 'Enter Age',
-                validator: (value) {
-                  int age = int.tryParse(value ?? '')?.toInt() ?? 0;
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 5, top: 5),
+                          child: Text.rich(TextSpan(children: [
+                            TextSpan(text: 'Age', style: titleTextStyle),
+                            const TextSpan(
+                              text: ' ',
+                            ),
+                            TextSpan(
+                                text: type == 'Infant' ? '(Month)' : '(Year)',
+                                style: titleTextStyle),
+                            const TextSpan(
+                                text: ' *', style: TextStyle(color: redColor))
+                          ])),
+                        ),
+                        Customtextformfield(
+                          focusNode: focusNode2,
+                          controller: ageController,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly
+                          ],
+                          keyboardType: TextInputType.number,
+                          hintText: 'Enter Age',
+                          validator: (value) {
+                            int age = int.tryParse(value ?? '')?.toInt() ?? 0;
 
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter age';
-                  } else if (type == 'Adult') {
-                    debugPrint('type of member1$type');
-                    if (age < 18 || age >= 100) {
-                      return 'Age must be between 18 to 99 years';
-                    }
-                  } else if (type == 'Child') {
-                    debugPrint('type of member2$type');
-                    if (age < 1 || age <= 2 || age >= 18) {
-                      return 'Age must be between 3 to 18 years';
-                    }
-                  } else if (type == 'Infant') {
-                    debugPrint('type of member3$type');
-                    if (age < 1 || age >= 24) {
-                      return 'Age must be between 1 to 24 months';
-                    }
-                  }
-                  return null;
-                },
-              ),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 5, top: 5),
-                child: Text.rich(TextSpan(children: [
-                  TextSpan(text: 'Gender', style: titleTextStyle),
-                  const TextSpan(text: ' *', style: TextStyle(color: redColor))
-                ])),
-              ),
-              CustomDropdownButton(
-                controller: genderController,
-                focusNode: focusNode3,
-                itemsList: const ['Male', 'Female'],
-                onChanged: (value) {
-                  setState(() {
-                    genderController.text = value ?? '';
-                    debugPrint('validate gender ${genderController.text}');
-                  });
-                },
-                hintText: 'Select Gender',
-                validator: (p0) {
-                  if (p0 == null || p0.isEmpty) {
-                    return 'Please select gender';
-                  }
-                  return null;
-                },
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter age';
+                            } else if (type == 'Adult') {
+                              debugPrint('type of member1$type');
+                              if (age < 18 || age >= 100) {
+                                return 'Age must be between 18 to 99 years';
+                              }
+                            } else if (type == 'Child') {
+                              debugPrint('type of member2$type');
+                              if (age < 1 || age <= 2 || age >= 18) {
+                                return 'Age must be between 3 to 18 years';
+                              }
+                            } else if (type == 'Infant') {
+                              debugPrint('type of member3$type');
+                              if (age < 1 || age >= 24) {
+                                return 'Age must be between 1 to 24 months';
+                              }
+                            }
+                            return null;
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 5, top: 5),
+                          child: Text.rich(TextSpan(children: [
+                            TextSpan(text: 'Gender', style: titleTextStyle),
+                            const TextSpan(
+                                text: ' *', style: TextStyle(color: redColor))
+                          ])),
+                        ),
+                        CustomDropdownButton(
+                          controller: genderController,
+                          focusNode: focusNode3,
+                          itemsList: const ['Male', 'Female'],
+                          onChanged: (value) {
+                            setState(() {
+                              genderController.text = value ?? '';
+                              debugPrint(
+                                  'validate gender ${genderController.text}');
+                            });
+                          },
+                          hintText: 'Select Gender',
+                          validator: (p0) {
+                            if (p0 == null || p0.isEmpty) {
+                              return 'Please select gender';
+                            }
+                            return null;
+                          },
+                        )
+                      ],
+                    ),
+                  )
+                ],
               )
             ],
           ),
@@ -403,72 +428,96 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                   return null;
                 },
               ),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 5, top: 5),
-                child: Text.rich(TextSpan(children: [
-                  TextSpan(text: 'Age', style: titleTextStyle),
-                  const TextSpan(
-                    text: ' ',
-                  ),
-                  TextSpan(
-                      text: type == 'Infant' ? '(Month)' : '(Year)',
-                      style: titleTextStyle),
-                  const TextSpan(text: ' *', style: TextStyle(color: redColor))
-                ])),
-              ),
-              Customtextformfield(
-                focusNode: focusNode2,
-                controller: ageController,
-                keyboardType: TextInputType.number,
-                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                hintText: 'Enter Age',
-                validator: (value) {
-                  int age = int.tryParse(value ?? '')?.toInt() ?? 0;
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 5, top: 5),
+                          child: Text.rich(TextSpan(children: [
+                            TextSpan(text: 'Age', style: titleTextStyle),
+                            const TextSpan(
+                              text: ' ',
+                            ),
+                            TextSpan(
+                                text: type == 'Infant' ? '(Month)' : '(Year)',
+                                style: titleTextStyle),
+                            const TextSpan(
+                                text: ' *', style: TextStyle(color: redColor))
+                          ])),
+                        ),
+                        Customtextformfield(
+                          focusNode: focusNode2,
+                          controller: ageController,
+                          keyboardType: TextInputType.number,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly
+                          ],
+                          hintText: 'Enter Age',
+                          validator: (value) {
+                            int age = int.tryParse(value ?? '')?.toInt() ?? 0;
 
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter age';
-                  } else if (type == 'Adult') {
-                    debugPrint('type of member1$type');
-                    if (age <= 18 || age >= 100) {
-                      return 'Age must be between 18 to 99 years';
-                    }
-                  } else if (type == 'Child') {
-                    debugPrint('type of member2$type');
-                    if (age < 1 || age <= 2 || age >= 18) {
-                      return 'Age must be between 3 to 18 years';
-                    }
-                  } else if (type == 'Infant') {
-                    debugPrint('type of member3$type');
-                    if (age < 1 || age >= 24) {
-                      return 'Age must be between 1 to 24 months';
-                    }
-                  }
-                  return null;
-                },
-              ),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 5, top: 5),
-                child: Text.rich(TextSpan(children: [
-                  TextSpan(text: 'Gender', style: titleTextStyle),
-                  const TextSpan(text: ' *', style: TextStyle(color: redColor))
-                ])),
-              ),
-              CustomDropdownButton(
-                controller: genderController,
-                focusNode: focusNode3,
-                itemsList: const ['Male', 'Female'],
-                onChanged: (value) {
-                  setState(() {
-                    genderController.text = value ?? '';
-                  });
-                },
-                hintText: 'Select Gender',
-                // validator: (p0) {
-                //   if (p0 == null || p0.isEmpty) {
-                //     return 'Please select gender';
-                //   }
-                //   return null;
-                // },
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter age';
+                            } else if (type == 'Adult') {
+                              debugPrint('type of member1$type');
+                              if (age <= 18 || age >= 100) {
+                                return 'Age must be between 18 to 99 years';
+                              }
+                            } else if (type == 'Child') {
+                              debugPrint('type of member2$type');
+                              if (age < 1 || age <= 2 || age >= 18) {
+                                return 'Age must be between 3 to 18 years';
+                              }
+                            } else if (type == 'Infant') {
+                              debugPrint('type of member3$type');
+                              if (age < 1 || age >= 24) {
+                                return 'Age must be between 1 to 24 months';
+                              }
+                            }
+                            return null;
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 5, top: 5),
+                          child: Text.rich(TextSpan(children: [
+                            TextSpan(text: 'Gender', style: titleTextStyle),
+                            const TextSpan(
+                                text: ' *', style: TextStyle(color: redColor))
+                          ])),
+                        ),
+                        CustomDropdownButton(
+                          controller: genderController,
+                          focusNode: focusNode3,
+                          itemsList: const ['Male', 'Female'],
+                          onChanged: (value) {
+                            setState(() {
+                              genderController.text = value ?? '';
+                            });
+                          },
+                          hintText: 'Select Gender',
+                          // validator: (p0) {
+                          //   if (p0 == null || p0.isEmpty) {
+                          //     return 'Please select gender';
+                          //   }
+                          //   return null;
+                          // },
+                        )
+                      ],
+                    ),
+                  )
+                ],
               )
             ],
           ),
@@ -607,61 +656,103 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                                 ),
                               ),
                               Container(
-                                margin: const EdgeInsets.only(bottom: 5),
-                                child: Text(
-                                  "Travel Date",
-                                  overflow: TextOverflow.ellipsis,
-                                  style: titleTextStyle,
-                                ),
-                              ),
-                              CommonContainer(
-                                width: AppDimension.getWidth(context) * .94,
-                                // width: AppDimension.getWidth(context) / 1.4,
-                                height: 45,
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 5),
-                                borderReq: true,
-                                elevation: 0,
-                                color: bgGreyColor.withOpacity(0.4),
-                                borderColor: naturalGreyColor.withOpacity(.3),
-                                borderRadius: BorderRadius.circular(5),
+                                margin:
+                                    const EdgeInsets.only(bottom: 0, top: 5),
                                 child: Row(
                                   children: [
-                                    const Icon(
-                                      Icons.calendar_month_outlined,
-                                      color: naturalGreyColor,
+                                    Expanded(
+                                      child: Text(
+                                        "Travel Date",
+                                        overflow: TextOverflow.ellipsis,
+                                        style: titleTextStyle,
+                                      ),
+                                    ),
+                                    Text(
+                                      ':',
+                                      style: titleTextStyle,
                                     ),
                                     const SizedBox(width: 10),
-                                    CustomTextWidget(
-                                        content: controller[0].text,
-                                        fontSize: 16,
-                                        textColor: Colors.black,
-                                        fontWeight: FontWeight.w600)
+                                    Expanded(
+                                      child: Text(
+                                        widget.bookingDate,
+                                        style: titleTextStyle1,
+                                      ),
+                                    )
                                   ],
                                 ),
                               ),
+                              // CommonContainer(
+                              //   width: AppDimension.getWidth(context) * .94,
+                              //   // width: AppDimension.getWidth(context) / 1.4,
+                              //   height: 45,
+                              //   padding:
+                              //       const EdgeInsets.symmetric(horizontal: 5),
+                              //   borderReq: true,
+                              //   elevation: 0,
+                              //   color: bgGreyColor.withOpacity(0.4),
+                              //   borderColor: naturalGreyColor.withOpacity(.3),
+                              //   borderRadius: BorderRadius.circular(5),
+                              //   child: Row(
+                              //     children: [
+                              //       const Icon(
+                              //         Icons.calendar_month_outlined,
+                              //         color: naturalGreyColor,
+                              //       ),
+                              //       const SizedBox(width: 10),
+                              //       CustomTextWidget(
+                              //           content: controller[0].text,
+                              //           fontSize: 16,
+                              //           textColor: Colors.black,
+                              //           fontWeight: FontWeight.w600)
+                              //     ],
+                              //   ),
+                              // ),
                               const SizedBox(height: 5),
-                              Text(
-                                'Primary Contact',
-                                style: titleTextStyle,
-                              ),
-
-                              const SizedBox(height: 5),
-
-                              CustomMobilenumber(
-                                  textLength: 9,
-                                  readOnly: true,
-                                  focusNode: focusNode4,
-                                  fillColor: background,
-                                  controller: primaryNoController,
-                                  hintText: 'Enter number',
-                                  suffixIcons: primaryNoController.text.isEmpty
-                                      ? const SpinKitThreeBounce(
-                                          size: 20,
-                                          color: btnColor,
+                              primaryNoController.text.isEmpty
+                                  ? const SizedBox.shrink()
+                                  : Row(
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            "Primary Contact",
+                                            overflow: TextOverflow.ellipsis,
+                                            style: titleTextStyle,
+                                          ),
+                                        ),
+                                        Text(
+                                          ':',
+                                          style: titleTextStyle,
+                                        ),
+                                        const SizedBox(width: 10),
+                                        Expanded(
+                                          child: Text(
+                                            '+971 ${primaryNoController.text}',
+                                            style: titleTextStyle1,
+                                          ),
                                         )
-                                      : null,
-                                  countryCode: primaryCountryCode),
+                                      ],
+                                    ),
+                              // Text(
+                              //   'Primary Contact',
+                              //   style: titleTextStyle,
+                              // ),
+
+                              // const SizedBox(height: 5),
+
+                              // CustomMobilenumber(
+                              //     textLength: 9,
+                              //     readOnly: true,
+                              //     focusNode: focusNode4,
+                              //     fillColor: background,
+                              //     controller: primaryNoController,
+                              //     hintText: 'Enter number',
+                              //     suffixIcons: primaryNoController.text.isEmpty
+                              //         ? const SpinKitThreeBounce(
+                              //             size: 20,
+                              //             color: btnColor,
+                              //           )
+                              //         : null,
+                              //     countryCode: primaryCountryCode),
                               // Customphonefield(
                               //   poneKey: _phoneKey,
                               //   focusNode: focusNode4,
@@ -862,7 +953,7 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                                     fontSize: 18,
                                     fontWeight: FontWeight.w600),
                               ),
-                              Spacer(),
+                              const Spacer(),
                               InkWell(
                                   onTap: () {
                                     FocusScope.of(context).unfocus();
@@ -885,7 +976,7 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                                           borderRadius:
                                               BorderRadius.circular(2),
                                           border: Border.all(color: btnColor)),
-                                      padding: EdgeInsets.all(2),
+                                      padding: const EdgeInsets.all(2),
                                       child: Image.asset(
                                         adultIcon,
                                         width: 24,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cab/model/package_models.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/res/Custom%20Page%20Layout/commonPage_Layout.dart';
+import 'package:flutter_cab/res/Custom%20Widgets/custom_viewmore_viewless.dart';
 import 'package:flutter_cab/res/Custom%20Widgets/multi_imageSlider_ContainerWidget.dart';
 import 'package:flutter_cab/res/customAppBar_widget.dart';
 import 'package:flutter_cab/res/customContainer.dart';
@@ -373,19 +374,8 @@ class _ActivityContainerState extends State<ActivityContainer> {
             //   textColor: textColor,
             //   fontWeight: FontWeight.w200,
             // ),
-            ReadMoreText(
-              widget.description,
-              style: GoogleFonts.lato(
-                fontSize: 14,
-                // textEllipsis: true,
-                color: blackColor,
-                fontWeight: FontWeight.w400,
-              ),
-              moreStyle: const TextStyle(
-                  fontWeight: FontWeight.w600, color: redColor, fontSize: 15),
-              lessStyle: const TextStyle(
-                  fontWeight: FontWeight.w600, color: redColor, fontSize: 15),
-            ),
+            CustomViewmoreViewless(moreText: widget.description),
+
             const SizedBox(height: 15),
             // words.length >= 30 ? Padding(
             //   padding: const EdgeInsets.only(bottom: 10),

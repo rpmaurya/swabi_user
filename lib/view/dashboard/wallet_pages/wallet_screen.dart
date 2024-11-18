@@ -188,11 +188,8 @@ class _WalletScreenState extends State<WalletScreen> {
                 Expanded(
                     child: GestureDetector(
                   onTap: () {
-                    // Navigator.push(
-                    //     context,
-                    //     MaterialPageRoute(
-                    //         builder: (context) =>
-                    //             const RechargeHistoryScreen()));
+                    context.push('/walletHistory',
+                        extra: {'userId': widget.userId});
                   },
                   child: cardItem(
                       const Icon(

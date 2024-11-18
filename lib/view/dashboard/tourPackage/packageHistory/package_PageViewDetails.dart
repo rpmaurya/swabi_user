@@ -10,6 +10,7 @@ import 'package:flutter_cab/model/payment_refund_model.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/res/Custom%20Page%20Layout/commonPage_Layout.dart';
 import 'package:flutter_cab/res/Custom%20Widgets/custom_phonefield.dart';
+import 'package:flutter_cab/res/Custom%20Widgets/custom_viewmore_viewless.dart';
 import 'package:flutter_cab/res/Custom%20Widgets/multi_imageSlider_ContainerWidget.dart';
 import 'package:flutter_cab/res/customAlertBox.dart';
 import 'package:flutter_cab/res/customAppBar_widget.dart';
@@ -2049,18 +2050,8 @@ class _ItineraryActivityContainerState
           textColor: greenColor,
         ),
         const SizedBox(height: 5),
-        ReadMoreText(
-          data.activity.description,
-          style: GoogleFonts.lato(
-            fontSize: 16,
-            color: blackColor,
-            fontWeight: FontWeight.w400,
-          ),
-          moreStyle: const TextStyle(
-              fontWeight: FontWeight.w500, color: redColor, fontSize: 15),
-          lessStyle: const TextStyle(
-              fontWeight: FontWeight.w500, color: redColor, fontSize: 15),
-        ),
+        CustomViewmoreViewless(moreText: data.activity.description),
+
         const SizedBox(height: 5),
         _buildInfoRow("Activity Hours", data.activity.activityHours,
             "Time To Visit", data.activity.bestTimeToVisit),

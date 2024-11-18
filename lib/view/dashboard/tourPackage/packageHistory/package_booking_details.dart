@@ -1,5 +1,7 @@
 // import 'dart:ffi';
 
+import 'dart:convert';
+
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -10,6 +12,7 @@ import 'package:flutter_cab/model/payment_refund_model.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/res/Custom%20Page%20Layout/commonPage_Layout.dart';
 import 'package:flutter_cab/res/Custom%20Widgets/custom_phonefield.dart';
+import 'package:flutter_cab/res/Custom%20Widgets/custom_viewmore_viewless.dart';
 import 'package:flutter_cab/res/Custom%20Widgets/multi_imageSlider_ContainerWidget.dart';
 import 'package:flutter_cab/res/customAlertBox.dart';
 import 'package:flutter_cab/res/customAppBar_widget.dart';
@@ -1284,16 +1287,32 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
                           ),
                         ),
                         Text(':', style: titleTextStyle),
+
                         const SizedBox(width: 10),
                         Flexible(
-                          child: CustomButtonSmall(
-                              width: 120,
-                              height: 35,
-                              btnHeading: 'View Issue',
+                          child: GestureDetector(
                               onTap: () {
                                 context.push("/raiseIssueDetail");
-                              }),
-                        )
+                              },
+                              child: const Text(
+                                'View Issue',
+                                style: TextStyle(
+                                    color: greenColor,
+                                    fontWeight: FontWeight.w600,
+                                    decoration: TextDecoration.underline,
+                                    decorationColor: greenColor,
+                                    decorationThickness: 1.5),
+                              )),
+                        ),
+                        // Flexible(
+                        //   child: CustomButtonSmall(
+                        //       width: 120,
+                        //       height: 35,
+                        //       btnHeading: 'View Issue',
+                        //       onTap: () {
+                        //         context.push("/raiseIssueDetail");
+                        //       }),
+                        // )
                       ],
                     ),
               bookingItem(
@@ -1414,89 +1433,98 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
         ),
 
         ///Members Details Container
-        CommonContainer(
-          padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
-          width: double.infinity,
-          elevation: 0,
-          borderRadius: BorderRadius.circular(5),
-          borderReq: true,
-          borderColor: naturalGreyColor.withOpacity(0.3),
-          child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: DataTable(
-                columnSpacing: 18,
-                headingRowHeight: 40,
-                dividerThickness: 0,
-                dataTextStyle: titleTextStyle1,
-                columns: const [
-                  DataColumn(
-                      label: CustomTextWidget(
-                    content: "Id",
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
-                  )),
-                  DataColumn(
-                      label: SizedBox(
-                          // width: 60,
-                          child: CustomTextWidget(
-                              content: "Name",
-                              fontSize: 18,
-                              fontWeight: FontWeight.w700))),
-                  DataColumn(
-                      label: CustomTextWidget(
-                          content: "Age",
-                          fontSize: 18,
-                          fontWeight: FontWeight.w700)),
-                  DataColumn(
-                      label: CustomTextWidget(
-                          content: "Type",
-                          fontSize: 18,
-                          fontWeight: FontWeight.w700)),
-                  DataColumn(
-                      label: CustomTextWidget(
-                          content: "Gender",
-                          fontSize: 18,
-                          fontWeight: FontWeight.w700)),
-                ],
-                rows: widget.memberList
-                    .map((PackageHIstoryDetailsMemberList members) => DataRow(
-                          cells: [
-                            DataCell(CustomText(
-                              content: members.memberId.toString(),
-                              textEllipsis: true,
-                            )),
-                            DataCell(SizedBox(
-                                // width: 60,
-                                child: CustomText(
-                                    // maxline: 2,
-                                    textLenght: 20,
-                                    needTextLenght: true,
-                                    align: TextAlign.start,
-                                    textEllipsis: true,
-                                    content: members.name.toString()))),
-                            DataCell(CustomText(
-                                content: '${members.age}${members.ageUnit}')),
-                            DataCell(CustomText(
-                              textColor: (() {
-                                int age = int.parse(members.age.toString());
-                                return age >= 60
-                                    ? redColor
-                                    : null; // Set color to red for Senior, otherwise use default
-                              })(),
-                              content: (() {
-                                int age = int.parse(members.age.toString());
+        Scrollbar(
+          controller: _scrollController,
+          thumbVisibility: true,
+          radius: const Radius.circular(10),
+          child: CommonContainer(
+            padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
+            width: double.infinity,
+            elevation: 0,
+            borderRadius: BorderRadius.circular(5),
+            borderReq: true,
+            borderColor: naturalGreyColor.withOpacity(0.3),
+            child: SingleChildScrollView(
+              controller: _scrollController,
+              scrollDirection: Axis.horizontal,
+              child: DataTable(
+                  columnSpacing: 18,
+                  headingRowHeight: 40,
+                  dividerThickness: 0,
+                  dataTextStyle: titleTextStyle1,
+                  columns: const [
+                    DataColumn(
+                        label: CustomTextWidget(
+                      content: "Id",
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700,
+                    )),
+                    DataColumn(
+                        label: SizedBox(
+                            // width: 60,
+                            child: CustomTextWidget(
+                                content: "Name",
+                                fontSize: 18,
+                                fontWeight: FontWeight.w700))),
+                    DataColumn(
+                        label: CustomTextWidget(
+                            content: "Age",
+                            fontSize: 18,
+                            fontWeight: FontWeight.w700)),
+                    DataColumn(
+                        label: CustomTextWidget(
+                            content: "Type",
+                            fontSize: 18,
+                            fontWeight: FontWeight.w700)),
+                    DataColumn(
+                        label: CustomTextWidget(
+                            content: "Gender",
+                            fontSize: 18,
+                            fontWeight: FontWeight.w700)),
+                  ],
+                  rows: widget.memberList
+                      .map((PackageHIstoryDetailsMemberList members) => DataRow(
+                            cells: [
+                              DataCell(CustomText(
+                                content: members.memberId.toString(),
+                                textEllipsis: true,
+                              )),
+                              DataCell(SizedBox(
+                                  // width: 60,
+                                  child: CustomText(
+                                      // maxline: 2,
+                                      textLenght: 20,
+                                      needTextLenght: true,
+                                      align: TextAlign.start,
+                                      textEllipsis: true,
+                                      content: utf8.decode(
+                                          members.name.runes.toList())))),
+                              DataCell(CustomText(
+                                  content: '${members.age}${members.ageUnit}')),
+                              DataCell(CustomText(
+                                textColor: (() {
+                                  int age = int.parse(members.age.toString());
+                                  return age >= 60
+                                      ? redColor
+                                      : null; // Set color to red for Senior, otherwise use default
+                                })(),
+                                content: (() {
+                                  int age = int.parse(members.age.toString());
 
-                                if (members.ageUnit == 'Month') return 'Infant';
-                                if (age < 18) return 'Child';
-                                if (age < 60) return 'Adult';
-                                return 'Senior*';
-                                // return age.toString();  // Display the age as-is for other cases
-                              })(),
-                            )),
-                            DataCell(CustomText(content: members.gender)),
-                          ],
-                        ))
-                    .toList()),
+                                  if (members.ageUnit == 'Month') {
+                                    return 'Infant';
+                                  }
+                                  if (age < 18) return 'Child';
+                                  if (age < 60) return 'Adult';
+                                  return 'Senior*';
+                                  // return age.toString();  // Display the age as-is for other cases
+                                })(),
+                              )),
+                              DataCell(CustomText(content: members.gender)),
+                            ],
+                          ))
+                      .toList()),
+            ),
           ),
         ),
         Padding(
@@ -1728,40 +1756,45 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            (widget.getIssueByBookingId?.data ?? []).isEmpty
-                ? CustomButtonSmall(
-                    width: 120,
-                    height: 40,
-                    btnHeading: 'Raised Issue',
-                    onTap: () {
-                      showModalBottomSheet(
-                        context: context,
-                        isDismissible: false,
-                        backgroundColor: background,
-                        isScrollControlled: true,
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.vertical(
-                            top: Radius.circular(10),
-                          ),
-                        ),
-                        builder: (BuildContext context) {
-                          return Padding(
-                            padding: EdgeInsets.only(
-                                bottom:
-                                    MediaQuery.of(context).viewInsets.bottom),
-                            child: SingleChildScrollView(child: StatefulBuilder(
-                                builder: (BuildContext context,
-                                    StateSetter setstate) {
-                              return RaiseIssueDialog(
-                                bookingId: widget.id,
-                                bookingType: 'PACKAGE_BOOKING',
+            (widget.bookingStatus == "CANCELLED" ||
+                    widget.bookingStatus == "COMPLETED")
+                ? Container()
+                : (widget.getIssueByBookingId?.data ?? []).isEmpty
+                    ? CustomButtonSmall(
+                        width: 120,
+                        height: 40,
+                        btnHeading: 'Raised Issue',
+                        onTap: () {
+                          showModalBottomSheet(
+                            context: context,
+                            isDismissible: false,
+                            backgroundColor: background,
+                            isScrollControlled: true,
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.vertical(
+                                top: Radius.circular(10),
+                              ),
+                            ),
+                            builder: (BuildContext context) {
+                              return Padding(
+                                padding: EdgeInsets.only(
+                                    bottom: MediaQuery.of(context)
+                                        .viewInsets
+                                        .bottom),
+                                child: SingleChildScrollView(child:
+                                    StatefulBuilder(builder:
+                                        (BuildContext context,
+                                            StateSetter setstate) {
+                                  return RaiseIssueDialog(
+                                    bookingId: widget.id,
+                                    bookingType: 'PACKAGE_BOOKING',
+                                  );
+                                })),
                               );
-                            })),
+                            },
                           );
-                        },
-                      );
-                    })
-                : const SizedBox(),
+                        })
+                    : const SizedBox(),
             widget.bookingStatus != "CANCELLED"
                 ? Padding(
                     padding: const EdgeInsets.symmetric(vertical: 5),
@@ -2049,18 +2082,8 @@ class _ItineraryActivityContainerState
           textColor: greenColor,
         ),
         const SizedBox(height: 5),
-        ReadMoreText(
-          data.activity.description,
-          style: GoogleFonts.lato(
-            fontSize: 16,
-            color: blackColor,
-            fontWeight: FontWeight.w400,
-          ),
-          moreStyle: const TextStyle(
-              fontWeight: FontWeight.w500, color: redColor, fontSize: 15),
-          lessStyle: const TextStyle(
-              fontWeight: FontWeight.w500, color: redColor, fontSize: 15),
-        ),
+        CustomViewmoreViewless(moreText: data.activity.description),
+
         const SizedBox(height: 5),
         _buildInfoRow("Activity Hours", data.activity.activityHours,
             "Time To Visit", data.activity.bestTimeToVisit),

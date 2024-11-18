@@ -597,14 +597,29 @@ class _RentalBookingContainerState extends State<RentalBookingContainer> {
                             Text(':', style: titleTextStyle),
                             const SizedBox(width: 10),
                             Flexible(
-                              child: CustomButtonSmall(
-                                  width: 120,
-                                  height: 30,
-                                  btnHeading: 'View Issue',
+                              child: GestureDetector(
                                   onTap: () {
                                     context.push("/raiseIssueDetail");
-                                  }),
-                            )
+                                  },
+                                  child: const Text(
+                                    'View Issue',
+                                    style: TextStyle(
+                                        color: greenColor,
+                                        fontWeight: FontWeight.w600,
+                                        decoration: TextDecoration.underline,
+                                        decorationColor: greenColor,
+                                        decorationThickness: 1.5),
+                                  )),
+                            ),
+                            // Flexible(
+                            //   child: CustomButtonSmall(
+                            //       width: 120,
+                            //       height: 30,
+                            //       btnHeading: 'View Issue',
+                            //       onTap: () {
+                            //         context.push("/raiseIssueDetail");
+                            //       }),
+                            // )
                           ],
                         ),
                   bookingItem(
