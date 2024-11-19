@@ -181,17 +181,18 @@ class _home_screenState extends State<home_screen>
                   child: Row(
                     children: [
                       Text(
-                        userdata?.firstName.isNotEmpty == true
-                            ? userdata?.firstName[0].toUpperCase() ?? ''
-                            : '',
+                        // userdata?.firstName.isNotEmpty == true
+                        //     ? userdata?.firstName[0].toUpperCase() ?? ''
+                        //     : '',
+                        userdata?.firstName.toString() ?? '',
                         style: titleTextStyle,
                       ),
-                      Text(
-                        userdata?.lastName.isNotEmpty == true
-                            ? userdata?.lastName[0].toUpperCase() ?? ''
-                            : "",
-                        style: titleTextStyle,
-                      ),
+                      // Text(
+                      //   userdata?.lastName.isNotEmpty == true
+                      //       ? userdata?.lastName[0].toUpperCase() ?? ''
+                      //       : "",
+                      //   style: titleTextStyle,
+                      // ),
                     ],
                   ),
                 ),

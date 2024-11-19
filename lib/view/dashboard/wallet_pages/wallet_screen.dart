@@ -38,197 +38,200 @@ class _WalletScreenState extends State<WalletScreen> {
         heading: "My Wallet",
       ),
       body: PageLayout_Page(
-        child: Column(
-          children: [
-            Material(
-              elevation: 1,
-              color: background,
-              borderRadius: BorderRadius.circular(5),
-              child: Container(
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(5)),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Wallet Balance',
-                      style: titleTextStyle,
-                    ),
-                    Text(
-                      'AED 00',
-                      style: titleTextStyle,
-                    )
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            Form(
-              key: _formKey,
-              child: Container(
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10)),
-                child: Padding(
-                  padding: const EdgeInsets.all(15.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              Material(
+                elevation: 1,
+                color: background,
+                borderRadius: BorderRadius.circular(5),
+                child: Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(5)),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        "Add Balance",
+                        'Wallet Balance',
                         style: titleTextStyle,
                       ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Customtextformfield(
-                        controller: amountcontroller,
-                        hintText: 'Enter Amount',
-                        onChanged: (value) {
-                          setState(() {
-                            result = value;
-
-                            debugPrint('object$result');
-                          });
-                        },
-                        validator: (p0) {
-                          if (p0 == null || p0.isEmpty) {
-                            return 'Please enter amount';
-                          }
-                          return null;
-                        },
-                      ),
-                      // TextField(
-                      //   controller: amountcontroller,
-                      //   decoration: const InputDecoration(
-                      //       contentPadding: EdgeInsets.symmetric(
-                      //           vertical: 6, horizontal: 10),
-                      //       border: OutlineInputBorder(),
-                      //       hintText: 'Enter Amount'),
-                      //   keyboardType: TextInputType.number,
-                      //   onChanged: (value) {
-                      //     setState(() {
-                      //       result = value;
-
-                      //       debugPrint('object$result');
-                      //     });
-                      //   },
-                      // ),
-                      const SizedBox(
-                        height: 20,
-                      ),
                       Text(
-                        'Recommend',
-                        style: titleText,
-                      ),
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      GroupButton(
-                        buttons: const ['+1000', '+2000', '+5000'],
-                        onSelected: (index, int i, isSelected) async {
-                          _addValues(result, index);
-                          setState(() {
-                            amountcontroller.text = result;
-                          });
-                          debugPrint('$i');
-                        },
-                        options: GroupButtonOptions(
-                            elevation: 2,
-                            groupRunAlignment: GroupRunAlignment.start,
-                            unselectedTextStyle: const TextStyle(
-                                fontSize: 12, color: Colors.black),
-                            textPadding:
-                                const EdgeInsets.only(left: 15, right: 15),
-                            textAlign: TextAlign.center,
-                            buttonHeight: 35,
-                            runSpacing: 25,
-                            selectedTextStyle: const TextStyle(color: btnColor),
-                            selectedColor: background,
-                            unselectedColor: background,
-                            alignment: Alignment.center,
-                            unselectedBorderColor: Colors.black54,
-                            selectedBorderColor: btnColor,
-                            borderRadius: BorderRadius.circular(5),
-                            mainGroupAlignment: MainGroupAlignment.start),
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      Center(
-                          child: CustomButtonSmall(
-                              width: 130,
-                              height: 45,
-                              btnHeading: 'ADD MONEY',
-                              onTap: () {
-                                if (_formKey.currentState!.validate()) {}
-                                // Navigator.push(
-                                //     context,
-                                //     MaterialPageRoute(
-                                //         builder: (context) => AddMoneyScreen(
-                                //             getAmount: result)));
-                              })),
-                      const SizedBox(
-                        height: 10,
+                        'AED 00',
+                        style: titleTextStyle,
                       )
                     ],
                   ),
                 ),
               ),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            Row(
-              children: [
-                Expanded(
-                    child: GestureDetector(
-                  onTap: () {
-                    context.push('/walletHistory',
-                        extra: {'userId': widget.userId});
-                  },
-                  child: cardItem(
-                      const Icon(
-                        Icons.wallet_rounded,
-                        color: btnColor,
-                      ),
-                      'WALLET HISTORY'),
-                )),
-                const SizedBox(
-                  width: 10,
+              const SizedBox(
+                height: 20,
+              ),
+              Form(
+                key: _formKey,
+                child: Container(
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10)),
+                  child: Padding(
+                    padding: const EdgeInsets.all(15.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Add Balance",
+                          style: titleTextStyle,
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Customtextformfield(
+                          controller: amountcontroller,
+                          hintText: 'Enter Amount',
+                          onChanged: (value) {
+                            setState(() {
+                              result = value;
+
+                              debugPrint('object$result');
+                            });
+                          },
+                          validator: (p0) {
+                            if (p0 == null || p0.isEmpty) {
+                              return 'Please enter amount';
+                            }
+                            return null;
+                          },
+                        ),
+                        // TextField(
+                        //   controller: amountcontroller,
+                        //   decoration: const InputDecoration(
+                        //       contentPadding: EdgeInsets.symmetric(
+                        //           vertical: 6, horizontal: 10),
+                        //       border: OutlineInputBorder(),
+                        //       hintText: 'Enter Amount'),
+                        //   keyboardType: TextInputType.number,
+                        //   onChanged: (value) {
+                        //     setState(() {
+                        //       result = value;
+
+                        //       debugPrint('object$result');
+                        //     });
+                        //   },
+                        // ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        Text(
+                          'Recommend',
+                          style: titleText,
+                        ),
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        GroupButton(
+                          buttons: const ['+1000', '+2000', '+5000'],
+                          onSelected: (index, int i, isSelected) async {
+                            _addValues(result, index);
+                            setState(() {
+                              amountcontroller.text = result;
+                            });
+                            debugPrint('$i');
+                          },
+                          options: GroupButtonOptions(
+                              elevation: 2,
+                              groupRunAlignment: GroupRunAlignment.start,
+                              unselectedTextStyle: const TextStyle(
+                                  fontSize: 12, color: Colors.black),
+                              textPadding:
+                                  const EdgeInsets.only(left: 15, right: 15),
+                              textAlign: TextAlign.center,
+                              buttonHeight: 35,
+                              runSpacing: 25,
+                              selectedTextStyle:
+                                  const TextStyle(color: btnColor),
+                              selectedColor: background,
+                              unselectedColor: background,
+                              alignment: Alignment.center,
+                              unselectedBorderColor: Colors.black54,
+                              selectedBorderColor: btnColor,
+                              borderRadius: BorderRadius.circular(5),
+                              mainGroupAlignment: MainGroupAlignment.start),
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        Center(
+                            child: CustomButtonSmall(
+                                width: 130,
+                                height: 45,
+                                btnHeading: 'ADD MONEY',
+                                onTap: () {
+                                  if (_formKey.currentState!.validate()) {}
+                                  // Navigator.push(
+                                  //     context,
+                                  //     MaterialPageRoute(
+                                  //         builder: (context) => AddMoneyScreen(
+                                  //             getAmount: result)));
+                                })),
+                        const SizedBox(
+                          height: 10,
+                        )
+                      ],
+                    ),
+                  ),
                 ),
-                Expanded(
-                    child: GestureDetector(
-                  onTap: () {
-                    context.push('/myTransaction',
-                        extra: {"userId": widget.userId});
-                  },
-                  child: cardItem(
-                      Image.asset(
-                        transaction,
-                        width: 22,
-                        height: 22,
-                        color: btnColor,
-                      ),
-                      'TRANSACTION HISTORY'),
-                )),
-                const SizedBox(
-                  width: 10,
-                ),
-                Expanded(
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              Row(
+                children: [
+                  Expanded(
+                      child: GestureDetector(
+                    onTap: () {
+                      context.push('/walletHistory',
+                          extra: {'userId': widget.userId});
+                    },
                     child: cardItem(
                         const Icon(
-                          Icons.receipt_outlined,
+                          Icons.wallet_rounded,
                           color: btnColor,
                         ),
-                        'REFUND HISTORY'))
-              ],
-            )
-          ],
+                        'WALLET HISTORY'),
+                  )),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  Expanded(
+                      child: GestureDetector(
+                    onTap: () {
+                      context.push('/myTransaction',
+                          extra: {"userId": widget.userId});
+                    },
+                    child: cardItem(
+                        Image.asset(
+                          transaction,
+                          width: 22,
+                          height: 22,
+                          color: btnColor,
+                        ),
+                        'TRANSACTION HISTORY'),
+                  )),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  Expanded(
+                      child: cardItem(
+                          const Icon(
+                            Icons.receipt_outlined,
+                            color: btnColor,
+                          ),
+                          'REFUND HISTORY'))
+                ],
+              )
+            ],
+          ),
         ),
       ),
     );
