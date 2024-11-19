@@ -646,7 +646,7 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                                             MediaQuery.of(context).size.width /
                                                 2),
                                     child: const Text(
-                                      '*Children under 2 years old can be booked for free. and Certain activities are not recommended for senior citizens due to potential health risks.*',
+                                      '*Children under 2 years old can be booked for free.Certain activities are not recommended for senior citizens due to potential health risks.*',
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         color: btnColor,
