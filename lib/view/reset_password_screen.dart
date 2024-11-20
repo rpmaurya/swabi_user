@@ -72,6 +72,11 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                           // obscuringCharacter: '*',
                           controller: password,
                           hintText: 'New password',
+                          inputFormatters: [
+                            FilteringTextInputFormatter.allow(
+                              RegExp(r'^[\u0000-\u007F]*$'),
+                            ),
+                          ],
                           suffixIcons: IconButton(
                             icon: Icon(
                               obscurePassword
@@ -113,6 +118,11 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                           // obscuringCharacter: '*',
                           controller: confirmpass,
                           hintText: 'Confirm new password',
+                          inputFormatters: [
+                            FilteringTextInputFormatter.allow(
+                              RegExp(r'^[\u0000-\u007F]*$'),
+                            ),
+                          ],
                           suffixIcons: IconButton(
                             icon: Icon(
                               obscureConfirmPassword

@@ -117,9 +117,11 @@ class _EditProfiePageState extends State<EditProfiePage> {
               Customtextformfield(
                 focusNode: focusNode1,
                 controller: controllers[0],
-                // inputFormatters: [
-                //   FilteringTextInputFormatter.allow(RegExp("[a-zA-Z]")),
-                // ],
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(
+                    RegExp(r'^[\u0000-\u007F]*$'),
+                  ),
+                ],
                 // prefixiconvisible: true,
                 fillColor: background,
                 img: user,
@@ -143,9 +145,11 @@ class _EditProfiePageState extends State<EditProfiePage> {
                 focusNode: focusNode2,
                 controller: controllers[1],
                 // prefixiconvisible: true,
-                // inputFormatters: [
-                //   FilteringTextInputFormatter.allow(RegExp("[a-zA-Z]")),
-                // ],
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(
+                    RegExp(r'^[\u0000-\u007F]*$'),
+                  ),
+                ],
                 fillColor: background,
                 img: user,
                 hintText: 'Last Name',

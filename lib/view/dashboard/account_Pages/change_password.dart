@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_cab/data/validatorclass.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/res/Custom%20Page%20Layout/commonPage_Layout.dart';
@@ -208,6 +209,11 @@ class _ChangePasswordState extends State<ChangePassword> {
               controller: _oldPasswordController,
               enableInteractiveSelection: _obscureOldPassword,
               hintText: 'Enter current password',
+              inputFormatters: [
+                FilteringTextInputFormatter.allow(
+                  RegExp(r'^[\u0000-\u007F]*$'),
+                ),
+              ],
               suffixIcons: IconButton(
                 icon: Icon(
                   _obscureOldPassword ? Icons.visibility : Icons.visibility_off,
@@ -240,6 +246,11 @@ class _ChangePasswordState extends State<ChangePassword> {
               enableInteractiveSelection: _obscureNewPassword,
               controller: _newPasswordController,
               hintText: 'Enter new password',
+              inputFormatters: [
+                FilteringTextInputFormatter.allow(
+                  RegExp(r'^[\u0000-\u007F]*$'),
+                ),
+              ],
               suffixIcons: IconButton(
                 icon: Icon(
                   _obscureNewPassword ? Icons.visibility : Icons.visibility_off,
@@ -273,6 +284,11 @@ class _ChangePasswordState extends State<ChangePassword> {
               enableInteractiveSelection: _obscureConfirmPassword,
               controller: _confirmPasswordController,
               hintText: 'Enter confirm new password',
+              inputFormatters: [
+                FilteringTextInputFormatter.allow(
+                  RegExp(r'^[\u0000-\u007F]*$'),
+                ),
+              ],
               suffixIcons: IconButton(
                 icon: Icon(
                   _obscureConfirmPassword

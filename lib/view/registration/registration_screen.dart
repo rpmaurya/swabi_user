@@ -134,9 +134,11 @@ class _registration_screenState extends State<registration_screen> {
                     Customtextformfield(
                       focusNode: firstNameFocus,
                       controller: controller[0],
-                      // inputFormatters: [
-                      //   FilteringTextInputFormatter.allow(RegExp("[a-zA-Z]")),
-                      // ],
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(
+                          RegExp(r'^[\u0000-\u007F]*$'),
+                        ),
+                      ],
                       keyboardType: TextInputType.name,
                       fillColor: background,
                       hintText: 'Enter your first name',
@@ -153,9 +155,11 @@ class _registration_screenState extends State<registration_screen> {
                       focusNode: lastNameFocus,
                       controller: controller[1],
                       keyboardType: TextInputType.name,
-                      // inputFormatters: [
-                      //   FilteringTextInputFormatter.allow(RegExp("[a-zA-Z]")),
-                      // ],
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(
+                          RegExp(r'^[\u0000-\u007F]*$'),
+                        ),
+                      ],
                       fillColor: background,
                       hintText: 'Enter your last name',
                       validator: (value) {
@@ -259,6 +263,7 @@ class _registration_screenState extends State<registration_screen> {
                                   debounceTime: 400,
                                   // countries: ["ae", "fr"],
                                   isLatLngRequired: true,
+
                                   getPlaceDetailWithLatLng: (prediction) {
                                     print(
                                         "Latitude: ${prediction.lat}, Longitude: ${prediction.lng}");
@@ -332,7 +337,7 @@ class _registration_screenState extends State<registration_screen> {
                     CustomDropdownButton(
                       controller: controller[4],
                       focusNode: genderFocus,
-                      itemsList: ['Male', 'Female'],
+                      itemsList: const ['Male', 'Female'],
                       onChanged: (value) {
                         setState(() {
                           // controller[4].text = value ?? '';
@@ -415,6 +420,11 @@ class _registration_screenState extends State<registration_screen> {
                       controller: controller[6],
                       fillColor: background,
                       hintText: 'Enter your password',
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(
+                          RegExp(r'^[\u0000-\u007F]*$'),
+                        ),
+                      ],
                       suffixIcons: IconButton(
                         icon: Icon(
                           obscurePassword
@@ -443,6 +453,11 @@ class _registration_screenState extends State<registration_screen> {
                       enableInteractiveSelection: obscureConfirmPassword,
                       controller: controller[7],
                       fillColor: background,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(
+                          RegExp(r'^[\u0000-\u007F]*$'),
+                        ),
+                      ],
                       suffixIcons: IconButton(
                         icon: Icon(
                           obscureConfirmPassword

@@ -76,6 +76,9 @@ class _CustomtextformfieldState extends State<Customtextformfield> {
         textAlignVertical: widget.textAlignVertical,
         inputFormatters: [
           LengthLimitingTextInputFormatter(widget.textLength),
+          FilteringTextInputFormatter.allow(
+            RegExp(r'^[\u0000-\u007F]*$'), // Allows ASCII characters only
+          ),
           ...?widget.inputFormatters
         ],
         maxLines: widget.maxLines,

@@ -244,9 +244,11 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                 focusNode: focusNode1,
                 controller: nameController,
                 hintText: 'Enter Name',
-                // inputFormatters: [
-                //   FilteringTextInputFormatter.allow(RegExp("[a-zA-Z]")),
-                // ],
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(
+                    RegExp(r'^[\u0000-\u007F]*$'),
+                  ),
+                ],
                 // errorText:
                 //     validationMessage.isEmpty ? '' : validationMessage,
                 validator: (value) {
@@ -418,9 +420,12 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                 focusNode: focusNode1,
                 controller: nameController,
                 hintText: 'Enter Name',
-                // inputFormatters: [
-                //   FilteringTextInputFormatter.allow(RegExp("[a-zA-Z]")),
-                // ],
+                keyboardType: TextInputType.name,
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(
+                    RegExp(r'^[\u0000-\u007F]*$'),
+                  ),
+                ],
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter name';
