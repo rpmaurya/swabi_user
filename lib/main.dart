@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_cab/utils/routes/route.dart';
 import 'package:flutter_cab/view_model/auth_view_model.dart';
+import 'package:flutter_cab/view_model/notification_view_model.dart';
 import 'package:flutter_cab/view_model/offer_view_model.dart';
 import 'package:flutter_cab/view_model/package_view_model.dart';
 import 'package:flutter_cab/view_model/payment_gateway_view_model.dart';
@@ -68,6 +69,7 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (context) => GetTranactionViewModel()),
         ChangeNotifierProvider(
             create: (context) => GetPaymentRefundViewModel()),
+        ChangeNotifierProvider(create: (context) => NotificationViewModel()),
       ],
       child: const MyApp(),
     ));

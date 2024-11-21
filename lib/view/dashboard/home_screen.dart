@@ -11,6 +11,7 @@ import 'package:flutter_cab/utils/color.dart';
 import 'package:flutter_cab/utils/text_styles.dart';
 import 'package:flutter_cab/view/dashboard/rental/rental_form.dart';
 import 'package:flutter_cab/view/dashboard/tourPackage/package_screen.dart';
+import 'package:flutter_cab/view_model/notification_view_model.dart';
 import 'package:flutter_cab/view_model/offer_view_model.dart';
 import 'package:flutter_cab/view_model/userProfile_view_model.dart';
 import 'package:flutter_cab/view_model/user_view_model.dart';
@@ -19,6 +20,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:badges/badges.dart' as badges;
 
 ///Home Screen Old
 class home_screen extends StatefulWidget {
@@ -33,11 +35,12 @@ class _home_screenState extends State<home_screen>
   UserViewModel userViewModel = UserViewModel();
   final ScrollController _scrollController = ScrollController();
   DateTime dateTime = DateTime.now();
+
   String uId = '';
   int selectIndex = -1;
   int initialIndex = 0;
   int _initialIndex = 0;
-
+  int unReadItem = 0;
   TabController? _tabcontroller;
   @override
   void initState() {
@@ -53,6 +56,7 @@ class _home_screenState extends State<home_screen>
         });
         Provider.of<UserProfileViewModel>(context, listen: false)
             .fetchUserProfileViewModelApi(context, {"userId": uId});
+        getNotification();
       });
       _tabcontroller?.addListener(() {
         setState(() {
@@ -64,6 +68,16 @@ class _home_screenState extends State<home_screen>
       //     context: context, date: DateFormat('dd-MM-yyyy').format(dateTime));
     });
     // _scrollController.addListener(_scrollListener);
+  }
+
+  void getNotification() {
+    Provider.of<NotificationViewModel>(context, listen: false)
+        .getAllNotificationList(
+            context: context,
+            userId: uId,
+            pageNumber: 0,
+            pageSize: 100,
+            readStatus: 'FALSE');
   }
 
   @override
@@ -82,7 +96,12 @@ class _home_screenState extends State<home_screen>
   Widget build(BuildContext context) {
     // print("UserId here at homeScreen $uId");
     userdata = context.watch<UserProfileViewModel>().DataList.data?.data;
-
+    unReadItem = context
+            .watch<NotificationViewModel>()
+            .getAllNotificationModel
+            ?.data
+            ?.totalElements ??
+        0;
     // offerListData = context.watch<OfferViewModel>().offerListModel;
     // isLoadingData = context.watch<OfferViewModel>().isLoading1;
     return PopScope(
@@ -142,15 +161,37 @@ class _home_screenState extends State<home_screen>
                 ],
               ),
               actions: [
-                InkWell(
-                    onTap: () {},
+                badges.Badge(
+                  position: badges.BadgePosition.topEnd(
+                      top: unReadItem == 0 ? 0 : -10, end: -10),
+                  showBadge: unReadItem == 0 ? false : true,
+                  ignorePointer: false,
+                  onTap: () {
+                    // context.push('/notification');
+                  },
+                  badgeContent: Text(
+                    unReadItem.toString(),
+                    // '100',
+                    style: const TextStyle(
+                        color: background,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w500),
+                  ),
+                  badgeStyle: const badges.BadgeStyle(
+                    badgeColor: greenColor,
+                    padding: EdgeInsets.all(5),
+                    elevation: 0,
+                  ),
+                  child: InkWell(
+                    onTap: () {
+                      context.push('/notification', extra: {"userId": uId});
+                    },
                     child: const Icon(
                       Icons.notifications_none_outlined,
                       color: btnColor,
                       size: 30,
-                    )),
-                const SizedBox(
-                  width: 5,
+                    ),
+                  ),
                 ),
                 Container(
                   width: 35, // Adjust to match the radius

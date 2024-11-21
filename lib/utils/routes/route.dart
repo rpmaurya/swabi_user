@@ -146,7 +146,10 @@ final GoRouter myRouter = GoRouter(
     GoRoute(
       path: '/notification',
       builder: (BuildContext context, GoRouterState state) {
-        return const NotificationPage();
+        var data = state.extra as Map<String, dynamic>;
+        return NotificationPage(
+          userId: data['userId'],
+        );
       },
     ),
     GoRoute(

@@ -41,4 +41,10 @@ class AppUrl {
   static var rentalCancellUrl = "/rental/cancel_rental_booking";
   static var getPackagelistUrl =
       "/package_booking/get_package_booking_by_userId";
+  static var getLatestNotificationUrl =
+      '/notification/get_latest_notification_by_receiverId';
+  static var updateNotificationStatusUrl =
+      '/notification/update_notification_status';
+  static var getAllNotificationUrl =
+      '/notification/get_notification_by_receiverId';
 }
