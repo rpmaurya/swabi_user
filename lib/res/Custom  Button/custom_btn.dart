@@ -32,7 +32,12 @@ class CustomButtonBig extends StatelessWidget {
           width: widht ?? AppDimension.getWidth(context) * .95,
           child: Center(
               child: loading
-                  ? const CircularProgressIndicator(
+                  // ? const CircularProgressIndicator(
+                  //     color: background,
+                  //   )
+                  ? const SpinKitWave(
+                      size: 15,
+                      duration: Duration(milliseconds: 200),
                       color: background,
                     )
                   : Text(
@@ -144,7 +149,7 @@ class CustomButtonSmall extends StatelessWidget {
           elevation: elevationReq ? elevation ?? 5 : 0,
           child: InkWell(
             borderRadius: borderRadius ?? BorderRadius.circular(5),
-            onTap: disable ? null : onTap,
+            onTap: (disable || loading) ? null : onTap,
             child: Container(
               height: height ?? 50,
               width: width,
@@ -153,11 +158,12 @@ class CustomButtonSmall extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 10),
               child: Center(
                   child: loading
-                      ? const CircularProgressIndicator(color: background)
-                      // ? const SpinKitWave(
-                      //     size: 18,
-                      //     color: background,
-                      //   )
+                      // ? const CircularProgressIndicator(color: background)
+                      ? const SpinKitWave(
+                          size: 15,
+                          duration: Duration(milliseconds: 500),
+                          color: background,
+                        )
                       : Text(btnHeading,
                           style: GoogleFonts.lato(
                               color: disable

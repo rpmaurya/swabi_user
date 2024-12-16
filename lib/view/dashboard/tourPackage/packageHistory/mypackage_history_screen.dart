@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/model/package_models.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
-import 'package:flutter_cab/res/Custom%20Page%20Layout/commonPage_Layout.dart';
 import 'package:flutter_cab/res/Custom%20Widgets/custom_tabbar.dart';
-import 'package:flutter_cab/res/Custom%20Widgets/multi_imageSlider_ContainerWidget.dart';
-import 'package:flutter_cab/res/customAppBar_widget.dart';
-import 'package:flutter_cab/res/customContainer.dart';
-import 'package:flutter_cab/res/customTextWidget.dart';
-import 'package:flutter_cab/utils/assets.dart';
+import 'package:flutter_cab/res/Custom%20Widgets/multi_image_slider_container_widget.dart';
+import 'package:flutter_cab/res/custom_container.dart';
+import 'package:flutter_cab/res/custom_text_widget.dart';
 import 'package:flutter_cab/utils/color.dart';
 import 'package:flutter_cab/utils/dimensions.dart';
 import 'package:flutter_cab/utils/text_styles.dart';
@@ -30,7 +27,7 @@ class _PackageHistoryManagementState extends State<PackageHistoryManagement>
     with SingleTickerProviderStateMixin {
   int pageLength = 40;
   ScrollController bookedPkgController = ScrollController();
-  List<String> tabList = ['ALL', 'BOOKED', 'COMPLETED', 'CANCELLED'];
+  List<String> tabList = ['ALL BOOKING', 'UPCOMING', 'COMPLETED', 'CANCELLED'];
   TabController? _tabController;
   int initialIndex = 0;
   int currentPage = 0;
@@ -49,7 +46,11 @@ class _PackageHistoryManagementState extends State<PackageHistoryManagement>
       isLoadingMore = true;
     });
 
-    String status = tabList[initialIndex]; // Get current tab status
+    String status = tabList[initialIndex] == 'ALL BOOKING'
+        ? 'ALL'
+        : tabList[initialIndex] == 'UPCOMING'
+            ? 'BOOKED'
+            : tabList[initialIndex]; // Get current tab status
 
     try {
       // Fetch data using Provider
@@ -138,16 +139,7 @@ class _PackageHistoryManagementState extends State<PackageHistoryManagement>
         .status
         .toString();
     debugPrint('status $status');
-    // return Scaffold(
-    //   backgroundColor: bgGreyColor,
-    //   // appBar: const CustomAppBar(
-    //   //   heading: 'My Package History',
-    //   // ),
-    //   appBar: AppBar(
-    //     title: Text('data'),
-    //     backgroundColor: background,
-    //   ),
-    //   body:
+   
     return Customtabbar(
         titleHeading: 'My Packages',
         controller: _tabController,
@@ -183,10 +175,10 @@ class _PackageHistoryManagementState extends State<PackageHistoryManagement>
                   color: greenColor,
                 ));
               } else if (response.status.toString() == "Status.error") {
-                return const Center(
+                return Center(
                     child: Text(
                   'No Data',
-                  style: TextStyle(color: redColor),
+                  style: nodataTextStyle,
                 ));
               } else if (response.status.toString() == "Status.completed") {
                 final data = response.data?.data.content ?? [];
@@ -196,10 +188,9 @@ class _PackageHistoryManagementState extends State<PackageHistoryManagement>
                   return Center(
                       child: Container(
                           decoration: const BoxDecoration(),
-                          child: const Text(
+                          child: Text(
                             'No Data Found',
-                            style: TextStyle(
-                                color: redColor, fontWeight: FontWeight.w600),
+                            style: nodataTextStyle,
                           )));
                 }
 
@@ -230,16 +221,7 @@ class _PackageHistoryManagementState extends State<PackageHistoryManagement>
                                 : bookedHistory[index].packagePrice == 'null'
                                     ? '0'
                                     : bookedHistory[index].packagePrice,
-                        // price: bookedHistory[index]
-                        //             .discountAmount
-                        //             .toString()
-                        //             .isEmpty ||
-                        //         bookedHistory[index]
-                        //                 .discountAmount
-                        //                 .toString() ==
-                        //             '0'
-                        //     ? bookedHistory[index].totalAmount
-                        //     : bookedHistory[index].discountAmount,
+                        
                         pkgName: bookedHistory[index].pkg.packageName,
                         location: bookedHistory[index].pkg.country,
                         imageList: bookedHistory[index]
@@ -278,7 +260,11 @@ class _PackageHistoryManagementState extends State<PackageHistoryManagement>
                 );
               }
 
-              return const Center(child: Text('No data found'));
+              return Center(
+                  child: Text(
+                'No data found',
+                style: nodataTextStyle,
+              ));
             },
           );
         }));
@@ -322,7 +308,7 @@ class PackageHistoryContainer extends StatelessWidget {
         child: Column(
           children: [
             SizedBox(
-              height: 200,
+              height: 220,
               width: double.infinity,
               child: MultiImageSlider(
                 images: List.generate(
@@ -364,8 +350,7 @@ class PackageHistoryContainer extends StatelessWidget {
               // height: 50,
               padding: const EdgeInsets.symmetric(horizontal: 10),
               margin: const EdgeInsets.only(bottom: 5),
-              // decoration: const BoxDecoration(
-              //     border: Border(bottom: BorderSide(color: naturalGreyColor))),
+            
               child: textTile(
                   lable1: 'Booking Id',
                   value1: pkgID,
@@ -376,9 +361,7 @@ class PackageHistoryContainer extends StatelessWidget {
                 // height: 50,
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 margin: const EdgeInsets.only(bottom: 5),
-                // decoration: const BoxDecoration(
-                //     border:
-                //         Border(bottom: BorderSide(color: naturalGreyColor))),
+               
                 child: textTile(
                     lable1: 'Date',
                     value1: bookingDate,

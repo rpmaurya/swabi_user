@@ -1,25 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/model/rentalbooking_model.dart';
+import 'package:flutter_cab/model/user_profile_model.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
+import 'package:flutter_cab/res/Custom%20Widgets/custom_paynow_modal.dart';
 import 'package:flutter_cab/res/Custom%20Widgets/custom_textformfield.dart';
-import 'package:flutter_cab/res/customAlertBox.dart';
-import 'package:flutter_cab/res/customAppBar_widget.dart';
-import 'package:flutter_cab/res/customTextWidget.dart';
+import 'package:flutter_cab/res/custom_appbar_widget.dart';
+import 'package:flutter_cab/res/custom_text_widget.dart';
+import 'package:flutter_cab/res/custom_modal_bottom_sheet.dart';
 import 'package:flutter_cab/utils/assets.dart';
 import 'package:flutter_cab/utils/color.dart';
-import 'package:flutter_cab/utils/dimensions.dart';
 import 'package:flutter_cab/utils/text_styles.dart';
 import 'package:flutter_cab/utils/utils.dart';
 import 'package:flutter_cab/view_model/offer_view_model.dart';
-import 'package:flutter_cab/view_model/payment_gateway_view_model.dart';
 import 'package:flutter_cab/view_model/rental_view_model.dart';
-import 'package:flutter_cab/view_model/services/payment_service.dart';
-import 'package:flutter_cab/view_model/userProfile_view_model.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:flutter_cab/view_model/user_profile_view_model.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 class BookYourCab extends StatefulWidget {
   final String carType;
@@ -68,20 +65,9 @@ class _BookYourCabState extends State<BookYourCab> {
   }
 
   bool isloading = false;
-  late BuildContext _savedContext;
+  // late BuildContext _savedContext;
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _savedContext = context;
-  }
-
-  @override
-  void dispose() {
-    if (mounted) {}
-    // Do not use context directly here; use _safeContext instead
-    super.dispose();
-  }
+  
 
   String? offerCode;
   double discountPercentage = 0;
@@ -106,7 +92,7 @@ class _BookYourCabState extends State<BookYourCab> {
 
   int checkBox = 0;
   List<Body> rentalData = [];
-  var rentalValidation, paymentOrderId, profileUser;
+  var rentalValidation, paymentOrderId;
 
   @override
   Widget build(BuildContext context) {
@@ -130,17 +116,17 @@ class _BookYourCabState extends State<BookYourCab> {
     debugPrint('payAbleamount.......$payableAmount');
     debugPrint('discountamount.......$disAmount');
 
-    // paymentOrderId = context
-    //     .watch<PaymentCreateOrderIdViewModel>()
-    //     .paymentOrderID
-    //     .data
-    //     ?.data
-    //     .razorpayOrderId;
-    profileUser = context.watch<UserProfileViewModel>().DataList.data?.data;
+    ProfileData? profileUser =
+        context.watch<UserProfileViewModel>().DataList.data?.data;
     List<Body> filteredData =
         rentalData.where((rental) => rental.carType == widget.carType).toList();
     debugPrint(widget.carType);
     // debugPrint(paymentOrderId);
+    String status = context
+        .watch<ConfirmRentalBookingViewModel>()
+        .rentalDataList
+        .status
+        .toString();
     return Scaffold(
       appBar: CustomAppBar(
         heading: "Book Your Ride",
@@ -182,6 +168,7 @@ class _BookYourCabState extends State<BookYourCab> {
                         setState(() {
                           visibleCoupon = false;
                           discountedAmount = 0;
+                          disAmount = 0;
                         });
                       },
                       onCouponTap: () {
@@ -194,7 +181,7 @@ class _BookYourCabState extends State<BookYourCab> {
                                 context: context,
                                 offerCode: couponController.text,
                                 bookingType: 'RENTAL_BOOKING',
-                                bookigAmount: payableAmount.toInt())
+                                bookigAmount: payableAmount)
                             .then((onValue) {
                           if (onValue?.status?.httpCode == '200') {
                             Utils.toastSuccessMessage(
@@ -218,398 +205,89 @@ class _BookYourCabState extends State<BookYourCab> {
                         });
                         // }
                       },
-                      onTap: () {
-                        ////
-                        if (rentalValidation.toString().isNotEmpty &&
-                            rentalValidation == "Success") {
-                          showDialog(
-                              context: context,
-                              builder: (context) => _showAlertBox(context, () {
-                                    setState(() {
-                                      debugPrint(checkBox.toString());
-                                    });
-                                    if (checkBox == 1) {
-                                      PaymentService paymentService =
-                                          PaymentService(
-                                        context: context,
-                                        onPaymentError: () {},
-                                        onPaymentSuccess:
-                                            (PaymentSuccessResponse response) {
-                                          debugPrint(
-                                              'paymentResponse#${response.orderId}');
 
-                                          setState(() {
-                                            isloading = true; // Show loader
-                                          });
-                                          if (isloading) {
-                                            loaderDailog();
-                                          }
-                                          // context.pop();
+                      confirmBooking: CustomModalbottomsheet(
+                        title: 'CONFIRM BOOKING',
+                        child: (rentalValidation.toString().isNotEmpty &&
+                                rentalValidation == "Success")
+                            ? CustomPaynowModal(
+                                sumAmount: double.parse(rental.totalPrice),
+                                discountAmount: disAmount,
+                                taxAmount: taxAmount,
+                                taxPercentage: taxPercentage,
+                                totalPayableAmount: discountedAmount == 0
+                                    ? payableAmount
+                                    : discountedAmount,
+                                carType: rental.carType,
+                                date: rental.date,
+                                userId: widget.userId,
+                                price: rental.totalPrice,
+                                hour: rental.hours,
+                                kilometer: rental.kilometers,
+                                offerCode: offerCode ?? '',
+                                pickUpLocation: rental.pickUpLocation,
+                                pickUpTime: rental.pickupTime,
+                                lati: widget.latitude,
+                                longi: widget.logitude,
+                                countryCode: profileUser?.countryCode ?? '',
+                                mobile: profileUser?.mobile ?? '',
+                                email: profileUser?.email ?? '',
+                              )
+                            : showConfirmation(
+                                context: context,
+                                title: 'Booking Alert',
+                                child: CustomPaynowModal(
+                                  sumAmount: double.parse(rental.totalPrice),
+                                  discountAmount: disAmount,
+                                  taxAmount: taxAmount,
+                                  taxPercentage: taxPercentage,
+                                  totalPayableAmount: discountedAmount == 0
+                                      ? payableAmount
+                                      : discountedAmount,
+                                  carType: rental.carType,
+                                  date: rental.date,
+                                  userId: widget.userId,
+                                  price: rental.totalPrice,
+                                  hour: rental.hours,
+                                  kilometer: rental.kilometers,
+                                  offerCode: offerCode ?? '',
+                                  pickUpLocation: rental.pickUpLocation,
+                                  pickUpTime: rental.pickupTime,
+                                  lati: widget.latitude,
+                                  longi: widget.logitude,
+                                  countryCode: profileUser?.countryCode ?? '',
+                                  mobile: profileUser?.mobile ?? '',
+                                  email: profileUser?.email ?? '',
+                                )),
+                      ),
 
-                                          Provider.of<PaymentVerifyViewModel>(
-                                                  _savedContext,
-                                                  listen: false)
-                                              .paymentVerifyViewModelApi(
-                                                  context: _savedContext,
-                                                  userId:
-                                                      widget.userId.toString(),
-                                                  paymentId: response.paymentId,
-                                                  razorpayOrderId:
-                                                      response.orderId,
-                                                  razorpaySignature:
-                                                      response.signature)
-                                              .then(
-                                            (value) {
-                                              if (value?.status.httpCode ==
-                                                  '200') {
-                                                print(
-                                                    'payment verification is successfull${value?.data.transactionId}');
-                                                debugPrint(response.orderId);
-                                                debugPrint(
-                                                  response.paymentId,
-                                                );
-                                                debugPrint(response.signature);
-                                                //   // Prepare API request body
-                                                Map<String, dynamic> data1 = {
-                                                  "date": rental.date,
-                                                  "pickupTime":
-                                                      rental.pickupTime,
-                                                  "bookerId": widget.userId,
-                                                  "bookingForId": widget.userId,
-                                                  "carType": rental.carType,
-                                                  "kilometers":
-                                                      rental.kilometers,
-                                                  "hours": rental.hours,
-                                                  "price": rental.totalPrice,
-                                                  "transactionId":
-                                                      value?.data.transactionId,
-                                                  "offerCode": offerCode,
-                                                  "discountAmount":
-                                                      disAmount.toInt(),
-                                                  "taxAmount": taxAmount,
-                                                  "taxPercentage":
-                                                      taxPercentage,
-                                                  "totalPayableAmount":
-                                                      discountedAmount == 0
-                                                          ? payableAmount
-                                                          : discountedAmount,
-                                                  "pickUpLocation": rental
-                                                      .pickUpLocation
-                                                      .trim()
-                                                      .replaceAll(
-                                                          RegExp(r'\s+'), ' '),
-                                                  "locationLatitude":
-                                                      widget.latitude,
-                                                  "locationLongitude":
-                                                      widget.logitude
-                                                };
-                                                Provider.of<
-                                                        RentalBookingViewModel>(
-                                                  _savedContext,
-                                                  listen: false,
-                                                )
-                                                    .rentalBookingViewModel(
-                                                      context: _savedContext,
-                                                      body: data1,
-                                                      userId: widget.userId,
-                                                    )
-                                                    .then((onValue) {})
-                                                    .catchError((error) {
-                                                  print('error....$error');
-                                                }).whenComplete(() {
-                                                  setState(() {
-                                                    isloading = false;
-                                                  });
-                                                });
-                                              }
-                                            },
-                                          );
-
-                                          // Call verify payment function after successful payment
-                                          // _verifyPayment(context, response);
-                                        },
-                                      );
-
-                                      paymentService.openCheckout(
-                                          amount:
-                                              double.parse(rental.totalPrice),
-                                          taxAmount: taxAmount,
-                                          taxPercentage: taxPercentage,
-                                          discountAmount: disAmount,
-                                          payableAmount: discountedAmount == 0
-                                              ? payableAmount
-                                              : discountedAmount,
-                                          userId: widget.userId.toString(),
-                                          coutryCode: profileUser?.countryCode,
-                                          mobileNo: profileUser?.mobile,
-                                          email: profileUser?.email);
-                                    } else if ((checkBox == 2)) {
-                                      debugPrint(
-                                          "${rental.totalPrice} Booking Price3");
-                                      context.push("/rentalForm/guestBooking",
-                                          extra: {
-                                            "date": rental.date,
-                                            "pickUpLocation":
-                                                rental.pickUpLocation,
-                                            "price": rental.totalPrice,
-                                            "hour": rental.hours,
-                                            "carType": rental.carType,
-                                            "bookerId": widget.userId,
-                                            "kilometer": rental.kilometers,
-                                            "pickUpTime": rental.pickupTime,
-                                            "offerCode": offerCode ?? '',
-                                            "discountAmount": disAmount.toInt(),
-                                            "taxAmount": taxAmount,
-                                            "taxPercentage": taxPercentage,
-                                            "payableAmount":
-                                                discountedAmount == 0
-                                                    ? payableAmount
-                                                    : discountedAmount,
-                                            "longi": widget.logitude,
-                                            "lati": widget.latitude
-                                          });
-                                    }
-                                    checkBox = 0;
-                                    context.pop();
-                                  }));
-                        } else {
-                          showDialog(
-                              context: context,
-                              builder: (context) => CustomAlertBox(
-                                    height:
-                                        AppDimension.getHeight(context) / 3.8,
-                                    width: AppDimension.getWidth(context) * .85,
-                                    heading: "Booking Alert",
-                                    content:
-                                        "You already have a booking on this date. Are you sure "
-                                        "you want to proceed with this new booking?",
-                                    leftBtnReq: true,
-                                    rightBtnReq: true,
-                                    widgetReq: false,
-                                    leftBtnHeading: "No",
-                                    rightBtnHeading: "Yes",
-                                    btnWidthLeft: 100,
-                                    btnWidthRight: 100,
-                                    leftOnTap: () => context.pop(),
-                                    rightOnTap: () {
-                                      context.pop();
-                                      showDialog(
-                                          context: context,
-                                          builder: (context) =>
-                                              _showAlertBox(context, () {
-                                                setState(() {
-                                                  debugPrint(
-                                                      checkBox.toString());
-                                                  // debugPrint("${rental.totalPrice} Booking Price");
-                                                });
-                                                if ((checkBox == 1)) {
-                                                  PaymentService
-                                                      paymentService =
-                                                      PaymentService(
-                                                    context: _savedContext,
-                                                    onPaymentError: () {},
-                                                    onPaymentSuccess:
-                                                        (PaymentSuccessResponse
-                                                            response) {
-                                                      print(
-                                                          'paymentResponse#${response.orderId}');
-                                                      setState(() {
-                                                        isloading =
-                                                            true; // Show loader
-                                                      });
-                                                      if (isloading) {
-                                                        loaderDailog();
-                                                      }
-                                                      // context.pop();
-                                                      // if (!mounted) return;
-                                                      Provider.of<PaymentVerifyViewModel>(
-                                                              _savedContext,
-                                                              listen: false)
-                                                          .paymentVerifyViewModelApi(
-                                                              context:
-                                                                  _savedContext,
-                                                              userId: widget
-                                                                  .userId
-                                                                  .toString(),
-                                                              paymentId: response
-                                                                  .paymentId,
-                                                              razorpayOrderId:
-                                                                  response
-                                                                      .orderId,
-                                                              razorpaySignature:
-                                                                  response
-                                                                      .signature)
-                                                          .then(
-                                                        (value) {
-                                                          if (value?.status
-                                                                  .httpCode ==
-                                                              '200') {
-                                                            print(
-                                                                'payment verification is successfull${value?.data.transactionId}');
-                                                            debugPrint(response
-                                                                .orderId);
-                                                            debugPrint(
-                                                              response
-                                                                  .paymentId,
-                                                            );
-                                                            debugPrint(response
-                                                                .signature);
-                                                            //   // Prepare API request body
-                                                            Map<String, dynamic>
-                                                                data1 = {
-                                                              "date":
-                                                                  rental.date,
-                                                              "pickupTime": rental
-                                                                  .pickupTime,
-                                                              "bookerId":
-                                                                  widget.userId,
-                                                              "bookingForId":
-                                                                  widget.userId,
-                                                              "carType": rental
-                                                                  .carType,
-                                                              "kilometers": rental
-                                                                  .kilometers,
-                                                              "hours":
-                                                                  rental.hours,
-                                                              "price": rental
-                                                                  .totalPrice,
-                                                              "transactionId": value
-                                                                  ?.data
-                                                                  .transactionId,
-                                                              "offerCode":
-                                                                  offerCode,
-                                                              "discountAmount":
-                                                                  disAmount
-                                                                      .toInt(),
-                                                              "taxAmount":
-                                                                  taxAmount,
-                                                              "taxPercentage":
-                                                                  taxPercentage,
-                                                              "totalPayableAmount":
-                                                                  discountedAmount ==
-                                                                          0
-                                                                      ? payableAmount
-                                                                      : discountedAmount,
-                                                              "pickUpLocation": rental
-                                                                  .pickUpLocation
-                                                                  .trim()
-                                                                  .replaceAll(
-                                                                      RegExp(
-                                                                          r'\s+'),
-                                                                      ' '),
-                                                              "locationLatitude":
-                                                                  widget
-                                                                      .latitude,
-                                                              "locationLongitude":
-                                                                  widget
-                                                                      .logitude
-                                                            };
-                                                            Provider.of<
-                                                                    RentalBookingViewModel>(
-                                                              _savedContext,
-                                                              listen: false,
-                                                            )
-                                                                .rentalBookingViewModel(
-                                                                  context:
-                                                                      _savedContext,
-                                                                  body: data1,
-                                                                  userId: widget
-                                                                      .userId,
-                                                                )
-                                                                .then(
-                                                                    (onValue) {})
-                                                                .catchError(
-                                                                    (error) {
-                                                              print(
-                                                                  'error....$error');
-                                                            }).whenComplete(() {
-                                                              setState(() {
-                                                                isloading =
-                                                                    false;
-                                                              });
-                                                            });
-                                                          }
-                                                        },
-                                                      );
-                                                      // Call verify payment function after successful payment
-                                                      // _verifyPayment(context, response);
-                                                    },
-                                                  );
-
-                                                  paymentService.openCheckout(
-                                                      amount: double.parse(
-                                                          rental.totalPrice),
-                                                      taxAmount: taxAmount,
-                                                      taxPercentage:
-                                                          taxPercentage,
-                                                      discountAmount: disAmount,
-                                                      payableAmount:
-                                                          discountedAmount == 0
-                                                              ? payableAmount
-                                                              : discountedAmount,
-                                                      userId: widget.userId
-                                                          .toString(),
-                                                      coutryCode: profileUser
-                                                          ?.countryCode,
-                                                      mobileNo:
-                                                          profileUser?.mobile,
-                                                      email:
-                                                          profileUser?.email);
-                                                } else if ((checkBox == 2)) {
-                                                  debugPrint(
-                                                      "${rental.totalPrice} Booking Price1");
-                                                  context.push(
-                                                      "/rentalForm/guestBooking",
-                                                      extra: {
-                                                        "date": rental.date,
-                                                        "pickUpLocation": rental
-                                                            .pickUpLocation,
-                                                        "price":
-                                                            rental.totalPrice,
-                                                        "hour": rental.hours,
-                                                        "carType":
-                                                            rental.carType,
-                                                        "bookerId":
-                                                            widget.userId,
-                                                        "kilometer":
-                                                            rental.kilometers,
-                                                        "pickUpTime":
-                                                            rental.pickupTime,
-                                                        "longi":
-                                                            widget.logitude,
-                                                        "lati": widget.latitude,
-                                                        "offerCode":
-                                                            offerCode ?? '',
-                                                        "discountAmount":
-                                                            disAmount.toInt(),
-                                                        "taxAmount": taxAmount,
-                                                        "taxPercentage":
-                                                            taxPercentage,
-                                                        "payableAmount":
-                                                            discountedAmount ==
-                                                                    0
-                                                                ? payableAmount
-                                                                : discountedAmount,
-                                                      });
-                                                }
-                                                checkBox = 0;
-                                                context.pop();
-                                              }));
-                                    },
-                                  ));
-                        }
-                      },
+                      onTap: () {},
                     ),
-                    // Show loader when loading
-                    // if (isloading)
-
-                    //   Container(
-                    //     // color: Colors.black.withOpacity(
-                    //     //     0.5), // Optional: Dim the background
-                    //     child: const Center(
-                    //       child: CircularProgressIndicator(),
-                    //     ),
-                    //   ),
+                    // status == 'Status.loading'
+                    //     ? Center(
+                    //         child: Container(
+                    //           height: 200,
+                    //           width: 200,
+                    //           decoration: BoxDecoration(
+                    //               color: background,
+                    //               borderRadius: BorderRadius.circular(10)),
+                    //           child: const Column(
+                    //             mainAxisAlignment: MainAxisAlignment.center,
+                    //             children: [
+                    //               SpinKitCircle(
+                    //                 size: 60,
+                    //                 color: btnColor,
+                    //               ),
+                    //               SizedBox(height: 10),
+                    //               Text(
+                    //                 'Please wait.....',
+                    //                 style: TextStyle(color: greenColor),
+                    //               )
+                    //             ],
+                    //           ),
+                    //         ),
+                    //       )
+                    //     : const SizedBox()
                   ],
                 );
               }),
@@ -618,177 +296,73 @@ class _BookYourCabState extends State<BookYourCab> {
     );
   }
 
-  Widget _showAlertBox(BuildContext contextx, VoidCallback onTap) {
-    return StatefulBuilder(
-      builder: (contextx, setState) {
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Dialog(
-              surfaceTintColor: background,
-              shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(5))),
-              backgroundColor: background,
-              child: SizedBox(
-                height: 250,
-                // height: AppDimension.getHeight(context) / 3.2,
-                // width: AppDimension.getWidth(context) / 2.5,
-                child: Column(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      decoration: const BoxDecoration(
-                          color: btnColor,
-                          borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(5),
-                              topRight: Radius.circular(5))),
-                      height: 40,
-                      width: double.infinity,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          const SizedBox(
-                            width: 40,
-                            height: 30,
-                          ),
-                          const CustomText(
-                              content: "Confirm Booking",
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              align: TextAlign.center,
-                              textColor: background),
-                          InkWell(
-                              onTap: () {
-                                checkBox = 0;
-                                context.pop();
-                              },
-                              child: const SizedBox(
-                                width: 40,
-                                height: 35,
-                                child: Icon(
-                                  Icons.cancel,
-                                  color: background,
-                                ),
-                              )),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 5, horizontal: 5),
-                      color: background,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 10, horizontal: 10),
-                            child: Text(
-                              "Please select for whom you booking",
-                              style: titleTextStyle,
-                            ),
-                          ),
-                          // const SizedBox(height: 10,),
-                          Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 20),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  RadioButtonWithText(
-                                    value: 1,
-                                    text: "Self",
-                                    groupValue: checkBox,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        checkBox = value;
-                                      });
-                                    },
-                                  ),
-                                  RadioButtonWithText(
-                                    value: 2,
-                                    text: "Someone Else",
-                                    groupValue: checkBox,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        checkBox = value;
-                                      });
-                                    },
-                                  ),
-                                ],
-                              )),
-                          checkBox == 0
-                              ? const SizedBox()
-                              : Align(
-                                  alignment: Alignment.center,
-                                  child: CustomButtonSmall(
-                                    borderRadius: BorderRadius.circular(5),
-                                    width: 120,
-                                    height: 40,
-                                    btnHeading: checkBox == 1
-                                        ? "Pay Now"
-                                        : "Add Details",
-                                    onTap: onTap,
-                                  ),
-                                )
-                        ],
-                      ),
-                    )
-                  ],
-                ),
-              ),
-            ),
-          ],
-        );
-      },
+  Widget showConfirmation(
+      {required BuildContext context,
+      required String title,
+      required Widget child}) {
+    return AlertDialog(
+      actionsAlignment: MainAxisAlignment.center,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      titlePadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+      title: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            title,
+            style: const TextStyle(
+                color: btnColor, fontSize: 16, fontWeight: FontWeight.w600),
+          ),
+          IconButton(
+              alignment: Alignment.topRight,
+              onPressed: () {
+                context.pop();
+              },
+              icon: const Icon(
+                Icons.close,
+                color: btnColor,
+              )),
+        ],
+      ),
+      backgroundColor: background,
+      insetPadding: const EdgeInsets.all(10),
+      contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+      actionsPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+      content: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 0),
+        child: Text(
+          "You already have a booking on this date. Are you sure "
+          "you want to proceed with this new booking?",
+          textAlign: TextAlign.center,
+          style: titleTextStyle1,
+        ),
+      ),
+      actions: <Widget>[
+        const SizedBox(height: 10),
+        GestureDetector(
+          onTap: () {
+            context.pop();
+          },
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 10),
+            decoration: BoxDecoration(
+                border: Border.all(color: btnColor),
+                borderRadius: BorderRadius.circular(5)),
+            child: Center(
+                child: Text(
+              'No',
+              style: titleTextStyle1,
+            )),
+          ),
+        ),
+        const SizedBox(
+          height: 15,
+        ),
+        CustomModalbottomsheet(title: 'Yes', exit: true, child: child),
+        const SizedBox(
+          height: 5,
+        ),
+      ],
     );
-  }
-
-  void loaderDailog() {
-    showDialog(
-        barrierDismissible: false,
-        context: context,
-        builder: (context) {
-          return Dialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Container(
-              height: 200,
-              width: 200,
-              decoration: BoxDecoration(
-                  color: Colors.white, borderRadius: BorderRadius.circular(10)),
-              child: const Padding(
-                padding: EdgeInsets.all(10.0),
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      SpinKitCircle(
-                        size: 60,
-                        color: btnColor,
-                      ),
-                      Text(
-                        'Please wait..',
-                        style: TextStyle(color: Colors.green),
-                      ),
-                      // SizedBox(
-                      //   height: 10,
-                      // ),
-                      // CircularProgressIndicator(
-                      //   color: Colors.green,
-                      // ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          );
-        });
   }
 }
 
@@ -813,7 +387,7 @@ class BookingContainer extends StatefulWidget {
   final double offerDisAmount;
   final double taxAmount;
   final double payableAmount;
-
+  final Widget confirmBooking;
   const BookingContainer(
       {this.carName = "",
       this.carImage = "",
@@ -835,6 +409,7 @@ class BookingContainer extends StatefulWidget {
       required this.offerDisAmount,
       required this.taxAmount,
       required this.payableAmount,
+      required this.confirmBooking,
       super.key});
 
   @override
@@ -855,17 +430,19 @@ class _BookingContainerState extends State<BookingContainer> {
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(color: naturalGreyColor.withOpacity(.3))),
             child: Column(
+
               children: [
                 ///First Line of Design
                 Container(
                     padding:
-                        const EdgeInsets.only(left: 10, top: 10, right: 10),
+                        const EdgeInsets.only(
+                        left: 10, top: 10, right: 10, bottom: 10),
                     decoration: const BoxDecoration(
                         border:
                             Border(bottom: BorderSide(color: curvePageColor))),
                     child: Row(
                       // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         SizedBox(
                           width: 80,
@@ -952,7 +529,7 @@ class _BookingContainerState extends State<BookingContainer> {
                             style: titleText,
                           ),
                           subtitle:
-                              Text('${widget.kilometers}/KM', style: titleText),
+                              Text('${widget.kilometers} KM', style: titleText),
                         ),
                       ),
                       Expanded(
@@ -996,20 +573,7 @@ class _BookingContainerState extends State<BookingContainer> {
                             style: titleText,
                           ),
                         )
-                        // SizedBox(
-                        //   width: AppDimension.getWidth(context) * .65,
-                        //   child: CustomText(
-                        //     content: widget.pickUpLocation,
-                        //     align: TextAlign.start,
-                        //     fontWeight: FontWeight.w400,
-                        //     maxline: 10,
-                        //     fontSize: 16,
-                        //   ),
-                        // )
-                        // Text(
-                        //   pickUpLocation,
-                        //   style: titleTextStyle,
-                        // ),
+                       
                       ],
                     )),
 
@@ -1052,7 +616,7 @@ class _BookingContainerState extends State<BookingContainer> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  'Save Amount',
+                                  'Discount Amount',
                                   style: titleText,
                                 ),
                                 Text(
@@ -1071,8 +635,8 @@ class _BookingContainerState extends State<BookingContainer> {
                           ),
                           Text(
                             widget.discountedAmount == 0
-                                ? 'AED ${widget.payableAmount}'
-                                : "AED ${widget.discountedAmount}",
+                                ? 'AED ${widget.payableAmount.ceil()}'
+                                : "AED ${widget.discountedAmount.ceil()}",
                             style: pageHeadingTextStyle,
                           ),
                         ],
@@ -1241,18 +805,19 @@ class _BookingContainerState extends State<BookingContainer> {
                           textColor: textColor),
                     ],
                   ),
-                  const Row(
+                  Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       CustomText(
-                          content: "Extra km fare after 10 km",
+                          content:
+                              "Extra km fare after ${widget.kilometers} km",
                           fontSize: 16,
                           maxline: 2,
                           align: TextAlign.start,
                           fontWeight: FontWeight.w500,
                           textColor: textColor),
-                      CustomText(
-                          content: "AED 15 per km",
+                      const CustomText(
+                          content: "AED 15 / km",
                           fontSize: 16,
                           maxline: 2,
                           align: TextAlign.start,
@@ -1260,18 +825,19 @@ class _BookingContainerState extends State<BookingContainer> {
                           textColor: textColor),
                     ],
                   ),
-                  const Row(
+                  Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       CustomText(
-                          content: "Extra ride time fare after 1 hr",
+                          content:
+                              "Extra ride time fare after ${widget.hour} hr",
                           fontSize: 16,
                           maxline: 2,
                           align: TextAlign.start,
                           fontWeight: FontWeight.w500,
                           textColor: textColor),
-                      CustomText(
-                          content: "AED 3 per min",
+                      const CustomText(
+                          content: "AED 3 / min",
                           fontSize: 16,
                           maxline: 2,
                           align: TextAlign.start,
@@ -1295,165 +861,10 @@ class _BookingContainerState extends State<BookingContainer> {
           ),
 
           const SizedBox(height: 10),
-          CustomButtonSmall(
-            height: 45,
-            width: double.infinity,
-            loading: widget.loading,
-            btnHeading: "Book Now",
-            onTap: widget.onTap,
-          ),
+          widget.confirmBooking,
+        
           const SizedBox(height: 10),
         ],
-      ),
-    );
-  }
-}
-
-class ConfirmationAlertBox extends StatelessWidget {
-  final VoidCallback onTap;
-
-  const ConfirmationAlertBox({super.key, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return Dialog(
-      shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(5))),
-      backgroundColor: background,
-      child: SizedBox(
-        height: AppDimension.getHeight(context) * .2,
-        width: AppDimension.getWidth(context) * .85,
-        child: Column(
-          children: [
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              decoration: const BoxDecoration(
-                  color: btnColor,
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(5),
-                      topRight: Radius.circular(5))),
-              height: 40,
-              width: double.infinity,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const SizedBox(
-                    width: 30,
-                    height: 30,
-                  ),
-                  const CustomTextWidget(
-                      content: "Booking Confirmation",
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                      textColor: background),
-                  SizedBox(
-                    width: 30,
-                    height: 40,
-                    child: IconButton(
-                      icon: const Icon(
-                        Icons.cancel,
-                        color: background,
-                      ),
-                      onPressed: () => context.pop(),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                    child: CustomTextWidget(
-                        content: "Are Your Sure Want Booking ?",
-                        fontSize: 15,
-                        align: TextAlign.start,
-                        fontWeight: FontWeight.w600,
-                        textColor: textColor),
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  Align(
-                    alignment: Alignment.bottomRight,
-                    child: CustomButtonSmall(
-                      width: AppDimension.getWidth(context) * .25,
-                      btnHeading: "Confirm",
-                      onTap: onTap,
-                    ),
-                  )
-                ],
-              ),
-            )
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class SuccessAlertBox extends StatelessWidget {
-  final VoidCallback onTap;
-
-  const SuccessAlertBox({super.key, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return Dialog(
-      shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(5))),
-      backgroundColor: background,
-      child: SizedBox(
-        height: AppDimension.getHeight(context) / 3.2,
-        width: AppDimension.getWidth(context) * .5,
-        child: Column(
-          children: [
-            Container(
-              decoration: const BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  topRight: Radius.circular(5),
-                  topLeft: Radius.circular(5),
-                ),
-                color: greenColor,
-              ),
-              width: double.infinity,
-              height: 100,
-              child: const Padding(
-                padding: EdgeInsets.all(12.0),
-                child: SizedBox(
-                  height: 40,
-                  width: 40,
-                  child: Card(
-                    shape: CircleBorder(),
-                    child: Icon(
-                      Icons.check,
-                      color: greenColor,
-                      size: 35,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            SizedBox(
-              child: Column(
-                children: [
-                  const SizedBox(height: 25),
-                  const CustomTextWidget(
-                      content: "Your Booking Successfully Booked",
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                      textColor: textColor),
-                  const SizedBox(height: 40),
-                  CustomButtonSmall(btnHeading: "OK", onTap: onTap)
-                ],
-              ),
-            )
-          ],
-        ),
       ),
     );
   }

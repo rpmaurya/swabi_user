@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/res/Custom%20Page%20Layout/commonPage_Layout.dart';
-import 'package:flutter_cab/res/customAppBar_widget.dart';
+import 'package:flutter_cab/res/custom_appbar_widget.dart';
 import 'package:flutter_cab/utils/color.dart';
 import 'package:flutter_cab/utils/text_styles.dart';
 import 'package:flutter_cab/view_model/offer_view_model.dart';
@@ -180,7 +180,7 @@ class _AlloffersScreenState extends State<AlloffersScreen>
                                                 child: Image.network(
                                                   data?.imageUrl ??
                                                       'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS23qSvFQm2bH4nUAwxBk7ZzBQm5Qi__4imxg&s',
-                                                  fit: BoxFit.fill,
+                                                  // fit: BoxFit.fill,
                                                 ),
                                               ),
                                             ),
@@ -202,7 +202,7 @@ class _AlloffersScreenState extends State<AlloffersScreen>
                                                             20),
                                                   ),
                                                   child: Text(
-                                                    data?.bookingType ==
+                                                    data?.offerType ==
                                                             'PACKAGE_BOOKING'
                                                         ? "PACKAGE OFFER"
                                                         : "RENTAL OFFER",
@@ -341,7 +341,7 @@ class _AlloffersScreenState extends State<AlloffersScreen>
                                 : Center(
                                     child: Text(
                                       'No Offers Available',
-                                      style: titleTextStyle,
+                                      style: nodataTextStyle,
                                     ),
                                   );
                       });

@@ -1,17 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/model/getall_notification_model.dart';
 import 'package:flutter_cab/res/Custom%20Page%20Layout/commonPage_Layout.dart';
-import 'package:flutter_cab/res/customAppBar_widget.dart';
-
-import 'package:flutter_cab/utils/assets.dart';
+import 'package:flutter_cab/res/custom_appbar_widget.dart';
 import 'package:flutter_cab/utils/color.dart';
-import 'package:flutter_cab/utils/dimensions.dart';
 import 'package:flutter_cab/utils/text_styles.dart';
 import 'package:flutter_cab/view_model/notification_view_model.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:timeago/timeago.dart' as timeago;
 
 class NotificationPage extends StatefulWidget {
   final String userId;
@@ -34,13 +29,14 @@ class _NotificationPageState extends State<NotificationPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    getNotification();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      getNotification();
+    });
     _scrollController.addListener(() {
-      if (_scrollController.position.pixels ==
-          _scrollController.position.maxScrollExtent) {
+      if (_scrollController.position.extentAfter < 200) {
         // User has reached the end of the list
         if (!isLoadingMore && !isLastPage) {
-          print('testing......');
+          debugPrint('testing......');
           getNotification();
         }
       }
@@ -48,7 +44,6 @@ class _NotificationPageState extends State<NotificationPage> {
   }
 
   void getNotification() async {
-    DateTime dateTime = DateTime.now();
     try {
       var resp =
           await Provider.of<NotificationViewModel>(context, listen: false)
@@ -58,36 +53,38 @@ class _NotificationPageState extends State<NotificationPage> {
                   pageNumber: currentPage,
                   pageSize: pageSize,
                   readStatus: 'all');
-      todayNotification = resp?.data?.content?.where((notification) {
-            DateTime date = DateTime.fromMillisecondsSinceEpoch(
-                notification.createdDate ?? 0 * 1000,
-                isUtc: false);
-            return date.day == dateTime.day &&
-                date.month == dateTime.month &&
-                date.year == dateTime.year;
-          }).toList() ??
-          [];
-      var data = resp?.data?.content?.where((notification) {
-            DateTime date = DateTime.fromMillisecondsSinceEpoch(
-                notification.createdDate ?? 0 * 1000,
-                isUtc: false);
-            return !(date.day == dateTime.day &&
-                date.month == dateTime.month &&
-                date.year == dateTime.year);
-          }).toList() ??
-          [];
-      if (data.isNotEmpty) {
-        setState(() {
-          earlierNotification.addAll(data);
-          currentPage++;
-          isLastPage = data.length < pageSize;
-          debugPrint('currentpage$currentPage');
-        });
-      } else {
-        setState(() {
-          isLastPage = true;
-        });
+      var content = resp?.data?.content ?? [];
+      List<Content> today = [];
+      List<Content> earlier = [];
+
+      DateTime todayStart = DateTime.now();
+      for (var notification in content) {
+        // Convert notification date
+        DateTime notificationDate = DateTime.fromMillisecondsSinceEpoch(
+            (notification.createdDate ?? 0),
+            isUtc: false);
+
+        if (notificationDate.day == todayStart.day &&
+            notificationDate.month == todayStart.month &&
+            notificationDate.year == todayStart.year) {
+          today.add(notification);
+        } else {
+          earlier.add(notification);
+        }
       }
+
+      setState(() {
+        if (content.isNotEmpty) {
+          todayNotification.addAll(today);
+          earlierNotification.addAll(earlier);
+          debugPrint('today.....................///////$todayNotification');
+          currentPage++;
+          isLastPage = content.length < pageSize; // Set isLastPage correctly
+          debugPrint("Current page: $currentPage, Last page: $isLastPage");
+        } else {
+          isLastPage = true;
+        }
+      });
     } catch (e) {
       debugPrint('error$e');
     } finally {
@@ -98,49 +95,89 @@ class _NotificationPageState extends State<NotificationPage> {
   }
 
   @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _scrollController.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: const CustomAppBar(
         heading: "Notification",
       ),
-      body: PageLayout_Page(
-          child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          todayNotification.isNotEmpty
-              ? Text(
-                  'Taday',
-                  style: titleTextStyle,
-                )
-              : const SizedBox.shrink(),
-          ListView.builder(
-            shrinkWrap: true,
-            itemCount: todayNotification.length,
-            itemBuilder: (context, index) {
-              return NotificationContainer(
-                title: todayNotification[index].title ?? '',
-                subTitle: todayNotification[index].message ?? '',
-                time: todayNotification[index].createdDate ?? 0,
+      body: PageLayout_Page(child:
+          Consumer<NotificationViewModel>(builder: (context, value, snapshot) {
+        return value.isLoading
+            ? const Center(
+                child: CircularProgressIndicator(
+                  color: greenColor,
+                ),
+              )
+            : SingleChildScrollView(
+                controller: _scrollController,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (todayNotification.isNotEmpty)
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Today', style: titleTextStyle),
+                          ListView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: todayNotification.length,
+                            itemBuilder: (context, index) {
+                              return NotificationContainer(
+                                title: todayNotification[index].title ?? '',
+                                subTitle:
+                                    todayNotification[index].message ?? '',
+                                time: todayNotification[index].createdDate ?? 0,
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    if (earlierNotification.isNotEmpty)
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Earlier', style: titleTextStyle),
+                          ListView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: earlierNotification.length,
+                            itemBuilder: (context, index) {
+                              return NotificationContainer(
+                                title: earlierNotification[index].title ?? '',
+                                subTitle:
+                                    earlierNotification[index].message ?? '',
+                                time:
+                                    earlierNotification[index].createdDate ?? 0,
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    (todayNotification.isEmpty && earlierNotification.isEmpty)
+                        ? const Center(
+                            child: Padding(
+                              padding: EdgeInsets.all(10.0),
+                              child: Text(
+                                'No Notification Available',
+                                style: TextStyle(
+                                    color: redColor,
+                                    fontWeight: FontWeight.w600),
+                              ),
+                            ),
+                          )
+                        : const SizedBox.shrink()
+                  ],
+                ),
               );
-            },
-          ),
-          Text(
-            'Earlier',
-            style: titleTextStyle,
-          ),
-          ListView.builder(
-            shrinkWrap: true,
-            itemCount: earlierNotification.length,
-            itemBuilder: (context, index) {
-              return NotificationContainer(
-                title: earlierNotification[index].title ?? '',
-                subTitle: earlierNotification[index].message ?? '',
-                time: earlierNotification[index].createdDate ?? 0,
-              );
-            },
-          ),
-        ],
-      )),
+      })),
     );
   }
 }
@@ -157,97 +194,94 @@ class NotificationContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    DateTime date =
-        DateTime.fromMillisecondsSinceEpoch(time * 1000, isUtc: false);
-    String formateDate = timeago.format(date);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: Material(
         elevation: 5,
+        color: background,
         borderRadius: BorderRadius.circular(10),
         child: InkWell(
           borderRadius: BorderRadius.circular(10),
           onTap: () {},
-          child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-              height: 70,
-              width: AppDimension.getWidth(context) * .9,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(
-                    color: curvePageColor,
-                  )),
-              child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-                const Stack(
-                  children: [
-                    SizedBox(
-                      width: 60,
-                      height: 60,
-                      child: CircleAvatar(
-                        child: Icon(
-                          Icons.notifications_none_outlined,
-                          color: btnColor,
-                          size: 30,
-                        ),
-                      ),
+          child: ListTile(
+            dense: true,
+            minLeadingWidth: 30,
+            horizontalTitleGap: 10,
+            contentPadding: const EdgeInsets.symmetric(horizontal: 5),
+            leading: const Stack(
+              children: [
+                SizedBox(
+                  width: 60,
+                  height: 60,
+                  child: CircleAvatar(
+                    child: Icon(
+                      Icons.notifications_none_outlined,
+                      color: btnColor,
+                      size: 30,
                     ),
-                    Positioned(
-                        top: 0,
-                        left: 10,
-                        child: SizedBox(
-                          width: 15,
-                          height: 15,
-                          child: CircleAvatar(
-                            backgroundColor: Colors.blue,
-                          ),
-                        ))
-                  ],
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 5),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                          height: 20,
-                          width: 150,
-                          child: Text(
-                            title,
-                            style: GoogleFonts.lato(
-                                color: textColor,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600),
-                            overflow: TextOverflow.ellipsis,
-                          )),
-                      const SizedBox(height: 5),
-                      SizedBox(
-                          height: 20,
-                          width: 200,
-                          child: Text(
-                            subTitle,
-                            style: GoogleFonts.lato(
-                                color: greyColor,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600),
-                            overflow: TextOverflow.ellipsis,
-                          )),
-                    ],
                   ),
                 ),
-                const Spacer(),
-                Align(
-                    alignment: Alignment.bottomRight,
-                    child: Text(
-                      formateDate,
-                      style: GoogleFonts.lato(
-                          color: greyColor,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600),
-                    )),
-              ])),
+                Positioned(
+                    top: 0,
+                    left: 10,
+                    child: SizedBox(
+                      width: 15,
+                      height: 15,
+                      child: CircleAvatar(
+                        backgroundColor: btnColor,
+                      ),
+                    ))
+              ],
+            ),
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  title,
+                  style: GoogleFonts.lato(
+                      color: textColor,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600),
+                  // overflow: TextOverflow.ellipsis,
+                ),
+                Text(
+                  formatTimeAgo(time),
+                  style: GoogleFonts.lato(
+                      color: blackColor,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600),
+                ),
+              ],
+            ),
+            subtitle: Text(
+              subTitle,
+              style: GoogleFonts.lato(
+                  color: greyColor, fontSize: 12, fontWeight: FontWeight.w600),
+              // overflow: TextOverflow.ellipsis,
+            ),
+          ),
         ),
       ),
     );
+  }
+
+  String formatTimeAgo(int dateTime) {
+    DateTime date = DateTime.fromMillisecondsSinceEpoch(
+      dateTime,
+    );
+    debugPrint('timeeee$date');
+    Duration difference = DateTime.now().difference(date);
+
+    if (difference.inSeconds < 60) {
+      return '${difference.inSeconds} sec${difference.inSeconds > 1 ? 's' : ''} ago';
+    } else if (difference.inMinutes < 60) {
+      return '${difference.inMinutes} min${difference.inMinutes > 1 ? 's' : ''} ago';
+    } else if (difference.inHours < 24) {
+      return '${difference.inHours} hr${difference.inHours > 1 ? 's' : ''} ago';
+    } else if (difference.inDays < 7) {
+      return '${difference.inDays} day${difference.inDays > 1 ? 's' : ''} ago';
+    } else {
+      return '${(difference.inDays / 7).floor()} week${(difference.inDays / 7).floor() > 1 ? 's' : ''} ago';
+    }
   }
 }

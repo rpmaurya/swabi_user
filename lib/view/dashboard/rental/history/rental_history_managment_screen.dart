@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/model/rentalbooking_model.dart';
-
 import 'package:flutter_cab/res/Custom%20Widgets/custom_tabbar.dart';
-import 'package:flutter_cab/res/customAppBar_widget.dart';
-import 'package:flutter_cab/utils/assets.dart';
 import 'package:flutter_cab/utils/color.dart';
-
+import 'package:flutter_cab/utils/text_styles.dart';
 import 'package:flutter_cab/view/dashboard/rental/history/rental_listing_container.dart';
 import 'package:flutter_cab/view_model/payment_gateway_view_model.dart';
 import 'package:flutter_cab/view_model/rental_view_model.dart';
-
 import 'package:provider/provider.dart';
 
 class RentalHistoryManagment extends StatefulWidget {
@@ -26,7 +22,7 @@ class _RentalHistoryManagmentState extends State<RentalHistoryManagment>
   ScrollController scrollController = ScrollController();
   ScrollController scrollController1 = ScrollController();
   List<String> tabList = [
-    'Booked',
+    'All Booking',
     'Upcoming',
     'Ongoing',
     'Completed',
@@ -51,7 +47,7 @@ class _RentalHistoryManagmentState extends State<RentalHistoryManagment>
 
     // String status = tabList[initialIndex]; // Get current tab status
     String status = '';
-    if (tabList[initialIndex] == 'Booked') {
+    if (tabList[initialIndex] == 'All Booking') {
       setState(() {
         status = 'ALL';
       });
@@ -154,13 +150,9 @@ class _RentalHistoryManagmentState extends State<RentalHistoryManagment>
   Widget build(BuildContext context) {
     var status =
         context.watch<RentalViewDetailViewModel>().dataList.status.toString();
-    // return Scaffold(
-    //   appBar: const CustomAppBar(
-    //     heading: 'My Rental History',
-    //   ),
-    //   body:
+   
     return Customtabbar(
-        titleHeading: 'My Rental Trip',
+        titleHeading: 'My Rental Trips',
         sortVisiblty: sortVisiblty,
         isVisible: isVisibleIcon,
         controller: _tabController,
@@ -182,7 +174,7 @@ class _RentalHistoryManagmentState extends State<RentalHistoryManagment>
           });
 
           getPackageHistoryList();
-          print('njnkjnjknnm,');
+    
         },
         viewchildren: List.generate(tabList.length, (index) {
           return Consumer<RentalBookingListViewModel>(
@@ -195,11 +187,11 @@ class _RentalHistoryManagmentState extends State<RentalHistoryManagment>
                   color: greenColor,
                 ));
               } else if (response.status.toString() == "Status.error") {
-                return const Center(
+                return Center(
                     child: Text(
                   'No Data Found',
                   style:
-                      TextStyle(color: redColor, fontWeight: FontWeight.w600),
+                      nodataTextStyle,
                 ));
               } else if (response.status.toString() == "Status.completed") {
                 final data = response.data?.data.content ?? [];
@@ -210,10 +202,9 @@ class _RentalHistoryManagmentState extends State<RentalHistoryManagment>
                   return Center(
                       child: Container(
                           decoration: const BoxDecoration(),
-                          child: const Text(
+                          child: Text(
                             'No Data Found',
-                            style: TextStyle(
-                                color: redColor, fontWeight: FontWeight.w600),
+                            style: nodataTextStyle,
                           )));
                 }
 
@@ -275,18 +266,18 @@ class _RentalHistoryManagmentState extends State<RentalHistoryManagment>
                             bookingList[index].totalPayableAmount.isEmpty
                                 ? bookingList[index].rentalCharge
                                 : bookingList[index].totalPayableAmount,
-                        // rentalCharge:
-                        //     bookingList[index].discountAmount.isEmpty ||
-                        //             bookingList[index].discountAmount == '0'
-                        //         ? bookingList[index].totalPayableAmount
-                        //         : bookingList[index].discountAmount,
+                       
                       ),
                     );
                   },
                 );
               }
 
-              return const Center(child: Text('No data found'));
+              return Center(
+                  child: Text(
+                'No data found',
+                style: nodataTextStyle,
+              ));
             },
           );
         }));

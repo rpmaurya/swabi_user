@@ -35,7 +35,7 @@ class NotificationRepository {
     var http = HttpService(
         baseURL: AppUrl.baseUrl,
         endURL: AppUrl.updateNotificationStatusUrl,
-        methodType: HttpMethodType.GET,
+        methodType: HttpMethodType.PATCH,
         bodyType: HttpBodyType.JSON,
         isAuthorizeRequest: false,
         queryParameters: query);
@@ -68,7 +68,7 @@ class NotificationRepository {
       return resp;
     } catch (error) {
       // ignore: use_build_context_synchronously
-      http.handleErrorResponse(context: context, error: error);
+      // http.handleErrorResponse(context: context, error: error);
       rethrow;
     }
   }

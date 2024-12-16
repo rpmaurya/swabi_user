@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class UserProfileModel {
   Status status;
   ProfileData data;
@@ -7,15 +9,16 @@ class UserProfileModel {
     required this.data,
   });
 
-  factory UserProfileModel.fromJson(Map<String, dynamic> json) => UserProfileModel(
-    status: Status.fromJson(json["status"]),
-    data: ProfileData.fromJson(json["data"]),
-  );
+  factory UserProfileModel.fromJson(Map<String, dynamic> json) =>
+      UserProfileModel(
+        status: Status.fromJson(json["status"]),
+        data: ProfileData.fromJson(json["data"]),
+      );
 
   Map<String, dynamic> toJson() => {
-    "status": status.toJson(),
-    "data": data.toJson(),
-  };
+        "status": status.toJson(),
+        "data": data.toJson(),
+      };
 }
 
 class ProfileData {
@@ -34,61 +37,70 @@ class ProfileData {
   String userType;
   String profileImageUrl;
   String countryCode;
-
+  String lastLogin;
+  String country;
+  String state;
   ProfileData({
-     this.userId = "",
-     this.firstName = '',
-     this.lastName = '',
-     this.mobile = '',
-     this.address = '',
-     this.email = '',
-     this.gender = '',
-     this.createdDate = '',
-     this.modifiedDate = '',
-     this.status = false,
-     this.otp = '',
-     this.isOtpVerified = '',
-     this.userType = '',
-     this.profileImageUrl = '',
-     this.countryCode = '',
+    this.userId = "",
+    this.firstName = '',
+    this.lastName = '',
+    this.mobile = '',
+    this.address = '',
+    this.email = '',
+    this.gender = '',
+    this.createdDate = '',
+    this.modifiedDate = '',
+    this.status = false,
+    this.otp = '',
+    this.isOtpVerified = '',
+    this.userType = '',
+    this.profileImageUrl = '',
+    this.countryCode = '',
+    this.lastLogin = '',
+    this.country = '',
+    this.state = '',
   });
 
   factory ProfileData.fromJson(Map<String, dynamic> json) => ProfileData(
-    userId: json["userId"].toString(),
-    firstName: json["firstName"] ?? '',
-    lastName: json["lastName"] ?? '',
-    mobile: json["mobile"] ?? '',
-    address: json["address"] ?? '',
-    email: json["email"] ?? '',
-    gender: json["gender"] ?? '',
-    createdDate: json["createdDate"] ?? '',
-    modifiedDate: json["modifiedDate"] ?? '',
-    status: json["status"] ?? false,
-    otp: json["otp"].toString(),
-    isOtpVerified: json["isOtpVerified"].toString(),
-    userType: json["userType"] ?? '',
-    profileImageUrl: json["profileImageUrl"] ?? '',
-    countryCode: json["countryCode"] ?? '',
-
-  );
+      userId: json["userId"].toString(),
+      firstName: json["firstName"] ?? '',
+      lastName: json["lastName"] ?? '',
+      mobile: json["mobile"] ?? '',
+      address: json["address"] ?? '',
+      email: json["email"] ?? '',
+      gender: json["gender"] ?? '',
+      createdDate: json["createdDate"] ?? '',
+      modifiedDate: json["modifiedDate"] ?? '',
+      status: json["status"] ?? false,
+      otp: json["otp"].toString(),
+      isOtpVerified: json["isOtpVerified"].toString(),
+      userType: json["userType"] ?? '',
+      profileImageUrl: json["profileImageUrl"] ?? '',
+      countryCode: json["countryCode"] ?? '',
+      lastLogin: json["lastLogin"] ?? '',
+      country: json['country'] ?? '',
+      state: json["state"] ?? '');
 
   Map<String, dynamic> toJson() => {
-    "userId": userId,
-    "firstName": firstName,
-    "lastName": lastName,
-    "mobile": mobile,
-    "address": address,
-    "email": email,
-    "gender": gender,
-    "createdDate": createdDate,
-    "modifiedDate": modifiedDate,
-    "status": status,
-    "otp": otp,
-    "isOtpVerified": isOtpVerified,
-    "userType": userType,
-    "profileImageUrl": profileImageUrl,
-    "countryCode": countryCode,
-  };
+        "userId": userId,
+        "firstName": firstName,
+        "lastName": lastName,
+        "mobile": mobile,
+        "address": address,
+        "email": email,
+        "gender": gender,
+        "createdDate": createdDate,
+        "modifiedDate": modifiedDate,
+        "status": status,
+        "otp": otp,
+        "isOtpVerified": isOtpVerified,
+        "userType": userType,
+        "profileImageUrl": profileImageUrl,
+        "countryCode": countryCode,
+        "lastLogin": lastLogin,
+        "country": country,
+        "state": state
+      };
 }
 
 class Status {
@@ -103,16 +115,16 @@ class Status {
   });
 
   factory Status.fromJson(Map<String, dynamic> json) => Status(
-    httpCode: json["httpCode"],
-    success: json["success"],
-    message: json["message"],
-  );
+        httpCode: json["httpCode"],
+        success: json["success"],
+        message: json["message"],
+      );
 
   Map<String, dynamic> toJson() => {
-    "httpCode": httpCode,
-    "success": success,
-    "message": message,
-  };
+        "httpCode": httpCode,
+        "success": success,
+        "message": message,
+      };
 }
 
 ///User Profile Update Model
@@ -125,15 +137,16 @@ class UserProfileUpdateModel {
     required this.data,
   });
 
-  factory UserProfileUpdateModel.fromJson(Map<String, dynamic> json) => UserProfileUpdateModel(
-    status: Status.fromJson(json["status"]),
-    data: UserProFileUpdateData.fromJson(json["data"]),
-  );
+  factory UserProfileUpdateModel.fromJson(Map<String, dynamic> json) =>
+      UserProfileUpdateModel(
+        status: Status.fromJson(json["status"]),
+        data: UserProFileUpdateData.fromJson(json["data"]),
+      );
 
   Map<String, dynamic> toJson() => {
-    "status": status.toJson(),
-    "data": data.toJson(),
-  };
+        "status": status.toJson(),
+        "data": data.toJson(),
+      };
 }
 
 class UserProFileUpdateData {
@@ -169,39 +182,40 @@ class UserProFileUpdateData {
     required this.profileImageUrl,
   });
 
-  factory UserProFileUpdateData.fromJson(Map<String, dynamic> json) => UserProFileUpdateData(
-    userId: json["userId"].toString(),
-    firstName: json["firstName"] ?? '',
-    lastName: json["lastName"] ?? '',
-    mobile: json["mobile"] ?? '',
-    address: json["address"] ?? '',
-    email: json["email"] ?? '',
-    gender: json["gender"] ?? '',
-    createdDate: json["createdDate"] ?? '',
-    modifiedDate: json["modifiedDate"] ?? '',
-    status: json["status"] ?? false,
-    otp: json["otp"].toString(),
-    isOtpVerified: json["isOtpVerified"].toString(),
-    userType: json["userType"] ?? '',
-    profileImageUrl: json["profileImageUrl"] ?? '',
-  );
+  factory UserProFileUpdateData.fromJson(Map<String, dynamic> json) =>
+      UserProFileUpdateData(
+        userId: json["userId"].toString(),
+        firstName: json["firstName"] ?? '',
+        lastName: json["lastName"] ?? '',
+        mobile: json["mobile"] ?? '',
+        address: json["address"] ?? '',
+        email: json["email"] ?? '',
+        gender: json["gender"] ?? '',
+        createdDate: json["createdDate"] ?? '',
+        modifiedDate: json["modifiedDate"] ?? '',
+        status: json["status"] ?? false,
+        otp: json["otp"].toString(),
+        isOtpVerified: json["isOtpVerified"].toString(),
+        userType: json["userType"] ?? '',
+        profileImageUrl: json["profileImageUrl"] ?? '',
+      );
 
   Map<String, dynamic> toJson() => {
-    "userId": userId,
-    "firstName": firstName,
-    "lastName": lastName,
-    "mobile": mobile,
-    "address": address,
-    "email": email,
-    "gender": gender,
-    "createdDate": createdDate,
-    "modifiedDate": modifiedDate,
-    "status": status,
-    "otp": otp,
-    "isOtpVerified": isOtpVerified,
-    "userType": userType,
-    "profileImageUrl": profileImageUrl,
-  };
+        "userId": userId,
+        "firstName": firstName,
+        "lastName": lastName,
+        "mobile": mobile,
+        "address": address,
+        "email": email,
+        "gender": gender,
+        "createdDate": createdDate,
+        "modifiedDate": modifiedDate,
+        "status": status,
+        "otp": otp,
+        "isOtpVerified": isOtpVerified,
+        "userType": userType,
+        "profileImageUrl": profileImageUrl,
+      };
 }
 
 class UserProFileUpdateStatus {
@@ -215,19 +229,19 @@ class UserProFileUpdateStatus {
     required this.message,
   });
 
-  factory UserProFileUpdateStatus.fromJson(Map<String, dynamic> json) => UserProFileUpdateStatus(
-    httpCode: json["httpCode"],
-    success: json["success"],
-    message: json["message"],
-  );
+  factory UserProFileUpdateStatus.fromJson(Map<String, dynamic> json) =>
+      UserProFileUpdateStatus(
+        httpCode: json["httpCode"],
+        success: json["success"],
+        message: json["message"],
+      );
 
   Map<String, dynamic> toJson() => {
-    "httpCode": httpCode,
-    "success": success,
-    "message": message,
-  };
+        "httpCode": httpCode,
+        "success": success,
+        "message": message,
+      };
 }
-
 
 ///User Image Model
 
@@ -240,15 +254,16 @@ class UserProfileImgModel {
     required this.data,
   });
 
-  factory UserProfileImgModel.fromJson(Map<String, dynamic> json) => UserProfileImgModel(
-    status: ImgStatus.fromJson(json["status"]),
-    data: Data.fromJson(json["data"]),
-  );
+  factory UserProfileImgModel.fromJson(Map<String, dynamic> json) =>
+      UserProfileImgModel(
+        status: ImgStatus.fromJson(json["status"]),
+        data: Data.fromJson(json["data"]),
+      );
 
   Map<String, dynamic> toJson() => {
-    "status": status.toJson(),
-    "data": data.toJson(),
-  };
+        "status": status.toJson(),
+        "data": data.toJson(),
+      };
 }
 
 class Data {
@@ -265,28 +280,26 @@ class Data {
   });
 
   factory Data.fromJson(Map<String, dynamic> json) => Data(
-    headers: Headers.fromJson(json["headers"]),
-    body: json["body"],
-    statusCode: json["statusCode"],
-    statusCodeValue: json["statusCodeValue"],
-  );
+        headers: Headers.fromJson(json["headers"]),
+        body: json["body"],
+        statusCode: json["statusCode"],
+        statusCodeValue: json["statusCodeValue"],
+      );
 
   Map<String, dynamic> toJson() => {
-    "headers": headers.toJson(),
-    "body": body,
-    "statusCode": statusCode,
-    "statusCodeValue": statusCodeValue,
-  };
+        "headers": headers.toJson(),
+        "body": body,
+        "statusCode": statusCode,
+        "statusCodeValue": statusCodeValue,
+      };
 }
 
 class Headers {
   Headers();
 
-  factory Headers.fromJson(Map<String, dynamic> json) => Headers(
-  );
+  factory Headers.fromJson(Map<String, dynamic> json) => Headers();
 
-  Map<String, dynamic> toJson() => {
-  };
+  Map<String, dynamic> toJson() => {};
 }
 
 class ImgStatus {
@@ -301,14 +314,14 @@ class ImgStatus {
   });
 
   factory ImgStatus.fromJson(Map<String, dynamic> json) => ImgStatus(
-    httpCode: json["httpCode"],
-    success: json["success"],
-    message: json["message"],
-  );
+        httpCode: json["httpCode"],
+        success: json["success"],
+        message: json["message"],
+      );
 
   Map<String, dynamic> toJson() => {
-    "httpCode": httpCode,
-    "success": success,
-    "message": message,
-  };
+        "httpCode": httpCode,
+        "success": success,
+        "message": message,
+      };
 }

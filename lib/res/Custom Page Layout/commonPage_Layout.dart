@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
-import 'package:flutter_cab/res/customAppBar_widget.dart';
+import 'package:flutter_cab/res/custom_appbar_widget.dart';
 import 'package:flutter_cab/utils/color.dart';
 import 'package:flutter_cab/utils/dimensions.dart';
 import 'package:flutter_cab/utils/text_styles.dart';
@@ -116,100 +116,7 @@ class PageLayout_Curve extends StatelessWidget {
   }
 }
 
-// class PageLayout_Page extends StatelessWidget {
-//   final String appHeading;
-//   final String btnHeading;
-//   final bool saveBtn;
-//   final Widget child;
-//   final VoidCallback? backBtn;
-//   final Widget? icon;
-//   final String bgImage;
-//   final EdgeInsets padding;
-//   final Color? bgColor;
-//   final VoidCallback? onTap;
-//   final VoidCallback? iconOnTap;
-//   final String addtionalIcon;
-//   final bool addtionalIconReq;
-//   const PageLayout_Page({super.key,
-//     this.appHeading = '',
-//     this.btnHeading = "Save",
-//     this.addtionalIconReq = false,
-//     this.addtionalIcon = "",
-//     this.bgImage = "",
-//     this.iconOnTap,
-//     this.bgColor,
-//     this.icon,
-//     this.saveBtn=false,
-//     this.padding = const EdgeInsets.fromLTRB(10, 10, 10, 10),
-//     required this.child,
-//     this.backBtn,
-//     this.onTap,
-//   });
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       backgroundColor: bgColor ?? background,
-//       resizeToAvoidBottomInset: false,
-//       // appBar: PreferredSize(
-//       //     preferredSize: const Size.fromHeight(50),
-//       //     child: AppBar(
-//       //       backgroundColor: background,
-//       //       surfaceTintColor: background,
-//       //       // toolbarHeight: 180,
-//       //       leading: IconButton(
-//       //         icon: const Icon(Icons.arrow_back),
-//       //         onPressed: backBtn ?? () => Navigator.pop(context),
-//       //       ),
-//       //       title: Text(appHeading, style: appbarTextStyle,),
-//       //       centerTitle: true,
-//       //       titleTextStyle: appbarTextStyle,
-//       //       actions: [
-//       //         Padding(padding: const EdgeInsets.symmetric(horizontal: 15),
-//       //           child: Material(
-//       //             color: background,
-//       //             borderRadius: BorderRadius.circular(5),
-//       //             child: InkWell(
-//       //               borderRadius: BorderRadius.circular(5),
-//       //               onTap: addtionalIconReq ? iconOnTap:()=> print("Icon Btn Press"),
-//       //               child: SizedBox(
-//       //                 height: 30,
-//       //                 width: 30,
-//       //                 // padding: EdgeInsets.symmetric(vertical: 5,horizontal: 5),
-//       //                 child: addtionalIconReq ?Image.asset(addtionalIcon,height: 30,width: 30):null,
-//       //               ),
-//       //             ),
-//       //           ),
-//       //         )
-//       //       ],
-//       //     )),
-//
-//       body: LayoutBuilder(
-//         builder: (context, constraints) =>
-//             Container(
-//               width: double.infinity,
-//               padding: padding,
-//               decoration: const BoxDecoration(
-//                 color: bgGreyColor,
-//               ),
-//               child: Column(
-//                 children: [
-//                   Expanded(child: Container(
-//                     color: bgGreyColor,
-//                     child: child,
-//                   )),
-//                   saveBtn ?
-//                   CustomButtonBig(
-//                       btnHeading: btnHeading, onTap: onTap ?? ()=> print("onTap"))
-//                       : const SizedBox.shrink(),
-//                 ],
-//               ),
-//             ),
-//       ),
-//
-//     );
-//   }
-// }
+
 class PageLayout_Page extends StatelessWidget {
   final String appHeading;
   final String btnHeading;

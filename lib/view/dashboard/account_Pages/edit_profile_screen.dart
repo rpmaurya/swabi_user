@@ -1,24 +1,19 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_cab/res/Common%20Widgets/common_alertTextfeild.dart';
+import 'package:flutter_cab/model/user_profile_model.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/customdropdown_button.dart';
 import 'package:flutter_cab/res/Custom%20Page%20Layout/commonPage_Layout.dart';
+import 'package:flutter_cab/res/Custom%20Widgets/custom_search_location.dart';
 import 'package:flutter_cab/res/Custom%20Widgets/custom_textformfield.dart';
-import 'package:flutter_cab/res/customAppBar_widget.dart';
-import 'package:flutter_cab/res/customTextWidget.dart';
-import 'package:flutter_cab/res/custom_mobileNumber.dart';
-import 'package:flutter_cab/res/login/login_customTextFeild.dart';
+import 'package:flutter_cab/res/custom_appbar_widget.dart';
+import 'package:flutter_cab/res/custom_mobile_number.dart';
 import 'package:flutter_cab/utils/assets.dart';
 import 'package:flutter_cab/utils/color.dart';
-import 'package:flutter_cab/utils/dimensions.dart';
 import 'package:flutter_cab/utils/text_styles.dart';
-import 'package:flutter_cab/view_model/userProfile_view_model.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:google_places_flutter/google_places_flutter.dart';
+import 'package:flutter_cab/view_model/user_profile_view_model.dart';
 import 'package:intl_phone_field/countries.dart';
-import 'package:intl_phone_field/country_picker_dialog.dart';
-import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:provider/provider.dart';
 
 class EditProfiePage extends StatefulWidget {
@@ -32,16 +27,18 @@ class EditProfiePage extends StatefulWidget {
 
 class _EditProfiePageState extends State<EditProfiePage> {
   List<TextEditingController> controllers =
-      List.generate(6, (index) => TextEditingController());
+      List.generate(8, (index) => TextEditingController());
   TextEditingController phoneController = TextEditingController();
   TextEditingController countryCode = TextEditingController();
   TextEditingController emailcontroller = TextEditingController();
+  TextEditingController searchcontroller = TextEditingController();
+
   FocusNode focusNode1 = FocusNode();
   FocusNode focusNode2 = FocusNode();
   FocusNode focusNode3 = FocusNode();
   FocusNode focusNode4 = FocusNode();
 
-  GlobalKey _phoneFieldKey = GlobalKey();
+  // GlobalKey _phoneFieldKey = GlobalKey();
   final _formKey = GlobalKey<FormState>();
 
   // String? cuntryCode;
@@ -58,12 +55,14 @@ class _EditProfiePageState extends State<EditProfiePage> {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       setState(() {
         controllers[0].text = userData?.firstName ?? '';
-        controllers[1].text = userData.lastName;
-        controllers[2].text = userData.address;
-        controllers[3].text = userData.gender;
-        controllers[4].text = userData.countryCode;
-        controllers[5].text = userData.mobile;
-        emailcontroller.text = userData.email;
+        controllers[1].text = userData?.lastName ?? '';
+        controllers[2].text = userData?.address ?? '';
+        controllers[3].text = userData?.gender ?? '';
+        controllers[4].text = userData?.countryCode ?? '971';
+        controllers[5].text = userData?.mobile ?? '';
+        controllers[6].text = userData?.country ?? 'United Arab Emirates';
+        controllers[7].text = userData?.state ?? '';
+        emailcontroller.text = userData?.email ?? '';
         var list = countries
             .where((code) =>
                 code.dialCode == controllers[4].text.replaceAll('+', '').trim())
@@ -73,29 +72,52 @@ class _EditProfiePageState extends State<EditProfiePage> {
           countryCode1 = list.first.code;
           print('isocode.................... ${list.first.code}');
         }
-        // cuntryCode = userData.countryCode;
-        // print('countrycode$cuntryCode');
-        // countryCode = getIsoCodeFromCountryCode(cuntryCode ?? 'AE');
-        // print('countryucode...$countryCode');
-        _phoneFieldKey = GlobalKey();
+       
       });
+      getCountry();
     });
   }
 
-  // Future<void> fetchUserData() async {
-  //   WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-  //     Provider.of<UserProfileViewModel>(context, listen: false)
-  //         .fetchUserProfileViewModelApi(context, {}, widget.usrId);
-  //   });
-  // }
+  Dio? dio;
+  String accessToken = '';
+  void getCountry() async {
+    try {
+      var countryProvider =
+          Provider.of<GetCountryStateListViewModel>(context, listen: false);
+      countryProvider.getAccessToken(context: context).then((onValue) {
+        debugPrint('token,.....c//.c.... $onValue');
+        setState(() {
+          accessToken = onValue['auth_token'].toString();
+        });
+        // countryProvider.getCountryList(context: context, token: accessToken);
+        Provider.of<GetCountryStateListViewModel>(context, listen: false)
+            .getStateList(
+                context: context,
+                token: accessToken,
+                country: controllers[6].text);
+      });
+    } catch (e) {
+      debugPrint('error $e');
+    }
+  }
+
+ 
   bool load = false;
-  var userData;
+  int visible = 0;
+
+  ProfileData? userData;
   @override
   Widget build(BuildContext context) {
-    userData = context.watch<UserProfileViewModel>().DataList.data?.data ?? '';
-    print(userData.toString());
+    userData = context.watch<UserProfileViewModel>().DataList.data?.data;
+    debugPrint(userData.toString());
     debugPrint(widget.usrId.toString());
-
+    bool status = context.watch<UserProfileUpdateViewModel>().isLoading;
+    // List country =
+    //     context.watch<GetCountryStateListViewModel>().getCountryListModel;
+    List state =
+        context.watch<GetCountryStateListViewModel>().getStateListModel;
+    bool isLoadingState =
+        context.watch<GetCountryStateListViewModel>().isLoading;
     return Scaffold(
       backgroundColor: bgGreyColor,
       // resizeToAvoidBottomInset: false,
@@ -109,6 +131,7 @@ class _EditProfiePageState extends State<EditProfiePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              const SizedBox(height: 5),
               Text.rich(TextSpan(children: [
                 TextSpan(text: 'First Name', style: titleTextStyle),
                 const TextSpan(text: ' *', style: TextStyle(color: redColor))
@@ -133,12 +156,13 @@ class _EditProfiePageState extends State<EditProfiePage> {
                   return null;
                 },
               ),
-              const SizedBox(height: 5),
+              const SizedBox(height: 10),
 
               Text.rich(TextSpan(children: [
                 TextSpan(text: 'Last Name', style: titleTextStyle),
                 const TextSpan(text: ' *', style: TextStyle(color: redColor))
               ])),
+
               const SizedBox(height: 5),
 
               Customtextformfield(
@@ -160,7 +184,26 @@ class _EditProfiePageState extends State<EditProfiePage> {
                   return null;
                 },
               ),
-              const SizedBox(height: 5),
+              const SizedBox(height: 10),
+              Padding(
+                  padding: const EdgeInsets.only(bottom: 5),
+                  child: Text.rich(TextSpan(children: [
+                    TextSpan(text: 'Gender', style: titleTextStyle),
+                    const TextSpan(
+                        text: ' *', style: TextStyle(color: redColor))
+                  ]))),
+              CustomDropdownButton(
+                controller: controllers[3],
+                // focusNode: focusNode3,
+                itemsList: const ['Male', 'Female'],
+                onChanged: (value) {
+                  setState(() {
+                    controllers[3].text = value ?? '';
+                  });
+                },
+                hintText: 'Select Gender',
+              ),
+              const SizedBox(height: 10),
 
               Text.rich(TextSpan(children: [
                 TextSpan(text: 'Email', style: titleTextStyle),
@@ -183,314 +226,13 @@ class _EditProfiePageState extends State<EditProfiePage> {
                   hintText: 'Email',
                 ),
               ),
-              // LoginTextFeild(
-              //   heading: "First Name",
-              //   headingReq: true,
-              //   controller: controllers[0],
-              //   hint: "First Name",
-              //   prefixIcon: true,
-              //   img: profile,
-              //   validator: (p0) {
-              //     if (p0 == null || p0.isEmpty) {
-              //       'Please enter first name';
-              //     }
-              //     return null;
-              //   },
-              // ),
-              // const SizedBox(height: 10),
-              // LoginTextFeild(
-              //   heading: "Last Name",
-              //   headingReq: true,
-              //   controller: controllers[1],
-              //   prefixIcon: true,
-              //   hint: "Last Name",
-              //   img: profile,
-              //   validator: (p0) {
-              //     if (p0 == null || p0.isEmpty) {
-              //       'Please enter last name';
-              //     }
-              //     return null;
-              //   },
-              // ),
-              const SizedBox(height: 5),
-
-              Text.rich(TextSpan(children: [
-                TextSpan(text: 'Address', style: titleTextStyle),
-                const TextSpan(text: ' *', style: TextStyle(color: redColor))
-              ])),
-              const SizedBox(height: 5),
-              FormField<String>(
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                  validator: (value) {
-                    if (controllers[2].text.isEmpty) {
-                      return '  Please select location';
-                    }
-                    return null;
-                  },
-                  builder: (FormFieldState<String> field) {
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 0),
-                          height: 50,
-                          child: GooglePlaceAutoCompleteTextField(
-                            focusNode: focusNode3,
-                            textEditingController: controllers[2],
-                            boxDecoration: BoxDecoration(
-                                color: background,
-                                borderRadius: BorderRadius.circular(5),
-                                border: Border.all(
-                                    color: naturalGreyColor.withOpacity(0.3))),
-                            googleAPIKey:
-                                // "AIzaSyADRdiTbSYUR8oc6-ryM1F1NDNjkHDr0Yo",
-                                'AIzaSyDhKIUQ4QBoDuOsooDfNY_EjCG0MB7Ami8',
-                            inputDecoration: InputDecoration(
-                              contentPadding: const EdgeInsets.symmetric(
-                                  horizontal: 10, vertical: 0),
-                              isDense: true,
-                              hintText: "Search your location",
-                              border: const OutlineInputBorder(
-                                  borderSide: BorderSide.none),
-                              hintStyle: textTitleHint,
-                              // prefixIcon: Padding(
-                              //   padding: const EdgeInsets.all(10.0),
-                              //   child: Image.asset(
-                              //     location,
-                              //     width: 10,
-                              //     height: 10,
-                              //   ),
-                              // ),
-                              filled: true,
-                              fillColor: background,
-                              disabledBorder: const OutlineInputBorder(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(5)),
-                                  borderSide: BorderSide.none),
-                            ),
-                            textStyle: titleTextStyle1,
-                            debounceTime: 400,
-                            // countries: ["ae", "fr"],
-                            isLatLngRequired: true,
-                            getPlaceDetailWithLatLng: (prediction) {
-                              print(
-                                  "Latitude: ${prediction.lat}, Longitude: ${prediction.lng}");
-                              // You can use prediction.lat and prediction.lng here as needed
-                              // Example: Save them to variables or perform further actions
-                            },
-
-                            itemClick: (prediction) {
-                              controllers[2].text =
-                                  prediction.description ?? "";
-                              controllers[2].selection =
-                                  TextSelection.fromPosition(TextPosition(
-                                      offset:
-                                          prediction.description?.length ?? 0));
-                              field.didChange(prediction.description);
-                            },
-                            seperatedBuilder: const Divider(),
-
-                            // OPTIONAL// If you want to customize list view item builder
-                            itemBuilder: (context, index, prediction) {
-                              return Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 10, horizontal: 5),
-                                child: Container(
-                                  // color: background,
-                                  child: Row(
-                                    children: [
-                                      const Icon(
-                                        Icons.location_on,
-                                        size: 15,
-                                      ),
-                                      const SizedBox(
-                                        width: 7,
-                                      ),
-                                      Expanded(
-                                          child: Text(
-                                        prediction.description ?? "",
-                                        style: titleTextStyle,
-                                      ))
-                                    ],
-                                  ),
-                                ),
-                              );
-                            },
-                            isCrossBtnShown: false,
-
-                            // default 600 ms ,
-                          ),
-                        ),
-                        if (field.hasError)
-                          Text(
-                            field.errorText!,
-                            style: TextStyle(color: redColor),
-                          ),
-                      ],
-                    );
-                  }),
-              // Column(
-              //   crossAxisAlignment: CrossAxisAlignment.start,
-              //   children: [
-              //     Padding(
-              //         padding: const EdgeInsets.symmetric(horizontal: 10),
-              //         child: Text.rich(TextSpan(children: [
-              //           TextSpan(text: 'Address', style: titleTextStyle),
-              //           TextSpan(text: ' *', style: TextStyle(color: redColor))
-              //         ]))
-              //         // child: Text("Address", style: titleTextStyle),
-              //         ),
-              //     const SizedBox(height: 5),
-              //     Container(
-              //       padding: const EdgeInsets.symmetric(horizontal: 0),
-              //       height: 50,
-              //       child: GooglePlaceAutoCompleteTextField(
-              //         textEditingController: controllers[2],
-              //         containerHorizontalPadding: 10,
-              //         boxDecoration: BoxDecoration(
-              //             color: background,
-              //             borderRadius: BorderRadius.circular(5),
-              //             border: Border.all(
-              //                 color: naturalGreyColor.withOpacity(0.3))),
-              //         googleAPIKey: "AIzaSyADRdiTbSYUR8oc6-ryM1F1NDNjkHDr0Yo",
-              //         inputDecoration: InputDecoration(
-              //           isDense: true,
-              //           prefixIconConstraints: const BoxConstraints(maxWidth: 50),
-              //           prefixIcon: const Icon(
-              //             Icons.location_on,
-              //             size: 24,
-              //           ),
-              //           contentPadding: const EdgeInsets.symmetric(
-              //               vertical: 0, horizontal: 5),
-              //           hintText: "Search your location",
-              //           border:
-              //               const OutlineInputBorder(borderSide: BorderSide.none),
-              //           hintStyle: GoogleFonts.lato(
-              //             color: greyColor1,
-              //             fontSize: 16,
-              //             fontWeight: FontWeight.w600,
-              //           ),
-              //           filled: true,
-              //           fillColor: background,
-              //           disabledBorder: const OutlineInputBorder(
-              //               borderRadius: BorderRadius.all(Radius.circular(5)),
-              //               borderSide: BorderSide.none),
-              //         ),
-              //         textStyle: titleTextStyle,
-              //         debounceTime: 400,
-              //         // countries: ["ae", "fr"],
-              //         isLatLngRequired: true,
-              //         getPlaceDetailWithLatLng: (prediction) {
-              //           print(
-              //               "Latitude: ${prediction.lat}, Longitude: ${prediction.lng}");
-              //         },
-              //         itemClick: (prediction) {
-              //           controllers[2].text = prediction.description ?? "";
-              //           controllers[2].selection = TextSelection.fromPosition(
-              //               TextPosition(
-              //                   offset: prediction.description?.length ?? 0));
-              //         },
-              //         seperatedBuilder: const Divider(),
-
-              //         // OPTIONAL// If you want to customize list view item builder
-              //         itemBuilder: (context, index, prediction) {
-              //           return Container(
-              //             padding: const EdgeInsets.only(bottom: 10, top: 10),
-              //             // color: background,
-              //             child: Row(
-              //               children: [
-              //                 const Icon(Icons.location_on),
-              //                 const SizedBox(
-              //                   width: 7,
-              //                 ),
-              //                 Expanded(child: Text(prediction.description ?? ""))
-              //               ],
-              //             ),
-              //           );
-              //         },
-              //         isCrossBtnShown: false,
-              //         // default 600 ms ,
-              //       ),
-              //     ),
-              //   ],
-              // ),
-              // const SizedBox(height: 10),
-              // Row(
-              //   mainAxisAlignment: MainAxisAlignment.start,
-              //   children: [
-              //     Padding(
-              //         padding: EdgeInsets.symmetric(horizontal: 10),
-              //         child: Text.rich(TextSpan(children: [
-              //           TextSpan(text: 'Gender', style: titleTextStyle),
-              //           const TextSpan(
-              //               text: ' *', style: TextStyle(color: redColor))
-              //         ]))),
-              //   ],
-              // ),
-
-              // LoginTextFeild(
-              //   heading: "Address",
-              //   headingReq: true,
-              //   controller: controllers[2],
-              //   hint: "Address",
-              //   prefixIcon: true,
-              //   img: address,
-              // ),
-              // const SizedBox(height: 10),
-
-              // FormCommonSingleAlertSelector(
-              //   width: double.infinity,
-              //   elevation: 0,
-              //   title: "Gender",
-              //   controller: controllers[3],
-              //   showIcon: const Icon(
-              //     Icons.event_seat,
-              //     color: naturalGreyColor,
-              //   ),
-              //   iconReq: false,
-              //   data: const ["Male", "Female"],
-              //   // icons: gender,
-              //   icon: genderImg,
-
-              //   ///Hint Color
-              //   initialValue: "Select Gender",
-              //   alertBoxTitle: "Select Gender",
-              // ),
-              const SizedBox(height: 10),
-
-              Padding(
-                  padding: EdgeInsets.only(bottom: 5),
-                  child: Text.rich(TextSpan(children: [
-                    TextSpan(text: 'Gender', style: titleTextStyle),
-                    const TextSpan(
-                        text: ' *', style: TextStyle(color: redColor))
-                  ]))),
-
-              CustomDropdownButton(
-                controller: controllers[3],
-                // focusNode: focusNode3,
-                itemsList: const ['Male', 'Female'],
-                onChanged: (value) {
-                  setState(() {
-                    controllers[3].text = value ?? '';
-                  });
-                },
-                hintText: 'Select Gender',
-
-                // validator: (p0) {
-                //   if (p0 == null || p0.isEmpty) {
-                //     return 'Please select gender';
-                //   }
-                //   return null;
-                // },
-              ),
 
               const SizedBox(height: 10),
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Text.rich(TextSpan(children: [
-                    TextSpan(text: 'Contact', style: titleTextStyle),
+                    TextSpan(text: 'Contact No', style: titleTextStyle),
                     const TextSpan(
                         text: ' *', style: TextStyle(color: redColor))
                   ])),
@@ -505,105 +247,90 @@ class _EditProfiePageState extends State<EditProfiePage> {
                   countryCode: controllers[4].text,
                   controller: controllers[5],
                   hintText: 'Enter mobile number'),
+              const SizedBox(height: 10),
 
+              Padding(
+                  padding: const EdgeInsets.only(bottom: 5),
+                  child: Text.rich(TextSpan(children: [
+                    TextSpan(text: 'Country', style: titleTextStyle),
+                    const TextSpan(
+                        text: ' *', style: TextStyle(color: redColor))
+                  ]))),
+              Material(
+                child: Customtextformfield(
+                  // focusNode: focusNode2,
+                  controller: controllers[6],
+                  readOnly: true,
+                  enableInteractiveSelection: false,
+                  // prefixiconvisible: true,
+                  // inputFormatters: [
+                  //   FilteringTextInputFormatter.allow(RegExp("[a-zA-Z]")),
+                  // ],
+                  fillColor: background,
+                  img: user,
+                  hintText: 'Country',
+                ),
+              ),
+            
+              const SizedBox(height: 10),
+
+              Padding(
+                  padding: const EdgeInsets.only(bottom: 5),
+                  child: Text.rich(TextSpan(children: [
+                    TextSpan(text: 'State', style: titleTextStyle),
+                    const TextSpan(
+                        text: ' *', style: TextStyle(color: redColor))
+                  ]))),
+
+              CustomDropdownButton(
+                controller: controllers[7],
+                // focusNode: focusNode3,
+                itemsList: state.map((state) {
+                  return state['state_name'].toString();
+                }).toList(),
+
+                // itemsList: [],
+                onChanged: isLoadingState
+                    ? null
+                    : (value) {
+                        setState(() {
+                          controllers[7].text = value ?? '';
+                          controllers[2].clear();
+                        });
+                      },
+                hintText: 'Select State',
+
+                // validator: (p0) {
+                //   if (p0 == null || p0.isEmpty) {
+                //     return 'Please select gender';
+                //   }
+                //   return null;
+                // },
+              ),
+
+              const SizedBox(height: 10),
+
+              Text.rich(TextSpan(children: [
+                TextSpan(text: 'Location', style: titleTextStyle),
+                const TextSpan(text: ' *', style: TextStyle(color: redColor))
+              ])),
+              const SizedBox(height: 5),
+            
+
+              CustomSearchLocation(
+                focusNode: focusNode3,
+                fillColor: background,
+                controller: controllers[2],
+                state: controllers[7].text,
+                // stateValidation: true,
+                hintText: 'Search location',
+              ),
               const SizedBox(height: 20),
-              // SizedBox(
-              //   width: AppDimension.getWidth(context) * .9,
-              //   child: IntlPhoneField(
-              //     key: _phoneFieldKey,
-              //     style: titleTextStyle,
-              //     showCountryFlag: true,
-              //     dropdownTextStyle: titleTextStyle,
-              //     dropdownIconPosition: IconPosition.trailing,
-              //     dropdownDecoration: const BoxDecoration(
-              //         borderRadius: BorderRadius.only(
-              //             topLeft: Radius.circular(5),
-              //             bottomLeft: Radius.circular(5))),
-              //     initialCountryCode: countryCode1,
-              //     controller: controllers[5],
-              //     pickerDialogStyle: PickerDialogStyle(
-              //       // searchFieldCursorColor: blackColor,
-              //       searchFieldInputDecoration: InputDecoration(
-              //           contentPadding: const EdgeInsets.symmetric(
-              //               vertical: 10, horizontal: 10),
-              //           hintText: "Enter Country Code or Name",
-              //           // fillColor: background,
-              //           isDense: true,
-              //           hintStyle: titleTextStyle1,
-              //           focusedBorder: UnderlineInputBorder(
-              //               borderSide: BorderSide(
-              //                   color: naturalGreyColor.withOpacity(0.3))),
-              //           labelStyle: titleTextStyle,
-              //           counterStyle: titleTextStyle,
-              //           suffixStyle: titleTextStyle),
-              //       countryCodeStyle: titleTextStyle,
-              //       countryNameStyle: titleTextStyle,
-              //       // backgroundColor: background,
-              //     ),
-              //     decoration: InputDecoration(
-              //       filled: true,
-              //       fillColor: background,
-              //       helperStyle: titleTextStyle1,
-              //       errorStyle: GoogleFonts.lato(color: redColor),
-              //       hintStyle: titleTextStyle,
-              //       isDense: true,
-              //       errorBorder: OutlineInputBorder(
-              //         borderSide:
-              //             BorderSide(color: naturalGreyColor.withOpacity(0.3)),
-              //       ),
-              //       focusedBorder: OutlineInputBorder(
-              //         borderSide:
-              //             BorderSide(color: naturalGreyColor.withOpacity(0.3)),
-              //       ),
-              //       border: OutlineInputBorder(
-              //         borderSide:
-              //             BorderSide(color: naturalGreyColor.withOpacity(0.3)),
-              //         // borderSide: BorderSide.none,
-              //       ),
-              //       contentPadding: const EdgeInsets.only(bottom: 30),
-              //       suffixStyle: titleTextStyle1,
-              //       focusedErrorBorder: const OutlineInputBorder(
-              //           borderSide: BorderSide(color: redColor)),
-              //       enabledBorder: OutlineInputBorder(
-              //           borderSide:
-              //               BorderSide(color: naturalGreyColor.withOpacity(0.3))),
-              //     ),
-              //     onChanged: (phone) {
-              //       setState(() {
-              //         controllers[4].text =
-              //             phone.countryCode.replaceFirst('+', '').trim();
-              //         controllers[5].text = phone.number;
-              //         // mobileNumber = phone.number;
-              //         debugPrint("${phone.number}Phone Number");
-              //         debugPrint("${controllers[4].text}Phone Code..........");
-              //       });
-              //     },
-              //     onCountryChanged: (value) {
-              //       setState(() {
-              //         controllers[4].text = value.fullCountryCode;
-              //         debugPrint("${controllers[4].text} Code......mnbmn....");
-              //       });
-              //     },
-              //     validator: (p0) {
-              //       return null;
-              //     },
-              //   ),
-              // ),
+            
 
-              ////////////////////////////////////////////////////////
-              // LoginTextFeild(
-              //   heading: "Mobile",
-              //   headingReq: true,
-              //   controller: controllers[4],
-              //   hint: "Mobile",
-              //   number: true,
-              //   prefixIcon: true,
-              //   img: phone,
-              // ),
-              // const Spacer(),
-              CustomButtonBig(
+              CustomButtonSmall(
                   btnHeading: "UPDATE",
-                  // loading: status == "Status.loading" && load,
+                  loading: status,
                   onTap: () {
                     // load = true;
                     if (_formKey.currentState!.validate()) {
@@ -614,9 +341,14 @@ class _EditProfiePageState extends State<EditProfiePage> {
                         "address": controllers[2].text,
                         "gender": controllers[3].text,
                         "countryCode": controllers[4].text,
-                        "mobile": controllers[5].text
+                        "mobile": controllers[5].text,
+                        "country": controllers[6].text,
+
+                        "state": controllers[7].text
+                        // "country": 'United Arab Emirates',
+                        // "state": 'Abu Zabi',
                       };
-                      print('edit data.........$data');
+                      debugPrint('edit data.........$data');
                       setState(() {
                         debugPrint(data.toString());
                         debugPrint(data.toString());

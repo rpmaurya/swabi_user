@@ -27,21 +27,5 @@ class SplashServices {
     });
   }
 
-  // void checkAunthentication (BuildContext context)async{
-  //   getUserData().then((value)async{
-  //     if(value.token == null || value.token == ''){
-  //       await Future.delayed(Duration(seconds: 4));
-  //       context.go('/login');
-  //     }else{
-  //       await Future.delayed(Duration(seconds: 4));
-  //       context.push('/');
-  //     }
-  //
-  //   }).onError((error, stackTrace){
-  //     if(kDebugMode){
-  //       print(error.toString());
-  //     }
-  //   });
-  //
-  // }
+
 }

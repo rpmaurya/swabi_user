@@ -1,10 +1,8 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/utils/color.dart';
-import 'package:flutter_cab/view_model/userProfile_view_model.dart';
-
+import 'package:flutter_cab/view_model/user_profile_view_model.dart';
 // import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:provider/provider.dart';
@@ -39,7 +37,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
 
   void startTimer() {
     _isButtonDisabled = true; // Disable the button when the timer starts
-    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (_start == 0) {
         setState(() {
           _isButtonDisabled = false; // Enable the button when countdown is over
@@ -105,11 +103,11 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                         length: 6,
                         onChanged: (value) {
                           // Handle changes in the OTP input
-                          print(value);
+                          debugPrint(value);
                         },
                         onCompleted: (value) {
                           // Handle when the user completes entering the OTP
-                          print("Completed: $value");
+                          debugPrint("Completed: $value");
                         },
                         // You can customize the appearance of the input field
                         pinTheme: PinTheme(

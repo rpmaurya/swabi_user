@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_cab/res/Custom%20Page%20Layout/commonPage_Layout.dart';
-import 'package:flutter_cab/res/customAppBar_widget.dart';
-import 'package:flutter_cab/res/customTextWidget.dart';
+import 'package:flutter_cab/res/custom_appbar_widget.dart';
 import 'package:flutter_cab/utils/color.dart';
 import 'package:flutter_cab/utils/text_styles.dart';
 import 'package:flutter_cab/view_model/offer_view_model.dart';
@@ -45,21 +44,14 @@ class _OfferdetailsScreenState extends State<OfferdetailsScreen> {
       builder: (context, viewModel, child) {
         String termConditions =
             """${viewModel.offerDetailByIdModel?.data?.termsAndConditions}""";
-        final document = html_parser.parse(termConditions);
-        final List<String> termsList = [
-          ...document.getElementsByTagName('p').map((p) => p.text.trim()),
-          ...document.getElementsByTagName('li').map((li) => li.text.trim()),
-        ];
-        // final List<String> termsList = document
-        //     .getElementsByTagName('li')
-        //     .map((li) => li.text.trim())
-        //     .toList();
-        // if (termsList.isEmpty) {
-        //   termsList.addAll(document
-        //       .getElementsByTagName('p')
-        //       .map((p) => p.text.trim())
-        //       .toList());
-        // }
+        // final document = html_parser.parse(termConditions);
+        // final List<String> termsList = [
+        //   ...document.getElementsByTagName('p').map((p) => p.text.trim()),
+        //   ...document.getElementsByTagName('li').map((li) => li.text.trim()),
+        // ];
+        final List<String> termsList =
+            termConditions.split(RegExp(r'\n')).map((e) => e.trim()).toList();
+       
         return Scaffold(
           appBar: const CustomAppBar(
             heading: 'Offer Details',
@@ -88,7 +80,7 @@ class _OfferdetailsScreenState extends State<OfferdetailsScreen> {
                           child: Image.network(
                             viewModel.offerDetailByIdModel?.data?.imageUrl ??
                                 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS23qSvFQm2bH4nUAwxBk7ZzBQm5Qi__4imxg&s',
-                            fit: BoxFit.fill,
+                            // fit: BoxFit.fill,
                           ),
                         ),
                       ),
@@ -101,7 +93,7 @@ class _OfferdetailsScreenState extends State<OfferdetailsScreen> {
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Text(
-                          viewModel.offerDetailByIdModel?.data?.bookingType ==
+                          viewModel.offerDetailByIdModel?.data?.offerType ==
                                   'PACKAGE_BOOKING'
                               ? "PACKAGE OFFER"
                               : "RENTAL OFFER",
@@ -114,7 +106,7 @@ class _OfferdetailsScreenState extends State<OfferdetailsScreen> {
                         style: pageHeadingTextStyle,
                       ),
                       Text(
-                        'Save up to AED ${viewModel.offerDetailByIdModel?.data?.maxDiscountAmount?.toInt()} on ${viewModel.offerDetailByIdModel?.data?.bookingType == 'RENTAL_BOOKING' ? 'RENTAL BOOKING' : "PACKAGE BOOKING"}',
+                        'Save up to AED ${viewModel.offerDetailByIdModel?.data?.maxDiscountAmount?.toInt()} on ${viewModel.offerDetailByIdModel?.data?.offerType == 'RENTAL_BOOKING' ? 'RENTAL BOOKING' : "PACKAGE BOOKING"}',
                         style: titleTextStyle1,
                       ),
                       Text(
@@ -181,14 +173,15 @@ class _OfferdetailsScreenState extends State<OfferdetailsScreen> {
                       Text(
                         viewModel.offerDetailByIdModel?.data?.description ?? '',
                         // style: titleTextStyle1,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
+                        // maxLines: 2,
+                        // overflow: TextOverflow.ellipsis,
                       ),
                       const SizedBox(height: 10),
                       Text(
                         'Terms & Conditions :-',
                         style: titleTextStyle,
                       ),
+                      
                       Column(
                         children: termsList.map((e) {
                           return Row(

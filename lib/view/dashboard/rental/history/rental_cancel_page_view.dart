@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/res/Custom%20Page%20Layout/commonPage_Layout.dart';
-import 'package:flutter_cab/res/Custom%20Widgets/multi_imageSlider_ContainerWidget.dart';
-import 'package:flutter_cab/res/customAppBar_widget.dart';
+import 'package:flutter_cab/res/Custom%20Widgets/multi_image_slider_container_widget.dart';
+import 'package:flutter_cab/res/custom_appbar_widget.dart';
 import 'package:flutter_cab/utils/color.dart';
 import 'package:flutter_cab/utils/dimensions.dart';
 import 'package:flutter_cab/utils/text_styles.dart';
@@ -384,7 +384,7 @@ class RentalCancelledContainer extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text("Contact : ", style: titleTextStyle),
+                              Text("Contact No: ", style: titleTextStyle),
                               SizedBox(
                                 // width: 100,
                                 child: Text(contact, style: titleTextStyle1),
@@ -477,7 +477,7 @@ class VechicleDetailsContainer extends StatelessWidget {
                   )),
             ),
             SizedBox(
-              height: 200,
+              height: 220,
               child: MultiImageSlider(images: vehicleImage),
             ),
             Container(

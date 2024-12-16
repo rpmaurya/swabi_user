@@ -1,34 +1,32 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/app_url.dart';
-import 'package:flutter_cab/data/network/base_apiservices.dart';
-import 'package:flutter_cab/data/network/network_apiservice.dart';
-import 'package:flutter_cab/data/response/base_response.dart';
+import 'package:flutter_cab/model/calculate_price_model.dart';
 import 'package:flutter_cab/model/change_mobile_model.dart';
+import 'package:flutter_cab/model/get_package_details_by_id_model.dart';
 import 'package:flutter_cab/model/package_models.dart';
-import 'package:flutter_cab/utils/utils.dart';
 import 'package:flutter_cab/view_model/services/http_service.dart';
 
 ///Get Package List Repo
 class GetPackageListRepository {
-  final BaseApiServices _apiServices = NetworkApiService();
-
-  Future<GetPackageListModel> getPackageListRepositoryApi(data) async {
+  Future<GetPackageListModel> getPackageListRepositoryApi(
+      {required BuildContext context,
+      required Map<String, dynamic> query}) async {
+    var http = HttpService(
+        baseURL: AppUrl.baseUrl,
+        endURL: AppUrl.getAllPackageListUrl,
+        queryParameters: query,
+        methodType: HttpMethodType.GET,
+        bodyType: HttpBodyType.JSON,
+        isAuthorizeRequest: false);
     try {
-      // dynamic response = await _apiServices.getGetApiResponse(AppUrl.getPackageList);
-      dynamic response = await _apiServices.getGetApiResponse(
-          "http://swabi.ap-south-1.elasticbeanstalk.com"
-          "/package/get_package_list?pageNumber=${data["pageNumber"]}&pageSize=${data["pageSize"]}&packageStatus=${data["packageStatus"]}&search=${data["search"]}&date=${data["date"]}"
-          // "/package/get_package_list?pageNumber=${data["pageNumber"]}&"
-          //     "pageSize=${data["pageSize"]}&packageStatus=${data["packageStatus"]}"
-          // "&search=${data["search"]}&date=${data["date"]}"
-          );
-      print("Get Package List Repo Success");
-      var resp = GetPackageListModel.fromJson(response);
+      Response<dynamic>? response = await http.request<dynamic>();
+      debugPrint("Get Package List Repo Success ${response?.data}");
+      var resp = GetPackageListModel.fromJson(response?.data);
       return resp;
     } catch (e) {
-      print("Get Package List Repo Field");
-      print(e);
+      debugPrint("Get Package List Repo Field $e");
+      http.handleErrorResponse(context: context, error: e);
       rethrow;
     }
   }
@@ -36,40 +34,95 @@ class GetPackageListRepository {
 
 ///Get Package Activity By Id Repo
 class GetPackageActivityByIdRepository {
-  final BaseApiServices _apiServices = NetworkApiService();
-
-  Future<dynamic> getPackageActivityByIdRepositoryApi(data) async {
+  Future<GetPackageDetailByIdModel> getPackageActivityByIdRepositoryApi(
+      {required BuildContext context,
+      required Map<String, dynamic> query}) async {
+    var http = HttpService(
+        baseURL: AppUrl.baseUrl,
+        endURL: AppUrl.getPackageByIdUrl,
+        queryParameters: query,
+        methodType: HttpMethodType.GET,
+        bodyType: HttpBodyType.JSON,
+        isAuthorizeRequest: false);
     try {
-      // dynamic response = await _apiServices.getGetApiResponse(AppUrl.getPackageList);
-      dynamic response = await _apiServices
-          .getGetApiResponse("http://swabi.ap-south-1.elasticbeanstalk.com"
-              "/package/get_package_by_id?packageId=${data["packageId"]}");
-      print("Get Package Activity By Id Repo Success");
-      return response = GetPackageDetailsByIdModel.fromJson(response);
+      Response<dynamic>? response = await http.request<dynamic>();
+      debugPrint("Get Package Activity By Id Repo Success ${response?.data}");
+      var resp = GetPackageDetailByIdModel.fromJson(response?.data);
+      return resp;
     } catch (e) {
-      print("Get Package Activity By Id Repo Field");
-      print(e);
+      debugPrint("Get Package Activity By Id Repo Field $e");
+      http.handleErrorResponse(context: context, error: e);
       rethrow;
     }
   }
 }
-
+class CalculatePriceRepository {
+  Future<CalculatePriceModel> getCalculatePriceApi(
+      {required BuildContext context,
+      required Map<String, dynamic> query}) async {
+    var http = HttpService(
+        baseURL: AppUrl.baseUrl,
+        endURL: AppUrl.getCalculatePriceUrl,
+        queryParameters: query,
+        methodType: HttpMethodType.GET,
+        bodyType: HttpBodyType.JSON,
+        isAuthorizeRequest: false);
+    try {
+      Response<dynamic>? response = await http.request<dynamic>();
+      debugPrint("Get Package Activity By Id Repo Success ${response?.data}");
+      var resp = CalculatePriceModel.fromJson(response?.data);
+      return resp;
+    } catch (e) {
+      debugPrint("Get Package Activity By Id Repo Field $e");
+      http.handleErrorResponse(context: context, error: e);
+      rethrow;
+    }
+  }
+}
 ///Post Package Booking By Id Repo
 class GetPackageBookedByIdRepository {
-  final BaseApiServices _apiServices = NetworkApiService();
-
-  Future<dynamic> getPackageBookedByIdRepositoryApi(data) async {
+  Future<BookPackageByMemberModel> getPackageBookedByIdRepositoryApi(
+      {required BuildContext context,
+      required Map<String, dynamic> body}) async {
+    var http = HttpService(
+        baseURL: AppUrl.baseUrl,
+        endURL: AppUrl.packageBookingUrl,
+        body: body,
+        methodType: HttpMethodType.POST,
+        bodyType: HttpBodyType.JSON,
+        isAuthorizeRequest: false);
     try {
-      // dynamic response = await _apiServices.getGetApiResponse(AppUrl.getPackageList);
-      dynamic response = await _apiServices.getPostApiResponse(
-          "http://swabi.ap-south-1.elasticbeanstalk.com"
-          "/package_booking/book_package",
-          data);
-      print("Get Package Booked By Id Repo Success");
-      // return response = BookPackageByMemberModel.fromJson(response);
+    
+      Response<dynamic>? response = await http.request<dynamic>();
+      debugPrint("Get Package Booked By Id Repo Success ${response?.data}");
+      var resp = BookPackageByMemberModel.fromJson(response?.data);
+      return resp;
     } catch (e) {
-      print("Get Package Booked By Id Repo Field");
-      print(e);
+      debugPrint("Get Package Booked By Id Repo Field $e");
+      http.handleErrorResponse(context: context, error: e);
+      rethrow;
+    }
+  }
+
+  Future<BookPackageByMemberModel> confirmPackageBookingRepositoryApi(
+      {required BuildContext context,
+      required Map<String, dynamic> query}) async {
+    var http = HttpService(
+        baseURL: AppUrl.baseUrl,
+        endURL: AppUrl.confirmpackageBookingUrl,
+        queryParameters: query,
+        methodType: HttpMethodType.PUT,
+        bodyType: HttpBodyType.JSON,
+        isAuthorizeRequest: false);
+    try {
+     
+      Response<dynamic>? response = await http.request<dynamic>();
+      debugPrint("Get Package Booked By Id Repo Success ${response?.data}");
+      var resp = BookPackageByMemberModel.fromJson(response?.data);
+      return resp;
+    } catch (e) {
+      debugPrint("Get Package Booked By Id Repo Field $e");
+      http.handleErrorResponse(context: context, error: e);
       rethrow;
     }
   }
@@ -77,8 +130,6 @@ class GetPackageBookedByIdRepository {
 
 ///Get Package History By Id Repo
 class GetPackageHistoryRepository {
-  final BaseApiServices _apiServices = NetworkApiService();
-
   Future<GetPackageHistoryModel?> getPackageHistoryRepositoryApi(
       {required BuildContext context,
       required Map<String, dynamic> data}) async {
@@ -94,11 +145,7 @@ class GetPackageHistoryRepository {
       debugPrint('Get Package History Repo Success ${response?.data}');
       var resp = GetPackageHistoryModel.fromJson(response?.data);
       return resp;
-      // dynamic response = await _apiServices.getGetApiResponse(
-      //     "http://swabi.ap-south-1.elasticbeanstalk.com"
-      //     "/package_booking/get_package_booking_by_userId?userId=${data["userId"]}&bookingStatus=${data["bookingStatus"]}&pageNumber=${data["pageNumber"]}&pageSize=${data["pageSize"]}&search=${data["search"]}&sortBy=${data["sortBy"]}&sortDirection=${data["sortDirection"]}");
-      // print("Get Package History Repo Success$response");
-      // return response = GetPackageHistoryModel.fromJson(response);
+    
     } catch (e) {
       debugPrint("Get Package History Repo Field $e");
       // ignore: use_build_context_synchronously
@@ -110,21 +157,31 @@ class GetPackageHistoryRepository {
 
 ///Get Package History Details By Id Repo
 class GetPackageHistoryDetailByIdRepository {
-  final BaseApiServices _apiServices = NetworkApiService();
-
   Future<GetPackageHIstoryDetailsModel?>
-      getPackageHistoryDetailByIdRepositoryApi(data) async {
+      getPackageHistoryDetailByIdRepositoryApi(
+          {required BuildContext context,
+          required Map<String, dynamic> query}) async {
+    var http = HttpService(
+        baseURL: AppUrl.baseUrl,
+        endURL: AppUrl.getpackageBookingByIdUrl,
+        queryParameters: query,
+        methodType: HttpMethodType.GET,
+        bodyType: HttpBodyType.JSON,
+        isAuthorizeRequest: false);
     try {
+      Response<dynamic>? response = await http.request<dynamic>();
+      debugPrint(
+          "Get Package History Detail By Id Repo Success ${response?.data}");
       // dynamic response = await _apiServices.getGetApiResponse(AppUrl.getPackageList);
-      dynamic response = await _apiServices.getGetApiResponse(
-          "http://swabi.ap-south-1.elasticbeanstalk.com"
-          "/package_booking/get_package_booking_by_id?packageBookingId=${data["packageBookingId"]}");
-      print("Get Package History Detail By Id Repo Success");
-      var resp = GetPackageHIstoryDetailsModel.fromJson(response);
+      // dynamic response = await _apiServices.getGetApiResponse(
+      //     "http://swabi.ap-south-1.elasticbeanstalk.com"
+      //     "/package_booking/get_package_booking_by_id?packageBookingId=${data["packageBookingId"]}");
+      // print("Get Package History Detail By Id Repo Success");
+      var resp = GetPackageHIstoryDetailsModel.fromJson(response?.data);
       return resp;
     } catch (e) {
-      print("Get Package History Detail By Id Repo Field");
-      print(e);
+      debugPrint("Get Package History Detail By Id Repo Field $e");
+      http.handleErrorResponse(context: context, error: e);
       rethrow;
     }
   }
@@ -132,8 +189,6 @@ class GetPackageHistoryDetailByIdRepository {
 
 ///Package Cancel Repo
 class PackageCancelRepository {
-  final BaseApiServices _apiServices = NetworkApiService();
-
   Future<PackageCancelModel?> packageCancelRepositoryApi(
       {required BuildContext context,
       required Map<String, dynamic> query}) async {
@@ -146,11 +201,7 @@ class PackageCancelRepository {
         isAuthorizeRequest: false);
     try {
       Response<dynamic>? response = await http.request<dynamic>();
-      // dynamic response = await _apiServices.getGetApiResponse(AppUrl.getPackageList);
-      // dynamic response = await _apiServices.patchApiResponseWithData(
-      //     "http://swabi.ap-south-1.elasticbeanstalk.com"
-      //     "/package_booking/cancel_package_booking?packageBookingId=${data["packageBookingId"]}&cancellationReason=${data["cancellationReason"]}&cancelledBy=${data["cancelledBy"]}",
-      //     data);
+
       debugPrint("Package Cancel Repo Success");
       var resp = PackageCancelModel.fromJson(response?.data);
       return resp;
@@ -165,21 +216,30 @@ class PackageCancelRepository {
 
 ///Add PickUp Location Repo
 class AddPickUpLocationPackageRepository {
-  final BaseApiServices _apiServices = NetworkApiService();
-
-  Future<dynamic> addPickUpLocationPackageRepositoryApi(data) async {
+  Future<dynamic> addPickUpLocationPackageRepositoryApi(
+      {required BuildContext context,
+      required Map<String, dynamic> query}) async {
+    var http = HttpService(
+        baseURL: AppUrl.baseUrl,
+        endURL: AppUrl.addPickupLocation,
+        queryParameters: query,
+        methodType: HttpMethodType.PATCH,
+        bodyType: HttpBodyType.JSON,
+        isAuthorizeRequest: false);
     try {
       // dynamic response = await _apiServices.getGetApiResponse(AppUrl.getPackageList);
-      dynamic response = await _apiServices.patchApiResponseWithData(
-          "http://swabi.ap-south-1.elasticbeanstalk.com"
-          "/package_booking/add_pickup_location?packageBookingId=${data["packageBookingId"]}&pickupLocation=${data["pickupLocation"]}",
-          data);
-      print("Add PickUp Location Package Repo Success");
+      // dynamic response = await _apiServices.patchApiResponseWithData(
+      //     "http://swabi.ap-south-1.elasticbeanstalk.com"
+      //     "/package_booking/add_pickup_location?packageBookingId=${data["packageBookingId"]}&pickupLocation=${data["pickupLocation"]}",
+      //     data);
+      Response<dynamic>? response = await http.request<dynamic>();
+      debugPrint("Add PickUp Location Package Repo Success ${response?.data}");
       return response;
       // return response = AddPickUpLocationModel.fromJson(response);
     } catch (e) {
-      print("Add PickUp Location Package Repo Field");
-      print(e);
+      debugPrint("Add PickUp Location Package Repo Fieldb$e");
+      http.handleErrorResponse(context: context, error: e);
+
       rethrow;
     }
   }
@@ -187,20 +247,25 @@ class AddPickUpLocationPackageRepository {
 
 ///Get Package Itinerary Repo
 class GetPackageItineraryRepository {
-  final BaseApiServices _apiServices = NetworkApiService();
-
-  Future<dynamic> getPackageItineraryRepositoryApi(data) async {
+  Future<GetPackageItineraryModel> getPackageItineraryRepositoryApi(
+      {required BuildContext context,
+      required Map<String, dynamic> query}) async {
+    var http = HttpService(
+        baseURL: AppUrl.baseUrl,
+        endURL: AppUrl.getItenerypackageBookingIdUrl,
+        queryParameters: query,
+        methodType: HttpMethodType.GET,
+        bodyType: HttpBodyType.JSON,
+        isAuthorizeRequest: false);
     try {
-      // dynamic response = await _apiServices.getGetApiResponse(AppUrl.getPackageList);
-      dynamic response = await _apiServices.getGetApiResponse(
-          "http://swabi.ap-south-1.elasticbeanstalk.com"
-          "/package_booking/get_itinerary_by_package_booking_id?packageBookingId=${data["packageBookingId"]}");
-      print("GetPackageItinerary Repo Success");
-      // return response;
-      return response = GetPackageItineraryModel.fromJson(response);
-    } on DioException catch (e) {
-      print("GetPackageItinerary Repo Field");
-      print(e.response?.data);
+      Response<dynamic>? response = await http.request<dynamic>();
+      debugPrint("GetPackageItinerary Repo Success ${response?.data}");
+
+      var resp = GetPackageItineraryModel.fromJson(response?.data);
+      return resp;
+    } catch (e) {
+      debugPrint("GetPackageItinerary Repo Field$e");
+      // http.handleErrorResponse(context: context, error: e);
       rethrow;
     }
   }
@@ -220,16 +285,10 @@ class ChangeMobileRepository {
         isAuthorizeRequest: false);
     try {
       Response<dynamic>? response = await http.request<dynamic>();
-      print('response...$response');
+      debugPrint('response...$response');
       var resp = ChangeMobileModel.fromJson(response?.data);
       return resp;
     } catch (error) {
-      // BaseResponseModel baseResponseModel =
-      //     BaseResponseModel.fromJson(error.response?.data);
-      // print(baseResponseModel.status?.message);
-      // Utils.flushBarErrorMessage(
-      //     baseResponseModel.status?.message ?? '', context);
-      // throw error.response?.data;
       http.handleErrorResponse(context: context, error: error);
     }
     return null;

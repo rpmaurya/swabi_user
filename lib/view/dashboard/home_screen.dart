@@ -1,24 +1,19 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_cab/model/offer_list_model.dart';
-
 import 'package:flutter_cab/model/user_profile_model.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/utils/assets.dart';
 import 'package:flutter_cab/utils/color.dart';
 import 'package:flutter_cab/utils/text_styles.dart';
+import 'package:flutter_cab/view/dashboard/account_screen.dart';
 import 'package:flutter_cab/view/dashboard/rental/rental_form.dart';
 import 'package:flutter_cab/view/dashboard/tourPackage/package_screen.dart';
 import 'package:flutter_cab/view_model/notification_view_model.dart';
-import 'package:flutter_cab/view_model/offer_view_model.dart';
-import 'package:flutter_cab/view_model/userProfile_view_model.dart';
+import 'package:flutter_cab/view_model/user_profile_view_model.dart';
 import 'package:flutter_cab/view_model/user_view_model.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:badges/badges.dart' as badges;
 
@@ -96,14 +91,8 @@ class _home_screenState extends State<home_screen>
   Widget build(BuildContext context) {
     // print("UserId here at homeScreen $uId");
     userdata = context.watch<UserProfileViewModel>().DataList.data?.data;
-    unReadItem = context
-            .watch<NotificationViewModel>()
-            .getAllNotificationModel
-            ?.data
-            ?.totalElements ??
-        0;
-    // offerListData = context.watch<OfferViewModel>().offerListModel;
-    // isLoadingData = context.watch<OfferViewModel>().isLoading1;
+
+   
     return PopScope(
         canPop: false,
         onPopInvoked: (val) async {
@@ -117,127 +106,97 @@ class _home_screenState extends State<home_screen>
         },
         child: Scaffold(
             backgroundColor: background,
-            appBar: AppBar(
-              backgroundColor: Colors.white,
-              automaticallyImplyLeading: false,
-              scrolledUnderElevation: 0,
-              titleSpacing: 0,
-              leading: IconButton(
-                  onPressed: () => context
-                          .push("/menuPage", extra: {'id': uId}).then((value) {
-                        Provider.of<UserProfileViewModel>(context,
+            onDrawerChanged: (isOpened) {
+              Provider.of<UserProfileViewModel>(context,
                                 listen: false)
                             .fetchUserProfileViewModelApi(
                                 context, {"userId": uId});
-                      }),
-                  icon: const Icon(
-                    Icons.notes_rounded,
-                    size: 34,
-                  )),
-              title: Row(
-                children: [
-                  InkWell(
-                      onTap: () {
-                        setState(() {
-                          _tabcontroller?.index = 0;
-                        });
-
-                        context.go('/');
-                        debugPrint("Custom Appbar");
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 0, horizontal: 0),
-                        child: Image.asset(
-                          // appIcon1,
-                          appLogo1,
-                          height: 24,
-                          // width: 50,
-                          fit: BoxFit.cover,
-                        ),
-                      )
-                      // child: Image.asset(appLogo1)
-                      ),
-                ],
-              ),
-              actions: [
-                badges.Badge(
-                  position: badges.BadgePosition.topEnd(
-                      top: unReadItem == 0 ? 0 : -10, end: -10),
-                  showBadge: unReadItem == 0 ? false : true,
-                  ignorePointer: false,
-                  onTap: () {
-                    // context.push('/notification');
-                  },
-                  badgeContent: Text(
-                    unReadItem.toString(),
-                    // '100',
-                    style: const TextStyle(
-                        color: background,
-                        fontSize: 15,
-                        fontWeight: FontWeight.w500),
-                  ),
-                  badgeStyle: const badges.BadgeStyle(
-                    badgeColor: greenColor,
-                    padding: EdgeInsets.all(5),
-                    elevation: 0,
-                  ),
-                  child: InkWell(
-                    onTap: () {
-                      context.push('/notification', extra: {"userId": uId});
+              getNotification();
+            },
+            appBar: AppBar(
+              backgroundColor: Colors.white,
+              // automaticallyImplyLeading: false,
+              scrolledUnderElevation: 0,
+              titleSpacing: 0,
+              leading: Builder(
+                builder: (BuildContext context) {
+                  return IconButton(
+                    icon: const Icon(
+                      Icons.notes_rounded,
+                      size: 26,
+                      // color: Colors.white,
+                    ),
+                    onPressed: () {
+                      Scaffold.of(context)
+                          .openDrawer(); // Use the context from Builder
                     },
-                    child: const Icon(
-                      Icons.notifications_none_outlined,
-                      color: btnColor,
-                      size: 30,
+                  );
+                },
+              ),
+
+              centerTitle: true,
+              title: InkWell(
+                  onTap: () {
+                    setState(() {
+                      _tabcontroller?.index = 0;
+                    });
+
+                    context.go('/');
+                    debugPrint("Custom Appbar");
+                  },
+                  child: Padding(
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 0, horizontal: 0),
+                    child: Image.asset(
+                      // appIcon1,
+                      appLogo1,
+                      height: 24,
+                      // width: 50,
+                      fit: BoxFit.cover,
                     ),
+                  )
+                  // child: Image.asset(appLogo1)
                   ),
-                ),
-                Container(
-                  width: 35, // Adjust to match the radius
-                  height: 35, // Adjust to match the radius
-                  margin: const EdgeInsets.symmetric(horizontal: 5),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    image: DecorationImage(
-                      image: NetworkImage(
-                        (userdata?.profileImageUrl ?? '').isNotEmpty
-                            ? userdata?.profileImageUrl ?? ''
-                            : 'https://up.yimg.com/ib/th?id=OIP.eCrcK2BiqwBGE1naWwK3UwHaHa&pid=Api&rs=1&c=1&qlt=95&w=115&h=115',
+                  
+              actions: [
+                Consumer<NotificationViewModel>(
+                  builder: (context, value, child) {
+                    unReadItem = value.totalUnreadNotification ?? 0;
+                    return InkWell(
+                      onTap: () {
+                        Provider.of<NotificationViewModel>(context,
+                                listen: false)
+                            .updateNotification(context: context, userId: uId)
+                            .then((onValue) {
+                          if (onValue?.status?.httpCode == '200') {
+                            context.push('/notification',
+                                extra: {'userId': uId}).then((onValue) {
+                              getNotification();
+                            });
+                          }
+                        });
+                      },
+                      child: Badge(
+                        backgroundColor: btnColor,
+                        isLabelVisible: unReadItem == 0 ? false : true,
+                        label: Text('${unReadItem.toString()}'),
+                        child: const Icon(
+                          Icons.notifications_none_outlined,
+                          size: 30,
+                        ),
                       ),
-                      fit: BoxFit.cover, // Ensures the image covers the circle
-                    ),
-                  ),
-                  // Fallback color when the image is loading or fails
-                  child: userdata?.profileImageUrl == null
-                      ? Icon(Icons.person, size: 20, color: Colors.grey[700])
-                      : null,
+                    );
+                  },
                 ),
-                const Text(
-                  'Hi,',
-                  style: TextStyle(color: Colors.green),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(5.0),
-                  child: Row(
-                    children: [
-                      Text(
-                        // userdata?.firstName.isNotEmpty == true
-                        //     ? userdata?.firstName[0].toUpperCase() ?? ''
-                        //     : '',
-                        userdata?.firstName.toString() ?? '',
-                        style: titleTextStyle,
-                      ),
-                      // Text(
-                      //   userdata?.lastName.isNotEmpty == true
-                      //       ? userdata?.lastName[0].toUpperCase() ?? ''
-                      //       : "",
-                      //   style: titleTextStyle,
-                      // ),
-                    ],
-                  ),
-                ),
+                const SizedBox(width: 10)
               ],
+            ),
+            drawer: Drawer(
+              backgroundColor: bgGreyColor,
+              child: AccountScreen(
+                userId: uId,
+                userdata: userdata,
+              ),
             ),
             body: Container(
               color: bgGreyColor,

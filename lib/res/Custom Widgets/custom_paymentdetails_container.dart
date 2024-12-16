@@ -54,10 +54,10 @@ class Custompaymentdetailscontainer extends StatelessWidget {
             textItem(lable: 'Rental Amount', value: 'AED $rentalAmount'),
             textItem(lable: 'Tax Amount (5%)', value: 'AED $taxAmount'),
             discountAmount == '0.0'
-                ? SizedBox()
+                ? const SizedBox.shrink()
                 : textItem(
                     lable: 'Discount Amount', value: 'AED $discountAmount'),
-            textItem(lable: 'Total Amount', value: 'AED ${amount}'),
+            textItem(lable: 'Total Amount', value: 'AED $amount'),
             textItem(lable: 'Payment Date', value: paymentDate),
             textItem(lable: 'Payment Time', value: paymentTime),
             const SizedBox(

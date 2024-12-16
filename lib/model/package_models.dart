@@ -1,407 +1,4 @@
-///Package Listing Details
-// class GetPackageListModel {
-//   Status status;
-//   Data data;
-//
-//   GetPackageListModel({
-//     required this.status,
-//     required this.data,
-//   });
-//
-//   factory GetPackageListModel.fromJson(Map<String, dynamic> json) => GetPackageListModel(
-//     status: Status.fromJson(json["status"]),
-//     data: Data.fromJson(json["data"]),
-//   );
-//
-//   Map<String, dynamic> toJson() => {
-//     "status": status.toJson(),
-//     "data": data.toJson(),
-//   };
-// }
-//
-// class Data {
-//   List<Content> content;
-//   // Pageable pageable;
-//   String totalPages;
-//   String totalElements;
-//   // bool last;
-//   // String size;
-//   // String number;
-//   // Sort sort;
-//   // int numberOfElements;
-//   // bool first;
-//   // bool empty;
-//
-//   Data({
-//      this.content =const [],
-//      // this.pageable = "",
-//      this.totalPages = "",
-//      this.totalElements = "",
-//      // this.last,
-//      // this.size,
-//      // this.number,
-//      // this.sort,
-//      // this.numberOfElements,
-//      // this.first,
-//      // this.empty,
-//   });
-//
-//   factory Data.fromJson(Map<String, dynamic> json) => Data(
-//     content: List<Content>.from(json["content"].map((x) => Content.fromJson(x))),
-//     // pageable: Pageable.fromJson(json["pageable"]),
-//     totalPages: json["totalPages"].toString(),
-//     totalElements: json["totalElements"].toString(),
-//     // last: json["last"].toString(),
-//     // size: json["size"],
-//     // number: json["number"],
-//     // sort: Sort.fromJson(json["sort"]),
-//     // numberOfElements: json["numberOfElements"],
-//     // first: json["first"],
-//     // empty: json["empty"],
-//   );
-//
-//   Map<String, dynamic> toJson() => {
-//     "content": List<dynamic>.from(content.map((x) => x.toJson())),
-//     // "pageable": pageable.toJson(),
-//     "totalPages": totalPages,
-//     "totalElements": totalElements,
-//     // "last": last,
-//     // "size": size,
-//     // "number": number,
-//     // "sort": sort.toJson(),
-//     // "numberOfElements": numberOfElements,
-//     // "first": first,
-//     // "empty": empty,
-//   };
-// }
-//
-// class Content {
-//   String packageId;
-//   String country;
-//   String state;
-//   String packageName;
-//   String location;
-//   String noOfDays;
-//   List<String> packageImageUrl;
-//   String totalPrice;
-//   String packageStatus;
-//   String createdDate;
-//   String modifiedDate;
-//   List<PackageActivity> packageActivities;
-//
-//   Content({
-//      this.packageId = "",
-//      this.country = "",
-//      this.state = "",
-//      this.packageName = "",
-//      this.location = "",
-//      this.noOfDays = "",
-//      this.packageImageUrl = const [],
-//      this.totalPrice = "",
-//      this.packageStatus = "",
-//      this.createdDate = "",
-//      this.modifiedDate = "",
-//      this.packageActivities =const [],
-//   });
-//
-//   factory Content.fromJson(Map<String, dynamic> json) => Content(
-//     packageId: json["packageId"].toString(),
-//     country: json["country"].toString(),
-//     state: json["state"].toString(),
-//     packageName: json["packageName"].toString(),
-//     location: json["location"].toString(),
-//     noOfDays: json["noOfDays"].toString(),
-//     packageImageUrl: List<String>.from(json["packageImageUrl"].map((x) => x)),
-//     totalPrice: json["totalPrice"].toString(),
-//     packageStatus: json["packageStatus"].toString(),
-//     createdDate: json["createdDate"].toString(),
-//     modifiedDate: json["modifiedDate"].toString(),
-//     packageActivities: List<PackageActivity>.from(json["packageActivities"].map((x) => PackageActivity.fromJson(x))),
-//   );
-//
-//   Map<String, dynamic> toJson() => {
-//     "packageId": packageId,
-//     "country": country,
-//     "state": state,
-//     "packageName": packageName,
-//     "location": location,
-//     "noOfDays": noOfDays,
-//     "packageImageUrl": List<dynamic>.from(packageImageUrl.map((x) => x)),
-//     "totalPrice": totalPrice,
-//     "packageStatus": packageStatusEnumValues.reverse[packageStatus],
-//     "createdDate": createdDate,
-//     "modifiedDate": modifiedDate,
-//     "packageActivities": List<dynamic>.from(packageActivities.map((x) => x.toJson())),
-//   };
-// }
-//
-// class PackageActivity {
-//   String packageActivityId;
-//   Activity activity;
-//   String day;
-//   dynamic startTime;
-//
-//   PackageActivity({
-//     required this.packageActivityId,
-//     required this.activity,
-//     required this.day,
-//     required this.startTime,
-//   });
-//
-//   factory PackageActivity.fromJson(Map<String, dynamic> json) => PackageActivity(
-//     packageActivityId: json["packageActivityId"].toString(),
-//     activity: Activity.fromJson(json["activity"]),
-//     day: json["day"].toString(),
-//     startTime: json["startTime"],
-//   );
-//
-//   Map<String, dynamic> toJson() => {
-//     "packageActivityId": packageActivityId,
-//     "activity": activity.toJson(),
-//     "day": day,
-//     "startTime": startTime,
-//   };
-// }
-//
-// class Activity {
-//   int activityId;
-//   String country;
-//   String state;
-//   String city;
-//   String address;
-//   String activityName;
-//   String bestTimeToVisit;
-//   String activityHours;
-//   String activityPrice;
-//   String startTime;
-//   String endTime;
-//   String description;
-//   List<ParticipantType> participantType;
-//   List<String> weeklyOff;
-//   List<String> activityImageUrl;
-//   String activityStatus;
-//   String createdDate;
-//   String modifiedDate;
-//   List<ActivityReligiousOffDate> activityReligiousOffDates;
-//
-//   Activity({
-//     required this.activityId,
-//     required this.country,
-//     required this.state,
-//     required this.city,
-//     required this.address,
-//     required this.activityName,
-//     required this.bestTimeToVisit,
-//     required this.activityHours,
-//     required this.activityPrice,
-//     required this.startTime,
-//     required this.endTime,
-//     required this.description,
-//     required this.participantType,
-//     required this.weeklyOff,
-//     required this.activityImageUrl,
-//     required this.activityStatus,
-//     required this.createdDate,
-//     required this.modifiedDate,
-//     required this.activityReligiousOffDates,
-//   });
-//
-//   factory Activity.fromJson(Map<String, dynamic> json) => Activity(
-//     activityId: json["activityId"],
-//     country: json["country"],
-//     state: json["state"],
-//     city: json["city"],
-//     address: json["address"],
-//     activityName: json["activityName"],
-//     bestTimeToVisit: json["bestTimeToVisit"],
-//     activityHours: json["activityHours"].toString(),
-//     activityPrice: json["activityPrice"].toString(),
-//     startTime: json["startTime"],
-//     endTime: json["endTime"],
-//     description: json["description"],
-//     participantType: List<ParticipantType>.from(json["participantType"].map((x) => participantTypeValues.map[x]!)),
-//     weeklyOff: List<String>.from(json["weeklyOff"].map((x) => x)),
-//     activityImageUrl: List<String>.from(json["activityImageUrl"].map((x) => x)),
-//     activityStatus:json["activityStatus"] ?? "",
-//     createdDate: json["createdDate"].toString(),
-//     modifiedDate: json["modifiedDate"].toString(),
-//     activityReligiousOffDates: List<ActivityReligiousOffDate>.from(json["activityReligiousOffDates"].map((x) => ActivityReligiousOffDate.fromJson(x))),
-//   );
-//
-//   Map<String, dynamic> toJson() => {
-//     "activityId": activityId,
-//     "country": country,
-//     "state": state,
-//     "city": city,
-//     "address": address,
-//     "activityName": activityName,
-//     "bestTimeToVisit": bestTimeToVisit,
-//     "activityHours": activityHours,
-//     "activityPrice": activityPrice,
-//     "startTime": startTime,
-//     "endTime": endTime,
-//     "description": description,
-//     "participantType": List<dynamic>.from(participantType.map((x) => participantTypeValues.reverse[x])),
-//     "weeklyOff": List<dynamic>.from(weeklyOff.map((x) => x)),
-//     "activityImageUrl": List<dynamic>.from(activityImageUrl.map((x) => x)),
-//     "activityStatus": packageStatusEnumValues.reverse[activityStatus],
-//     "createdDate": createdDate,
-//     "modifiedDate": modifiedDate,
-//     "activityReligiousOffDates": List<dynamic>.from(activityReligiousOffDates.map((x) => x.toJson())),
-//   };
-// }
-//
-// class ActivityReligiousOffDate {
-//   int activityReligiousOffId;
-//   String religiousOffDate;
-//   bool isCancelled;
-//   DateTime createdDate;
-//   DateTime modifiedDate;
-//
-//   ActivityReligiousOffDate({
-//     required this.activityReligiousOffId,
-//     required this.religiousOffDate,
-//     required this.isCancelled,
-//     required this.createdDate,
-//     required this.modifiedDate,
-//   });
-//
-//   factory ActivityReligiousOffDate.fromJson(Map<String, dynamic> json) => ActivityReligiousOffDate(
-//     activityReligiousOffId: json["activityReligiousOffId"],
-//     religiousOffDate: json["religiousOffDate"],
-//     isCancelled: json["isCancelled"],
-//     createdDate: DateTime.parse(json["createdDate"]),
-//     modifiedDate: DateTime.parse(json["modifiedDate"]),
-//   );
-//
-//   Map<String, dynamic> toJson() => {
-//     "activityReligiousOffId": activityReligiousOffId,
-//     "religiousOffDate": religiousOffDate,
-//     "isCancelled": isCancelled,
-//     "createdDate": createdDate.toIso8601String(),
-//     "modifiedDate": modifiedDate.toIso8601String(),
-//   };
-// }
-//
-// enum PackageStatusEnum {
-//   TRUE
-// }
-//
-// final packageStatusEnumValues = EnumValues({
-//   "TRUE": PackageStatusEnum.TRUE
-// });
-//
-// enum ParticipantType {
-//   ADULT,
-//   CHILD,
-//   INFANT,
-//   SENIOR,
-//   TEEN
-// }
-//
-// final participantTypeValues = EnumValues({
-//   "ADULT": ParticipantType.ADULT,
-//   "CHILD": ParticipantType.CHILD,
-//   "INFANT": ParticipantType.INFANT,
-//   "SENIOR": ParticipantType.SENIOR,
-//   "TEEN": ParticipantType.TEEN
-// });
-//
-// class Pageable {
-//   Sort sort;
-//   int pageSize;
-//   int pageNumber;
-//   int offset;
-//   bool unpaged;
-//   bool paged;
-//
-//   Pageable({
-//     required this.sort,
-//     required this.pageSize,
-//     required this.pageNumber,
-//     required this.offset,
-//     required this.unpaged,
-//     required this.paged,
-//   });
-//
-//   factory Pageable.fromJson(Map<String, dynamic> json) => Pageable(
-//     sort: Sort.fromJson(json["sort"]),
-//     pageSize: json["pageSize"],
-//     pageNumber: json["pageNumber"],
-//     offset: json["offset"],
-//     unpaged: json["unpaged"],
-//     paged: json["paged"],
-//   );
-//
-//   Map<String, dynamic> toJson() => {
-//     "sort": sort.toJson(),
-//     "pageSize": pageSize,
-//     "pageNumber": pageNumber,
-//     "offset": offset,
-//     "unpaged": unpaged,
-//     "paged": paged,
-//   };
-// }
-//
-// class Sort {
-//   bool sorted;
-//   bool empty;
-//   bool unsorted;
-//
-//   Sort({
-//     required this.sorted,
-//     required this.empty,
-//     required this.unsorted,
-//   });
-//
-//   factory Sort.fromJson(Map<String, dynamic> json) => Sort(
-//     sorted: json["sorted"],
-//     empty: json["empty"],
-//     unsorted: json["unsorted"],
-//   );
-//
-//   Map<String, dynamic> toJson() => {
-//     "sorted": sorted,
-//     "empty": empty,
-//     "unsorted": unsorted,
-//   };
-// }
-//
-// class Status {
-//   String httpCode;
-//   bool success;
-//   String message;
-//
-//   Status({
-//     required this.httpCode,
-//     required this.success,
-//     required this.message,
-//   });
-//
-//   factory Status.fromJson(Map<String, dynamic> json) => Status(
-//     httpCode: json["httpCode"],
-//     success: json["success"],
-//     message: json["message"],
-//   );
-//
-//   Map<String, dynamic> toJson() => {
-//     "httpCode": httpCode,
-//     "success": success,
-//     "message": message,
-//   };
-// }
-//
-// class EnumValues<T> {
-//   Map<String, T> map;
-//   late Map<T, String> reverseMap;
-//
-//   EnumValues(this.map);
-//
-//   Map<T, String> get reverse {
-//     reverseMap = map.map((k, v) => MapEntry(v, k));
-//     return reverseMap;
-//   }
-// }
+
 class GetPackageListModel {
   Status status;
   Data data;
@@ -493,7 +90,7 @@ class Content {
   String createdDate;
   String modifiedDate;
   List<PackageActivity> packageActivities;
-
+  double? packageDiscountedAmount;
   Content({
     required this.packageId,
     required this.country,
@@ -507,6 +104,7 @@ class Content {
     required this.createdDate,
     required this.modifiedDate,
     required this.packageActivities,
+    this.packageDiscountedAmount,
   });
 
   factory Content.fromJson(Map<String, dynamic> json) => Content(
@@ -524,6 +122,7 @@ class Content {
         modifiedDate: json["modifiedDate"].toString(),
         packageActivities: List<PackageActivity>.from(
             json["packageActivities"].map((x) => PackageActivity.fromJson(x))),
+      packageDiscountedAmount: json['packageDiscountedAmount'] ?? 0
       );
 
   Map<String, dynamic> toJson() => {
@@ -540,6 +139,7 @@ class Content {
         "modifiedDate": modifiedDate,
         "packageActivities":
             List<dynamic>.from(packageActivities.map((x) => x.toJson())),
+        "packageDiscountedAmount": packageDiscountedAmount
       };
 }
 
@@ -592,54 +192,59 @@ class Activity {
   String createdDate;
   String modifiedDate;
   List<ActivityReligiousOffDate> activityReligiousOffDates;
-
-  Activity({
-    required this.activityId,
-    required this.country,
-    required this.state,
-    required this.city,
-    required this.address,
-    required this.activityName,
-    required this.bestTimeToVisit,
-    required this.activityHours,
-    required this.activityPrice,
-    required this.startTime,
-    required this.endTime,
-    required this.description,
-    required this.participantType,
-    required this.weeklyOff,
-    required this.activityImageUrl,
-    required this.activityStatus,
-    required this.createdDate,
-    required this.modifiedDate,
-    required this.activityReligiousOffDates,
-  });
+  AgeGroupDiscountPercent? ageGroupDiscountPercent;
+  double discountedAmount;
+  Activity(
+      {required this.activityId,
+      required this.country,
+      required this.state,
+      required this.city,
+      required this.address,
+      required this.activityName,
+      required this.bestTimeToVisit,
+      required this.activityHours,
+      required this.activityPrice,
+      required this.startTime,
+      required this.endTime,
+      required this.description,
+      required this.participantType,
+      required this.weeklyOff,
+      required this.activityImageUrl,
+      required this.activityStatus,
+      required this.createdDate,
+      required this.modifiedDate,
+      required this.activityReligiousOffDates,
+      this.ageGroupDiscountPercent,
+      required this.discountedAmount});
 
   factory Activity.fromJson(Map<String, dynamic> json) => Activity(
-        activityId: json["activityId"].toString(),
-        country: json["country"] ?? "",
-        state: json["state"] ?? "",
-        city: json["city"] ?? "",
-        address: json["address"] ?? "",
-        activityName: json["activityName"] ?? "",
-        bestTimeToVisit: json["bestTimeToVisit"] ?? "",
-        activityHours: json["activityHours"].toString(),
-        activityPrice: json["activityPrice"].toString(),
-        startTime: json["startTime"] ?? "",
-        endTime: json["endTime"] ?? "",
-        description: json["description"] ?? "",
-        participantType: List<ParticipantType>.from(
-            json["participantType"].map((x) => participantTypeValues.map[x]!)),
-        weeklyOff: List<String>.from(json["weeklyOff"].map((x) => x)),
-        activityImageUrl:
-            List<String>.from(json["activityImageUrl"].map((x) => x)),
-        activityStatus: json["activityStatus"].toString(),
-        createdDate: json["createdDate"].toString(),
-        modifiedDate: json["modifiedDate"].toString(),
-        activityReligiousOffDates: List<ActivityReligiousOffDate>.from(
-            json["activityReligiousOffDates"]
-                .map((x) => ActivityReligiousOffDate.fromJson(x))),
-      );
+      activityId: json["activityId"].toString(),
+      country: json["country"] ?? "",
+      state: json["state"] ?? "",
+      city: json["city"] ?? "",
+      address: json["address"] ?? "",
+      activityName: json["activityName"] ?? "",
+      bestTimeToVisit: json["bestTimeToVisit"] ?? "",
+      activityHours: json["activityHours"].toString(),
+      activityPrice: json["activityPrice"].toString(),
+      startTime: json["startTime"] ?? "",
+      endTime: json["endTime"] ?? "",
+      description: json["description"] ?? "",
+      participantType: List<ParticipantType>.from(
+          json["participantType"].map((x) => participantTypeValues.map[x]!)),
+      weeklyOff: List<String>.from(json["weeklyOff"].map((x) => x)),
+      activityImageUrl:
+          List<String>.from(json["activityImageUrl"].map((x) => x)),
+      activityStatus: json["activityStatus"].toString(),
+      createdDate: json["createdDate"].toString(),
+      modifiedDate: json["modifiedDate"].toString(),
+      activityReligiousOffDates: List<ActivityReligiousOffDate>.from(
+          json["activityReligiousOffDates"]
+              .map((x) => ActivityReligiousOffDate.fromJson(x))),
+      ageGroupDiscountPercent: json["ageGroupDiscountPercent"] == null
+          ? null
+          : AgeGroupDiscountPercent.fromJson(json["ageGroupDiscountPercent"]),
+      discountedAmount: json['discountedAmount'] ?? 0);
 
   Map<String, dynamic> toJson() => {
         "activityId": activityId,
@@ -663,6 +268,8 @@ class Activity {
         "modifiedDate": modifiedDate,
         "activityReligiousOffDates": List<dynamic>.from(
             activityReligiousOffDates.map((x) => x.toJson())),
+        "ageGroupDiscountPercent": ageGroupDiscountPercent?.toJson(),
+        "discountedAmount": discountedAmount
       };
 }
 
@@ -696,6 +303,31 @@ class ActivityReligiousOffDate {
         "isCancelled": isCancelled,
         "createdDate": createdDate,
         "modifiedDate": modifiedDate,
+      };
+}
+
+class AgeGroupDiscountPercent {
+  double? child;
+  double? senior;
+  double? infant;
+
+  AgeGroupDiscountPercent({
+    this.child,
+    this.senior,
+    this.infant,
+  });
+
+  factory AgeGroupDiscountPercent.fromJson(Map<String, dynamic> json) =>
+      AgeGroupDiscountPercent(
+        child: json["CHILD"],
+        senior: json["SENIOR"],
+        infant: json["INFANT"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "CHILD": child,
+        "SENIOR": senior,
+        "INFANT": infant,
       };
 }
 
@@ -810,6 +442,7 @@ class EnumValues<T> {
 }
 
 ///Get Package Detail By ID Model
+
 class GetPackageDetailsByIdModel {
   Status status;
   GetPackageDetailsData data;
@@ -844,39 +477,40 @@ class GetPackageDetailsData {
   String createdDate;
   String modifiedDate;
   List<PackageActivity> packageActivities;
-
-  GetPackageDetailsData({
-    required this.packageId,
-    required this.country,
-    required this.state,
-    required this.packageName,
-    required this.location,
-    required this.noOfDays,
-    required this.packageImageUrl,
-    required this.totalPrice,
-    required this.packageStatus,
-    required this.createdDate,
-    required this.modifiedDate,
-    required this.packageActivities,
-  });
+  double packageDiscountedAmount;
+  GetPackageDetailsData(
+      {required this.packageId,
+      required this.country,
+      required this.state,
+      required this.packageName,
+      required this.location,
+      required this.noOfDays,
+      required this.packageImageUrl,
+      required this.totalPrice,
+      required this.packageStatus,
+      required this.createdDate,
+      required this.modifiedDate,
+      required this.packageActivities,
+      required this.packageDiscountedAmount});
 
   factory GetPackageDetailsData.fromJson(Map<String, dynamic> json) =>
       GetPackageDetailsData(
-        packageId: json["packageId"].toString(),
-        country: json["country"] ?? "",
-        state: json["state"] ?? "",
-        packageName: json["packageName"] ?? "",
-        location: json["location"] ?? "",
-        noOfDays: json["noOfDays"] ?? "",
-        packageImageUrl:
-            List<String>.from(json["packageImageUrl"].map((x) => x)),
-        totalPrice: json["totalPrice"].toString(),
-        packageStatus: json["packageStatus"] ?? "",
-        createdDate: json["createdDate"] ?? "",
-        modifiedDate: json["modifiedDate"] ?? "",
-        packageActivities: List<PackageActivity>.from(
-            json["packageActivities"].map((x) => PackageActivity.fromJson(x))),
-      );
+          packageId: json["packageId"].toString(),
+          country: json["country"] ?? "",
+          state: json["state"] ?? "",
+          packageName: json["packageName"] ?? "",
+          location: json["location"] ?? "",
+          noOfDays: json["noOfDays"] ?? "",
+          packageImageUrl:
+              List<String>.from(json["packageImageUrl"].map((x) => x)),
+          totalPrice: json["totalPrice"].toString(),
+          packageStatus: json["packageStatus"] ?? "",
+          createdDate: json["createdDate"] ?? "",
+          modifiedDate: json["modifiedDate"] ?? "",
+          packageActivities: List<PackageActivity>.from(
+              json["packageActivities"]
+                  .map((x) => PackageActivity.fromJson(x))),
+          packageDiscountedAmount: json['packageDiscountedAmount'] ?? 0);
 
   Map<String, dynamic> toJson() => {
         "packageId": packageId,
@@ -892,6 +526,7 @@ class GetPackageDetailsData {
         "modifiedDate": modifiedDate,
         "packageActivities":
             List<dynamic>.from(packageActivities.map((x) => x.toJson())),
+        "packageDiscountedAmount": packageDiscountedAmount
       };
 }
 
@@ -1102,8 +737,8 @@ class BookPackageByMemberData {
         cancellationReason: json["cancellationReason"].toString(),
         createdDate: json["createdDate"].toString(),
         modifiedDate: json["modifiedDate"].toString(),
-        user: json["user"] ?? "",
-        pkg: json["pkg"] ?? "",
+        user: User.fromJson(json["user"] ?? {}),
+        pkg: Pkg.fromJson(json["pkg"] ?? {}),
         totalAmount: json["totalAmount"].toString(),
         numberOfMembers: json["numberOfMembers"].toString(),
         memberList: List<MemberList>.from(
@@ -2744,56 +2379,57 @@ class PackageHIstoryDetailsActivity {
   String createdDate;
   String modifiedDate;
   List<PackageHIstoryDetailsActivityReligiousOffDate> activityReligiousOffDates;
-
-  PackageHIstoryDetailsActivity({
-    required this.activityId,
-    required this.country,
-    required this.state,
-    required this.city,
-    required this.address,
-    required this.activityName,
-    required this.bestTimeToVisit,
-    required this.activityHours,
-    required this.activityPrice,
-    required this.startTime,
-    required this.endTime,
-    required this.description,
-    required this.participantType,
-    required this.weeklyOff,
-    required this.activityImageUrl,
-    required this.activityStatus,
-    required this.createdDate,
-    required this.modifiedDate,
-    required this.activityReligiousOffDates,
-  });
+  double? discountedAmount;
+  PackageHIstoryDetailsActivity(
+      {required this.activityId,
+      required this.country,
+      required this.state,
+      required this.city,
+      required this.address,
+      required this.activityName,
+      required this.bestTimeToVisit,
+      required this.activityHours,
+      required this.activityPrice,
+      required this.startTime,
+      required this.endTime,
+      required this.description,
+      required this.participantType,
+      required this.weeklyOff,
+      required this.activityImageUrl,
+      required this.activityStatus,
+      required this.createdDate,
+      required this.modifiedDate,
+      required this.activityReligiousOffDates,
+      this.discountedAmount});
 
   factory PackageHIstoryDetailsActivity.fromJson(Map<String, dynamic> json) =>
       PackageHIstoryDetailsActivity(
-        activityId: json["activityId"].toString(),
-        country: json["country"] ?? "",
-        state: json["state"] ?? "",
-        city: json["city"] ?? "",
-        address: json["address"] ?? "",
-        activityName: json["activityName"] ?? "",
-        bestTimeToVisit: json["bestTimeToVisit"] ?? "",
-        activityHours: json["activityHours"].toString(),
-        activityPrice: json["activityPrice"].toString(),
-        startTime: json["startTime"] ?? "",
-        endTime: json["endTime"] ?? "",
-        description: json["description"] ?? "",
-        participantType:
-            List<String>.from(json["participantType"].map((x) => x)),
-        weeklyOff: List<String>.from(json["weeklyOff"].map((x) => x)),
-        activityImageUrl:
-            List<String>.from(json["activityImageUrl"].map((x) => x)),
-        activityStatus: json["activityStatus"] ?? "",
-        createdDate: json["createdDate"].toString(),
-        modifiedDate: json["modifiedDate"].toString(),
-        activityReligiousOffDates:
-            List<PackageHIstoryDetailsActivityReligiousOffDate>.from(
-                json["activityReligiousOffDates"].map((x) =>
-                    PackageHIstoryDetailsActivityReligiousOffDate.fromJson(x))),
-      );
+          activityId: json["activityId"].toString(),
+          country: json["country"] ?? "",
+          state: json["state"] ?? "",
+          city: json["city"] ?? "",
+          address: json["address"] ?? "",
+          activityName: json["activityName"] ?? "",
+          bestTimeToVisit: json["bestTimeToVisit"] ?? "",
+          activityHours: json["activityHours"].toString(),
+          activityPrice: json["activityPrice"].toString(),
+          startTime: json["startTime"] ?? "",
+          endTime: json["endTime"] ?? "",
+          description: json["description"] ?? "",
+          participantType:
+              List<String>.from(json["participantType"].map((x) => x)),
+          weeklyOff: List<String>.from(json["weeklyOff"].map((x) => x)),
+          activityImageUrl:
+              List<String>.from(json["activityImageUrl"].map((x) => x)),
+          activityStatus: json["activityStatus"] ?? "",
+          createdDate: json["createdDate"].toString(),
+          modifiedDate: json["modifiedDate"].toString(),
+          activityReligiousOffDates:
+              List<PackageHIstoryDetailsActivityReligiousOffDate>.from(
+                  json["activityReligiousOffDates"].map((x) =>
+                      PackageHIstoryDetailsActivityReligiousOffDate.fromJson(
+                          x))),
+          discountedAmount: json["discountedAmount"] ?? 0);
 
   Map<String, dynamic> toJson() => {
         "activityId": activityId,
@@ -2816,6 +2452,7 @@ class PackageHIstoryDetailsActivity {
         "modifiedDate": modifiedDate,
         "activityReligiousOffDates": List<dynamic>.from(
             activityReligiousOffDates.map((x) => x.toJson())),
+        "discountedAmount": discountedAmount
       };
 }
 
@@ -3642,53 +3279,53 @@ class GetPackageItineraryActivity {
   String createdDate;
   String modifiedDate;
   // List<dynamic> activityReligiousOffDates;
-
-  GetPackageItineraryActivity({
-    required this.activityId,
-    required this.country,
-    required this.state,
-    required this.city,
-    required this.address,
-    required this.activityName,
-    required this.bestTimeToVisit,
-    required this.activityHours,
-    required this.activityPrice,
-    required this.startTime,
-    required this.endTime,
-    required this.description,
-    required this.participantType,
-    required this.weeklyOff,
-    required this.activityImageUrl,
-    required this.activityStatus,
-    required this.createdDate,
-    required this.modifiedDate,
-    // required this.activityReligiousOffDates,
-  });
+  double? discountedAmount;
+  GetPackageItineraryActivity(
+      {required this.activityId,
+      required this.country,
+      required this.state,
+      required this.city,
+      required this.address,
+      required this.activityName,
+      required this.bestTimeToVisit,
+      required this.activityHours,
+      required this.activityPrice,
+      required this.startTime,
+      required this.endTime,
+      required this.description,
+      required this.participantType,
+      required this.weeklyOff,
+      required this.activityImageUrl,
+      required this.activityStatus,
+      required this.createdDate,
+      required this.modifiedDate,
+      // required this.activityReligiousOffDates,
+      this.discountedAmount});
 
   factory GetPackageItineraryActivity.fromJson(Map<String, dynamic> json) =>
       GetPackageItineraryActivity(
-        activityId: json["activityId"].toString(),
-        country: json["country"] ?? "",
-        state: json["state"] ?? "",
-        city: json["city"] ?? "",
-        address: json["address"] ?? "",
-        activityName: json["activityName"] ?? "",
-        bestTimeToVisit: json["bestTimeToVisit"] ?? "",
-        activityHours: json["activityHours"].toString(),
-        activityPrice: json["activityPrice"].toString(),
-        startTime: json["startTime"] ?? "",
-        endTime: json["endTime"] ?? "",
-        description: json["description"] ?? "",
-        participantType:
-            List<String>.from(json["participantType"].map((x) => x)),
-        weeklyOff: List<String>.from(json["weeklyOff"].map((x) => x)),
-        activityImageUrl:
-            List<String>.from(json["activityImageUrl"].map((x) => x)),
-        activityStatus: json["activityStatus"] ?? "",
-        createdDate: json["createdDate"] ?? "",
-        modifiedDate: json["modifiedDate"] ?? "",
-        // activityReligiousOffDates: List<dynamic>.from(json["activityReligiousOffDates"].map((x) => x)),
-      );
+          activityId: json["activityId"].toString(),
+          country: json["country"] ?? "",
+          state: json["state"] ?? "",
+          city: json["city"] ?? "",
+          address: json["address"] ?? "",
+          activityName: json["activityName"] ?? "",
+          bestTimeToVisit: json["bestTimeToVisit"] ?? "",
+          activityHours: json["activityHours"].toString(),
+          activityPrice: json["activityPrice"].toString(),
+          startTime: json["startTime"] ?? "",
+          endTime: json["endTime"] ?? "",
+          description: json["description"] ?? "",
+          participantType:
+              List<String>.from(json["participantType"].map((x) => x)),
+          weeklyOff: List<String>.from(json["weeklyOff"].map((x) => x)),
+          activityImageUrl:
+              List<String>.from(json["activityImageUrl"].map((x) => x)),
+          activityStatus: json["activityStatus"] ?? "",
+          createdDate: json["createdDate"] ?? "",
+          modifiedDate: json["modifiedDate"] ?? "",
+          // activityReligiousOffDates: List<dynamic>.from(json["activityReligiousOffDates"].map((x) => x)),
+          discountedAmount: json["discountedAmount"] ?? 0);
 
   Map<String, dynamic> toJson() => {
         "activityId": activityId,
@@ -3710,6 +3347,7 @@ class GetPackageItineraryActivity {
         "createdDate": createdDate,
         "modifiedDate": modifiedDate,
         // "activityReligiousOffDates": List<dynamic>.from(activityReligiousOffDates.map((x) => x)),
+        "discountedAmount": discountedAmount
       };
 }
 

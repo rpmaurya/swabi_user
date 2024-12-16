@@ -1,22 +1,17 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/res/Common%20Widgets/common_offer_container.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/customdropdown_button.dart';
-import 'package:flutter_cab/res/customTextWidget.dart';
-import 'package:flutter_cab/res/custom_dropDown.dart';
+import 'package:flutter_cab/res/Custom%20Widgets/custom_search_location.dart';
+import 'package:flutter_cab/res/Custom%20Widgets/custom_textformfield.dart';
 import 'package:flutter_cab/utils/assets.dart';
 import 'package:flutter_cab/utils/text_styles.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_cab/view_model/user_profile_view_model.dart';
 import 'package:flutter_cab/model/rentalbooking_model.dart';
-import 'package:flutter_cab/res/Common%20Widgets/common_alertTextfeild.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
-import 'package:flutter_cab/res/Custom%20Page%20Layout/commonPage_Layout.dart';
-import 'package:flutter_cab/res/customAppBar_widget.dart';
 import 'package:flutter_cab/res/custom_datePicker/common_textfield.dart';
 import 'package:flutter_cab/utils/color.dart';
-import 'package:flutter_cab/utils/dimensions.dart';
-import 'package:flutter_cab/utils/utils.dart';
 import 'package:flutter_cab/view_model/rental_view_model.dart';
-import 'package:google_places_flutter/google_places_flutter.dart';
 import 'package:provider/provider.dart';
 
 class RentalForm extends StatefulWidget {
@@ -36,6 +31,9 @@ class _RentalFormState extends State<RentalForm> with RouteAware {
   final rentalController = TextEditingController();
   final hoursController = TextEditingController();
   final minsController = TextEditingController();
+  final TextEditingController countryController = TextEditingController();
+  final TextEditingController stateController = TextEditingController();
+
   final FocusNode locationFocusNode = FocusNode();
   String selectHour = '';
   String selectMin = '';
@@ -76,7 +74,7 @@ class _RentalFormState extends State<RentalForm> with RouteAware {
   // double latitude1 = 0.0;
   double logi = 0.0;
   double lati = 0.0;
-
+  String country = 'United Arab Emirates';
   @override
   void initState() {
     // TODO: implement initState
@@ -84,10 +82,13 @@ class _RentalFormState extends State<RentalForm> with RouteAware {
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       Provider.of<GetRentalRangeListViewModel>(context, listen: false)
-          .fetchGetRentalRangeListViewModelApi(context, {});
+          .fetchGetRentalRangeListViewModelApi(context);
       rentalController.addListener(_onRentalControllerChanged);
       pickupdateController.addListener(_onRentalControllerChanged);
       seatController.addListener(_onRentalControllerChanged);
+      countryController.text = country;
+
+      getCountry();
     });
 
     // controllers[0].addListener(() {
@@ -99,6 +100,29 @@ class _RentalFormState extends State<RentalForm> with RouteAware {
     print('jcmzxcmnzxbcmnxzbcnxz..,,..,..............');
     if (locationFocusNode.hasFocus) {
       locationFocusNode.unfocus();
+    }
+  }
+
+  Dio? dio;
+  String accessToken = '';
+  void getCountry() async {
+    try {
+      var countryProvider =
+          Provider.of<GetCountryStateListViewModel>(context, listen: false);
+      countryProvider.getAccessToken(context: context).then((onValue) {
+        debugPrint('token,.....c//.c.... $onValue');
+        setState(() {
+          accessToken = onValue['auth_token'].toString();
+        });
+        // countryProvider.getCountryList(context: context, token: accessToken);
+        Provider.of<GetCountryStateListViewModel>(context, listen: false)
+            .getStateList(
+                context: context,
+                token: accessToken,
+                country: countryController.text);
+      });
+    } catch (e) {
+      debugPrint('error $e');
     }
   }
 
@@ -139,25 +163,86 @@ class _RentalFormState extends State<RentalForm> with RouteAware {
             ?.data ??
         [];
     String status = context.watch<RentalViewModel>().DataList.status.toString();
-    // return Scaffold(
-    //   backgroundColor: bgGreyColor,
-    //   resizeToAvoidBottomInset: false,
-    //   appBar: const CustomAppBar(
-    //     heading: "Rental Vehicle",
-    //   ),
-    //   body:
+    List state =
+        context.watch<GetCountryStateListViewModel>().getStateListModel;
+    bool isLoadingState =
+        context.watch<GetCountryStateListViewModel>().isLoading;
+
+
     return SingleChildScrollView(
       child: Form(
         key: _formKey,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 10),
+            // const SizedBox(height: 10),
             const CommonOfferContainer(
               bookingType: 'RENTAL_BOOKING',
             ),
+            // const SizedBox(height: 10),
+            Padding(
+                padding: const EdgeInsets.only(bottom: 5, left: 10, right: 10),
+                child: Text.rich(TextSpan(children: [
+                  TextSpan(text: 'Country', style: titleTextStyle),
+                  // const TextSpan(text: ' *', style: TextStyle(color: redColor))
+                ]))),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: Material(
+                child: Customtextformfield(
+                  // focusNode: focusNode2,
+                  controller: countryController,
+                  readOnly: true,
+                  enableInteractiveSelection: false,
+                  // prefixiconvisible: true,
+                  // inputFormatters: [
+                  //   FilteringTextInputFormatter.allow(RegExp("[a-zA-Z]")),
+                  // ],
+                  fillColor: background,
+                  img: user,
+                  hintText: 'Country',
+                ),
+              ),
+            ),
+
             const SizedBox(height: 10),
 
+            Padding(
+                padding: const EdgeInsets.only(bottom: 5, left: 10, right: 10),
+                child: Text.rich(TextSpan(children: [
+                  TextSpan(text: 'State', style: titleTextStyle),
+                  const TextSpan(text: ' *', style: TextStyle(color: redColor))
+                ]))),
+
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: CustomDropdownButton(
+                controller: stateController,
+                // focusNode: focusNode3,
+                itemsList: state.map((state) {
+                  return state['state_name'].toString();
+                }).toList(),
+
+                // itemsList: [],
+                onChanged: isLoadingState
+                    ? null
+                    : (value) {
+                        setState(() {
+                          stateController.text = value ?? '';
+                          pickuplocationController.clear();
+                        });
+                      },
+                hintText: 'Select State',
+
+                validator: (p0) {
+                  if (p0 == null || p0.isEmpty) {
+                    return 'Please select state';
+                  }
+                  return null;
+                },
+              ),
+            ),
+            const SizedBox(height: 10),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10),
               child: Text.rich(TextSpan(children: [
@@ -167,116 +252,17 @@ class _RentalFormState extends State<RentalForm> with RouteAware {
               // child: Text("Pickup Location", style: titleTextStyle),
             ),
             const SizedBox(height: 5),
-            FormField<String>(
-                autovalidateMode: AutovalidateMode.onUserInteraction,
-                validator: (value) {
-                  if (pickuplocationController.text.isEmpty) {
-                    return 'Please select location';
-                  }
-                  return null;
-                },
-                builder: (FormFieldState<String> field) {
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10),
-                        height: 50,
-                        child: GooglePlaceAutoCompleteTextField(
-                          focusNode: locationFocusNode,
-                          textEditingController: pickuplocationController,
-                          boxDecoration: BoxDecoration(
-                              color: background,
-                              borderRadius: BorderRadius.circular(5),
-                              border: Border.all(
-                                  color: naturalGreyColor.withOpacity(0.3))),
-                          googleAPIKey:
-                              // "AIzaSyADRdiTbSYUR8oc6-ryM1F1NDNjkHDr0Yo",
-                              "AIzaSyDhKIUQ4QBoDuOsooDfNY_EjCG0MB7Ami8",
-                          inputDecoration: InputDecoration(
-                            isDense: true,
-                            helperStyle: titleTextStyle,
-                            prefixStyle: titleTextStyle,
-                            counterStyle: titleTextStyle,
-                            contentPadding: const EdgeInsets.symmetric(
-                                vertical: 0, horizontal: 10),
-                            hintText: "Search your location",
-                            border: const OutlineInputBorder(
-                                borderSide: BorderSide.none),
-                            hintStyle: GoogleFonts.lato(
-                              color: greyColor1,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                            ),
-                            filled: true,
-                            labelStyle: titleTextStyle,
-                            fillColor: background,
-                            disabledBorder: const OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(5)),
-                                borderSide: BorderSide.none),
-                          ),
-                          textStyle: titleTextStyle,
-                          debounceTime: 400,
-                          isLatLngRequired: true,
-                          getPlaceDetailWithLatLng: (prediction) {
-                            debugPrint(
-                                "Latitude: ${prediction.lat}, Longitude: ${prediction.lng}");
-                            setState(() {
-                              lati = double.parse(prediction.lat ?? '0.0');
-                              logi = double.parse(prediction.lng ?? '0.0');
-                            });
-                            // logitude = prediction.lng.toString();
-                            // latitude = prediction.lat.toString();
-                            // You can use prediction.lat and prediction.lng here as needed
-                            // Example: Save them to variables or perform further actions
-                          },
-                          itemClick: (prediction) {
-                            pickuplocationController.text =
-                                prediction.description ?? "";
-                            pickuplocationController.selection =
-                                TextSelection.fromPosition(TextPosition(
-                                    offset:
-                                        prediction.description?.length ?? 0));
-                            field.didChange(prediction.description);
-                          },
-                          seperatedBuilder: const Divider(),
-
-                          // OPTIONAL// If you want to customize list view item builder
-                          itemBuilder: (context, index, prediction) {
-                            return Container(
-                              padding:
-                                  const EdgeInsets.only(bottom: 10, top: 10),
-                              // color: background,
-                              child: Row(
-                                children: [
-                                  const Icon(Icons.location_on),
-                                  const SizedBox(
-                                    width: 7,
-                                  ),
-                                  Expanded(
-                                      child: Text(prediction.description ?? ""))
-                                ],
-                              ),
-                            );
-                          },
-                          isCrossBtnShown: false,
-                          // default 600 ms ,
-                        ),
-                      ),
-                      if (field.hasError)
-                        pickuplocationController.text.isEmpty
-                            ? Padding(
-                                padding: const EdgeInsets.only(left: 20),
-                                child: Text(
-                                  field.errorText!,
-                                  style: const TextStyle(color: redColor),
-                                ),
-                              )
-                            : Container(),
-                    ],
-                  );
-                }),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: CustomSearchLocation(
+                  focusNode: locationFocusNode,
+                  controller: pickuplocationController,
+                  state: stateController.text,
+                  // stateValidation: true,
+                  fillColor: background,
+                  hintText: 'Search your location'),
+            ),
+           
             const SizedBox(height: 10),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -458,8 +444,8 @@ class _RentalFormState extends State<RentalForm> with RouteAware {
             const SizedBox(height: 10),
             Padding(
               padding: const EdgeInsets.all(10.0),
-              child: CustomButtonBig(
-                widht: double.infinity,
+              child: CustomButtonSmall(
+                width: double.infinity,
                 btnHeading: "SEARCH",
                 // loading: _rentalViewModel.loading,
                 loading: status == "Status.loading" && onTap,
@@ -484,11 +470,7 @@ class _RentalFormState extends State<RentalForm> with RouteAware {
                             logi,
                             lati);
                     debugPrint("${status}Status Hai Ye");
-                    // if(status == "Status.completed"){
-                    // context.push('/rentalForm/carsDetails',extra: {'id': widget.userId});
-                    // }else{
-                    //   Utils.flushBarErrorMessage("No vehicle available with the selected number of seats.", context, redColor);
-                    // }
+                  
                   }
                 },
               ),

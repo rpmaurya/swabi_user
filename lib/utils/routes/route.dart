@@ -2,8 +2,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/res/Custom%20Page%20Layout/commonPage_Layout.dart';
-import 'package:flutter_cab/view/dashboard/account_Pages/booking.dart';
-import 'package:flutter_cab/view/dashboard/account_Pages/cardPage.dart';
 import 'package:flutter_cab/view/dashboard/account_Pages/change_password.dart';
 import 'package:flutter_cab/view/dashboard/account_Pages/contact.dart';
 import 'package:flutter_cab/view/dashboard/account_Pages/faq_page_screen.dart';
@@ -22,8 +20,6 @@ import 'package:flutter_cab/view/dashboard/raiseIssue_pages/issue_view_details_s
 import 'package:flutter_cab/view/dashboard/rental/book_your_ride_screen_.dart';
 import 'package:flutter_cab/view/dashboard/rental/cancel_booking.dart';
 import 'package:flutter_cab/view/dashboard/rental/cars_available_screen.dart';
-import 'package:flutter_cab/view/dashboard/rental/guestdetails_bookingform_screen.dart';
-import 'package:flutter_cab/view/dashboard/rental/happy_booking_screen.dart';
 import 'package:flutter_cab/view/dashboard/rental/history/rental_bookedpage_view.dart';
 import 'package:flutter_cab/view/dashboard/rental/history/rental_cancel_page_view.dart';
 import 'package:flutter_cab/view/dashboard/rental/history/rental_history_managment_screen.dart';
@@ -33,7 +29,6 @@ import 'package:flutter_cab/view/dashboard/tourPackage/package_screen.dart';
 import 'package:flutter_cab/view/dashboard/tourPackage/package_booking_member_screen.dart';
 import 'package:flutter_cab/view/dashboard/tourPackage/package_viewdetails_screen.dart';
 import 'package:flutter_cab/view/dashboard/tourPackage/packageHistory/mypackage_history_screen.dart';
-import 'package:flutter_cab/view/dashboard/tourPackage/tourPackageForm.dart';
 import 'package:flutter_cab/view/dashboard/account_Pages/edit_profile_screen.dart';
 import 'package:flutter_cab/view/dashboard/wallet_pages/wallet_history_screen.dart';
 import 'package:flutter_cab/view/dashboard/wallet_pages/wallet_screen.dart';
@@ -55,64 +50,7 @@ final GoRouter myRouter = GoRouter(
   initialLocation: '/splash',
   navigatorKey: _rootNavigatorKey,
   routes: <RouteBase>[
-    ///For Bottom Navigation Regarding
-    // ShellRoute(
-    //   navigatorKey: _shellNavigatorKey,
-    //   builder: (BuildContext context, GoRouterState state, Widget child) {
-    //     return CustomBottomNavigationBar(
-    //         child: child, currentRoute: state.uri.toString());
-    //   },
-    //   routes: [
-    //     GoRoute(
-    //       path: '/',
-    //       parentNavigatorKey: _shellNavigatorKey,
-    //       pageBuilder: (context, state) {
-    //         return const NoTransitionPage(child:
-    //         VendorProfileScreen()
-    //         );
-    //       },
-    //     ),
-    //     GoRoute(
-    //         path: '/vendor',
-    //         parentNavigatorKey: _shellNavigatorKey,
-    //         pageBuilder: (context, state) {
-    //           return const NoTransitionPage(child: VendorProfileScreen());
-    //         },
-    //         routes: [
-    //           GoRoute(
-    //             path: 'vendor',
-    //             parentNavigatorKey: _rootNavigatorKey,
-    //             pageBuilder: (context, state) {
-    //               return const NoTransitionPage(child: VendorProfileScreen());
-    //             },
-    //           ),
-    //           GoRoute(
-    //             path: 'vendor',
-    //             parentNavigatorKey: _rootNavigatorKey,
-    //             pageBuilder: (context, state) {
-    //               final title = state.extra as Map<String, dynamic>;
-    //               final color = state.extra as Map<String, dynamic>;
-    //               return NoTransitionPage(
-    //                   child:VendorProfileScreen());
-    //             },
-    //           ),
-    //         ]),
-    //     GoRoute(
-    //         path: '/vendor',
-    //         parentNavigatorKey: _shellNavigatorKey,
-    //         pageBuilder: (context, state) {
-    //           return const NoTransitionPage(child: VendorProfileScreen());
-    //         },
-    //         routes: []),
-    //     GoRoute(
-    //       path: '/vendor',
-    //       parentNavigatorKey: _shellNavigatorKey,
-    //       pageBuilder: (context, state) {
-    //         return const NoTransitionPage(child: VendorProfileScreen());
-    //       },
-    //     ),
-    //   ],
-    // ),
+    
     GoRoute(
         path: '/splash',
         builder: (BuildContext context, GoRouterState state) {
@@ -137,12 +75,7 @@ final GoRouter myRouter = GoRouter(
         return const home_screen();
       },
     ),
-    // GoRoute(
-    //   path: '/oneWayTrip',
-    //   builder: (BuildContext context, GoRouterState state) {
-    //     return const one_way_trip();
-    //   },
-    // ),
+  
     GoRoute(
       path: '/notification',
       builder: (BuildContext context, GoRouterState state) {
@@ -152,35 +85,7 @@ final GoRouter myRouter = GoRouter(
         );
       },
     ),
-    GoRoute(
-      path: '/menuPage',
-      pageBuilder: (BuildContext context, GoRouterState state) {
-        var data = state.extra as Map<String, dynamic>;
-        return CustomTransitionPage(
-          key: state.pageKey,
-          child: AccountScreen(userId: data['id']),
-          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-            const begin = Offset(-1.0, 0.0);
-            const end = Offset.zero;
-            const curve = Curves.ease;
-            var tween =
-                Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-            var offsetAnimation = animation.drive(tween);
-            return SlideTransition(
-              position: offsetAnimation,
-              child: child,
-            );
-          },
-        );
-      },
-    ),
-    // GoRoute(
-    //   path: '/menuPage',
-    //   builder: (BuildContext context, GoRouterState state) {
-    //     var data = state.extra as Map<String, dynamic>;
-    //     return MenuList(userId: data['id'],);
-    //   },
-    // ),
+    
     GoRoute(
         path: '/profilePage',
         builder: (BuildContext context, GoRouterState state) {
@@ -201,12 +106,7 @@ final GoRouter myRouter = GoRouter(
             },
           ),
         ]),
-    GoRoute(
-      path: '/booking',
-      pageBuilder: (BuildContext context, GoRouterState state) {
-        return const NoTransitionPage(child: MyBooking());
-      },
-    ),
+  
     GoRoute(
       path: '/changePassword',
       // parentNavigatorKey: _rootNavigatorKey,
@@ -294,13 +194,7 @@ final GoRouter myRouter = GoRouter(
         return const Issueviewdetails();
       },
     ),
-    GoRoute(
-      path: '/myCards',
-      parentNavigatorKey: _rootNavigatorKey,
-      builder: (BuildContext context, GoRouterState state) {
-        return const CardPage();
-      },
-    ),
+   
     GoRoute(
       path: '/allOffer',
       parentNavigatorKey: _rootNavigatorKey,
@@ -375,13 +269,7 @@ final GoRouter myRouter = GoRouter(
           );
         },
         routes: [
-          // GoRoute(
-          //   path: 'tourPackage',
-          //   parentNavigatorKey: _rootNavigatorKey,
-          //   builder: (BuildContext context, GoRouterState state) {
-          //     return const TourPackage();
-          //   },
-          // ),
+       
           GoRoute(
             path: 'packageDetails',
             parentNavigatorKey: _rootNavigatorKey,
@@ -405,27 +293,19 @@ final GoRouter myRouter = GoRouter(
               final usrId = state.extra as Map<String, dynamic>;
               final amt = state.extra as Map<String, dynamic>;
               final bookingDate = state.extra as Map<String, dynamic>;
+              final participantTypes = state.extra as Map<String, dynamic>;
+              final activityList = state.extra as Map<String, dynamic>;
               return PackageBookingMemberPage(
                 packageID: pkgId["pkgID"],
                 userID: usrId['usrID'],
                 amt: amt['amt'],
                 bookingDate: bookingDate['bookDate'],
+                participantTypes: participantTypes['participantTypes'],
+                packageActivityList: activityList['activityList'],
               );
             },
           ),
-          /////Test Member design
-          // GoRoute(
-          //   path: 'packageMember',
-          //   parentNavigatorKey: _rootNavigatorKey,
-          //   builder: (BuildContext context, GoRouterState state) {
-          //     // final pkgId = state.extra as Map<String, dynamic>;
-          //     // final usrId = state.extra as Map<String, dynamic>;
-          //     // final amt = state.extra as Map<String, dynamic>;
-          //     // final bookingDate = state.extra as Map<String, dynamic>;
-          //     return const PackageBooking();
-          //   },
-          // ),
-
+        
           ///History Pages
           GoRoute(
             path: 'packageHistoryManagement',
@@ -458,16 +338,7 @@ final GoRouter myRouter = GoRouter(
           return RentalForm(userId: data['userId']);
         },
         routes: [
-          GoRoute(
-            path: 'happyScreen',
-            parentNavigatorKey: _rootNavigatorKey,
-            builder: (BuildContext context, GoRouterState state) {
-              var data = state.extra as Map<String, dynamic>;
-              return HappyBookingScreen(
-                userId: data['userId'],
-              );
-            },
-          ),
+       
           GoRoute(
             path: 'carsDetails',
             parentNavigatorKey: _rootNavigatorKey,
@@ -502,47 +373,7 @@ final GoRouter myRouter = GoRouter(
               );
             },
           ),
-          GoRoute(
-            path: 'guestBooking',
-            parentNavigatorKey: _rootNavigatorKey,
-            builder: (BuildContext context, GoRouterState state) {
-              var date = state.extra as Map<String, dynamic>;
-              var pickUpLocation = state.extra as Map<String, dynamic>;
-              var price = state.extra as Map<String, dynamic>;
-              var hour = state.extra as Map<String, dynamic>;
-              var carType = state.extra as Map<String, dynamic>;
-              var bookerId = state.extra as Map<String, dynamic>;
-              var kilometer = state.extra as Map<String, dynamic>;
-              var pickUpTime = state.extra as Map<String, dynamic>;
-              var longitude = state.extra as Map<String, dynamic>;
-              var latitude = state.extra as Map<String, dynamic>;
-              var offerCode = state.extra as Map<String, dynamic>;
-              var discountAmount = state.extra as Map<String, dynamic>;
-              var taxAmount = state.extra as Map<String, dynamic>;
-              var taxPercentage = state.extra as Map<String, dynamic>;
-
-              var payableAmount = state.extra as Map<String, dynamic>;
-              // final List guestData = data[''] ?? [];
-              return GuestRentalBookingForm(
-                // data: {},
-                date: date['date'],
-                pickUpLocation: pickUpLocation['pickUpLocation'],
-                price: price['price'],
-                hour: hour['hour'],
-                carType: carType['carType'],
-                bookerId: bookerId['bookerId'],
-                kilometer: kilometer['kilometer'],
-                pickUpTime: pickUpTime['pickUpTime'],
-                longi: longitude['longi'],
-                lati: latitude['lati'],
-                offerCode: offerCode['offerCode'],
-                discountAmount: discountAmount['discountAmount'],
-                taxAmount: taxAmount["taxAmount"],
-                taxPercentage: taxPercentage["taxPercentage"],
-                payableAmount: payableAmount['payableAmount'],
-              );
-            },
-          ),
+        
           GoRoute(
             path: 'rentalCarBooking',
             parentNavigatorKey: _rootNavigatorKey,
@@ -592,29 +423,7 @@ final GoRouter myRouter = GoRouter(
           ),
         ]),
 
-    //       GoRoute(
-    //           path: 'selectItem',
-    //           parentNavigatorKey: _rootNavigatorKey,
-    //           pageBuilder: (context, state) {
-    //             var data = state.extra as Map<String, dynamic>;
-    //             return NoTransitionPage(
-    //                 child: SelectItem(
-    //               selectedItems: data["notifier"],
-    //               customer: data["customer"],
-    //             ));
-    //           }),
+ 
   ],
 );
-//
-// extension GoRouterEx on GoRouter {
-//   void popUntilPath(BuildContext context, String routePath) {
-//     final router = GoRouterState.of(context);
-//     while (router.uri.toString() != routePath) {
-//       if (!router.canPop()) {
-//         return;
-//       }
-//       debugPrint('Popping ${router.location}');
-//       router.pop();
-//     }
-//   }
-// }
+

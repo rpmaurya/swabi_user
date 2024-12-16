@@ -1,15 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/model/get_trasactionbyid_model.dart';
-import 'package:flutter_cab/res/Custom%20Page%20Layout/commonPage_Layout.dart';
 import 'package:flutter_cab/res/Custom%20Widgets/custom_tabbar.dart';
-import 'package:flutter_cab/res/customAppBar_widget.dart';
-import 'package:flutter_cab/res/login/login_customTextFeild.dart';
-import 'package:flutter_cab/utils/assets.dart';
 import 'package:flutter_cab/utils/color.dart';
-import 'package:flutter_cab/utils/dimensions.dart';
 import 'package:flutter_cab/utils/text_styles.dart';
 import 'package:flutter_cab/view_model/payment_gateway_view_model.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -131,14 +125,9 @@ class _MyTransactionState extends State<MyTransaction>
   @override
   Widget build(BuildContext context) {
     debugPrint('userId....${widget.userId}');
-    // return Scaffold(
-    //   backgroundColor: bgGreyColor,
-    //   appBar: const CustomAppBar(heading: "My Transaction"),
-    //   body: PageLayout_Page(
-    //       child: Column(
-    //     children: [
+  
     return Customtabbar(
-        titleHeading: 'My Transaction',
+        titleHeading: 'My Transactions',
         controller: _tabController,
         onTap: (index) {
           setState(() {
@@ -283,18 +272,15 @@ class _MyTransactionState extends State<MyTransaction>
                           },
                           itemCount:
                               allTranaction.length + (isLoadingMore ? 1 : 0))
-                      : const Center(
+                      : Center(
                           child: Text(
                             'No Transaction Available',
-                            style: TextStyle(
-                                color: redColor, fontWeight: FontWeight.bold),
+                              style: nodataTextStyle
                           ),
                         );
             },
           );
         }));
-    //     ],
-    //   )),
-    // );
+  
   }
 }

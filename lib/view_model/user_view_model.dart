@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import '../respository/user.dart';
 import '../utils/utils.dart';
 import '/model/user_model.dart';
 // ignore: depend_on_referenced_packages
 import 'package:shared_preferences/shared_preferences.dart';
 
 class UserViewModel with ChangeNotifier {
-  final _myRepo = UserRepository();
+
   bool _loading = false;
   bool get loading => _loading;
   String filename = '';
@@ -77,14 +76,7 @@ class UserViewModel with ChangeNotifier {
     final bool remember = sp.getBool('remember') ?? false;
     return remember;
   }
-  // Future<bool> removeUser(context) async {
-  //   final SharedPreferences sp = await SharedPreferences.getInstance();
-  //   print(sp.toString());
-  //   Utils.flushBarSuccessMessage('Logout Successfully', context);
-  //   sp.clear();
-  //   print("token dismis");
-  //   return true;
-  // }
+ 
 
   Future<dynamic> remove(context) async {
     final SharedPreferences sp = await SharedPreferences.getInstance();

@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/app_url.dart';
-import 'package:flutter_cab/model/offer_detailbyid_model.dart';
+import 'package:flutter_cab/model/offer_detail_by_id_model.dart';
 import 'package:flutter_cab/model/offer_list_model.dart';
 import 'package:flutter_cab/view_model/services/http_service.dart';
 

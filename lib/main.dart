@@ -6,10 +6,10 @@ import 'package:flutter_cab/view_model/notification_view_model.dart';
 import 'package:flutter_cab/view_model/offer_view_model.dart';
 import 'package:flutter_cab/view_model/package_view_model.dart';
 import 'package:flutter_cab/view_model/payment_gateway_view_model.dart';
-import 'package:flutter_cab/view_model/raiseIssue_view_model.dart';
+import 'package:flutter_cab/view_model/raise_issue_view_model.dart';
 import 'package:flutter_cab/view_model/registration_view_model.dart';
 import 'package:flutter_cab/view_model/rental_view_model.dart';
-import 'package:flutter_cab/view_model/userProfile_view_model.dart';
+import 'package:flutter_cab/view_model/user_profile_view_model.dart';
 import 'package:flutter_cab/view_model/user_view_model.dart';
 
 import 'package:provider/provider.dart';
@@ -70,6 +70,14 @@ Future<void> main() async {
         ChangeNotifierProvider(
             create: (context) => GetPaymentRefundViewModel()),
         ChangeNotifierProvider(create: (context) => NotificationViewModel()),
+        ChangeNotifierProvider(
+            create: (context) => ConfirmPackageBookingViewModel()),
+        ChangeNotifierProvider(
+            create: (context) => ConfirmRentalBookingViewModel()),
+        ChangeNotifierProvider(
+            create: (context) => GetCalculatePackagePriceViewModel()),
+        ChangeNotifierProvider(
+            create: (context) => GetCountryStateListViewModel()),
       ],
       child: const MyApp(),
     ));

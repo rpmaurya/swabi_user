@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/app_url.dart';
-import 'package:flutter_cab/data/response/base_response.dart';
 import 'package:flutter_cab/model/payment_details_model.dart';
 import 'package:flutter_cab/model/rentalbooking_model.dart';
 import 'package:flutter_cab/view_model/services/http_service.dart';
@@ -11,8 +10,6 @@ import '../data/network/base_apiservices.dart';
 import '../data/network/network_apiservice.dart';
 
 class RentalRepository {
-  final BaseApiServices _apiServices = NetworkApiService();
-
   Future<RentalCarListStatusModel> rentalRepositoryApi(
       {required BuildContext context,
       required Map<String, dynamic> query}) async {
@@ -24,10 +21,6 @@ class RentalRepository {
         bodyType: HttpBodyType.JSON,
         queryParameters: query);
     try {
-      // Response<dynamic> response = await _apiServices.getGetApiResponse(
-      //     'http://swabi.ap-south-1.elasticbeanstalk.com/'
-      //     'rental/rental_car_price?date=${data["date"]}&pickupTime=${data["pickupTime"]}&seat=${data["seat"]}&hours=${data["hours"]}&kilometers=${data["kilometers"]}&pickUpLocation=${data["pickUpLocation"]}&longitude=${data["longitude"]}&latitude=${data["latitude"]}');
-      // // print("rental api success");
       Response<dynamic>? response = await http.request<dynamic>();
       debugPrint("rentalBooking search Repo api success${response?.data}");
       var resp = RentalCarListStatusModel.fromJson(response?.data);
@@ -67,59 +60,39 @@ class RentalBookingRepository {
       var resp = RentalCarBookingModel.fromJson(response?.data);
       return resp;
     } catch (error) {
-      // BaseResponseModel baseResponseModel =
-      //     BaseResponseModel.fromJson(error.response?.data);
-      // print(baseResponseModel.status?.message);
-
       print({'error..': error});
       http.handleErrorResponse(context: context, error: error);
     }
     return null;
   }
 
-  Future<dynamic> rentalBookingRepositoryApi(data) async {
+  Future<RentalCarBookingModel> confirmRentalBookingRepositoryApi(
+      {required BuildContext context,
+      required Map<String, dynamic> query}) async {
+    var http = HttpService(
+        baseURL: AppUrl.baseUrl,
+        endURL: AppUrl.confirmRentalBookingUrl,
+        queryParameters: query,
+        methodType: HttpMethodType.PUT,
+        bodyType: HttpBodyType.JSON,
+        isAuthorizeRequest: false);
     try {
-      dynamic response = await _apiServices.getPostApiResponse(
-          'http://swabi.ap-south-1.elasticbeanstalk.com/'
-          'rental/booking_v2',
-          data);
-      // dynamic response = await _apiServices.getPostApiResponse(
-      //     'http://swabi.ap-south-1.elasticbeanstalk.com/'
-      //     'rental/booking_v2?date=${data["date"]}&pickupTime=${data["pickupTime"]}&bookerId=${data["bookerId"]}&bookingForId=${data["bookingForId"]}&carType=${data["carType"]}&kilometers=${data["kilometers"]}&hours=${data["hours"]}&price=${data["price"]}&pickUpLocation=${data["pickUpLocation"]}&locationLatitude=${data["locationLatitude"]}&locationLongitude=${data["locationLongitude"]}&guestName=${data["guestName"]}&guestMobile=${data["guestMobile"]}&gender=${data["gender"]}',
-      //     data);
-      print("rentalBooking Repo api success $response");
-      return response = RentalCarBookingModel.fromJson(response);
+      
+      Response<dynamic>? response = await http.request<dynamic>();
+      debugPrint("Get Rental Booked By Id Repo Success ${response?.data}");
+      var resp = RentalCarBookingModel.fromJson(response?.data);
+      return resp;
     } catch (e) {
-      print("rentalBooking Repo api not successful error");
-      // print(e);
+      debugPrint("Get Rental Booked By Id Repo Field $e");
+      http.handleErrorResponse(context: context, error: e);
       rethrow;
     }
   }
+  
 }
-// ///Rental Booking Repo
-// class RentalBookingRepository {
-//   final BaseApiServices _apiServices = NetworkApiService();
-//
-//   Future<dynamic> rentalBookingRepositoryApi(data) async {
-//     try {
-//       dynamic response = await _apiServices.getPostApiResponse(
-//           'http://swabi.ap-south-1.elasticbeanstalk.com/'
-//               'rental/booking?date=${data["date"]}&pickupTime=${data["pickupTime"]}&userId=${data["userId"]}&carType=${data["carType"]}&kilometers=${data["kilometers"]}&hours=${data["hours"]}&price=${data["price"]}&pickUpLocation=${data["pickUpLocation"]}',
-//           data);
-//       print("rentalBooking Repo api success");
-//       return response = RentalCarBookingModel.fromJson(response);
-//     } catch (e) {
-//       print("rentalBooking Repo api not successful error");
-//       print(e);
-//       rethrow;
-//     }
-//   }
-// }
 
 ///Rental Booking Cancel Repo
 class RentalBookingCancelRepository {
-  final BaseApiServices _apiServices = NetworkApiService();
-
   Future<RentalCarBookingCancelModel> rentalBookingCancelRepositoryApi(
       {required BuildContext context,
       required Map<String, dynamic> query}) async {
@@ -132,17 +105,14 @@ class RentalBookingCancelRepository {
         queryParameters: query);
     try {
       Response<dynamic>? response = await http.request<dynamic>();
-      // dynamic response = await _apiServices.getPutApiResponse(
-      //     'http://swabi.ap-south-1.elasticbeanstalk.com/'
-      //     'rental/cancel_rental_booking?id=${data["id"]}&reason=${data["reason"]}&cancelledBy=${data["cancelledBy"]}');
-      print("rentalBooking cancel Repo api success ${response?.data}");
+
+      debugPrint("rentalBooking cancel Repo api success ${response?.data}");
       var resp = RentalCarBookingCancelModel.fromJson(response?.data);
       return resp;
     } catch (e) {
-      // print("rentalBooking cancel Repo api not successful error");
       // ignore: use_build_context_synchronously
       http.handleErrorResponse(context: context, error: e);
-      print(e);
+      debugPrint('cancel bookingbooking $e');
       rethrow;
     }
   }
@@ -152,18 +122,25 @@ class RentalBookingCancelRepository {
 class RentalBookingListRepository {
   final BaseApiServices _apiServices = NetworkApiService();
 
-  Future<RentalCarBookingListModel> rentalBookingListRepositoryApi(data) async {
+  Future<RentalCarBookingListModel> rentalBookingListRepositoryApi(
+      {required BuildContext context,
+      required Map<String, dynamic> query}) async {
+    var http = HttpService(
+        baseURL: AppUrl.baseUrl,
+        endURL: AppUrl.getRentalByUserIdUrl,
+        bodyType: HttpBodyType.JSON,
+        methodType: HttpMethodType.GET,
+        isAuthorizeRequest: false,
+        queryParameters: query);
     try {
-      dynamic response = await _apiServices.getGetApiResponse(
-          'http://swabi.ap-south-1.elasticbeanstalk.com/'
-          'rental/get_rental_booking_by_userId?userId=${data["userId"]}&pageNumber=${data["pageNumber"]}&pageSize=${data["pageSize"]}&bookingStatus=${data["bookingStatus"]}&search=${data["search"]}&sortBy=${data["sortBy"]}&sortDirection=${data["sortDirection"]}');
-
-      debugPrint("rentalBooking Repo api success $response");
-      var resp = RentalCarBookingListModel.fromJson(response);
+      Response<dynamic>? response = await http.request<dynamic>();
+      debugPrint("rentalBooking Repo api success${response?.data}");
+     
+      var resp = RentalCarBookingListModel.fromJson(response?.data);
       return resp;
     } catch (e) {
-      // print("rentalBooking Repo api not successful error");
-      print(e);
+      http.handleErrorResponse(context: context, error: e);
+      debugPrint('rentalBooking Repo api not successful error $e');
       rethrow;
     }
   }
@@ -173,17 +150,28 @@ class RentalBookingListRepository {
 class RentalViewDetailsRepository {
   final BaseApiServices _apiServices = NetworkApiService();
 
-  Future<RentalDetailsSingleModel> rentalViewDetailsRepositoryApi(data) async {
+  Future<RentalDetailsSingleModel> rentalViewDetailsRepositoryApi(
+      {required BuildContext context,
+      required Map<String, dynamic> query}) async {
+    var http = HttpService(
+        baseURL: AppUrl.baseUrl,
+        endURL: AppUrl.getRentalByIdUrl,
+        bodyType: HttpBodyType.JSON,
+        methodType: HttpMethodType.GET,
+        isAuthorizeRequest: false,
+        queryParameters: query);
     try {
-      dynamic response = await _apiServices
-          .getGetApiResponse("http://swabi.ap-south-1.elasticbeanstalk.com"
-              "/rental/get_rental_booking_by_id?id=${data["id"]}");
-      print("rental View Detail Repo api success");
-      var resp = RentalDetailsSingleModel.fromJson(response);
+      Response<dynamic>? response = await http.request<dynamic>();
+      debugPrint("rental View Detail Repo api success${response?.data}");
+      // dynamic response = await _apiServices
+      //     .getGetApiResponse("http://swabi.ap-south-1.elasticbeanstalk.com"
+      //         "/rental/get_rental_booking_by_id?id=${data["id"]}");
+      // print("rental View Detail Repo api success");
+      var resp = RentalDetailsSingleModel.fromJson(response?.data);
       return resp;
     } catch (e) {
-      print("rental View Detail api not successful error");
-      print(e);
+      http.handleErrorResponse(context: context, error: e);
+      debugPrint('rental View Detail api not successful error $e');
       rethrow;
     }
   }
@@ -191,8 +179,6 @@ class RentalViewDetailsRepository {
 
 ///Rental View Single payment Detail Repo
 class RentalViewPaymentDetailsRepository {
-  final BaseApiServices _apiServices = NetworkApiService();
-
   Future<PaymentDetailsModel?> paymentDetailsApi(
       {required BuildContext context,
       required Map<String, dynamic> query}) async {
@@ -209,10 +195,6 @@ class RentalViewPaymentDetailsRepository {
       var resp = PaymentDetailsModel.fromJson(response?.data);
       return resp;
     } catch (error) {
-      // BaseResponseModel baseResponseModel =
-      //     BaseResponseModel.fromJson(error.response?.data);
-      // print(baseResponseModel.status?.message);
-
       print({'error..': error});
       http.handleErrorResponse(
         context: context,
@@ -228,16 +210,25 @@ class RentalViewPaymentDetailsRepository {
 class RentalValidationRepository {
   final BaseApiServices _apiServices = NetworkApiService();
 
-  Future<dynamic> rentalValidationRepositoryApi(data) async {
+  Future<dynamic> rentalValidationRepositoryApi(
+      {required BuildContext context,
+      required Map<String, dynamic> query}) async {
+    var http = HttpService(
+        baseURL: AppUrl.baseUrl,
+        endURL: AppUrl.checkRentalBookingByDateUrl,
+        bodyType: HttpBodyType.JSON,
+        methodType: HttpMethodType.GET,
+        isAuthorizeRequest: false,
+        queryParameters: query);
     try {
-      dynamic response = await _apiServices.getGetApiResponse(
-          "http://swabi.ap-south-1.elasticbeanstalk.com"
-          "/rental/check_rental_booking_by_date?date=${data["date"]}&userId=${data["userId"]}");
-      print("rental Validation Repo Success");
-      return response = RentalCarBookingValidationModel.fromJson(response);
+      Response<dynamic>? response = await http.request<dynamic>();
+      debugPrint("rental Validation Repo Success${response?.data}");
+
+      var resp = RentalCarBookingValidationModel.fromJson(response?.data);
+      return resp;
     } catch (e) {
-      print("rental Validation Repo Field");
-      print(e);
+      // http.handleErrorResponse(context: context, error: e);
+      debugPrint('rental Validation Repo Field $e');
       rethrow;
     }
   }
@@ -245,16 +236,27 @@ class RentalValidationRepository {
 
 ///Get Rental Range List  Repo
 class GetRentalRangeListRepository {
-  final BaseApiServices _apiServices = NetworkApiService();
+  // final BaseApiServices _apiServices = NetworkApiService();
 
-  Future<dynamic> getRentalRangeListRepositoryApi(data) async {
+  Future<dynamic> getRentalRangeListRepositoryApi({
+    required BuildContext context,
+  }) async {
+    var http = HttpService(
+      baseURL: AppUrl.baseUrl,
+      endURL: AppUrl.getRentalmatricsListUrl,
+      bodyType: HttpBodyType.JSON,
+      methodType: HttpMethodType.GET,
+      isAuthorizeRequest: false,
+    );
     try {
-      dynamic response =
-          await _apiServices.getGetApiResponse(AppUrl.rentalRangeList);
-      return response = GetRentalRangeListModel.fromJson(response);
+      Response<dynamic>? response = await http.request<dynamic>();
+      debugPrint("get rental Matrics List Repo Success${response?.data}");
+
+      var resp = GetRentalRangeListModel.fromJson(response?.data);
+      return resp;
     } catch (e) {
-      print("rental Validation Repo Field");
-      print(e);
+      http.handleErrorResponse(context: context, error: e);
+      debugPrint('get rental Matrics List Repo Field $e');
       rethrow;
     }
   }

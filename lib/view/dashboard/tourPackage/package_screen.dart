@@ -4,11 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cab/model/package_models.dart';
 import 'package:flutter_cab/res/Common%20Widgets/common_offer_container.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
-import 'package:flutter_cab/res/Custom%20Page%20Layout/commonPage_Layout.dart';
-import 'package:flutter_cab/res/Custom%20Widgets/multi_imageSlider_ContainerWidget.dart';
-import 'package:flutter_cab/res/customAppBar_widget.dart';
-import 'package:flutter_cab/res/customContainer.dart';
-import 'package:flutter_cab/res/customTextWidget.dart';
+import 'package:flutter_cab/res/Custom%20Widgets/multi_image_slider_container_widget.dart';
+import 'package:flutter_cab/res/custom_container.dart';
+import 'package:flutter_cab/res/custom_text_widget.dart';
 import 'package:flutter_cab/utils/assets.dart';
 import 'package:flutter_cab/utils/color.dart';
 import 'package:flutter_cab/utils/dimensions.dart';
@@ -63,17 +61,6 @@ class _PackagesState extends State<Packages> {
     // controller.text = _selectedDate.day.toString();
   }
 
-  // void _fetchPackageList() async {
-  //   Provider.of<GetPackageListViewModel>(context, listen: false)
-  //       .fetchGetPackageListViewModelApi(context, {
-  //     "pageNumber": "0",
-  //     "pageSize": "40",
-  //     "date": controller.text,
-  //     "search": "",
-  //     "packageStatus": "TRUE",
-  //   });
-  // }
-
   Future<void> fetchPackageList() async {
     if (isLoadingMore || isLastPage) return;
     setState(() {
@@ -88,7 +75,9 @@ class _PackagesState extends State<Packages> {
         "pageSize": pageSize,
         "date": controller.text,
         "search": "",
-        "packageStatus": "TRUE",
+        "days": "",
+        "price": ""
+        // "packageStatus": "TRUE",
       });
       var data = resp?.data.content ?? [];
       if (data.isNotEmpty) {
@@ -185,28 +174,10 @@ class _PackagesState extends State<Packages> {
         .getPackageActivityById
         .status
         .toString();
-    // packageList = context
-    //         .watch<GetPackageListViewModel>()
-    //         .getPackageList
-    //         .data
-    //         ?.data
-    //         .content ??
-    //     [];
+  
     isLoadingData = context.watch<OfferViewModel>().isLoading1;
 
-    // activityData = context
-    //     .watch<GetPackageListViewModel>()
-    //     .getPackageList
-    //     .data
-    //     ?.data.content.
-    // imgList = context.watch<GetPackageListViewModel>().getPackageList.data?.data.content ?? [];
-    // print(packageList.length);
-    // return Scaffold(
-    //   backgroundColor: bgGreyColor,
-    //   appBar: const CustomAppBar(
-    //     heading: "Packages",
-    //   ),
-    //   body:
+   
     return Stack(
       children: [
         Column(
@@ -286,7 +257,7 @@ class _PackagesState extends State<Packages> {
                                 shrinkWrap: true,
                                 physics: const NeverScrollableScrollPhysics(),
                                 padding: const EdgeInsets.symmetric(
-                                    vertical: 5, horizontal: 10),
+                                    vertical: 0, horizontal: 10),
                                 itemCount: getPackageList.length +
                                     (isLoadingMore ? 1 : 0),
                                 itemBuilder: (context, index) {
@@ -327,6 +298,8 @@ class _PackagesState extends State<Packages> {
                                           .packageActivities
                                           .length
                                           .toString(),
+                                      discountPrice: getPackageList[index]
+                                          .packageDiscountedAmount,
                                       loader:
                                           statusDetails == "Status.loading" &&
                                               loader &&
@@ -365,16 +338,7 @@ class _PackagesState extends State<Packages> {
                                       style: TextStyle(color: redColor),
                                     )))
                         : Container()
-                    // : const Center(
-                    //     child: CircularProgressIndicator(
-                    //       color: Colors.green,
-                    //     ),
-                    //   ),
-                    // const SpinKitFoldingCube(
-                    //     size: 80,
-                    //     duration: Duration(milliseconds: 1200),
-                    //     color: Colors.red,
-                    //   )
+                   
                   ],
                 ),
               ),
@@ -390,7 +354,7 @@ class _PackagesState extends State<Packages> {
               )
       ],
     );
-    // );
+
   }
 }
 
@@ -407,7 +371,7 @@ class PackageContainer extends StatefulWidget {
   final String packageName;
   final bool loader;
   final VoidCallback ontap;
-
+  final double? discountPrice;
   const PackageContainer(
       {super.key,
       required this.packageImg,
@@ -421,7 +385,8 @@ class PackageContainer extends StatefulWidget {
       required this.total,
       required this.location,
       required this.loader,
-      required this.ontap});
+      required this.ontap,
+      this.discountPrice});
 
   @override
   State<PackageContainer> createState() => _PackageContainerState();
@@ -465,39 +430,30 @@ class _PackageContainerState extends State<PackageContainer> {
             borderRadius: BorderRadius.circular(5),
             child: Column(
               children: [
-                Stack(
-                  children: [
-                    widget.packageImg.isNotEmpty
-                        ? SizedBox(
+                widget.packageImg.isNotEmpty
+                    ? SizedBox(
+                        width: double.infinity,
+                        height: 220,
+                        child: MultiImageSlider(images: widget.packageImg),
+                      )
+                    : ClipRRect(
+                        borderRadius: const BorderRadius.only(
+                            topRight: Radius.circular(5),
+                            topLeft: Radius.circular(5)),
+                        child: Container(
+                            margin: const EdgeInsets.all(2),
                             width: double.infinity,
-                            height: 200,
-                            child: ClipRRect(
-                                borderRadius: const BorderRadius.only(
-                                    topRight: Radius.circular(5),
-                                    topLeft: Radius.circular(5)),
-                                child: MultiImageSlider(
-                                    images: widget.packageImg)),
-                          )
-                        : ClipRRect(
-                            borderRadius: const BorderRadius.only(
-                                topRight: Radius.circular(5),
-                                topLeft: Radius.circular(5)),
-                            child: Container(
-                                margin: const EdgeInsets.all(2),
-                                width: double.infinity,
-                                decoration: const BoxDecoration(
-                                  borderRadius: BorderRadius.only(
-                                      topRight: Radius.circular(5),
-                                      topLeft: Radius.circular(5)),
-                                ),
-                                child: Image.asset(
-                                  tour,
-                                  height: 200,
-                                  fit: BoxFit.cover,
-                                )),
-                          ),
-                  ],
-                ),
+                            decoration: const BoxDecoration(
+                              borderRadius: BorderRadius.only(
+                                  topRight: Radius.circular(5),
+                                  topLeft: Radius.circular(5)),
+                            ),
+                            child: Image.asset(
+                              tour,
+                              height: 200,
+                              fit: BoxFit.cover,
+                            )),
+                      ),
                 Container(
                   padding:
                       const EdgeInsets.symmetric(vertical: 5, horizontal: 05),
@@ -505,114 +461,38 @@ class _PackageContainerState extends State<PackageContainer> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Container(
-                        height: 40,
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 5, horizontal: 0),
-                        width: double.infinity,
-                        decoration: const BoxDecoration(
-                            border:
-                                Border(bottom: BorderSide(color: greyColor1))),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            SizedBox(
-                              width: AppDimension.getWidth(context) * .65,
-                              child: CustomText(
-                                  content: widget.packageName,
-                                  align: TextAlign.start,
-                                  fontSize: 17,
-                                  maxline: 1,
-                                  fontWeight: FontWeight.w600,
-                                  textColor: textColor),
-                            ),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 4, vertical: 5),
-                              decoration: BoxDecoration(
-                                  color: greyColor1.withOpacity(.1),
-                                  borderRadius: BorderRadius.circular(2)),
-                              child: Row(
-                                children: [
-                                  Text(
-                                    "${int.tryParse(widget.noOfDays ?? '1') != null ? (int.parse(widget.noOfDays) - 1).toString() : '0'}N / ${widget.noOfDays ?? '0'}D",
-                                    style: GoogleFonts.lato(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w600,
-                                        color: btnColor),
-                                  ),
-                                  // Text(",${widget.noOfNights}N",style: textTextStyle,),
-                                ],
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                      Column(
+                      Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 10),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                widget.location.isEmpty
-                                    ? Container()
-                                    : Container(
-                                        height: 15,
-                                        width: 15,
-                                        margin: const EdgeInsets.only(right: 5),
-                                        child: const Card(
-                                          shape: CircleBorder(),
-                                          elevation: 0,
-                                          color: greyColor1,
-                                        ),
-                                      ),
-                                widget.state.isEmpty
-                                    ? Container()
-                                    : SizedBox(
-                                        width:
-                                            AppDimension.getWidth(context) * .3,
-                                        child: CustomText(
-                                          content:
-                                              widget.location.toUpperCase(),
-                                          fontSize: 15,
-                                          maxline: 2,
-                                          align: TextAlign.start,
-                                          textColor: greyColor1,
-                                        ),
-                                      ),
-                                const Spacer(),
-                                widget.state.isEmpty
-                                    ? Container()
-                                    : Container(
-                                        height: 15,
-                                        width: 15,
-                                        margin: const EdgeInsets.only(right: 5),
-                                        child: const Card(
-                                          shape: CircleBorder(),
-                                          elevation: 0,
-                                          color: greyColor1,
-                                        ),
-                                      ),
-                                widget.location.isEmpty
-                                    ? Container()
-                                    : SizedBox(
-                                        width:
-                                            AppDimension.getWidth(context) * .4,
-                                        child: CustomText(
-                                          content: widget.state,
-                                          fontSize: 15,
-                                          maxline: 2,
-                                          align: TextAlign.start,
-                                          textColor: greyColor1,
-                                        ),
-                                      ),
-                              ],
-                            ),
+                          SizedBox(
+                            width: AppDimension.getWidth(context) * .65,
+                            child: CustomText(
+                                content: widget.packageName,
+                                align: TextAlign.start,
+                                fontSize: 17,
+                                maxline: 1,
+                                fontWeight: FontWeight.w600,
+                                textColor: textColor),
                           ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 4, vertical: 5),
+                            decoration: BoxDecoration(
+                                color: greyColor1.withOpacity(.1),
+                                borderRadius: BorderRadius.circular(2)),
+                            child: Text(
+                              "${int.tryParse(widget.noOfDays ?? '1') != null ? (int.parse(widget.noOfDays) - 1).toString() : '0'}N / ${widget.noOfDays ?? '0'}D",
+                              style: GoogleFonts.lato(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w600,
+                                  color: btnColor),
+                            ),
+                          )
+                        ],
+                      ),
+                      const Divider(),
+                
                           Padding(
                             padding: const EdgeInsets.only(bottom: 10),
                             child: Row(
@@ -629,17 +509,17 @@ class _PackageContainerState extends State<PackageContainer> {
                                     color: greyColor1,
                                   ),
                                 ),
-                                SizedBox(
-                                  width: AppDimension.getWidth(context) * .3,
-                                  child: CustomText(
-                                    content: widget.country,
-                                    fontSize: 15,
-                                    maxline: 2,
-                                    align: TextAlign.start,
-                                    textColor: greyColor1,
-                                  ),
-                                ),
-                                const Spacer(),
+                            Expanded(
+                              child: CustomText(
+                                content: "${widget.activity} Activity",
+                                fontSize: 15,
+                                maxline: 2,
+                                align: TextAlign.start,
+                                textColor: greyColor1,
+                              ),
+                            ),
+                            // const Spacer(),
+
                                 Container(
                                   height: 15,
                                   width: 15,
@@ -650,25 +530,17 @@ class _PackageContainerState extends State<PackageContainer> {
                                     color: greyColor1,
                                   ),
                                 ),
-                                SizedBox(
-                                  width: AppDimension.getWidth(context) * .4,
+                            Expanded(
                                   child: CustomText(
-                                    content: "${widget.activity} Activity",
+                                content: widget.country,
                                     fontSize: 15,
                                     maxline: 2,
                                     align: TextAlign.start,
                                     textColor: greyColor1,
                                   ),
                                 ),
-                                // RichText(
-                                //     text: TextSpan(children: [
-                                //       TextSpan(
-                                //           text: "Country : ",
-                                //           style: packagetextTextStyle),
-                                //       TextSpan(
-                                //           text: ,
-                                //           style: packagetextTextStyle),
-                                //     ])),
+                               
+                               
                               ],
                             ),
                           ),
@@ -707,21 +579,12 @@ class _PackageContainerState extends State<PackageContainer> {
                                                 maxline: 2,
                                                 align: TextAlign.start,
                                               ))
-                                          // RichText(
-                                          //     text: TextSpan(children: [
-                                          //       TextSpan(
-                                          //           text: "Activity : ",
-                                          //           style: packagetextTextStyle),
-                                          //       TextSpan(
-                                          //           text: widget.activity,
-                                          //           style: packagetextTextStyle),
-                                          //     ])),
+                                         
                                         ],
                                       ),
                                     )),
                           ),
-                        ],
-                      ),
+                      
                       Container(
                         padding: const EdgeInsets.symmetric(
                             vertical: 5, horizontal: 5),
@@ -734,14 +597,40 @@ class _PackageContainerState extends State<PackageContainer> {
                           children: [
                             RichText(
                                 text: TextSpan(children: [
-                              TextSpan(
-                                  text: "AED",
+                         
+                              (widget.total == widget.discountPrice.toString())
+                                  ? const TextSpan()
+                                  : TextSpan(
+                                      text:
+                                          "AED ${double.tryParse(widget.total)?.round()}"
+                                              .toUpperCase(),
                                   style: GoogleFonts.nunito(
                                       color: Colors.black,
-                                      fontSize: 15,
+                                          fontSize:
+                                              (widget.discountPrice == null ||
+                                                      widget.discountPrice == 0)
+                                                  ? 15
+                                                  : 12,
+                                          decoration:
+                                              (widget.discountPrice == null ||
+                                                      widget.discountPrice == 0)
+                                                  ? null
+                                                  : TextDecoration.lineThrough,
+                                          decorationColor: btnColor,
+                                          decorationThickness: 3,
                                       fontWeight: FontWeight.w700)),
-                              TextSpan(
-                                  text: " ${widget.total}".toUpperCase(),
+                              (widget.total == widget.discountPrice.toString())
+                                  ? const TextSpan()
+                                  : (widget.discountPrice == null ||
+                                          widget.discountPrice == 0)
+                                      ? const TextSpan()
+                                      : const TextSpan(text: '\n'),
+                              (widget.discountPrice == null ||
+                                      widget.discountPrice == 0)
+                                  ? const TextSpan()
+                                  : TextSpan(
+                                      text:
+                                          'AED ${widget.discountPrice?.round()}',
                                   style: GoogleFonts.nunito(
                                       color: Colors.black,
                                       fontSize: 15,

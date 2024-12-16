@@ -3,8 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/res/Custom%20Page%20Layout/commonPage_Layout.dart';
 import 'package:flutter_cab/res/Custom%20Widgets/custom_textformfield.dart';
-import 'package:flutter_cab/res/customAppBar_widget.dart';
-import 'package:flutter_cab/res/customTextWidget.dart';
+import 'package:flutter_cab/res/custom_appbar_widget.dart';
+import 'package:flutter_cab/res/custom_text_widget.dart';
 import 'package:flutter_cab/utils/assets.dart';
 import 'package:flutter_cab/utils/color.dart';
 import 'package:flutter_cab/utils/dimensions.dart';
@@ -182,12 +182,7 @@ class BookingContainer extends StatelessWidget {
                         fontWeight: FontWeight.w700),
                   )),
             ),
-            // Align(
-            //     alignment: Alignment.center,
-            //     child: Text(
-            //       "",
-            //       style: titleTextStyle,
-            //     )),
+         
             Container(
               // height: 50,
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
@@ -397,7 +392,7 @@ class BookingContainer extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       text: TextSpan(children: [
                         TextSpan(
-                          text: "Contact : ",
+                          text: "Contact No: ",
                           style: titleTextStyle,
                         ),
                         TextSpan(
@@ -430,10 +425,7 @@ class BookingContainer extends StatelessWidget {
                     width: AppDimension.getWidth(context) * .85,
                     btnHeading: "Cancel",
                     onTap: cancelTap),
-                // CustomButtonSmall(
-                //   width: AppDimension.getWidth(context)*.42,
-                //   btnHeading: "Schedule",
-                //   onTap: scheduleTap)
+               
               ],
             ),
             const SizedBox(height: 10)
@@ -451,7 +443,7 @@ class CancelContainerDialog extends StatefulWidget {
   final bool loading;
   const CancelContainerDialog(
       {required this.controllerCancel,
-      this.loading = false,
+      required this.loading,
       required this.onTap,
       super.key});
 
@@ -464,10 +456,7 @@ class _CancelContainerDialogState extends State<CancelContainerDialog> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      // decoration: const BoxDecoration(
-      //     color: background,
-      //     borderRadius: BorderRadius.all(Radius.circular(10))),
-      // height: AppDimension.getHeight(context)*.4,
+     
       padding: const EdgeInsets.all(20),
       width: double.infinity,
       child: Form(
@@ -543,7 +532,6 @@ class _CancelContainerDialogState extends State<CancelContainerDialog> {
         ),
       ),
     );
-    // },
-    // );
+  
   }
 }

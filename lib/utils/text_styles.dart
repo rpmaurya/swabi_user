@@ -36,6 +36,8 @@ TextStyle pageSubHeadingTextStyle = GoogleFonts.lato(
 
 TextStyle titleTextStyle = GoogleFonts.lato(
     color: blackColor, fontSize: 16, fontWeight: FontWeight.w600);
+TextStyle nodataTextStyle = GoogleFonts.lato(
+    color: redColor, fontSize: 15, fontWeight: FontWeight.w600);
 TextStyle tableheaderStyle = GoogleFonts.lato(
     color: background, fontSize: 17, fontWeight: FontWeight.w600);
 TextStyle titleTextStyle1 = GoogleFonts.lato(
@@ -48,6 +50,8 @@ TextStyle titleText = GoogleFonts.lato(
     color: blackColor, fontSize: 14, fontWeight: FontWeight.w600);
 TextStyle buttonText = GoogleFonts.lato(
     color: btnColor, fontSize: 17, fontWeight: FontWeight.w600);
+TextStyle offText = GoogleFonts.lato(
+    color: greenColor, fontSize: 16, fontWeight: FontWeight.w600);
 //////////////////DEFAULT TEXT STYLE IN SWABI APPLICATION///////////////////////////////////////////
 
 TextStyle textTitleHeading = GoogleFonts.lato(
@@ -58,3 +62,5 @@ TextStyle textTitleHint = GoogleFonts.lato(
     color: greyColor1, fontSize: 16, fontWeight: FontWeight.w500);
 TextStyle subtitleText = GoogleFonts.lato(
     color: blackColor, fontSize: 14, fontWeight: FontWeight.w500);
+TextStyle valueText = GoogleFonts.lato(
+    color: blackColor, fontSize: 14, fontWeight: FontWeight.w400);

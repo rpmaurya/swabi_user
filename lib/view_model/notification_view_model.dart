@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/model/getall_notification_model.dart';
 import 'package:flutter_cab/model/getlatest_notification_model.dart';
+import 'package:flutter_cab/model/update_notification_status_model.dart';
 import 'package:flutter_cab/respository/notification_repository.dart';
 
 class NotificationViewModel with ChangeNotifier {
   final _myRepo = NotificationRepository();
   GetLatestNotificationModel? getLatestNotificationModel;
-  GetAllNotificationModel? getAllNotificationModel;
+  // GetAllNotificationModel? getAllNotificationModel;
+  int? totalUnreadNotification;
+  bool isLoading = false;
   Future<void> getLatestNotification({
     required BuildContext context,
     required String userId,
@@ -26,23 +29,19 @@ class NotificationViewModel with ChangeNotifier {
     }
   }
 
-  Future<void> updateNotification({
+  Future<UpdateNotificationStatusModel?> updateNotification({
     required BuildContext context,
     required String userId,
   }) async {
     Map<String, dynamic> query = {"receiverId": userId};
     try {
-      await _myRepo
-          .updateNotificationStatusApi(context: context, query: query)
-          .then((onValue) {
-        if (onValue?.status?.httpCode == '200') {
-          // updateNotificationStatus = onValue;
-          notifyListeners();
-        }
-      });
+      var resp = await _myRepo.updateNotificationStatusApi(
+          context: context, query: query);
+      return resp;
     } catch (e) {
       debugPrint('error $e');
     }
+    return null;
   }
 
   Future<GetAllNotificationModel?> getAllNotificationList(
@@ -59,15 +58,32 @@ class NotificationViewModel with ChangeNotifier {
       'receiverRole': 'USER'
     };
     try {
-      var resp =
-          await _myRepo.getAllNotificationApi(context: context, query: query);
-      if (resp?.status?.httpCode == '200') {
-        getAllNotificationModel = resp;
-        notifyListeners();
+      isLoading = true;
+      notifyListeners();
+      if (readStatus == 'FALSE') {
+        await _myRepo
+            .getAllNotificationApi(context: context, query: query)
+            .then((onValue) {
+          if (onValue?.status?.httpCode == '200') {
+            totalUnreadNotification = onValue?.data?.totalElements;
+          }
+        });
+      } else {
+        
+        var resp =
+            await _myRepo.getAllNotificationApi(context: context, query: query);
+
+        return resp;
       }
-      return resp;
+      isLoading = false;
+      notifyListeners();
     } catch (e) {
       debugPrint('error $e');
+      isLoading = false;
+      notifyListeners();
+    } finally {
+      isLoading = false;
+      notifyListeners();
     }
     return null;
   }

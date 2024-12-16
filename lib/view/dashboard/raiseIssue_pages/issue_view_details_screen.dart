@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/model/issuedetail_model.dart';
-import 'package:flutter_cab/res/customAppBar_widget.dart';
+import 'package:flutter_cab/res/custom_appbar_widget.dart';
 import 'package:flutter_cab/utils/color.dart';
 import 'package:flutter_cab/utils/text_styles.dart';
-import 'package:flutter_cab/view_model/raiseIssue_view_model.dart';
+import 'package:flutter_cab/view_model/raise_issue_view_model.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -95,7 +95,9 @@ class _IssueviewdetailsState extends State<Issueviewdetails> {
                             issueData?.createdDate ?? 0))),
                 itemText(
                     lable: 'Booking Type',
-                    value: issueData?.bookingType.toString() ?? ''),
+                    value: issueData?.bookingType == 'PACKAGE_BOOKING'
+                        ? 'PACKAGE BOOKING'
+                        : 'RENTAL BOOKING'),
                 itemText(
                     lable: 'Issue Description',
                     value: issueData?.issueDescription.toString() ?? ''),
@@ -107,7 +109,7 @@ class _IssueviewdetailsState extends State<Issueviewdetails> {
                       ),
                 Text(
                   issueData?.resolutionDescription ?? '',
-                  style: titleTextStyle,
+                  style: titleTextStyle1,
                 )
               ],
             ),

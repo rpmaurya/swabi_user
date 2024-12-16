@@ -1,26 +1,23 @@
 // ignore_for_file: camel_case_types, depend_on_referenced_packages
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_cab/data/validatorclass.dart';
-import 'package:flutter_cab/res/Common%20Widgets/common_alertTextfeild.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/customdropdown_button.dart';
+import 'package:flutter_cab/res/Custom%20Widgets/custom_search_location.dart';
 import 'package:flutter_cab/res/Custom%20Widgets/custom_textformfield.dart';
-import 'package:flutter_cab/res/customTextWidget.dart';
-import 'package:flutter_cab/res/custom_mobileNumber.dart';
+import 'package:flutter_cab/res/custom_text_widget.dart';
+import 'package:flutter_cab/res/custom_mobile_number.dart';
 import 'package:flutter_cab/utils/assets.dart';
 import 'package:flutter_cab/utils/color.dart';
-import 'package:flutter_cab/utils/dimensions.dart';
 import 'package:flutter_cab/utils/text_styles.dart';
 import 'package:flutter_cab/view_model/registration_view_model.dart';
+import 'package:flutter_cab/view_model/user_profile_view_model.dart';
 import 'package:flutter_cab/view_model/user_view_model.dart';
 import 'package:go_router/go_router.dart';
-
 import 'package:google_fonts/google_fonts.dart';
-import 'package:google_places_flutter/google_places_flutter.dart';
-import 'package:intl_phone_field/country_picker_dialog.dart';
-import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:provider/provider.dart';
 
 class registration_screen extends StatefulWidget {
@@ -32,7 +29,7 @@ class registration_screen extends StatefulWidget {
 
 class _registration_screenState extends State<registration_screen> {
   List<TextEditingController> controller =
-      List.generate(8, (index) => TextEditingController());
+      List.generate(10, (index) => TextEditingController());
   final _formKey = GlobalKey<FormState>();
   GlobalKey _phoneFieldKey = GlobalKey();
   final firstNameFocus = FocusNode();
@@ -62,13 +59,16 @@ class _registration_screenState extends State<registration_screen> {
         r'x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])';
     final regex = RegExp(pattern);
     if (value == null || value.isEmpty) {
-      // return 'Please add email';
-      return 'Please enter a valid email address';
+      return 'Please enter email';
+      // return 'Please enter a valid email address';
     } else if (!regex.hasMatch(value)) {
       return 'Please enter a valid email address';
     }
     return null;
   }
+
+  String country = 'United Arab Emirates';
+  // 'India';
 
   @override
   void initState() {
@@ -77,6 +77,29 @@ class _registration_screenState extends State<registration_screen> {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       _phoneFieldKey = GlobalKey();
     });
+    controller[8].text = country;
+    getCountry();
+  }
+
+  Dio? dio;
+  String accessToken = '';
+  void getCountry() async {
+    try {
+      var countryProvider =
+          Provider.of<GetCountryStateListViewModel>(context, listen: false);
+      countryProvider.getAccessToken(context: context).then((onValue) {
+        debugPrint('token,.....c//.c.... $onValue');
+        setState(() {
+          accessToken = onValue['auth_token'].toString();
+        });
+        // countryProvider.getCountryList(context: context, token: accessToken);
+        Provider.of<GetCountryStateListViewModel>(context, listen: false)
+            .getStateList(
+                context: context, token: accessToken, country: country);
+      });
+    } catch (e) {
+      debugPrint('error $e');
+    }
   }
 
   @override
@@ -105,6 +128,10 @@ class _registration_screenState extends State<registration_screen> {
   @override
   Widget build(BuildContext context) {
     isLoading = context.watch<PostSignUpViewModel>().loading;
+    List state =
+        context.watch<GetCountryStateListViewModel>().getStateListModel;
+    bool isLoadingState =
+        context.watch<GetCountryStateListViewModel>().isLoading;
     return Scaffold(
         backgroundColor: bgGreyColor,
         body: SafeArea(
@@ -120,6 +147,13 @@ class _registration_screenState extends State<registration_screen> {
                     const SizedBox(height: 40),
                     Center(child: Image.asset(appLogo1)),
                     const SizedBox(height: 30),
+                    const CustomTextWidget(
+                        content: "Sign Up",
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600,
+                        maxline: 2,
+                        align: TextAlign.start,
+                        textColor: textColor),
                     Text(
                       'Create Your Account.',
                       style: GoogleFonts.lato(
@@ -179,152 +213,233 @@ class _registration_screenState extends State<registration_screen> {
                         hintText: 'xyz@gmail.com',
                         validator: _emailValidation),
                     const SizedBox(height: 10),
-                    // LoginTextFeild(
-                    //   headingReq: true,
-                    //   heading: "Last Name",
-                    //   prefixIcon: false,
-                    //   img: user,
-                    //   hint: "Enter your last name",
-                    //   controller: controller[1],
-                    //   validator: (p0) {
-                    //     return null;
+                   
+                    Padding(
+                        padding: const EdgeInsets.only(bottom: 5),
+                        child: Text.rich(TextSpan(children: [
+                          TextSpan(text: 'Country', style: titleTextStyle),
+                          const TextSpan(
+                              text: ' *', style: TextStyle(color: redColor))
+                        ]))),
+                    Material(
+                      child: Customtextformfield(
+                        // focusNode: focusNode2,
+                        controller: controller[8],
+                        readOnly: true,
+                        enableInteractiveSelection: false,
+                        // prefixiconvisible: true,
+                        // inputFormatters: [
+                        //   FilteringTextInputFormatter.allow(RegExp("[a-zA-Z]")),
+                        // ],
+                        fillColor: background,
+                        img: user,
+                        hintText: 'Country',
+                      ),
+                    ),
+                    // CustomDropdownButton(
+                    //   controller: controllers[6],
+                    //   // focusNode: focusNode3,
+                    //   itemsList: country.map((country) {
+                    //     return country['country_name'].toString();
+                    //   }).toList(),
+                    //   onChanged: (value) {
+                    //     setState(() {
+                    //       controllers[6].text = value ?? '';
+                    //     });
+                    //     Provider.of<GetCountryStateListViewModel>(context,
+                    //             listen: false)
+                    //         .getStateList(
+                    //             context: context,
+                    //             token: accessToken,
+                    //             country: value ?? '');
                     //   },
-                    // ),
-                    // const SizedBox(height: 10),
+                    //   hintText: 'Select Country',
 
-                    // LoginTextFeild(
-                    //   headingReq: true,
-                    //   heading: "Mobile No.",
-                    //   controller: controller[2],
-                    //   prefixIcon: true,
-                    //   img: phone,
-                    //   hint: "Enter your contact no.",
-                    //   number: true,
+                    //   // validator: (p0) {
+                    //   //   if (p0 == null || p0.isEmpty) {
+                    //   //     return 'Please select gender';
+                    //   //   }
+                    //   //   return null;
+                    //   // },
                     // ),
-                    // const SizedBox(height: 10),
-                    // LoginTextFeild(
-                    //     headingReq: true,
-                    //     heading: "Address",
-                    //     prefixIcon: true,
-                    //     img: address,
-                    //     hint: "Enter your address",
-                    //     controller: controller[3]),
+                    const SizedBox(height: 10),
+
+                    Padding(
+                        padding: const EdgeInsets.only(bottom: 5),
+                        child: Text.rich(TextSpan(children: [
+                          TextSpan(text: 'State', style: titleTextStyle),
+                          const TextSpan(
+                              text: ' *', style: TextStyle(color: redColor))
+                        ]))),
+
+                    CustomDropdownButton(
+                      controller: controller[9],
+                      // focusNode: focusNode3,
+                      itemsList: state.map((state) {
+                        return state['state_name'].toString();
+                      }).toList(),
+
+                      // itemsList: [],
+                      onChanged: isLoadingState
+                          ? null
+                          : (value) {
+                              setState(() {
+                                controller[9].text = value ?? '';
+                                controller[3].clear();
+                              });
+                            },
+                      hintText: 'Select State',
+
+                      validator: (p0) {
+                        if (p0 == null || p0.isEmpty) {
+                          return 'Please select state';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 10),
 
                     Text.rich(TextSpan(children: [
-                      TextSpan(text: 'Address', style: titleTextStyle),
+                      TextSpan(text: 'Location', style: titleTextStyle),
                       const TextSpan(
                           text: ' *', style: TextStyle(color: redColor))
                     ])),
                     const SizedBox(height: 5),
-                    FormField<String>(
-                        autovalidateMode: AutovalidateMode.onUserInteraction,
-                        validator: (value) {
-                          if (controller[3].text.isEmpty) {
-                            return 'Please enter address';
-                          }
-                          return null;
-                        },
-                        builder: (FormFieldState<String> field) {
-                          return Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 0),
-                                height: 50,
-                                child: GooglePlaceAutoCompleteTextField(
-                                  focusNode: addressFocus,
-                                  textEditingController: controller[3],
-                                  boxDecoration: BoxDecoration(
-                                      color: background,
-                                      borderRadius: BorderRadius.circular(5),
-                                      border: Border.all(
-                                          color: naturalGreyColor
-                                              .withOpacity(0.3))),
-                                  googleAPIKey:
-                                      // "AIzaSyADRdiTbSYUR8oc6-ryM1F1NDNjkHDr0Yo",
-                                      'AIzaSyDhKIUQ4QBoDuOsooDfNY_EjCG0MB7Ami8',
-                                  inputDecoration: InputDecoration(
-                                    contentPadding: const EdgeInsets.symmetric(
-                                        horizontal: 10, vertical: 10),
-                                    isDense: true,
-                                    hintText: "Search your location",
-                                    border: const OutlineInputBorder(
-                                        borderSide: BorderSide.none),
-                                    hintStyle: textTitleHint,
-                                    filled: true,
-                                    fillColor: background,
-                                    disabledBorder: const OutlineInputBorder(
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(5)),
-                                        borderSide: BorderSide.none),
-                                  ),
-                                  textStyle: titleTextStyle,
-                                  debounceTime: 400,
-                                  // countries: ["ae", "fr"],
-                                  isLatLngRequired: true,
+                    CustomSearchLocation(
+                        focusNode: addressFocus,
+                        fillColor: background,
+                        controller: controller[3],
+                        state: controller[9].text,
+                        // stateValidation: true,
+                        hintText: 'Search your location'),
+                    // FormField<String>(
+                    //     autovalidateMode: AutovalidateMode.onUserInteraction,
+                    //     validator: (value) {
+                    //       if (controller[3].text.isEmpty) {
+                    //         return 'Please enter address';
+                    //       }
+                    //       return null;
+                    //     },
+                    //     builder: (FormFieldState<String> field) {
+                    //       return Column(
+                    //         crossAxisAlignment: CrossAxisAlignment.start,
+                    //         children: [
+                    //           Container(
+                    //             padding:
+                    //                 const EdgeInsets.symmetric(horizontal: 0),
+                    //             height: 50,
+                    //             child: GooglePlaceAutoCompleteTextField(
+                    //               focusNode: addressFocus,
+                    //               textEditingController: controller[3],
+                    //               boxDecoration: BoxDecoration(
+                    //                   color: background,
+                    //                   borderRadius: BorderRadius.circular(5),
+                    //                   border: Border.all(
+                    //                       color: naturalGreyColor
+                    //                           .withOpacity(0.3))),
+                    //               googleAPIKey:
+                    //                   // "AIzaSyADRdiTbSYUR8oc6-ryM1F1NDNjkHDr0Yo",
+                    //                   'AIzaSyDhKIUQ4QBoDuOsooDfNY_EjCG0MB7Ami8',
+                    //               inputDecoration: InputDecoration(
+                    //                 contentPadding: const EdgeInsets.symmetric(
+                    //                     horizontal: 10, vertical: 10),
+                    //                 isDense: true,
+                    //                 hintText: "Search your location",
+                    //                 border: const OutlineInputBorder(
+                    //                     borderSide: BorderSide.none),
+                    //                 hintStyle: textTitleHint,
+                    //                 filled: true,
+                    //                 fillColor: background,
+                    //                 disabledBorder: const OutlineInputBorder(
+                    //                     borderRadius: BorderRadius.all(
+                    //                         Radius.circular(5)),
+                    //                     borderSide: BorderSide.none),
+                    //               ),
+                    //               textStyle: titleTextStyle,
+                    //               debounceTime: 400,
+                    //               countries: ["ae"],
+                    //               isLatLngRequired: true,
 
-                                  getPlaceDetailWithLatLng: (prediction) {
-                                    print(
-                                        "Latitude: ${prediction.lat}, Longitude: ${prediction.lng}");
-                                    // You can use prediction.lat and prediction.lng here as needed
-                                    // Example: Save them to variables or perform further actions
-                                  },
+                    //               getPlaceDetailWithLatLng: (prediction) {
+                    //                 print(
+                    //                     "Latitude: ${prediction.lat}, Longitude: ${prediction.lng}");
+                    //                 // You can use prediction.lat and prediction.lng here as needed
+                    //                 // Example: Save them to variables or perform further actions
+                    //               },
 
-                                  itemClick: (prediction) {
-                                    controller[3].text =
-                                        prediction.description ?? "";
-                                    controller[3].selection =
-                                        TextSelection.fromPosition(TextPosition(
-                                            offset: prediction
-                                                    .description?.length ??
-                                                0));
-                                    field.didChange(prediction.description);
-                                  },
-                                  seperatedBuilder: const Divider(),
+                    //               itemClick: (prediction) {
+                    //                 if (prediction.description
+                    //                         ?.contains(controller[9].text) ??
+                    //                     false) {
+                    //                   controller[3].text =
+                    //                       prediction.description ?? "";
+                    //                   controller[3].selection =
+                    //                       TextSelection.fromPosition(
+                    //                           TextPosition(
+                    //                     offset:
+                    //                         prediction.description?.length ?? 0,
+                    //                   ));
+                    //                   field.didChange(prediction.description);
+                    //                 } else {
+                    //                   // Show a validation message or feedback to the user if the location is not valid
+                    //                   print(
+                    //                       "Please select a location in Dubai.");
+                    //                   Utils.toastMessage(
+                    //                       "Please select a location in ${controller[9].text}");
+                    //                 }
+                    //                 // controller[3].text =
+                    //                 //     prediction.description ?? "";
+                    //                 // controller[3].selection =
+                    //                 //     TextSelection.fromPosition(TextPosition(
+                    //                 //         offset: prediction
+                    //                 //                 .description?.length ??
+                    //                 //             0));
+                    //                 // field.didChange(prediction.description);
+                    //               },
+                    //               seperatedBuilder: const Divider(),
 
-                                  // OPTIONAL// If you want to customize list view item builder
-                                  itemBuilder: (context, index, prediction) {
-                                    return Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 10, horizontal: 5),
-                                      child: Container(
-                                        // color: background,
-                                        child: Row(
-                                          children: [
-                                            const Icon(
-                                              Icons.location_on,
-                                              size: 15,
-                                            ),
-                                            const SizedBox(
-                                              width: 7,
-                                            ),
-                                            Expanded(
-                                                child: Text(
-                                              prediction.description ?? "",
-                                              style: titleTextStyle,
-                                            ))
-                                          ],
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                  isCrossBtnShown: false,
+                    //               // OPTIONAL// If you want to customize list view item builder
+                    //               itemBuilder: (context, index, prediction) {
+                    //                 return Padding(
+                    //                   padding: const EdgeInsets.symmetric(
+                    //                       vertical: 10, horizontal: 5),
+                    //                   child: Container(
+                    //                     // color: background,
+                    //                     child: Row(
+                    //                       children: [
+                    //                         const Icon(
+                    //                           Icons.location_on,
+                    //                           size: 15,
+                    //                         ),
+                    //                         const SizedBox(
+                    //                           width: 7,
+                    //                         ),
+                    //                         Expanded(
+                    //                             child: Text(
+                    //                           prediction.description ?? "",
+                    //                           style: titleTextStyle,
+                    //                         ))
+                    //                       ],
+                    //                     ),
+                    //                   ),
+                    //                 );
+                    //               },
+                    //               isCrossBtnShown: false,
 
-                                  // default 600 ms ,
-                                ),
-                              ),
-                              if (field.hasError)
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 10),
-                                  child: Text(
-                                    field.errorText!,
-                                    style: TextStyle(color: redColor),
-                                  ),
-                                ),
-                            ],
-                          );
-                        }),
+                    //               // default 600 ms ,
+                    //             ),
+                    //           ),
+                    //           if (field.hasError)
+                    //             Padding(
+                    //               padding: const EdgeInsets.only(left: 10),
+                    //               child: Text(
+                    //                 field.errorText!,
+                    //                 style: TextStyle(color: redColor),
+                    //               ),
+                    //             ),
+                    //         ],
+                    //       );
+                    //     }),
                     const SizedBox(height: 10),
                     Padding(
                       padding: const EdgeInsets.only(bottom: 5),
@@ -341,7 +456,7 @@ class _registration_screenState extends State<registration_screen> {
                       onChanged: (value) {
                         setState(() {
                           // controller[4].text = value ?? '';
-                          print('cgghhh${controller[4].text}');
+                          debugPrint('cgghhh${controller[4].text}');
                         });
                       },
                       hintText: 'Select gender',
@@ -352,48 +467,13 @@ class _registration_screenState extends State<registration_screen> {
                         return null;
                       },
                     ),
-                    // FormField<String>(validator: (value) {
-                    //   if (controller[4].text.isEmpty) {
-                    //     return '  Please select gender';
-                    //   }
-                    //   return null;
-                    // }, builder: (FormFieldState<String> field) {
-                    //   return Column(
-                    //     crossAxisAlignment: CrossAxisAlignment.start,
-                    //     children: [
-                    //       FormCommonSingleAlertSelector(
-                    //         title: "Gender",
-                    //         border: false,
-                    //         controller: controller[4],
-                    //         textStyle: titleTextStyle,
-                    //         showIcon: const Icon(
-                    //           Icons.event_seat,
-                    //           color: naturalGreyColor,
-                    //         ),
-                    //         iconReq: false,
-                    //         data: const ["Male", "Female"],
-                    //         // icons: gender,
-                    //         // icon: genderImg,
-                    //         elevation: 0,
-
-                    //         ///Hint Color
-                    //         initialValue: "Select Gender",
-                    //         alertBoxTitle: "Select Gender",
-                    //       ),
-                    //       if (field.hasError)
-                    //         Text(
-                    //           field.errorText!,
-                    //           style: TextStyle(color: redColor),
-                    //         ),
-                    //     ],
-                    //   );
-                    // }),
+                   
                     const SizedBox(height: 10),
                     const Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         CustomText(
-                            content: "Contact ",
+                            content: "Contact No",
                             textColor: blackColor,
                             fontSize: 16,
                             fontWeight: FontWeight.w700),
@@ -503,6 +583,8 @@ class _registration_screenState extends State<registration_screen> {
                             "gender": controller[4].text,
                             "email": controller[2].text,
                             "password": controller[6].text,
+                            "country": controller[8].text,
+                            "state": controller[9].text
                           };
                           Provider.of<PostSignUpViewModel>(context,
                                   listen: false)
@@ -543,7 +625,7 @@ class _registration_screenState extends State<registration_screen> {
       padding: const EdgeInsets.only(bottom: 5.0),
       child: Text.rich(TextSpan(children: [
         TextSpan(text: title, style: titleTextStyle),
-        TextSpan(text: ' *', style: TextStyle(color: redColor))
+        const TextSpan(text: ' *', style: TextStyle(color: redColor))
       ])),
     );
   }

@@ -46,8 +46,8 @@ class IssueContainer extends StatelessWidget {
           itemText(
               lable: 'Booking Type',
               value: bookingType == "RENTAL_BOOKING"
-                  ? "Rental Booking"
-                  : "Package Booking"),
+                  ? "RENTAL BOOKING"
+                  : "PACKAGE BOOKING"),
           const SizedBox(height: 10),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,

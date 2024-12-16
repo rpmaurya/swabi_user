@@ -4,8 +4,7 @@ import 'package:flutter_cab/model/get_trasactionbyid_model.dart';
 import 'package:flutter_cab/model/payment_getway_model.dart';
 import 'package:flutter_cab/model/payment_refund_model.dart';
 import 'package:flutter_cab/respository/payment_gateway_repository.dart';
-import 'package:flutter_cab/utils/utils.dart';
-import 'package:go_router/go_router.dart';
+
 
 /// Rental Booking View Model
 class PaymentCreateOrderIdViewModel with ChangeNotifier {
@@ -18,7 +17,7 @@ class PaymentCreateOrderIdViewModel with ChangeNotifier {
 
   Future<PaymentCreateOderIdModel?> paymentCreateOrderIdViewModelApi(
       {required BuildContext context,
-      required int amount,
+      required double amount,
       required String userId,
       required double taxAmount,
       required double taxPercentage,
@@ -26,11 +25,11 @@ class PaymentCreateOrderIdViewModel with ChangeNotifier {
       required double totalPayableAmount}) async {
     Map<String, dynamic> body = {
       "price": amount,
-      "taxAmount": taxAmount,
+      "taxAmount": taxAmount.toStringAsFixed(2),
       "userId": userId,
       "taxPercentage": taxPercentage,
-      "discountAmount": discountAmount.toInt(),
-      "totalPayableAmount": totalPayableAmount
+      "discountAmount": discountAmount.toStringAsFixed(2),
+      "totalPayableAmount": totalPayableAmount.ceil()
     };
     try {
       setDataList(ApiResponse.loading());
@@ -40,38 +39,14 @@ class PaymentCreateOrderIdViewModel with ChangeNotifier {
       return resp;
     } catch (e) {
       setDataList(ApiResponse.error(e.toString()));
-      print(e);
+      debugPrint('$e');
     } finally {
       setDataList(ApiResponse.error(''));
     }
     return null;
   }
 
-  // Future<void> fetchPaymentCreateOrderIdViewModelApi(
-  //   BuildContext context,
-  //   data,
-  //   // String? carType, id, date, lati, longi
-  // ) async {
-  //   setDataList(ApiResponse.loading());
-  //   var resp =
-  //       _myRepo.paymentCreateOrderIDRepositoryApi(data).then((value) async {
-  //     print(data);
-  //     setDataList(ApiResponse.completed(value));
-  //     // context.push('/rentalForm/bookYourCab', extra: {
-  //     //   "carType": carType,
-  //     //   "userId": id,
-  //     //   "bookdate": date,
-  //     //   "longitude": longi,
-  //     //   "latitude": lati,
-  //     //   // "totalAmt":totalAmt
-  //     // });
-  //     // Utils.flushBarSuccessMessage("Payment Order Id Success", context);
-  //   }).onError((error, stackTrace) {
-  //     // debugPrint(error.toString());
-  //     // Utils.flushBarErrorMessage(error.toString(), context);
-  //     setDataList(ApiResponse.error(error.toString()));
-  //   });
-  // }
+ 
 }
 
 /// Rental Booking View Model
@@ -96,35 +71,20 @@ class PaymentVerifyViewModel with ChangeNotifier {
       "razorpaySignature": razorpaySignature
     };
     try {
-      print('bodyofpaymentverification..$body');
+      debugPrint('bodyofpaymentverification..$body');
       setDataList(ApiResponse.loading());
       var resp = await _myRepo.paymentVerifyApi(context: context, body: body);
       setDataList(ApiResponse.completed(resp));
+        
       // Utils.flushBarSuccessMessage("Payment paymentVerify Success", context);
       return resp;
     } catch (e) {
-      print(e);
+      debugPrint('$e');
     }
     return null;
   }
 
-  Future<void> fetchPaymentVerifyViewModelApi(
-      BuildContext context, data) async {
-    print('verification data :...$data');
-    setDataList(ApiResponse.loading());
-    _myRepo.paymentVerifyRepositoryApi(data).then((value) async {
-      setDataList(ApiResponse.completed(value));
-      Utils.toastSuccessMessage("Payment paymentVerify Success");
-      // context.pop();
-      context.pop();
-    }).onError((error, stackTrace) {
-      // debugPrint(error.toString());
-      Utils.toastMessage(
-        error.toString(),
-      );
-      setDataList(ApiResponse.error(error.toString()));
-    });
-  }
+ 
 }
 
 class GetTranactionViewModel with ChangeNotifier {
@@ -139,7 +99,7 @@ class GetTranactionViewModel with ChangeNotifier {
       {required BuildContext context,
       required Map<String, dynamic> query}) async {
     try {
-      print('bodyofpaymentverification..$query');
+      debugPrint('bodyofpaymentverification..$query');
       setDataList(ApiResponse.loading());
       var resp =
           await _myRepo.getTrasactionByIdApi(context: context, query: query);
@@ -147,7 +107,7 @@ class GetTranactionViewModel with ChangeNotifier {
       // Utils.flushBarSuccessMessage("Payment paymentVerify Success", context);
       return resp;
     } catch (e) {
-      print(e);
+      debugPrint('$e');
     }
     return null;
   }
@@ -156,7 +116,7 @@ class GetTranactionViewModel with ChangeNotifier {
       {required BuildContext context,
       required Map<String, dynamic> query}) async {
     try {
-      print('bodyofpaymentverification..$query');
+      debugPrint('bodyofpaymentverification..$query');
       setDataList(ApiResponse.loading());
       var resp = await _myRepo.getRefundTrasactionByIdApi(
           context: context, query: query);
@@ -164,7 +124,7 @@ class GetTranactionViewModel with ChangeNotifier {
       // Utils.flushBarSuccessMessage("Payment paymentVerify Success", context);
       return resp;
     } catch (e) {
-      print(e);
+      debugPrint('$e');
     }
     return null;
   }
@@ -182,7 +142,7 @@ class GetPaymentRefundViewModel with ChangeNotifier {
       {required BuildContext context, required String paymentId}) async {
     Map<String, dynamic> query = {"paymentId": paymentId};
     try {
-      print('refundQuery..$query');
+      debugPrint('refundQuery..$query');
       setDataList(ApiResponse.loading());
       var resp =
           await _myRepo.getRefundPaymentApi(context: context, query: query);
@@ -191,7 +151,7 @@ class GetPaymentRefundViewModel with ChangeNotifier {
       return resp;
     } catch (e) {
       setDataList(ApiResponse.error(e.toString()));
-      print(e);
+      debugPrint('$e');
     }
     return null;
   }

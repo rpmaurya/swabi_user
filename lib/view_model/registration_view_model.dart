@@ -47,26 +47,11 @@ class PostSignUpViewModel with ChangeNotifier {
         setDataList(ApiResponse.error(error.toString()));
       });
     } catch (e) {
-      print('errrrrrrrrrrrrrrrrrrrr$e');
+      debugPrint('errrrrrrrrrrrrrrrrrrrr$e');
       setLoading(false);
       setDataList(ApiResponse.error(e.toString()));
     }
     return null;
   }
-  // Future fetchPostSingUp(data, BuildContext context) async {
-  //   setDataList(ApiResponse.loading());
-  //   _myRepo
-  //       .fetchRegistrationListApi(context: context, body: data)
-  //       .then((value) {
-  //     setDataList(ApiResponse.completed(value));
-  //     // print("Signup Success");
-  //     Utils.flushBarSuccessMessage("SignUp Successfully", context);
-  //     context.push("/login");
-  //   }).onError((error, stackTrace) {
-  //     setDataList(ApiResponse.error(error.toString()));
-  //     // if(error.toString())
-  //     Utils.flushBarSuccessMessage("SignUp Successfully field", context);
-  //     print(error.toString());
-  //   });
-  // }
+ 
 }

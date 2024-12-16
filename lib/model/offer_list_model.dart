@@ -48,7 +48,7 @@ class Datum {
   DateTime? createdDate;
   DateTime? modifiedDate;
   String? offerStatus;
-  String? bookingType;
+  String? offerType;
   String? imageUrl;
 
   Datum(
@@ -66,7 +66,7 @@ class Datum {
       this.createdDate,
       this.modifiedDate,
       this.offerStatus,
-      this.bookingType,
+      this.offerType,
       this.imageUrl});
 
   factory Datum.fromJson(Map<String, dynamic> json) => Datum(
@@ -88,7 +88,7 @@ class Datum {
             ? null
             : DateTime.parse(json["modifiedDate"]),
         offerStatus: json["offerStatus"],
-        bookingType: json["bookingType"],
+        offerType: json["offerType"],
         imageUrl: json["imageUrl"],
       );
 
@@ -107,7 +107,7 @@ class Datum {
         "createdDate": createdDate?.toIso8601String(),
         "modifiedDate": modifiedDate?.toIso8601String(),
         "offerStatus": offerStatus,
-        "bookingType": bookingType,
+        "offerType": offerType,
         "imageUrl": imageUrl,
       };
 }

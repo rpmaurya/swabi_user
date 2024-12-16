@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_cab/model/offer_detailbyid_model.dart';
+import 'package:flutter_cab/model/offer_detail_by_id_model.dart';
 import 'package:flutter_cab/model/offer_list_model.dart';
 import 'package:flutter_cab/respository/offer_repository.dart';
 import 'package:go_router/go_router.dart';
@@ -14,7 +14,7 @@ class OfferViewModel with ChangeNotifier {
       {required BuildContext context,
       required String date,
       required String bookingType}) async {
-    Map<String, dynamic> query = {"date": date, "bookingType": bookingType};
+    Map<String, dynamic> query = {"date": date, "offerType": bookingType};
     try {
       isLoading1 = true;
       notifyListeners();
@@ -67,10 +67,10 @@ class OfferViewModel with ChangeNotifier {
       {required BuildContext context,
       required String offerCode,
       required String bookingType,
-      required int bookigAmount}) async {
+      required double bookigAmount}) async {
     Map<String, dynamic> query = {
       "offerCode": offerCode,
-      "bookingType": bookingType,
+      "offerType": bookingType,
       "bookingAmount": bookigAmount
     };
     try {

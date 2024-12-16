@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/model/getissue_model.dart';
 import 'package:flutter_cab/res/Custom%20Widgets/custom_tabbar.dart';
-import 'package:flutter_cab/res/customAppBar_widget.dart';
 import 'package:flutter_cab/utils/color.dart';
 import 'package:flutter_cab/utils/text_styles.dart';
 import 'package:flutter_cab/view/dashboard/raiseIssue_pages/issue_container.dart';
-import 'package:flutter_cab/view_model/raiseIssue_view_model.dart';
+import 'package:flutter_cab/view_model/raise_issue_view_model.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -111,19 +110,7 @@ class _RaiseissuedetailsState extends State<Raiseissuedetails>
   int selectIndex = -1;
   @override
   Widget build(BuildContext context) {
-    // final vieProvider = Provider.of<RaiseissueViewModel>(context);
-    // isLoading1 = vieProvider.isloading1;
-    // // print('loding.......$isLoading1');
-    // isLoading = context.watch<RaiseissueViewModel>().isloading;
-    // // allRaiseList =
-    // //     context.watch<RaiseissueViewModel>().getIssue?.data?.content ?? [];
-    // // print('daaa${allRaiseList?.first.bookingId}');
-
-    // return Scaffold(
-    //   appBar: const CustomAppBar(
-    //     heading: 'Raised Issue',
-    //   ),
-    //   body:
+   
     return Customtabbar(
         titleHeading: 'Raised Issue',
         controller: _tabController,
@@ -184,11 +171,10 @@ class _RaiseissuedetailsState extends State<Raiseissuedetails>
                                   }),
                             );
                           })
-                      : const Center(
+                      : Center(
                           child: Text(
                             'No Data Found',
-                            style: TextStyle(
-                                color: redColor, fontWeight: FontWeight.bold),
+                            style: nodataTextStyle,
                           ),
                         );
             },

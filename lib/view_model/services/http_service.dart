@@ -6,7 +6,6 @@ import 'package:flutter_cab/data/app_url.dart';
 import 'package:flutter_cab/data/response/base_response.dart';
 import 'package:flutter_cab/data/string.dart';
 import 'package:flutter_cab/utils/color.dart';
-import 'package:flutter_cab/utils/utils.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -47,18 +46,7 @@ class HttpService<T> {
     _http = Dio();
   }
 
-  // isAuthorizeRequest() {
-  //   // if (_auth.isAuthenticated) {
-
-  //   if (this.headers == null) {
-  //     this.headers = Map<String, String>();
-  //   }
-  //   this.headers!.addAll({
-  //     "Authorization": "Bearer " +
-  //         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MWRlZmZjMGQ1MjE1NjI5MGIyYTgwOTYiLCJuYW1lIjoibWFkaHVzdSIsImVtYWlsIjoibXNzc2RAZ21hb2lsbC5mamYiLCJwaG9uZU51bWJlciI6IjkxODk3ODc3Njc2NyIsImlhdCI6MTY0MjAwNDQyMiwiZXhwIjoxNjQyODY4NDIyfQ.585EsMwtKGXQK3AJX8coewikknodm-Kqbr7dquzoKVk"
-  //   });
-  //   // }
-  // }
+ 
   authorizeRequest() async {
     if (this.headers == null) {
       this.headers = <String, String>{};

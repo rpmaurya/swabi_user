@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/view_model/user_view_model.dart';
 import 'package:go_router/go_router.dart';
@@ -28,37 +28,7 @@ class AuthViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> loginApi(dynamic data, BuildContext context) async {
-    setLoading(true);
-    {
-      _myRepo.loginApi(data).then((value) async {
-        // print(value);
-        setLoading(false);
-        final userPreference =
-            Provider.of<UserViewModel>(context, listen: false);
-        print("save token");
-        // userPreference.saveEmail(value['user']);
-        print(value['data']['userId'].toString());
-        String userID = value['data']['userId'].toString();
-        String token1 = value['data']['token'].toString();
-        userPreference.saveToken(UserModel(token: token1));
-        userPreference.saveUserId(UserModel(userId: userID));
-        print('userId: $userID');
-        print('token: ${token1.toString()}');
-        Utils.toastSuccessMessage("Login Successfully");
-        context.go('/');
-      }).onError((error, stackTrace) {
-        setLoading(false);
-        FocusScope.of(context).unfocus();
-        Utils.toastMessage(
-          "Email and Password is not present!",
-        );
-        if (kDebugMode) {
-          print(error.toString());
-        }
-      });
-    }
-  }
+ 
 
   Future<void> userLoginApi(
       {required BuildContext context,

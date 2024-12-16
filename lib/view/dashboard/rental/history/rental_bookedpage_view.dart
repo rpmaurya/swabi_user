@@ -1,24 +1,22 @@
-// import 'package:country_currency_pickers/utils/utils.dart';
-// import 'package:currency_picker/currency_picker.dart';
+
 import 'package:flutter/material.dart';
-import 'package:flutter_cab/model/getissueby_bookingid_model.dart';
+import 'package:flutter_cab/model/get_issue_by_booking_id_model.dart';
 import 'package:flutter_cab/model/payment_details_model.dart';
 import 'package:flutter_cab/model/payment_refund_model.dart';
 import 'package:flutter_cab/model/rentalbooking_model.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/res/Custom%20Page%20Layout/commonPage_Layout.dart';
 import 'package:flutter_cab/res/Custom%20Widgets/custom_paymentdetails_container.dart';
-import 'package:flutter_cab/res/Custom%20Widgets/multi_imageSlider_ContainerWidget.dart';
+import 'package:flutter_cab/res/Custom%20Widgets/multi_image_slider_container_widget.dart';
 import 'package:flutter_cab/res/Custom%20Widgets/refund_payment_container.dart';
-import 'package:flutter_cab/res/customAppBar_widget.dart';
-import 'package:flutter_cab/res/customRaiseIssueForm.dart';
+import 'package:flutter_cab/res/custom_appbar_widget.dart';
+import 'package:flutter_cab/res/custom_raise_issue_form.dart';
 import 'package:flutter_cab/utils/assets.dart';
 import 'package:flutter_cab/utils/color.dart';
 import 'package:flutter_cab/utils/dimensions.dart';
-import 'package:flutter_cab/utils/utils.dart';
 import 'package:flutter_cab/view/dashboard/rental/cancel_booking.dart';
 import 'package:flutter_cab/view_model/payment_gateway_view_model.dart';
-import 'package:flutter_cab/view_model/raiseIssue_view_model.dart';
+import 'package:flutter_cab/view_model/raise_issue_view_model.dart';
 import 'package:flutter_cab/view_model/rental_view_model.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -140,7 +138,7 @@ class _RentalBookedPageViewState extends State<RentalBookedPageView> {
                 RentalBookingContainer(
                   // bookingId: fulldata.bookerId,
                   // carName: vehicleMap['carName'] ?? 'N/A',
-                  bookingPrice: fulldata?.rentalCharge ?? '',
+                  // bookingPrice: fulldata?.rentalCharge ?? '',
                   cancelBy: fulldata?.cancelledBy ?? '',
                   cancelresion: fulldata?.cancellationReason ?? '',
                   totalPayableAmount: fulldata?.totalPayableAmount ?? '',
@@ -190,7 +188,8 @@ class _RentalBookedPageViewState extends State<RentalBookedPageView> {
                         paymentDate: DateFormat('dd-MM-yyyy').format(dateTime),
                         amount:
                             '${(double.tryParse(paymentDetails?.amount.toString() ?? '') ?? 0) / 100}',
-                        taxAmount: fulldata?.taxAmount ?? '',
+                        taxAmount:
+                            '${fulldata?.taxAmount.toStringAsFixed(1) ?? 0.0}',
                         discountAmount: fulldata?.discountAmount ?? '',
                         rentalAmount: fulldata?.rentalCharge ?? '',
                         paymentTime: formattedTime)
@@ -415,7 +414,7 @@ class RentalBookingContainer extends StatefulWidget {
   final String kilometer;
   final String status;
   final String totalPayableAmount;
-  final String bookingPrice;
+  // final String bookingPrice;
   final String cancelBy;
   final String cancelresion;
   // final String bookingId;
@@ -446,7 +445,7 @@ class RentalBookingContainer extends StatefulWidget {
     required this.kilometer,
     required this.status,
     required this.totalPayableAmount,
-    required this.bookingPrice,
+    // required this.bookingPrice,
     required this.cancelBy,
     required this.cancelresion,
     // required this.bookingId,
@@ -564,10 +563,10 @@ class _RentalBookingContainerState extends State<RentalBookingContainer> {
                       value: widget.vehicleType.isEmpty
                           ? widget.carType
                           : widget.vehicleType),
-                  const SizedBox(height: 5),
-                  bookingItem(
-                      lable: 'Booking Price',
-                      value: 'AED ${widget.bookingPrice}'),
+                  // const SizedBox(height: 5),
+                  // bookingItem(
+                  //     lable: 'Booking Price',
+                  //     value: 'AED ${widget.bookingPrice}'),
                   widget.status != 'CANCELLED'
                       ? const SizedBox()
                       : const SizedBox(height: 5),
@@ -611,15 +610,7 @@ class _RentalBookingContainerState extends State<RentalBookingContainer> {
                                         decorationThickness: 1.5),
                                   )),
                             ),
-                            // Flexible(
-                            //   child: CustomButtonSmall(
-                            //       width: 120,
-                            //       height: 30,
-                            //       btnHeading: 'View Issue',
-                            //       onTap: () {
-                            //         context.push("/raiseIssueDetail");
-                            //       }),
-                            // )
+                        
                           ],
                         ),
                   bookingItem(
@@ -675,7 +666,7 @@ class _RentalBookingContainerState extends State<RentalBookingContainer> {
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text("Contact : ", style: titleTextStyle),
+                              Text("Contact No: ", style: titleTextStyle),
                               SizedBox(
                                 // width: 100,
                                 child: Text(widget.contact,
@@ -792,7 +783,7 @@ class VechicleDetailsContainer extends StatelessWidget {
                   )),
             ),
             SizedBox(
-              height: 200,
+              height: 220,
               child: vehicleImage.isEmpty
                   ? Image.asset(tour1)
                   : MultiImageSlider(images: vehicleImage),
@@ -966,7 +957,7 @@ class DriverDetailsContainer extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text("Address : ", style: titleTextStyle),
+                      Text("Location : ", style: titleTextStyle),
                       SizedBox(
                         // width: 100,
                         child: Text(

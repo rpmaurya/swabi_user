@@ -47,7 +47,7 @@ class _CustomtabbarState extends State<Customtabbar> {
           Container(
               // width: AppDimension.getWidth(context) * .9,
               // padding: EdgeInsets.symmetric(vertical: 5),
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 // borderRadius: BorderRadius.circular(10),
                 color: background,
                 // border: Border.all(color: naturalGreyColor.withOpacity(0.3)),

@@ -1,8 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/app_url.dart';
-import 'package:flutter_cab/data/network/base_apiservices.dart';
-import 'package:flutter_cab/data/network/network_apiservice.dart';
 import 'package:flutter_cab/model/get_trasactionbyid_model.dart';
 import 'package:flutter_cab/model/payment_getway_model.dart';
 import 'package:flutter_cab/model/payment_refund_model.dart';
@@ -10,7 +8,6 @@ import 'package:flutter_cab/view_model/services/http_service.dart';
 
 ///Payment Create OrderID Repo
 class PaymentCreateOrderIDRepository {
-  final BaseApiServices _apiServices = NetworkApiService();
   Future<PaymentCreateOderIdModel?> paymentCreateOrderIdApi(
       {required BuildContext context,
       required Map<String, dynamic> body}) async {
@@ -24,39 +21,24 @@ class PaymentCreateOrderIDRepository {
         body: body);
     try {
       Response<dynamic>? response = await http.request<dynamic>();
-      print({"CreatePaymentOrderresponse": response?.data});
+      debugPrint("CreatePaymentOrderresponse ${response?.data}");
       var resp = PaymentCreateOderIdModel.fromJson(response?.data);
       return resp;
     } catch (error) {
-      // BaseResponseModel baseResponseModel =
-      //     BaseResponseModel.fromJson(error.response?.data);
-      // print(baseResponseModel.status?.message);
+     
 
-      print({'error..': error});
+      debugPrint('error $error');
       http.handleErrorResponse(context: context, error: error);
       rethrow;
     }
   }
 
-  Future<dynamic> paymentCreateOrderIDRepositoryApi(data) async {
-    try {
-      dynamic response = await _apiServices.getPostApiResponse(
-          'http://swabi.ap-south-1.elasticbeanstalk.com/'
-          'payment/create_order?amount=${data["amount"]}&userId=${data["userId"]}',
-          data);
-      print("paymentCreateOrderID Repo api success");
-      return response = PaymentCreateOderIdModel.fromJson(response);
-    } catch (e) {
-      print("paymentCreateOrderID Repo api not successful error");
-      print(e);
-      rethrow;
-    }
-  }
+ 
 }
 
 ///Payment Verify Repo
 class PaymentVerifyRepository {
-  final BaseApiServices _apiServices = NetworkApiService();
+
   Future<PaymentVerifyModel?> paymentVerifyApi(
       {required BuildContext context,
       required Map<String, dynamic> body}) async {
@@ -73,11 +55,7 @@ class PaymentVerifyRepository {
       var resp = PaymentVerifyModel.fromJson(response?.data);
       return resp;
     } catch (error) {
-      // BaseResponseModel baseResponseModel =
-      //     BaseResponseModel.fromJson(error.response?.data);
-      // print(baseResponseModel.status?.message);
-
-      print({'error..': error});
+      debugPrint('error $error');
       http.handleErrorResponse(
         context: context,
         error: error,
@@ -86,20 +64,6 @@ class PaymentVerifyRepository {
     return null;
   }
 
-  Future<dynamic> paymentVerifyRepositoryApi(data) async {
-    try {
-      dynamic response = await _apiServices.getPostApiResponse(
-          'http://swabi.ap-south-1.elasticbeanstalk.com/'
-          'payment/verify_payment',
-          data);
-      print("PaymentVerify Repo api success");
-      return response = PaymentVerifyModel.fromJson(response);
-    } catch (e) {
-      print("PaymentVerify Repo api not successful error");
-      print(e);
-      rethrow;
-    }
-  }
 }
 
 class PaymentTrasactionRespository {
@@ -115,11 +79,11 @@ class PaymentTrasactionRespository {
         queryParameters: query);
     try {
       Response<dynamic>? response = await http.request<dynamic>();
-      print({"GetTrasactionresponse": response?.data});
+      debugPrint("GetTrasactionresponse ${response?.data}");
       var resp = GetTransactionByIdModel.fromJson(response?.data);
       return resp;
     } catch (error) {
-      print({'error..': error});
+      debugPrint('error $error');
       http.handleErrorResponse(context: context, error: error);
       rethrow;
     }
@@ -141,7 +105,7 @@ class PaymentTrasactionRespository {
       var resp = GetTransactionByIdModel.fromJson(response?.data);
       return resp;
     } catch (error) {
-      print({'error..': error});
+      debugPrint('error $error');
       http.handleErrorResponse(context: context, error: error);
       rethrow;
     }
@@ -161,11 +125,11 @@ class PaymentRefundRespository {
         queryParameters: query);
     try {
       Response<dynamic>? response = await http.request<dynamic>();
-      print({"Get Refunde details....": response?.data});
+      debugPrint("Get Refunde details.... ${response?.data}");
       var resp = PaymentRefundModel.fromJson(response?.data);
       return resp;
     } catch (error) {
-      print({'error..': error});
+      debugPrint('error $error');
       // http.handleErrorResponse(context: context, error: error);
       rethrow;
     }

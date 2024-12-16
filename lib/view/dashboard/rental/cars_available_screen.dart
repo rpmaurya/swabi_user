@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cab/model/rentalbooking_model.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/res/Custom%20Page%20Layout/commonPage_Layout.dart';
-import 'package:flutter_cab/res/customAppBar_widget.dart';
+import 'package:flutter_cab/res/custom_appbar_widget.dart';
 import 'package:flutter_cab/utils/assets.dart';
 import 'package:flutter_cab/utils/color.dart';
 import 'package:flutter_cab/utils/dimensions.dart';
@@ -79,13 +79,7 @@ class _CarsDetailsAvailableState extends State<CarsDetailsAvailable> {
                       });
                       double amount =
                           double.parse(rentalData[index].totalPrice);
-                      // int intAmoutns
-                      // Provider.of<PaymentCreateOrderIdViewModel>(context,
-                      //     listen: false)
-                      //     .fetchPaymentCreateOrderIdViewModelApi(context, {
-                      //   "amount": amount.toInt(),
-                      //   "userId": widget.id.toString(),
-                      // },rentalData[index].carType,widget.id.toString(),rentalData[index].date,rentalData[index].longitude,rentalData[index].latitude);
+                      
                       context.push('/rentalForm/bookYourCab', extra: {
                         "carType": rentalData[index].carType,
                         "userId": widget.id.toString(),
@@ -241,7 +235,7 @@ class TransContainer extends StatelessWidget {
                           "Kilometer",
                           style: titleText,
                         ),
-                        subtitle: Text('$kilometers/KM', style: titleText),
+                        subtitle: Text('$kilometers KM', style: titleText),
                       ),
                     ),
                     Expanded(
@@ -311,7 +305,7 @@ class TransContainer extends StatelessWidget {
                       width: 120,
                       height: 40,
                       loading: loading,
-                      btnHeading: "View Details",
+                      btnHeading: "BOOK NOW",
                       onTap: onTap,
                     ),
                   ],

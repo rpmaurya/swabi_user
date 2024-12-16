@@ -76,3 +76,4 @@ const String raiseIssue = "assets/images/ride_issue.webp";
 const String otherIssue = "assets/images/other_issue.png";
 const String privacyPolicy = "assets/images/privacy-policy.png";
 const String myWallet = "assets/images/my-wallet.png";
+const String addLocation = "assets/images/add-location3.png";

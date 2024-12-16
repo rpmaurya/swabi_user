@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_cab/model/offer_list_model.dart';
-import 'package:flutter_cab/res/customContainer.dart';
-import 'package:flutter_cab/res/customTextWidget.dart';
+import 'package:flutter_cab/res/custom_container.dart';
+import 'package:flutter_cab/res/custom_text_widget.dart';
 import 'package:flutter_cab/utils/color.dart';
 import 'package:flutter_cab/utils/text_styles.dart';
 import 'package:flutter_cab/view_model/offer_view_model.dart';
@@ -184,7 +184,7 @@ class _CommonOfferContainerState extends State<CommonOfferContainer> {
                                       color: Colors.white.withOpacity(0.5),
                                     ),
                                     child: Text(
-                                      data?.bookingType == 'RENTAL_BOOKING'
+                                      data?.offerType == 'RENTAL_BOOKING'
                                           ? 'Rental Offer'
                                           : 'Package Offer',
                                       style: const TextStyle(

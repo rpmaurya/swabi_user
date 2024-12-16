@@ -1,12 +1,11 @@
 import 'dart:io';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/network/network_apiservice.dart';
 import 'package:flutter_cab/model/user_profile_model.dart';
-import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/res/Custom%20Page%20Layout/commonPage_Layout.dart';
-import 'package:flutter_cab/res/customAppBar_widget.dart';
-import 'package:flutter_cab/res/custom_ListTile.dart';
-import 'package:flutter_cab/res/custom_modalbottomsheet.dart';
+import 'package:flutter_cab/res/custom_appbar_widget.dart';
+import 'package:flutter_cab/res/custom_modal_bottom_sheet.dart';
 import 'package:flutter_cab/res/login/login_customTextFeild.dart';
 import 'package:flutter_cab/utils/assets.dart';
 import 'package:flutter_cab/utils/color.dart';
@@ -14,8 +13,10 @@ import 'package:flutter_cab/utils/dimensions.dart';
 import 'package:flutter_cab/utils/string_extenstion.dart';
 import 'package:flutter_cab/utils/text_styles.dart';
 import 'package:flutter_cab/view/dashboard/account_Pages/change_password.dart';
-import 'package:flutter_cab/view_model/userProfile_view_model.dart';
+import 'package:flutter_cab/view_model/user_profile_view_model.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:image/image.dart' as img;
@@ -30,101 +31,97 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  File? imgFile;
-  final profileImg = ImagePicker();
+  // File? imgFile;
+  // final profileImg = ImagePicker();
+  File? _image;
 
+  final ImagePicker _picker = ImagePicker();
   UserProfileViewModel userProfileViewModel = UserProfileViewModel();
 
   NetworkApiService networkApiService = NetworkApiService();
 
   String dataUser = '';
 
-  // void openGallery() async {
-  //   try {
-  //     var imgGallery = await profileImg.pickImage(source: ImageSource.gallery);
-  //
-  //     if (imgGallery != null) {
-  //       setState(() {
-  //         imgFile = File(imgGallery.path);
-  //       });
-  //     }
-  //     Navigator.of(context).pop();
-  //   } catch (e) {
-  //     print('Error opening gallery: $e');
-  //     // Handle the error appropriately
-  //   }
-  // }
-  //
-  // void openCamera() async {
-  //   try {
-  //     var imgCamera = await profileImg.pickImage(
-  //         source: ImageSource.camera, imageQuality: 50);
-  //
-  //     if (imgCamera != null) {
-  //       setState(() {
-  //         imgFile = File(imgCamera.path);
-  //       });
-  //       Navigator.of(context).pop();
-  //     } else {
-  //       Utils.flushBarSuccessMessage("Something went wrong", context);
-  //     }
-  //   } catch (e) {
-  //     print('Error opening camera: $e');
-  //     // Handle the error appropriately
-  //   }
-  // }
-  ///Old Code
-  void openGallery() async {
-    var imgGallery = await profileImg.pickImage(source: ImageSource.gallery);
+ 
+  Future<void> _pickImage(ImageSource source) async {
+    try {
+      // Step 1: Pick an image from the selected source
+      final pickedFile = await _picker.pickImage(
+        source: source,
+        imageQuality: 100, // Max quality
+      );
 
-    ///Call api
-    setState(() {
-      imgFile = File(imgGallery!.path);
-      debugPrint("${imgFile!.path}Gallery");
-    });
-    File resizedFile = await resizeImage(imgFile!);
-    debugPrint("${resizedFile.path}Gallery.....,.,,,");
-    if (imgFile != null) {
-      // debugPrint("chli");
+      if (pickedFile != null) {
+        // Step 2: Crop the image
+        final croppedFile = await ImageCropper().cropImage(
+          sourcePath: pickedFile.path,
+          cropStyle: CropStyle.rectangle,
+          aspectRatio:
+              const CropAspectRatio(ratioX: 1, ratioY: 1), // Square crop
+          compressQuality: 100, // Max quality during cropping
+          uiSettings: [
+            AndroidUiSettings(
+              toolbarTitle: 'Crop Image',
+              toolbarColor: btnColor,
+              toolbarWidgetColor: Colors.white,
+              hideBottomControls: true,
+              lockAspectRatio: true,
+            ),
+            IOSUiSettings(title: 'Crop Image'),
+          ],
+        );
+
+        if (croppedFile != null) {
+          // Step 3: Compress the image
+          var compressedFile = await _compressImage(File(croppedFile.path));
+
+          setState(() {
+            _image = compressedFile;
+          });
+
+          // Step 4: Upload the image
+          await _uploadImage(_image!);
+        }
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error: $e")),
+      );
+    }
+  }
+
+  Future<File> _compressImage(File file) async {
+    final dir = await Directory.systemTemp.createTemp();
+    final targetPath = '${dir.path}/temp.jpg';
+    final result1 = await FlutterImageCompress.compressAndGetFile(
+      file.absolute.path,
+      targetPath,
+      quality: 85, // Adjust quality as needed
+      format: CompressFormat.jpeg,
+    );
+    final File result = File(result1?.path ?? '');
+
+    return result; // Return the File
+  }
+
+  Future<void> _uploadImage(File file) async {
+    var profilePic =
+        await MultipartFile.fromFile(file.path, filename: "profile.jpg");
+    // Map<String, dynamic> body = {"driverId": widget.user, "image": profilePic};
+    try {
       await Provider.of<ProfileImageViewModel>(context, listen: false)
           .postProfileImageApi(context, {
         "userId": widget.user,
-        "image": resizedFile,
+        "image": file,
+      }).then((onValue) {
+        Provider.of<UserProfileViewModel>(context, listen: false)
+            .fetchUserProfileViewModelApi(context, {"userId": widget.user});
       });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error: $e")),
+      );
     }
-    Navigator.of(context).pop();
-  }
-
-  void openCamera() async {
-    var imgCamera = await profileImg.pickImage(
-        source: ImageSource.camera, imageQuality: 50);
-    setState(() {
-      imgFile = File(imgCamera!.path);
-      debugPrint(imgFile!.path.toString());
-    });
-    File resizedFile = await resizeImage(imgFile!);
-    debugPrint("${resizedFile.path}Gallery.....,.,,,");
-    if (imgFile != null) {
-      // debugPrint("chli");
-      await Provider.of<ProfileImageViewModel>(context, listen: false)
-          .postProfileImageApi(
-              context, {"userId": widget.user, "image": resizedFile});
-    }
-    Navigator.of(context).pop();
-  }
-
-  /// Helper function to resize the image
-  Future<File> resizeImage(File imageFile) async {
-    final img.Image? image = img.decodeImage(imageFile.readAsBytesSync());
-
-    // Resize the image to a smaller size (e.g., 300px width)
-    final resizedImage = img.copyResize(image!, width: 300);
-
-    // Save the resized image to a file
-    final resizedFile = File(imageFile.path)
-      ..writeAsBytesSync(img.encodeJpg(resizedImage, quality: 85));
-
-    return resizedFile;
   }
 
   @override
@@ -142,14 +139,9 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    // debugPrint(dataUser);
-    var status =
-        context.watch<UserProfileViewModel>().DataList.status.toString();
-    // if(status == "Status.completed"){
     userdata = context.watch<UserProfileViewModel>().DataList.data?.data ??
         ProfileData();
-    // userdata = context.watch<UserProfileViewModel>().DataList.data?.data ?? ProfileData();
-    // print(userdata.address);
+   
     userImg = context
             .watch<UserProfileViewModel>()
             .DataList
@@ -160,7 +152,7 @@ class _ProfilePageState extends State<ProfilePage> {
     return Scaffold(
       backgroundColor: bgGreyColor,
       appBar: CustomAppBar(
-        heading: "Profile",
+        heading: "My Profile",
         rightIconOnTapReq: true,
         rightIconImage: edit,
         trailingIcon: true,
@@ -172,10 +164,45 @@ class _ProfilePageState extends State<ProfilePage> {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                ProfileContainer(
-                  onTap: () => showCameraOption(),
-                  imgPath: imgFile ??
-                      (userImg.toString().isNotEmpty ? userImg : profile),
+              
+                Stack(
+                  children: [
+                    _image != null
+                        ? CircleAvatar(
+                            backgroundImage: FileImage(_image!),
+                            radius: 60,
+                          )
+                        : userImg.toString().isNotEmpty
+                            ? CircleAvatar(
+                                backgroundImage:
+                                    Image.network(userImg.toString()).image,
+                                radius: 60,
+                              )
+                            : const CircleAvatar(
+                                radius: 60,
+                                child: Icon(Icons.person, size: 60),
+                              ),
+                    Positioned(
+                      bottom: 5,
+                      right: 0,
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(50),
+                        onTap: showCameraOption,
+                        child: const Card(
+                          elevation: 0,
+                          shape: CircleBorder(),
+                          color: btnColor,
+                          child: SizedBox(
+                              height: 30,
+                              width: 30,
+                              child: Icon(
+                                Icons.camera_alt_outlined,
+                                color: background,
+                              )),
+                        ),
+                      ),
+                    )
+                  ],
                 ),
                 CommonTextFeild(
                   heading: "Customer Id",
@@ -227,7 +254,29 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
                 const SizedBox(height: 10),
                 CommonTextFeild(
-                  heading: "Address",
+                  heading: "Country",
+                  headingReq: true,
+                  prefixIcon: true,
+                  initiValueReq: false,
+                  controller: TextEditingController(text: userdata.country),
+                  initialValueText: userdata.country ?? '',
+                  readOnly: true,
+                  img: address,
+                ),
+                const SizedBox(height: 10),
+                CommonTextFeild(
+                  heading: "State",
+                  headingReq: true,
+                  prefixIcon: true,
+                  initiValueReq: false,
+                  controller: TextEditingController(text: userdata.state),
+                  initialValueText: userdata.state ?? '',
+                  readOnly: true,
+                  img: address,
+                ),
+                const SizedBox(height: 10),
+                CommonTextFeild(
+                  heading: "Location",
                   headingReq: true,
                   prefixIcon: true,
                   initiValueReq: false,
@@ -238,7 +287,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
                 const SizedBox(height: 10),
                 CommonTextFeild(
-                  heading: "Contact ",
+                  heading: "Contact No",
                   headingReq: true,
                   prefixIcon: true,
                   initiValueReq: false,
@@ -249,28 +298,14 @@ class _ProfilePageState extends State<ProfilePage> {
                   img: phone,
                 ),
                 const SizedBox(height: 10),
-                // Custom_ListTile(
-                //   headingTitleReq: true,
-                //   headingTitle: "Change Password",
-                //   onTap: () => context
-                //       .push("/changePassword", extra: {"userId": dataUser}),
-                //   heading: "**********",
-                //   img: pass,
-                // ),
+              
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: CustomModalbottomsheet(
                       title: 'CHANGE PASSWORD',
                       child: ChangePassword(userId: dataUser)),
                 ),
-                // Padding(
-                //   padding: const EdgeInsets.all(8.0),
-                //   child: CustomButtonSmall(
-                //     btnHeading: 'CHANGE PASSWORD',
-                //     onTap: () => context
-                //         .push("/changePassword", extra: {"userId": dataUser}),
-                //   ),
-                // )
+              
               ],
             ),
           )),
@@ -327,29 +362,23 @@ class _ProfilePageState extends State<ProfilePage> {
                       const SizedBox(
                         height: 5,
                       ),
-                      Align(
-                        alignment: Alignment.topLeft,
-                        child: TextButton(
-                          onPressed: openCamera,
-                          // () => getImage(ImageSource.camera),
-                          child: Text(
-                            'Camera',
-                            style: titleTextStyle,
-                          ),
-                        ),
+                      ListTile(
+                        leading: const Icon(Icons.camera),
+                        title: const Text("Camera"),
+                        onTap: () {
+                          Navigator.of(context).pop();
+                          _pickImage(ImageSource.camera);
+                        },
                       ),
-                      Align(
-                        alignment: Alignment.topLeft,
-                        child: TextButton(
-                          onPressed: openGallery,
-                          // () => getImage(ImageSource.gallery),
-                          child: Text(
-                            'Gallery',
-                            style: titleTextStyle,
-                            // style: Theme.of(context).textTheme.bodyMedium,
-                          ),
-                        ),
+                      ListTile(
+                        leading: const Icon(Icons.photo),
+                        title: const Text("Gallery"),
+                        onTap: () {
+                          Navigator.of(context).pop();
+                          _pickImage(ImageSource.gallery);
+                        },
                       ),
+                     
                     ],
                   ),
                 )
@@ -400,7 +429,7 @@ class ProfileContainer extends StatelessWidget {
                                   // AppUrl.userProfileUpdate +
                                   imgPath),
                               // image: AssetImage(imgPath),
-                              fit: BoxFit.cover)))
+                              fit: BoxFit.fill)))
                   : Container(
                       decoration: BoxDecoration(
                           shape: BoxShape.circle,
